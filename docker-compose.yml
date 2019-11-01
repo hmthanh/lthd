@@ -1,0 +1,43 @@
+version: '3'
+services:
+  database:
+    image: mysql:8.0.17
+    environment:
+      MYSQL_ROOT_PASSWORD: db_development
+      MYSQL_DATABASE: db_development
+    ports:
+      - '4406:3306'
+
+  # api shop 
+  shop_api:
+    build: ./shop_api
+    environment:
+      API_SHOP_HOST: ${API_SHOP_HOST}
+      API_SHOP_PORT: ${API_SHOP_PORT}
+    expose:
+      - ${API_SHOP_PORT}
+    ports:
+      - ${API_SHOP_PORT}:${API_SHOP_PORT}
+    volumes:
+      - ./shop_api:/shop_api
+      - /shop_api/node_modules
+    links:
+      - database
+    command: npm run start
+
+  # front_end 
+  front_end:
+    build: ./front_end
+    environment:
+      - REACT_APP_PORT=${REACT_APP_PORT}
+    expose:
+      - ${REACT_APP_PORT}
+    ports:
+      - ${REACT_APP_PORT}:${REACT_APP_PORT}
+    volumes:
+      - ./front_end:/front_end
+      - /front_end/node_modules
+    links:
+      - shop_api
+    command: npm run start
+    
