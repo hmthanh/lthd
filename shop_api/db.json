@@ -1,0 +1,40 @@
+{
+  "categories": [
+    {
+      "name": "Books",
+      "iat": 1538978440
+    },
+    {
+      "name": "Laptop",
+      "iat": 1538978440
+    },
+    {
+      "name": "Phone",
+      "iat": 1538978440
+    },
+    {
+      "name": "Fashion",
+      "iat": 1538978440
+    },
+    {
+      "name": "Backpack",
+      "iat": 1538978440
+    },
+    {
+      "name": "Jewels",
+      "iat": 1538978440
+    },
+    {
+      "name": "3G",
+      "iat": 1539924720
+    },
+    {
+      "name": "4G",
+      "iat": 1539924993
+    },
+    {
+      "name": "5G",
+      "iat": 1539925799
+    }
+  ]
+}
