@@ -1,0 +1,8 @@
+No command 'shell' found, did you mean:
+ Command 'bshell' from package 'avahi-ui-utils' (universe)
+ Command 'lshell' from package 'lshell' (universe)
+ Command 'pshell' from package 'python-pyramid' (universe)
+ Command 'spell' from package 'spell' (universe)
+ Command 'shelr' from package 'shelr' (universe)
+ Command 'jshell' from package 'openjdk-9-jdk-headless' (universe)
+shell: command not found

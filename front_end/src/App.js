@@ -3,6 +3,11 @@ import logo from './logo.svg';
 import './App.css';
 
 function App() {
+
+  fetch(`${process.env.API_HOST}`)
+  .then(ret => ret.json())
+  .then(ret => console.log('ret from api ', ret))
+
   return (
     <div className="App">
       <header className="App-header">

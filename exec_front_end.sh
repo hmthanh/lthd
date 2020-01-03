@@ -1,1 +1,0 @@
-docker-compose exec front_end sh

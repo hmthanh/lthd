@@ -1,5 +1,4 @@
- 
-FROM node:12.0.0
+FROM node:12.14.0
 RUN mkdir front_end
 WORKDIR /front_end
 
@@ -9,6 +8,5 @@ RUN npm install -qy
 
 COPY . /front_end
 
-# EXPOSE 3000
 
 CMD ['sudo npm', 'start']
