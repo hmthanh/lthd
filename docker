@@ -6,3 +6,6 @@ No command 'shell' found, did you mean:
  Command 'shelr' from package 'shelr' (universe)
  Command 'jshell' from package 'openjdk-9-jdk-headless' (universe)
 shell: command not found
+
+docker system prune -a
+
