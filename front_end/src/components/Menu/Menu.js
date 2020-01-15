@@ -8,9 +8,27 @@ const menus = [
         exact: true
     },
     {
-        name : 'Quản Lý Sản Phẩm',
-        to : '/product-list',
-        exact : false
+        name: 'Tài khoản',
+        to: '/user',
+        exact: false
+    }, {
+        name: 'Đăng ký',
+        to: '/register',
+        exact: false
+    }, {
+        name: 'Đăng nhập',
+        to: '/login',
+        exact: false
+    },
+    {
+        name: 'Chuyển tiền',
+        to: '/payment',
+        exact: false
+    },
+    {
+        name: 'Chuyển liên ngân hàng',
+        to: '/transfer',
+        exact: false
     }
 ]
 
@@ -33,11 +51,13 @@ class Menu extends Component {
 
     render() {
         return (
-            <nav className="navbar navbar-default">
-                <ul className="nav navbar-nav">
-                    {this.showMenus(menus)}
-                </ul>
-            </nav>
+            <header className="container">
+                <nav className="navbar navbar-default">
+                    <ul className="nav navbar-nav">
+                        {this.showMenus(menus)}
+                    </ul>
+                </nav>
+            </header>
         );
     }
 

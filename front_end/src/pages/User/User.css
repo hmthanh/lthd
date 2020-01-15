@@ -1,0 +1,16 @@
+.media {
+    margin: 20px 0;
+    padding: 30px;
+}
+
+.dp {
+    border: 10px solid #eee;
+    transition: all 0.2s ease-in-out;
+}
+
+.dp:hover {
+    border: 2px solid #eee;
+    transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+}

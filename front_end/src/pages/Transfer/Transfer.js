@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import './ProductListPage.css';
+import './Transfer.css';
 import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
-import ProductList from './../../components/ProductList/ProductList';
-import ProductItem from './../../components/ProductItem/ProductItem';
+import ProductList from '../../components/ProductList/ProductList';
+import ProductItem from '../../components/ProductItem/ProductItem';
 import { actFetchProductsRequest, actDeleteProductRequest } from '../../actions/index';
 
-class ProductListPage extends Component {
+class Transfer extends Component {
 
     componentDidMount() {
         // Gọi trước khi component đc render lần đầu tiên
@@ -64,4 +64,4 @@ const mapDispatchToProps = (dispatch, props) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProductListPage);
+export default connect(mapStateToProps, mapDispatchToProps)(Transfer);

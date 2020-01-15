@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import routes from './routes';
 import Menu from './components/Menu/Menu';
+import Footer from './components/Footer/Footer';
 
 class App extends Component {
     render() {
@@ -11,6 +12,7 @@ class App extends Component {
                 <div className="App">
                     <Menu />
                     {this.showContentMenus(routes)}
+                    <Footer></Footer>
                 </div>
             </Router>
         );
