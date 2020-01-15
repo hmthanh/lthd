@@ -4,33 +4,50 @@ const createError = require('http-errors');
 const jwt = require('jsonwebtoken');
 require('express-async-errors');
 const config = require('./config');
-
-const { Pool, Client } = require('pg')
-console.log(config)
-const pool = new Pool({
-  user:  config.DB_USER,
-  host: config.DB_HOST,
-  database: config.DB_BANKING_NAME,
-  password: config.DB_PASSWORD,
-  port: config.DB_PORT
-})
-
 const app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  console.log(`Your port is ${config.EXPOSE_PORT}`); 
-  pool.query('SELECT NOW()', (err, res) => {
-    console.log(err, res)
-    pool.end()
-  })
   res.json({
     msg: 'hello from nodejs express api',
   });
 })
 
+// app.use('/api/auth', require('./routes/auth.route'));
+// app.use('/api/users', require('./routes/user.route'));
+
+function verifyAccessToken(req, res, next) {
+  // console.log(req.headers);
+  const token = req.headers['x-access-token'];
+  if (token) {
+    jwt.verify(token, 'shhhhh', function (err, payload) {
+      if (err) throw createError(403, err);
+
+      console.log(payload);
+      next();
+    });
+  } else {
+    throw createError(401, 'NO_TOKEN');
+  }
+}
+
+// app.use('/api/categories', verifyAccessToken, require('./routes/category.route'));
+
+
+app.use((req, res, next) => {
+  throw createError(404, 'Resource not found.');
+})
+
+app.use(function (err, req, res, next) {
+  if (typeof err.status === 'undefined' || err.status === 500) {
+    console.error(err.stack);
+    res.status(500).send('View error log on console.');
+  } else {
+    res.status(err.status).send(err);
+  }
+})
 
 const PORT = config.EXPOSE_PORT;
 
