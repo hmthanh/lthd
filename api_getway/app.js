@@ -1,59 +1,26 @@
-const express = require('express');
-const morgan = require('morgan');
-const createError = require('http-errors');
-const jwt = require('jsonwebtoken');
-const config = require('./config');
-require('express-async-errors');
+var express = require('express'),
+    bodyParser = require('body-parser'),
+    morgan = require('morgan'),
+    cors = require('cors');
 
+var events = require('./events');
+var categoryCtrl = require('./categoryController');
 
-const app = express();
+var app = express();
 
 app.use(morgan('dev'));
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(cors());
 
-app.get('/', (req, res) => {
-  res.json({
-    msg: 'hello from nodejs express api',
-  });
-})
+// SSE
+app.get('/categoryAddedEvent', events.subscribeCategoryAdded);
 
-// app.use('/api/auth', require('./routes/auth.route'));
-// app.use('/api/users', require('./routes/user.route'));
+// WS
+require('./ws');
 
-// function verifyAccessToken(req, res, next) {
-//   // console.log(req.headers);
-//   const token = req.headers['x-access-token'];
-//   if (token) {
-//     jwt.verify(token, 'shhhhh', function (err, payload) {
-//       if (err) throw createError(403, err);
+app.use('/categories', categoryCtrl);
 
-//       console.log(payload);
-//       next();
-//     });
-//   } else {
-//     throw createError(401, 'NO_TOKEN');
-//   }
-// }
-
-
-app.use('/accounts', require('./routes/account.route'))
-
-
-app.use((req, res, next) => {
-  throw createError(404, 'Resource not found.');
-})
-
-app.use(function (err, req, res, next) {
-  if (typeof err.status === 'undefined' || err.status === 500) {
-    console.error(err.stack);
-    res.status(500).send('View error log on console.');
-  } else {
-    res.status(err.status).send(err);
-  }
-})
-
-const PORT = config.EXPOSE_PORT;
-
+var PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`API is running at http://localhost:${PORT}`);
-})
+    console.log(`API running on PORT ${PORT}`);
+});
