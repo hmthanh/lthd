@@ -2,14 +2,19 @@ const express = require('express');
 const morgan = require('morgan');
 const createError = require('http-errors');
 const jwt = require('jsonwebtoken');
-const config = require('./config');
+const cors = require('cors');
 require('express-async-errors');
+
+//my packet
+const config = require('./config');
+
 
 
 const app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.json({
@@ -17,7 +22,7 @@ app.get('/', (req, res) => {
   });
 })
 
-// app.use('/api/auth', require('./routes/auth.route'));
+app.use('/api/auth', require('./routes/auth.route'));
 // app.use('/api/users', require('./routes/user.route'));
 
 // function verifyAccessToken(req, res, next) {
@@ -36,7 +41,7 @@ app.get('/', (req, res) => {
 // }
 
 
-app.use('/accounts', require('./routes/account.route'))
+app.use('/api/accounts', require('./routes/account.route'))
 
 
 app.use((req, res, next) => {
