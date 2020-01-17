@@ -1,0 +1,32 @@
+import {LOGIN, LOGIN_FAILED, LOGIN_SUCCESS} from '../actions/actionType'
+import { UrlApi } from '../../shares/baseUrl';
+import { fetchFrom } from '../../utils/fetchHelper'
+
+export const login = (data) => (dispatch) => {
+  dispatch(LoginLoading());
+  return fetchFrom(UrlApi + '/api/auth', 'POST', data)
+        .then(response => response.json())
+        .then(response=>{
+            // console.log(response)
+            dispatch(LoginSuccess(response));
+        })
+        .catch(err => {
+          console.log(err)
+          dispatch(LoginFailed());
+        })
+}
+
+export const LoginLoading = () => ({
+  type: LOGIN
+})
+
+
+export const LoginSuccess = (data) => ({
+  type: LOGIN_SUCCESS,
+  payload: data
+})
+
+export const LoginFailed = () => ({
+  type: LOGIN_FAILED,
+  payload: 'không thể kết nối đến server!!!'
+})

@@ -34,3 +34,4 @@ view at http://localhost:5500/
 view at http://localhost:3000/
 
 **NOTE** if you use LINUX platform install docker-compose if error permistion run CMD `sudo chown -R $USER:$USER .`
+`docker-compose logs -f database`
