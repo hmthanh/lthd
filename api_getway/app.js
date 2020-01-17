@@ -10,17 +10,14 @@ const config = require('./config');
 
 
 
-const app = express();
+var app = express();
 
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cors());
 
-app.get('/', (req, res) => {
-  res.json({
-    msg: 'hello from nodejs express api',
-  });
-})
+// SSE
+app.get('/categoryAddedEvent', events.subscribeCategoryAdded);
 
 app.use('/api/auth', require('./routes/auth.route'));
 // app.use('/api/users', require('./routes/user.route'));
@@ -59,6 +56,7 @@ app.use(function (err, req, res, next) {
 
 const PORT = config.EXPOSE_PORT;
 
+var PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`API is running at http://localhost:${PORT}`);
-})
+    console.log(`API running on PORT ${PORT}`);
+});
