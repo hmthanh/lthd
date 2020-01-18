@@ -54,9 +54,6 @@ app.use(function (err, req, res, next) {
   }
 })
 
-const PORT = config.EXPOSE_PORT;
-
-var PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`API running on PORT ${PORT}`);
+app.listen(config.EXPOSE_PORT, () => {
+    console.log(`API running on PORT ${config.EXPOSE_PORT}`);
 });
