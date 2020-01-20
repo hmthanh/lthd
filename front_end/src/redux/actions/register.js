@@ -1,15 +1,17 @@
-import {LOGIN, LOGIN_FAILED, LOGIN_SUCCESS} from './actionType'
+import { REGISTER_LOADING, REGISTER_FAILED, REGISTER_SUCCESS, REGISTER_DEAULFT } from './actionType'
 
-export const Login = (state =  { isLoading: true,
+export const Register = (state =  { isLoading: false,
     errMess: null,
     data:[]}, action) => {
     switch (action.type) {
-        case LOGIN:
+        case REGISTER_LOADING:
             return {isLoading: true, errMess: null, data: []};
-        case LOGIN_FAILED:
+        case REGISTER_FAILED:
             return {...state, isLoading: false, errMess: action.payload, data: []};
-        case LOGIN_SUCCESS:
+        case REGISTER_SUCCESS:
             return {...state, isLoading: false, errMess: null, next: 0,data: {...action.payload}}
+        case REGISTER_DEAULFT:
+          return {...state, isLoading: false, errMess: null, next: 0,data: []}
         default:
             return state;
     }

@@ -1,26 +1,69 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Control, Errors, LocalForm } from 'react-redux-form';
-import { required, requiredText, validEmail, validEmailText, isNumber, isNumberText} from '../utils/utils';
+import React, { Component, useState } from 'react'
+import { connect } from 'react-redux'
+import { Control, Errors, LocalForm } from 'react-redux-form'
+import { required, requiredText, validEmail, validEmailText, isNumber, isNumberText, minLength } from '../utils/utils'
+import DatePicker from 'react-datepicker'
+import { register, backRegister } from '../redux/creators/registerCreator'
+import { Alert, Button } from 'reactstrap'
 
+import 'react-datepicker/dist/react-datepicker.css'
+import Loading from '../components/Loading'
+
+const DateInput = (props) => {
+	
+	let maxDate = new Date()
+	maxDate.setFullYear(2002)
+	const [startDate, setStartDate] = useState(maxDate);
+	return (
+    <DatePicker className='form-control' selected={startDate} onChange={date => { props.onChange(date) ;return setStartDate(date)}} autoComplete='off' />
+  );
+}
 
 class Register extends Component {
 
 	constructor(props) {
 		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
-
+		this.handleBack = this.handleBack.bind(this);
 	}
 
 	handleSubmit(values) {
-		// this.props.login(values.userName, values.password)
-		//     .then(() => {
-		//         localStorage.setItem('user', this.props.user.data)
-		//         this.props.history.push("/");
-		//     })
+		// console.log(values)
+		this.props.register(values)
+        .then((ret) => {
+					console.log(ret)
+        })
+	}
+
+	handleBack() {
+		this.props.backRegister()
 	}
 
 	render() {
+		if(this.props.Register.isLoading) {
+			return (
+				<div className="container" style={{ marginTop: '10px' }}>
+					<div className="row justify-content-center">
+						<Loading />
+					</div>
+				</div>
+			)
+		} else if(this.props.Register.errMess) {
+			return (
+				<div className="container" style={{ marginTop: '10px' }}>
+					<div className="row justify-content-center">
+						<div className="card-group mb-0">
+							<div className="card p-4">
+								<Alert color="danger">
+										{this.props.Register.errMess}
+								</Alert>
+								<Button color="primary" size="sm" onClick={this.handleBack}>Quay Lại</Button>{' '}
+							</div>
+						</div>
+					</div>
+				</div>
+			)
+		} else
 		return (
 			<div className="container" style={{ marginTop: '10px' }}>
 				<div className="row justify-content-center">
@@ -36,7 +79,7 @@ class Register extends Component {
 											<Control.text model='.name' id='name' name='name'
 												className='form-control' autoComplete='off'
 												validators={{ required }} />
-											<Errors className='text-danger' model='.userName' show="touched"
+											<Errors className='text-danger' model='.name' show="touched"
 												messages={{ required: requiredText}} />
 										</div>
 										<div className='form-group'>
@@ -55,11 +98,17 @@ class Register extends Component {
 											<Errors className='text-danger' model='.phone' show="touched"
 												messages={{ required: requiredText, isNumber: isNumberText }} />
 										</div>
+										<div className='form-group'>
+											<label htmlFor='.dob' >Ngày sinh:</label> {'  '}
+											<Control.text className='form-control'
+												model=".dob"
+												component={DateInput}
+											/>
+										</div>
 										<button type="submit" className="btn btn-primary">Đăng ký</button>
 									</LocalForm>
 								</div>
 							</div>
-
 						</div>
 					</div>
 				</div>
@@ -69,10 +118,13 @@ class Register extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
+	register: (formVal) => dispatch(register(formVal)),
+	backRegister: () => dispatch(backRegister())
 });
 
 const mapStateToProps = (state) => {
 	return {
+		Register: state.Register,
 	}
 }
 
