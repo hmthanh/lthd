@@ -6,6 +6,6 @@ export const validEmail = (val) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.t
 
 export const requiredText = 'Trường bắt buộc'
 export const validEmailText = 'Định dạng email không hợp lệ'
-export const isNumberText = 'Trường yêu cầu số'
+export const isNumberText = 'Trường yêu cầu định dạng số'
 export const maxLengthText = (val) => `Tối đa: ${val} kí tự`
 export const minLengthText = (val) => `Tối thiểu: ${val} kí tự`
