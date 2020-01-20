@@ -2,7 +2,6 @@ import React, { Component, lazy, Suspense } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { Container, Row, Col } from 'reactstrap';
 import Header from '../layout/Header'
-import Register from './Register'
 import { Spinner } from 'reactstrap'
 
 
@@ -13,6 +12,7 @@ import { Spinner } from 'reactstrap'
 //
 
 const LoginPage =  lazy(() => import('./Login'))
+const Register = lazy(()=>import('./Register'))
 
 class Main extends Component {
   render() {

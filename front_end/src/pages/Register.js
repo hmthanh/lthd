@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Control, Errors, LocalForm } from 'react-redux-form';
+import { required, requiredText, validEmail, validEmailText, isNumber, isNumberText} from '../utils/utils';
 
-const required = (val) => val && val.length;
 
 class Register extends Component {
 
@@ -22,35 +22,41 @@ class Register extends Component {
 
 	render() {
 		return (
-			<div className="container" style={{ marginTop: '230px' }}>
+			<div className="container" style={{ marginTop: '10px' }}>
 				<div className="row justify-content-center">
 					<div className="col-md-8">
 						<div className="card-group mb-0">
 							<div className="card p-4">
 								<div className="card-block">
-									<h1>Login</h1>
-									<p className="text-muted">Sign In to your account</p>
-									{/* <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
-
+									<h1>Đăng ký</h1>
+									<p className="text-muted">Đăng ký tài khoản</p>
+									<LocalForm onSubmit={(values) => this.handleSubmit(values)}>
 										<div className='form-group'>
-											<label htmlFor='userName'>Your Account</label>
-											<Control.text model='.userName' id='userName' name='userName'
+											<label htmlFor='.name'>Họ Tên:</label>
+											<Control.text model='.name' id='name' name='name'
 												className='form-control' autoComplete='off'
 												validators={{ required }} />
 											<Errors className='text-danger' model='.userName' show="touched"
-												messages={{ required: 'Required' }} />
+												messages={{ required: requiredText}} />
 										</div>
 										<div className='form-group'>
-											<label htmlFor='password'>Password</label>
-											<Control.password model='.password' id='password' name='password'
-												className='form-control' rows='6' autoComplete='off'
-												validators={{ required }} />
-											<Errors className='text-danger' model='.password' show="touched"
-												messages={{ required: 'Required' }} />
+											<label htmlFor='.email'>Email:</label>
+											<Control.text model='.email' id='email' name='email'
+												className='form-control' autoComplete='off'
+												validators={{ required, validEmail }} />
+											<Errors className='text-danger' model='.email' show="touched"
+												messages={{ required: requiredText, validEmail: validEmailText }} />
 										</div>
-										<button type="submit" className="btn btn-primary">Login</button>
-									</LocalForm> */}
-
+										<div className='form-group'>
+											<label htmlFor='.phone'>Số Điện Thoại:</label>
+											<Control.text model='.phone' id='phone' name='phone'
+												className='form-control' autoComplete='off'
+												validators={{ required, isNumber }} />
+											<Errors className='text-danger' model='.phone' show="touched"
+												messages={{ required: requiredText, isNumber: isNumberText }} />
+										</div>
+										<button type="submit" className="btn btn-primary">Đăng ký</button>
+									</LocalForm>
 								</div>
 							</div>
 

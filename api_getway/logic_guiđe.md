@@ -1,0 +1,2 @@
+1.    Logic phát sinh số tài khoản khi đăng ký 1 tài khoản: 4 số đầu tiên `BANKING_CODE` + `(s1 xor (^) s2)` \
+với `s1 và s2` là 2 chuỗi số được phát sinh như sau: s1 = { id + ngày sinh của tài khoản đăng ký ( milisecond ) }, s2= {thời điểm đăng ký (timestamp)}. Ví dụ `s1: id = 62 dob = 87451742` => `s1 = 6287451742 `. Chi tiết xem trong `common.js hàm genagrateAccountNumber`
