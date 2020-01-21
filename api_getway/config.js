@@ -11,6 +11,7 @@ module.exports = {
   DB_PASSWORD: process.env.DB_PASSWORD,
   DB_BANKING_NAME: process.env.DB_BANKING_NAME,
   BANKING_CODE: process.env.BANKING_CODE,
+  PW_SEED: +process.env.PW_SEED,
 
   MAILER_PORT:  process.env.MAILER_PORT,
 };

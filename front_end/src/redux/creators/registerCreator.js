@@ -3,16 +3,39 @@ import { UrlApi } from '../../shares/baseUrl';
 import { fetchFrom } from '../../utils/fetchHelper'
 
 export const register = (data) => (dispatch) => {
+  console.log(data)
   dispatch(registerLoading());
-  return fetchFrom(UrlApi + '/api/register', 'POST', data)
-        .then(response => response.json())
-        .then(response=>{
-            dispatch(registerSuccess(response));
-        })
-        .catch(err => {
-          console.log(err)
-          dispatch(registerFailed());
-        })
+  fetchFrom(UrlApi + '/api/accounts', 'POST', data)
+  .then(response=>{
+    console.log(response)
+    dispatch(registerSuccess(response));
+  })
+  .catch(err => {
+    console.log(err)
+    dispatch(registerFailed());
+  })
+  // return fetch(UrlApi + '/api/accounts', {
+  //   method: 'POST', // *GET, POST, PUT, DELETE, etc.
+  //   mode: 'cors', 
+  //   credentials: 'same-origin',
+  //   headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   body: JSON.stringify(data)  
+  // }).then(response => response.json())
+  // .then(response=>{
+  //   console.log(response)
+  //   dispatch(registerSuccess(response));
+  // })
+  // return fetchFrom(UrlApi + '/api/accounts', 'POST', data)
+  //       .then(response => response.json())
+  //       .then(response=>{
+  //         console.log(response)
+  //         dispatch(registerSuccess(response));
+  //       }).catch(err => {
+  //         console.log(err)
+  //         dispatch(registerFailed());
+  //       })
 }
 
 export const registerLoading = () => ({
