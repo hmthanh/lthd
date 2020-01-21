@@ -13,9 +13,10 @@ const DateInput = (props) => {
 	
 	let maxDate = new Date()
 	maxDate.setFullYear(2002)
-	const [startDate, setStartDate] = useState(maxDate);
+	const [startDate, setStartDate] = useState(maxDate)
 	return (
-    <DatePicker className='form-control' selected={startDate} onChange={date => { props.onChange(date) ;return setStartDate(date)}} autoComplete='off' />
+		<DatePicker className='form-control' selected={startDate} dateFormat='dd/MM/yyyy'
+		onChange={date => { props.onChange(date) ;return setStartDate(date)}} autoComplete='off' />
   );
 }
 
@@ -29,10 +30,16 @@ class Register extends Component {
 
 	handleSubmit(values) {
 		// console.log(values)
-		this.props.register(values)
-        .then((ret) => {
-					console.log(ret)
-        })
+		let info = { ... values}
+		delete info.dob
+		let dob = values.dob
+		if (!dob) {
+			dob = new Date()
+			dob.setFullYear(2002)
+		}
+		let date_of_birth = dob.getDate() + '-' + (dob.getMonth() + 1) + '-' + dob.getFullYear()
+		info['date_of_birth'] = date_of_birth
+		this.props.register(info)
 	}
 
 	handleBack() {

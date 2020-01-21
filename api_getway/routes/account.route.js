@@ -1,11 +1,11 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const rndToken = require('rand-token');
-const authModel = require('../models/auth.model');
-const common = require('../utils/common');
-const accountModel = require('../models/account.model');
+const express = require('express')
+const jwt = require('jsonwebtoken')
+const rndToken = require('rand-token')
+const authModel = require('../models/auth.model')
+const common = require('../utils/common')
+const accountModel = require('../models/account.model')
 
-const router = express.Router();
+const router = express.Router()
 
 function validate(data) {
     if(!common.validEmail(data['email'])) return false
@@ -13,22 +13,28 @@ function validate(data) {
     if(!common.required(data['name'])) return false
     if(!common.required(data['date_of_birth'])) return false
     data['phone'] = '84' + (+data['phone'])
+    let DoB = data['date_of_birth']
+    data['password'] = DoB.split('-').join('')
     return true
 }
 
 router.post('/', async (req, res) => {  
-    // console.log(req.body)
-    const val = validate(req.body)
+    let data = {...req.body}
+    let DoB = data['date_of_birth']
+    const isValid = validate(data)
     let ret, errorCode, item = null
-    if(val) {
-        let DoB = req.body['date_of_birth']
-        let results = await accountModel.add(req.body);
-        let accountNum = common.genagrateAccountNumber(results.insertId, DoB)
-        console.log('acountNum: ' + accountNum)
+    if(isValid) {
+        let results = await accountModel.add(data); 
+        let insertId = results.insertId
+        let name = common.nonAccentVietnamese(data.name)
+        let userName = name.split(' ').join('') + insertId
+        let accountNum = common.genagrateAccountNumber(insertId, DoB)
+        await accountModel.updateAccount(insertId, {user_name: userName, account_num: accountNum})
         item = {
             id: 1,
             ...req.body,
             accountNum,
+            userName
         }
         msg = 'successfully'
         errorCode = 201
@@ -44,4 +50,4 @@ router.post('/', async (req, res) => {
     res.status(errorCode).json(ret)
 })
   
-module.exports = router;
+module.exports = router
