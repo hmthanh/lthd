@@ -3,7 +3,9 @@ import React, { Component } from 'react';
 class HomePage extends Component {
     render() {
         return (
-            <h1>Trang Chủ</h1>
+            <div className="container">
+                <h1>2348.234 VND</h1>
+            </div>
         );
     }
 }

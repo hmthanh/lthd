@@ -1,22 +1,40 @@
-import React, {Component} from 'react'
-// import './App.css'
-import {BrowserRouter} from 'react-router-dom'
-import Main from './pages/MainPage'
-import {Provider} from 'react-redux'
-import {ConfigureStore} from './redux/configureStore'
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-const store = ConfigureStore();
+import routes from './routes';
+import Menu from './components/Menu/Menu';
+import Footer from './components/Footer/Footer';
 
 class App extends Component {
-  render() {
-    return (
-        <Provider store={store}>
-            <BrowserRouter>
-                    <Main />
-            </BrowserRouter>
-        </Provider>
-    )
-  }
+    render() {
+        return (
+            <Router>
+                <div className="App">
+                    <Menu />
+                    {this.showContentMenus(routes)}
+                    <Footer></Footer>
+                </div>
+            </Router>
+        );
+    }
+
+    showContentMenus = (routes) => {
+        var result = null;
+        if (routes.length > 0) {
+            result = routes.map((route, index) => {
+                return (
+                    <Route
+                        key={index}
+                        path={route.path}
+                        exact={route.exact}
+                        component={route.main}
+                    />
+                );
+            });
+        }
+        return <Switch>{result}</Switch>;
+    }
+
 }
 
 export default App;
