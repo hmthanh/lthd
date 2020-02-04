@@ -45,7 +45,7 @@ export const LoginSuccess = (data) => ({
   payload: data
 })
 
-export const LoginFailed = () => ({
+export const LoginFailed = (errMsg = 'không thể kết nối đến server!!!') => ({
   type: LOGIN_FAILED,
-  payload: 'không thể kết nối đến server!!!'
+  payload: errMsg
 })

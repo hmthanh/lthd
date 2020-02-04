@@ -74,7 +74,7 @@ class UserInfo extends Component {
             </FormGroup>
 
             </Form>
-          <Link to="/resetpws">Đổi mật khẩu</Link>
+          <Link to="/changepwd">Đổi mật khẩu</Link>
         </CardBody>
       </Card>
     </div>
