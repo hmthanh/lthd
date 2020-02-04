@@ -12,6 +12,9 @@ module.exports = {
   DB_BANKING_NAME: process.env.DB_BANKING_NAME,
   BANKING_CODE: process.env.BANKING_CODE,
   PW_SEED: +process.env.PW_SEED,
+  TIME_OUT_TOKEN: +process.env.TIME_OUT_TOKEN,
+  SECRET_KEY_TOKEN: process.env.SECRET_KEY_TOKEN,
+  LENGTH_REFREST_TOKEN: process.env.LENGTH_REFREST_TOKEN,
 
   MAILER_PORT:  process.env.MAILER_PORT,
 };
