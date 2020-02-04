@@ -21,14 +21,16 @@ class LoginPage extends Component {
         .then(() => {
             //localStorage.setItem('user', this.props.Login.data)
             // console.log(this.props.Login)
-            if (this.props.Login.errMess === '' || this.props.Login.errMess === null || this.props.Login.errMess === undefined) {
+            if (this.props.Login.data.authenticated) {
               // console.log('login ', this.props.Login.data)
               localStorage.setItem('uid', this.props.Login.data.user.id)
               localStorage.setItem('accessToken', this.props.Login.data.accessToken)
               localStorage.setItem('refreshToken', this.props.Login.data.refreshToken)
               this.props.history.push("/")
-            } else
+            } else {
               this.setState({isFailed: true})
+            }
+             
         })
   }
   render() {
@@ -40,6 +42,7 @@ class LoginPage extends Component {
             this.state.isFailed&&
             <Alert color="danger">
               {this.props.Login.errMess}
+              {!this.props.Login.authenticated && 'Mật Khẩu Hoặc Tên Đăng Nhập Sai'}
           </Alert>
           }
             <div className="card-group mb-0">

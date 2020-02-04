@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const userModel = require('./user.model');
 const { PW_SEED } = require('../config')
-
+const db = require('../utils/db');
 module.exports = {
   login: async entity => {
 
@@ -20,11 +20,29 @@ module.exports = {
   },
 
   relogin: async entity => {
-    console.log('relogin ', entity)
     const rows = await userModel.singleByUserId(entity.uId);
-    console.log('singleByUserId ', rows)
     if (rows === 0)
       return null;
     return rows[0];
+  },
+
+  comparePwd: async entity => {
+    const rows = await userModel.singleByUserId(entity.uId);
+    console.log('comparePwd', rows)
+    if (rows === 0)
+      return null;
+    const hashPwd = rows[0].password;
+    if (bcrypt.compareSync(entity.oldPwd, hashPwd)) {
+      return rows[0];
+    }
+    return null;
+  },
+
+  updatePwd: async entity => {
+    const hash = bcrypt.hashSync(entity.newPwd, PW_SEED)
+    let _entity = {
+      password: hash
+    }
+    return db.patch(_entity, {id: entity.uId}, 'user_info')
   }
 };
