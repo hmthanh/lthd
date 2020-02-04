@@ -81,6 +81,7 @@ class Header extends Component {
   logout() {
     localStorage.clear()
     this.props.logout()
+    // this.props.history.push("/")
   }
 
   componentWillReceiveProps(props) {
