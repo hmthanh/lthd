@@ -5,7 +5,7 @@ import { fetchFrom } from '../../utils/fetchHelper'
 export const login = (data) => (dispatch) => {
   dispatch(LoginLoading());
   return fetchFrom(UrlApi + '/api/auth', 'POST', data)
-        .then(response => response.json())
+        //.then(response => response.json())
         .then(response=>{
             // console.log(response)
             dispatch(LoginSuccess(response));
@@ -14,6 +14,25 @@ export const login = (data) => (dispatch) => {
           console.log(err)
           dispatch(LoginFailed());
         })
+}
+
+
+export const relogin = (uId) => (dispatch) => {
+  dispatch(LoginLoading());
+  return fetchFrom(UrlApi + '/api/auth/relogin', 'POST', {uId})
+        //.then(response => response.json())
+        .then(response=>{
+            console.log("relogin", response)
+            dispatch(LoginSuccess(response));
+        })
+        .catch(err => {
+          console.log(err)
+          dispatch(LoginFailed());
+        })
+}
+
+export const logout = () => (dispatch) => {
+  dispatch(LoginSuccess({}));
 }
 
 export const LoginLoading = () => ({
