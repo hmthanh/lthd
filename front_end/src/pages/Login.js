@@ -14,8 +14,8 @@ class LoginPage extends Component {
     this.state = {
       isFailed: false
     }
-
   }
+  
   handleSubmit(values) {
     this.props.login(values.userName, values.password)
         .then(() => {
