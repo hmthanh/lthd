@@ -33,6 +33,7 @@ class LoginPage extends Component {
              
         })
   }
+  
   render() {
     return (
       <div className="container" style={{ marginTop: '20px' }}>

@@ -72,5 +72,52 @@ router.post('/id', async (req, res) => {
     }
     res.status(errorCode).json(ret)
 })
+
+// create receiver_info
+router.post('/ref/account', async (req, res) => {  
+  // let info = await accountModel.getInfoBanking(req.body.id)
+  // let errorCode = 400
+  // let ret = {
+  //   msg: 'invalid parameters',
+  // }
+  // if(info && info.length != 0) {
+  //     let saving_money = 0, main = 0
+  //     errorCode = 200
+  //     for (let i = 0; i < info.length; i++) {
+  //       item = info[i]
+  //       if(item.type == 1) main += item.surplus
+  //       else saving_money += item.surplus
+  //     }
+  //     ret = {
+  //       msg: 'successfully',
+  //       saving_money,
+  //       main
+  //     }
+  // }
+  // res.status(errorCode).json(ret)
+})
+// get all receiver_info by uid
+router.post('/ref/account/id', async (req, res) => {  
+  // let info = await accountModel.getInfoBanking(req.body.id)
+  // let errorCode = 400
+  // let ret = {
+  //   msg: 'invalid parameters',
+  // }
+  // if(info && info.length != 0) {
+  //     let saving_money = 0, main = 0
+  //     errorCode = 200
+  //     for (let i = 0; i < info.length; i++) {
+  //       item = info[i]
+  //       if(item.type == 1) main += item.surplus
+  //       else saving_money += item.surplus
+  //     }
+  //     ret = {
+  //       msg: 'successfully',
+  //       saving_money,
+  //       main
+  //     }
+  // }
+  // res.status(errorCode).json(ret)
+})
   
 module.exports = router
