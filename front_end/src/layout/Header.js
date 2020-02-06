@@ -43,7 +43,7 @@ const InfoUser = (props) => {
                   <NavLink href="/info">Thông tin</NavLink>
                   </DropdownItem>
                   <DropdownItem>
-                    Option 2
+                  <NavLink href="/setting">Thiết Lập Thông Tin Người Nhận</NavLink>
                   </DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem onClick={props.logout}>

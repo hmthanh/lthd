@@ -16,6 +16,7 @@ const Register = lazy(()=>import('./Register'))
 const UserInfo = lazy(()=>import('./UserInfo'))
 const ChangePassword = lazy(()=>import('./ChangePassword'))
 const ForgetPassword = lazy(()=>import('./ForgetPassword'))
+const SettingPage = lazy(()=>import('./SettingRecieverPage'))
 
 class Main extends Component {
   render() {
@@ -39,6 +40,7 @@ class Main extends Component {
             <Route exact path='/info' component={UserInfo} />
             <Route exact path='/changepwd' component={ChangePassword} />
             <Route exact path='/forgetpwd' component={ForgetPassword} />
+            <Route exact path='/setting' component={SettingPage} />
           </Switch>
           </Suspense>
         </main>
