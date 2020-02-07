@@ -19,4 +19,5 @@ module.exports = {
 
   singleByUserName: userName => db.load(`select * from user_info where user_name = '${userName}'`),
   singleByUserId: uId => db.load(`select * from user_info where id = '${uId}'`),
+  singleByAccountNum: accountNumber => db.load(`select * from user_info where account_num = '${accountNumber}'`),
 };
