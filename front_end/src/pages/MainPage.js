@@ -13,6 +13,11 @@ import { Spinner } from 'reactstrap'
 
 const LoginPage =  lazy(() => import('./Login'))
 const Register = lazy(()=>import('./Register'))
+const UserInfo = lazy(()=>import('./UserInfo'))
+const HistoryPage = lazy(()=>import('./HistoryPage'))
+const ChangePassword = lazy(()=>import('./ChangePassword'))
+const ForgetPassword = lazy(()=>import('./ForgetPassword'))
+const SettingPage = lazy(()=>import('./SettingRecieverPage'))
 
 class Main extends Component {
   render() {
@@ -33,6 +38,11 @@ class Main extends Component {
           <Switch>
             <Route exact path='/login' component={LoginPage} />
             <Route exact path='/register' component={Register} />
+            <Route exact path='/info' component={UserInfo} />
+            <Route exact path='/history' component={HistoryPage} />
+            <Route exact path='/changepwd' component={ChangePassword} />
+            <Route exact path='/forgetpwd' component={ForgetPassword} />
+            <Route exact path='/setting' component={SettingPage} />
           </Switch>
           </Suspense>
         </main>
