@@ -13,4 +13,7 @@ module.exports = {
   updateAccount: (id, entity) => {
     return db.patch(entity, {id: id}, 'user_info')
   },
+  getInfoBanking: (id) => {
+    return db.load(`Select * from banking_account where owner_id=${id}`)
+  }
 };
