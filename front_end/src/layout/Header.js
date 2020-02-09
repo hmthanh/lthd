@@ -10,6 +10,7 @@ const InfoUser = (props) => {
   const [isOpen, setIsOpen] = useState(false)
   const toggle = () => setIsOpen(!isOpen)
 
+
   if(!props.authenticated){
     return (
       <div>
@@ -44,6 +45,9 @@ const InfoUser = (props) => {
                   </DropdownItem>
                   <DropdownItem>
                   <NavLink href="/setting">Thiết Lập Thông Tin Người Nhận</NavLink>
+                  </DropdownItem>
+                  <DropdownItem>
+                    <NavLink href="/history">Lịch sử giao dịch</NavLink>
                   </DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem onClick={props.logout}>

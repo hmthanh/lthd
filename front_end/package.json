@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.19.1",
     "@coreui/coreui": "^2.1.16",
     "@coreui/react": "^2.1.4",
     "bootstrap": "^4.4.1",
