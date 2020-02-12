@@ -1,8 +1,10 @@
 import React, { Component, useState } from 'react'
 import { connect } from 'react-redux'
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledDropdown, DropdownToggle,
-  DropdownMenu, DropdownItem, Button } from 'reactstrap'
-import {Link} from 'react-router-dom'
+import {
+  Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledDropdown, DropdownToggle,
+  DropdownMenu, DropdownItem, Button
+} from 'reactstrap'
+import { Link } from 'react-router-dom'
 import { relogin, logout } from '../redux/creators/loginCreator';
 
 const InfoUser = (props) => {
@@ -11,8 +13,8 @@ const InfoUser = (props) => {
   const toggle = () => setIsOpen(!isOpen)
 
 
-  if(!props.authenticated){
-  // if (false){
+  // if(!props.authenticated){
+  if (false) {
     return (
       <div>
         <Button color="info" outline className="mr-2">
@@ -26,39 +28,71 @@ const InfoUser = (props) => {
     )
   } else {
     return (
-        <div>
-          <NavbarToggler onClick={toggle} />
-          <Collapse isOpen={isOpen} navbar>
-            <Nav className="mr-auto" navbar>
-              <NavItem>
-                <NavLink href="/components/">Components</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
-              </NavItem>
-              <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle nav caret>
-                  Options
+      <div>
+        <NavbarToggler onClick={toggle} />
+        <Collapse isOpen={isOpen} navbar>
+          <Nav className="mr-auto" navbar>
+            {/* Phân hệ khách hàng */}
+            <NavItem>
+              <NavLink href="/list-account/">Danh sách tài khoản</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="/list-receiver/">Danh sách người nhận</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="/transfer/">Chuyển khoản</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="/transfer/">Quản lý nhắc nợ</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="/setting">Thông Tin Người Nhận</NavLink>
+            </NavItem>
+            <UncontrolledDropdown nav inNavbar>
+              <DropdownToggle nav caret>
+                Tài khoản
                 </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem onClick={props.infoUser}>
+              <DropdownMenu right>
+                <DropdownItem onClick={props.infoUser}>
                   <NavLink href="/info">Thông tin</NavLink>
-                  </DropdownItem>
-                  <DropdownItem>
-                  <NavLink href="/setting">Thiết Lập Thông Tin Người Nhận</NavLink>
-                  </DropdownItem>
-                  <DropdownItem>
-                    <NavLink href="/history">Lịch sử giao dịch</NavLink>
-                  </DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem onClick={props.logout}>
-                    Đăng xuất
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            </Nav>
-          </Collapse>
-        </div>
+                </DropdownItem>
+                <DropdownItem divider />
+                <DropdownItem>
+                  <NavLink href="/history">Lịch sử giao dịch</NavLink>
+                </DropdownItem>
+                <DropdownItem>
+                  <NavLink href="/history">Đổi mật khẩu</NavLink>
+                </DropdownItem>
+                <DropdownItem>
+                  <NavLink href="/history">Quên mật khẩu</NavLink>
+                </DropdownItem>
+
+              </DropdownMenu>
+            </UncontrolledDropdown>
+            {/* Phân hệ giao dịch viên */}
+            <NavItem>
+              <NavLink href="/create-account/">Tạo tài khoản</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="/recharge/">Nạp tiền</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="/history-account/">Lịch sử khách hàng</NavLink>
+            </NavItem>
+            {/* Phân hệ quản trị viên */}
+            <NavItem>
+              <NavLink href="/list-staff/">Danh sách nhân viên</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="/recharge/">Danh sách giao dịch</NavLink>
+            </NavItem>
+            {/* Chung */}
+            <DropdownItem onClick={props.logout}>
+              <NavLink href="/logout">Đăng xuất</NavLink>
+            </DropdownItem>
+          </Nav>
+        </Collapse>
+      </div>
     )
   }
 }
@@ -73,13 +107,13 @@ class Header extends Component {
       authenticated: false
     }
     let uid = localStorage.getItem('uid')
-    if(uid) {
+    if (uid) {
       this.props.relogin(uid)
-      .then(()=>{
-        if(this.props.Login.data.authenticated) {
-          this.setState({ authenticated: true})
-        }
-      })
+        .then(() => {
+          if (this.props.Login.data.authenticated) {
+            this.setState({ authenticated: true })
+          }
+        })
     }
   }
 
@@ -90,10 +124,10 @@ class Header extends Component {
   }
 
   componentWillReceiveProps(props) {
-    if(props.Login.data.authenticated) {
-      this.setState({ authenticated: true})
+    if (props.Login.data.authenticated) {
+      this.setState({ authenticated: true })
     } else {
-      this.setState({ authenticated: false})
+      this.setState({ authenticated: false })
     }
   }
 
@@ -103,7 +137,7 @@ class Header extends Component {
         <Navbar color="light" light expand="md">
           <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
           <InfoUser authenticated={this.state.authenticated} user={this.props.Login.data.user} logout={this.logout}
-          infoUser={this.infoUser}/>
+            infoUser={this.infoUser} />
         </Navbar>
       </div>
     );
@@ -122,5 +156,3 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
-
-// export default Header;

@@ -25,7 +25,7 @@ class HistoryPage extends Component {
             <div className="card-group mb-0">
               <div className="card p-6">
                 <div className="card-block">
-                  <h1>History</h1>
+                  <h1 className="col-centered table-heading">Lịch sử giao dịch</h1>
                   <Table>
                     <thead>
                       <tr>
