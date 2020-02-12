@@ -39,9 +39,9 @@ class Main extends Component {
             <Route exact path='/login' component={LoginPage} />
             <Route exact path='/register' component={Register} />
             <Route exact path='/info' component={UserInfo} />
-            <Route exact path='/history' component={HistoryPage} />
-            <Route exact path='/changepwd' component={ChangePassword} />
-            <Route exact path='/forgetpwd' component={ForgetPassword} />
+            <Route exact path='/transfer-history' component={HistoryPage} />
+            <Route exact path='/change-password' component={ChangePassword} />
+            <Route exact path='/forget-password' component={ForgetPassword} />
             <Route exact path='/setting' component={SettingPage} />
           </Switch>
           </Suspense>
