@@ -15,7 +15,7 @@ class LoginPage extends Component {
       isFailed: false
     }
   }
-  
+
   handleSubmit(values) {
     this.props.login(values.userName, values.password)
         .then(() => {
@@ -30,10 +30,10 @@ class LoginPage extends Component {
             } else {
               this.setState({isFailed: true})
             }
-             
+
         })
   }
-  
+
   render() {
     return (
       <div className="container" style={{ marginTop: '20px' }}>

@@ -12,6 +12,7 @@ const InfoUser = (props) => {
 
 
   if(!props.authenticated){
+  // if (false){
     return (
       <div>
         <Button color="info" outline className="mr-2">
