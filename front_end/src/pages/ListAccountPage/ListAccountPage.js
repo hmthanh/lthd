@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Control, Errors, LocalForm } from 'react-redux-form';
 import { Table } from 'reactstrap'
-import { getAllHistory } from '../redux/creators/historyInfoCreator'
+import { getAllAccount } from '../../redux/creators/accountCreator'
 
-class HistoryPage extends Component {
+class ListAccountPage extends Component {
 
   constructor(props) {
     super(props);
@@ -13,9 +13,8 @@ class HistoryPage extends Component {
   }
 
   componentDidMount() {
-    this.props.getAll(1);
+    this.props.getAllAccount(1);
   }
-
 
   render() {
     return (
@@ -25,32 +24,25 @@ class HistoryPage extends Component {
             <div className="card-group mb-0">
               <div className="card p-6">
                 <div className="card-block">
-                  <h1 className="col-centered table-heading">Lịch sử giao dịch</h1>
+                  <h1 className="col-centered table-heading">Danh sách tài khoản</h1>
                   <Table>
                     <thead>
                       <tr>
                         <th>#</th>
-                        <th>Ngày giao dịch</th>
-                        <th>Loại giao dịch</th>
-                        <th>Người gửi</th>
-                        <th>Người nhận</th>
-                        <th>Số tiền</th>
-                        <th>Số dư</th>
+                        <th>Loại tài khoản</th>
+                        <th>Số tài khoản</th>
+                        <th>Số dư hiện tại</th>
                       </tr>
                     </thead>
                     <tbody>
                       {
-                        this.props.HistoryInfo.data.val &&
-                        // console.log(this.props.HistoryInfo.data.val)
-                        this.props.HistoryInfo.data.val.map(item => (
+                        this.props.AccountInfo.data.val &&
+                        this.props.AccountInfo.data.val.map(item => (
                           <tr key={item.id}>
                             <th scope="row">{item.id}</th>
-                            <td>{item.day.toString()}</td>
                             <td>{item.type}</td>
-                            <td>{item.send}</td>
-                            <td>{item.recieve}</td>
+                            <td>{item.number}</td>
                             <td>{item.money}</td>
-                            <td>{item.excess}</td>
                           </tr>
                         ))
                       }
@@ -67,13 +59,13 @@ class HistoryPage extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  getAll: (id) => dispatch(getAllHistory(id))
+  getAllAccount: (id) => dispatch(getAllAccount(id))
 });
 
 const mapStateToProps = (state) => {
   return {
-    HistoryInfo: state.HistoryInfo,
+    AccountInfo: state.AccountInfo
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HistoryPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ListAccountPage);

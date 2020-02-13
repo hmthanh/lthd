@@ -139,11 +139,11 @@ class Payment extends Component {
                                             <dd> THE WORLD BANK</dd>
                                         </dl>
                                         <dl className="param">
-                                            <dt>Accaunt number: </dt>
+                                            <dt>Account number: </dt>
                                             <dd> 12345678912345</dd>
                                         </dl>
                                         <dl className="param">
-                                            <dt>IBAN: </dt>
+                                            <dt>IBN: </dt>
                                             <dd> 123456789</dd>
                                         </dl>
                                         <p><strong>Note:</strong> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod

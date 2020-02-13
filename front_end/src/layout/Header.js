@@ -1,69 +1,63 @@
 import React, { Component, useState } from 'react'
 import { connect } from 'react-redux'
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledDropdown, DropdownToggle,
-  DropdownMenu, DropdownItem, Button } from 'reactstrap'
-import {Link} from 'react-router-dom'
+import {
+  Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink, UncontrolledDropdown, DropdownToggle,
+  DropdownMenu, DropdownItem, Button
+} from 'reactstrap'
+import { Link } from 'react-router-dom'
 import { relogin, logout } from '../redux/creators/loginCreator';
+import AdministratorNav from '../components/Nav/AdministratorNav';
+import CustomerNav from '../components/Nav/CustomerNav';
+import EmployeeNav from '../components/Nav/EmployeeNav';
 
 const InfoUser = (props) => {
 
   const [isOpen, setIsOpen] = useState(false)
   const toggle = () => setIsOpen(!isOpen)
+  const permistion = 1
 
-
-  if(!props.authenticated){
+  // if(!props.authenticated){
+  if (false) {
     return (
       <div>
         <Button color="info" outline className="mr-2">
           <Link to="/login">Đăng nhập</Link>
         </Button>
-
         <Button color="success" outline className="mr-4">
           <Link to="/register">Đăng ký</Link>
         </Button>
       </div>
     )
   } else {
-    return (
+    if (permistion == 1) {
+      return (
         <div>
-          <NavbarToggler onClick={toggle} />
+          <NavbarToggler onClick={toggle}></NavbarToggler>
           <Collapse isOpen={isOpen} navbar>
-            <Nav className="mr-auto" navbar>
-              <NavItem>
-                <NavLink href="/components/">Components</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
-              </NavItem>
-              <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle nav caret>
-                  Options
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem onClick={props.infoUser}>
-                  <NavLink href="/info">Thông tin</NavLink>
-                  </DropdownItem>
-                  <DropdownItem>
-                  <NavLink href="/setting">Thiết Lập Thông Tin Người Nhận</NavLink>
-                  </DropdownItem>
-                  <DropdownItem>
-                    <NavLink href="/history">Lịch sử giao dịch</NavLink>
-                  </DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem onClick={props.logout}>
-                    Đăng xuất
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            </Nav>
-          </Collapse>
+            <CustomerNav logout={logout}></CustomerNav>
+          </Collapse >
         </div>
-    )
+      )
+    } else if (permistion == 2) {
+      return (
+        <div>
+          <NavbarToggler onClick={toggle}></NavbarToggler>
+          <EmployeeNav logout={logout}></EmployeeNav>
+        </div>
+      )
+    }
+    else {
+      return (
+        <div>
+          <NavbarToggler onClick={toggle}></NavbarToggler>
+          <AdministratorNav logout={logout}></AdministratorNav>
+        </div>
+      )
+    }
   }
 }
 
 class Header extends Component {
-
   constructor(props) {
     super(props)
     this.logout = this.logout.bind(this)
@@ -72,13 +66,13 @@ class Header extends Component {
       authenticated: false
     }
     let uid = localStorage.getItem('uid')
-    if(uid) {
+    if (uid) {
       this.props.relogin(uid)
-      .then(()=>{
-        if(this.props.Login.data.authenticated) {
-          this.setState({ authenticated: true})
-        }
-      })
+        .then(() => {
+          if (this.props.Login.data.authenticated) {
+            this.setState({ authenticated: true })
+          }
+        })
     }
   }
 
@@ -89,10 +83,10 @@ class Header extends Component {
   }
 
   componentWillReceiveProps(props) {
-    if(props.Login.data.authenticated) {
-      this.setState({ authenticated: true})
+    if (props.Login.data.authenticated) {
+      this.setState({ authenticated: true })
     } else {
-      this.setState({ authenticated: false})
+      this.setState({ authenticated: false })
     }
   }
 
@@ -102,7 +96,7 @@ class Header extends Component {
         <Navbar color="light" light expand="md">
           <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
           <InfoUser authenticated={this.state.authenticated} user={this.props.Login.data.user} logout={this.logout}
-          infoUser={this.infoUser}/>
+            infoUser={this.infoUser} />
         </Navbar>
       </div>
     );
@@ -121,5 +115,3 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);
-
-// export default Header;
