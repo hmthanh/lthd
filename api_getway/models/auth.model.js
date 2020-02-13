@@ -9,10 +9,9 @@ module.exports = {
     
     if (rows === 0)
       return null;
-
-    //const hash = bcrypt.hashSync(entity.password, PW_SEED);
-    //console.log('nguyenvanb1 ', hash)
+    
     const hashPwd = rows[0].password;
+    // console.log(hashPwd, entity.password)
     if (bcrypt.compareSync(entity.password, hashPwd)) {
       return rows[0];
     }

@@ -16,8 +16,7 @@ const InfoUser = (props) => {
   const toggle = () => setIsOpen(!isOpen)
   const permistion = 1
 
-  // if(!props.authenticated){
-  if (false) {
+  if(!props.authenticated){
     return (
       <div>
         <Button color="info" outline className="mr-2">
@@ -78,7 +77,7 @@ class Header extends Component {
 
   logout() {
     localStorage.clear()
-    this.props.logout()
+    // this.props.logout()
     // this.props.history.push("/")
   }
 
