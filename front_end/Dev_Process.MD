@@ -1,5 +1,4 @@
 1. Phân hệ khách hàng customer
-1.2 Liệt kê danh sách tài khoản của người dùng
 1.3 Thiết lập danh sách người nhận
 
 1.4 Chuyển khoản
