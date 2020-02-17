@@ -8,6 +8,7 @@ import { ChangePassword } from './actions/changepassword'
 import { GetBankingInfo } from './actions/getBankingInfo'
 import { GetHistoryInfo } from './actions/getHistory'
 import { GetAllAccount } from './actions/getAllAccount'
+import { GetDebtInfo } from './actions/getDebt'
 
 export const ConfigureStore = () => {
     const store = createStore(
@@ -17,6 +18,7 @@ export const ConfigureStore = () => {
             ChangePassword: ChangePassword,
             BankingInfo: GetBankingInfo,
             HistoryInfo: GetHistoryInfo,
+            DebtInfo: GetDebtInfo,
             AccountInfo: GetAllAccount
         }),
         applyMiddleware(logger),
