@@ -8,6 +8,7 @@ const LoginPage = lazy(() => import('./Login'))
 const Register = lazy(() => import('./Register'))
 const UserInfo = lazy(() => import('./UserInfo'))
 const HistoryPage = lazy(() => import('./HistoryPage'))
+const debtPage = lazy(()=>import('./Debt'))
 const ChangePassword = lazy(() => import('./ChangePassword'))
 const ForgetPassword = lazy(() => import('./ForgetPassword'))
 const SettingPage = lazy(() => import('./SettingRecieverPage'))
@@ -40,6 +41,7 @@ class Main extends Component {
               <Route exact path='/register' component={Register} />
               <Route exact path='/info' component={UserInfo} />
               <Route exact path='/transfer-history' component={HistoryPage} />
+              <Route exact path='/manage-debt' component={debtPage} />
               <Route exact path='/change-password' component={ChangePassword} />
               <Route exact path='/list-account' component={ListAccountPage} />
               <Route exact path='/forget-password' component={ForgetPassword} />
