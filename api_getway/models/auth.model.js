@@ -27,7 +27,6 @@ module.exports = {
 
   comparePwd: async entity => {
     const rows = await userModel.singleByUserId(entity.uId);
-    console.log('comparePwd', rows)
     if (rows === 0)
       return null;
     const hashPwd = rows[0].password;

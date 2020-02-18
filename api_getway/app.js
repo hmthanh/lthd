@@ -40,6 +40,9 @@ app.use('/api/auth', require('./routes/auth.route'));
 
 app.use('/api/accounts', require('./routes/account.route'))
 
+app.use('/api/receiver', require('./routes/receiver.route'))
+
+app.use('/api/debt', require('./routes/debt.route'))
 
 app.use((req, res, next) => {
   throw createError(404, 'Resource not found.');
