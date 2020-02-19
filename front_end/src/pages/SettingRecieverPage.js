@@ -3,14 +3,19 @@ import { Control, Errors, LocalForm } from 'react-redux-form'
 import {
   Container, Row, Col, Breadcrumb, BreadcrumbItem, Table,
   Button, Modal, ModalHeader, ModalBody, ModalFooter, ButtonGroup, ButtonToolbar
-} from 'reactstrap';
+} from 'reactstrap'
+import { connect } from 'react-redux'
+import { Create, Edit, Delete, Fetch } from '../redux/creators/nameReminscentCreator';
 
 const required = (val) => val && val.length;
 
 const ModalAddNew = (props) => {
   const {
     buttonLabel,
-    className
+    className,
+    handleCreate,
+    handleEdit,
+    handleDel
   } = props;
 
   const [modal, setModal] = useState(false);
@@ -19,7 +24,7 @@ const ModalAddNew = (props) => {
 
   const handleSubmit = (values) => {
     console.log(values)
-    setModal(false)
+    setModal(!modal)
   }
 
   return (
@@ -27,7 +32,7 @@ const ModalAddNew = (props) => {
       <Button color="success" onClick={toggle}>{buttonLabel}</Button>
       <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
         <ModalHeader toggle={toggle}>Thêm mới tài khoản</ModalHeader>
-        <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autocomplete="off">
+        <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
           <ModalBody>
             <div className='form-group'>
               <label htmlFor='accountNum'>Số tài Khoản</label>
@@ -114,4 +119,18 @@ class SettingReceiver extends Component {
   }
 }
 
-export default SettingReceiver;
+const mapDispatchToProps = dispatch => ({
+  Create: (item) => dispatch(Create(item)),
+  Edit: (item) => dispatch(Edit(item)),
+  Delete: (id) => dispatch(Delete(id)),
+  Fetch: (id) => dispatch(Fetch(id))
+});
+
+const mapStateToProps = (state) => {
+  return {
+    Reminscent: state.Reminscent
+  }
+}
+
+// export default SettingReceiver
+export default connect(mapStateToProps, mapDispatchToProps)(SettingReceiver);

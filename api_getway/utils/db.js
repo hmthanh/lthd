@@ -3,7 +3,7 @@ const { promisify } = require('util');
 const config = require('../config');
 
 const pool = mysql.createPool({
-  connectionLimit: 100,
+  connectionLimit: 10,
   host: config.DB_HOST,
   port: config.DB_PORT,
   user: config.DB_USER,
