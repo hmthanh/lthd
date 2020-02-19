@@ -9,6 +9,7 @@ import { GetBankingInfo } from './actions/getBankingInfo'
 import { GetHistoryInfo } from './actions/getHistory'
 import { GetAllAccount } from './actions/getAllAccount'
 import { GetDebtInfo } from './actions/getDebt'
+import { ReminscentAcction } from './actions/reminscentAcc'
 
 export const ConfigureStore = () => {
     const store = createStore(
@@ -19,7 +20,8 @@ export const ConfigureStore = () => {
             BankingInfo: GetBankingInfo,
             HistoryInfo: GetHistoryInfo,
             DebtInfo: GetDebtInfo,
-            AccountInfo: GetAllAccount
+            AccountInfo: GetAllAccount,
+            Reminscent: ReminscentAcction
         }),
         applyMiddleware(logger),
         applyMiddleware(thunk),

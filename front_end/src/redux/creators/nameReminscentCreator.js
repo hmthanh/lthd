@@ -5,6 +5,19 @@ import {
 import { UrlApi } from '../../shares/baseUrl'
 import { fetchFrom } from '../../utils/fetchHelper'
 
+export const Fetch = (id) => (dispatch) => {
+  dispatch(Loading());
+  return fetchFrom(UrlApi + `/api/receiver/${id}`, 'GET')
+    .then(res => {
+      console.log(res)
+      Success(res.item)
+    })
+    .catch(err => {
+      console.log(err)
+      dispatch(ErrorAccount('không thể kết nối server'));
+    })
+}
+
 export const Create = (data) => (dispatch) => {
   dispatch(Loading());
   return fetchFrom(UrlApi + '/api/receiver', 'POST', data)
@@ -34,12 +47,27 @@ export const Create = (data) => (dispatch) => {
 
 export const Edit = (data) => (dispatch) => {
   dispatch(Loading());
-  return fetchFrom(UrlApi + '/api/reminscent/id', 'POST', data)
+  return fetchFrom(UrlApi + '/api/reminscent', 'PATCH', data)
     .then(res => {
       if (res.err !== 200) {
         dispatch(ErrorAccount('Lỗi hệ thống'));
       } else {
-        Success(res.item)
+        SuccessEdit(res.item)
+      }
+    }).catch(err => {
+      console.log(err)
+      dispatch(ErrorAccount('không thể kết nối server'));
+    })
+}
+
+export const Delete = (id) => (dispatch) => {
+  dispatch(Loading());
+  return fetchFrom(UrlApi + '/api/reminscent', 'DELETE', id)
+    .then(res => {
+      if (res.err !== 200) {
+        dispatch(ErrorAccount('Lỗi hệ thống'));
+      } else {
+        SuccessDelete(res.item)
       }
     }).catch(err => {
       console.log(err)
@@ -58,6 +86,16 @@ export const Loading = () => ({
 
 
 export const Success = (data) => ({
-  type: LOGIN_SUCCESS,
+  type: NAME_REMINISCENT_SUCCESS,
+  payload: data
+})
+
+export const SuccessEdit = (data) => ({
+  type: NAME_REMINISCENT_EDIT,
+  payload: data
+})
+
+export const SuccessDelete = (data) => ({
+  type: NAME_REMINISCENT_DELETED,
   payload: data
 })

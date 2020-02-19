@@ -5,6 +5,7 @@ import {
   Button, Modal, ModalHeader, ModalBody, ModalFooter, ButtonGroup, ButtonToolbar
 } from 'reactstrap'
 import { connect } from 'react-redux'
+import { Create, Edit, Delete, Fetch } from '../redux/creators/nameReminscentCreator';
 
 const required = (val) => val && val.length;
 
@@ -119,12 +120,15 @@ class SettingReceiver extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
- 
+  Create: (item) => dispatch(Create(item)),
+  Edit: (item) => dispatch(Edit(item)),
+  Delete: (id) => dispatch(Delete(id)),
+  Fetch: (id) => dispatch(Fetch(id))
 });
 
 const mapStateToProps = (state) => {
   return {
-    
+    Reminscent: state.Reminscent
   }
 }
 
