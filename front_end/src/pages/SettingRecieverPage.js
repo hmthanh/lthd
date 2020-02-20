@@ -81,7 +81,7 @@ const ModalEdit = (props) => {
 
   return (
     <div>
-      <Button color="success" onClick={toggle}>{buttonLabel}</Button>
+      <Button color="primary" onClick={toggle}>{buttonLabel}</Button>
       <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
         <ModalHeader toggle={toggle}>Thêm mới tài khoản</ModalHeader>
         <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
@@ -110,6 +110,33 @@ const ModalEdit = (props) => {
         </LocalForm>
 
 
+      </Modal>
+    </div>
+  );
+}
+
+const ConfirmDelete = (props) => {
+  const {
+    buttonLabel,
+    className
+  } = props;
+
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => setModal(!modal);
+
+  return (
+    <div>
+      <Button color="danger" onClick={toggle}>{buttonLabel}</Button>
+      <Modal isOpen={modal} toggle={toggle} className={className}>
+        <ModalHeader toggle={toggle}>xóa</ModalHeader>
+        <ModalBody>
+          bạn có chăc muốn xóa không
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggle}>đồng ý</Button>{' '}
+          <Button color="secondary" onClick={toggle}>bỏ qua</Button>
+        </ModalFooter>
       </Modal>
     </div>
   );
@@ -146,8 +173,7 @@ class SettingReceiver extends Component {
                 <ButtonToolbar>
                   <ButtonGroup>
                     <ModalEdit buttonLabel={'Sửa'} />
-                    <Button color='danger'>xóa</Button>
-                    <Button color='primary'>sửa</Button>
+                    <ConfirmDelete buttonLabel={'xóa'} />
                   </ButtonGroup>
                 </ButtonToolbar>
               </td>
