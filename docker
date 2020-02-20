@@ -9,3 +9,6 @@ shell: command not found
 
 docker system prune -a
 
+
+git config user.name "thamttn"
+git config user.email "ngoctham365"

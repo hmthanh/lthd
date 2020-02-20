@@ -13,9 +13,7 @@ const ModalAddNew = (props) => {
   const {
     buttonLabel,
     className,
-    handleCreate,
-    handleEdit,
-    handleDel
+    handleCreate
   } = props;
 
   const [modal, setModal] = useState(false);
@@ -63,6 +61,60 @@ const ModalAddNew = (props) => {
   );
 }
 
+const ModalEdit = (props) => {
+  const {
+    buttonLabel,
+    className,
+    handleEdit,
+    accountNum,
+    aliasName
+  } = props;
+
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => setModal(!modal);
+
+  const handleSubmit = (values) => {
+    console.log(values)
+    setModal(!modal)
+  }
+
+  return (
+    <div>
+      <Button color="success" onClick={toggle}>{buttonLabel}</Button>
+      <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
+        <ModalHeader toggle={toggle}>Thêm mới tài khoản</ModalHeader>
+        <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
+          <ModalBody>
+            <div className='form-group'>
+              <label htmlFor='accountNum'>Số tài Khoản</label>
+              <Control.text model='.accountNum' id='accountNum' name='accountNum'
+                className='form-control' autoComplete='off'
+                validators={{ required }} value={accountNum} disabled={true} />
+              <Errors className='text-danger' model='.accountNum' show="touched"
+                messages={{ required: 'Required' }} />
+            </div>
+            <div className='form-group'>
+              <label htmlFor='aliasName'>Tên gợi nhớ</label>
+              <Control.text model='.aliasName' id='aliasName' name='aliasName'
+                className='form-control' rows='6' autoComplete='off'
+                validators={{ required }} value={aliasName}/>
+              <Errors className='text-danger' model='.aliasName' show="touched"
+                messages={{ required: 'Required' }} />
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <button type="submit" className="btn btn-primary">Đồng ý</button>
+          </ModalFooter>
+
+        </LocalForm>
+
+
+      </Modal>
+    </div>
+  );
+}
+
 class SettingReceiver extends Component {
 
   constructor(props) {
@@ -93,6 +145,7 @@ class SettingReceiver extends Component {
               <td>
                 <ButtonToolbar>
                   <ButtonGroup>
+                    <ModalEdit buttonLabel={'Sửa'} />
                     <Button color='danger'>xóa</Button>
                     <Button color='primary'>sửa</Button>
                   </ButtonGroup>
