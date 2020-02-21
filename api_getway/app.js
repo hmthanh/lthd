@@ -11,17 +11,18 @@ const config = require('./config');
 
 // var mysql      = require('mysql');
 // var connection = mysql.createConnection({
-//   host     : '45.117.169.177',
-//   port     : 2222,
-//   user     : 'xenhapkhau_db1',
-//   password : 'Abc123',
-//   database : 'mxenhapkhau_db1y_db'
+//   host     : 'db4free.net',
+//   port     : 3306,
+//   user     : 'banking_user',
+//   password : 'Abcde123',
+//   database : 'banking_db'
 // });
  
 // connection.connect();
  
 // connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-//   if (error) throw error;
+//   if (error) 
+//     console.log('The error is: ', error);
 //   console.log('The solution is: ', results[0].solution);
 // });
  

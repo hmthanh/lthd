@@ -10,5 +10,5 @@ shell: command not found
 docker system prune -a
 
 
-git config user.name "thamttn"
-git config user.email "ngoctham365"
+git config user.name "ngoctham365"
+git config user.email "ngoctham365@gmail.com"
