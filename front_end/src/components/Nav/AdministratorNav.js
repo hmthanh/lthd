@@ -1,13 +1,11 @@
-import React, { Component } from 'react'
-import {
-    Navbar, Nav, NavItem, NavLink
-} from 'reactstrap'
+import React, {Component} from 'react'
+import {Nav, NavItem, NavLink} from 'reactstrap'
 
 class AdministratorNav extends Component {
     render() {
         return (
             <Nav>
-                < NavItem >
+                < NavItem>
                     <NavLink href="/list-staff/">Danh sách nhân viên</NavLink>
                 </NavItem>
                 <NavItem>
