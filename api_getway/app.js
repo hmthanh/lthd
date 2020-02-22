@@ -35,6 +35,8 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 
+
+
 // SSE
 // app.get('/categoryAddedEvent', events.subscribeCategoryAdded);
 

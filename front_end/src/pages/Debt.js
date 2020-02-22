@@ -26,13 +26,14 @@ class debtPage extends Component {
             <div className="card-group mb-0">
               <div className="card p-6">
                 <div className="card-block">
-                  <h1>Debt reminder</h1>
+                  <h1>Danh sách nợ chưa thanh toán</h1>
+                  <Button color="success">Thêm mới</Button>
                   <Table>
                     <thead>
                       <tr>
                         <th>#</th>
-                        <th>The debt</th>
-                        <th>Amount owed</th>
+                        <th>Tài khoản nợ</th>
+                        <th>Số tiền</th>
                         <th>Ngày giao dịch</th>
                         <th>Nhắc nhở</th>
                         <th>Xóa</th>
