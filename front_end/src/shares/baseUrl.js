@@ -1,3 +1,3 @@
-export const UrlApi = 'http://localhost:5500'
+export const UrlApi = 'http://localhost:5500';
 
-export const epAccount = '/api/accounts/id'
+export const epAccount = '/api/accounts/id';

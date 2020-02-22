@@ -3,9 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "axios": "^0.19.1",
         "@coreui/coreui": "^2.1.16",
         "@coreui/react": "^2.1.4",
+        "axios": "^0.19.1",
         "bootstrap": "^4.4.1",
         "react": "^16.12.0",
         "react-currency-format": "^1.0.0",

@@ -8,27 +8,27 @@ const routes = [
     {
         path: '/',
         exact: true,
-        main: () => <HomePage />
+        main: () => <HomePage/>
     },
     {
         path: '/product-list',
         exact: false,
-        main: () => <ProductListPage />
+        main: () => <ProductListPage/>
     },
     {
         path: '/product/add',
         exact: false,
-        main: ({ location, history }) => <ProductActionPage location={location} history={history} />
+        main: ({location, history}) => <ProductActionPage location={location} history={history}/>
     },
     {
         path: '/product/:id/edit',
         exact: false,
-        main: ({ match, history }) => <ProductActionPage match={match} history={history} />
+        main: ({match, history}) => <ProductActionPage match={match} history={history}/>
     },
     {
         path: '',
         exact: false,
-        main: () => <NotFound />
+        main: () => <NotFound/>
     }
 ];
 

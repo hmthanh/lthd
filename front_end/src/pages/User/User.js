@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import './User.css';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import ProductList from '../../components/ProductList/ProductList';
 import ProductItem from '../../components/ProductItem/ProductItem';
-import { actFetchProductsRequest, actDeleteProductRequest } from '../../actions/index';
+import {actDeleteProductRequest, actFetchProductsRequest} from '../../actions/index';
 
 class User extends Component {
 
@@ -16,20 +16,22 @@ class User extends Component {
 
     render() {
 
-        var { products } = this.props;
+        var {products} = this.props;
 
         return (
             <div className="container">
                 <div className="row">
                     <div className="col-lg-5">
                         <div className="media">
-                        <a className="pull-left">
-                                <img className="media-object dp img-circle" src="http://www.huffmancode.com/img/hardik.jpg" style={{width: "100px", height:"100px"}} alt="sdf" />
+                            <a className="pull-left">
+                                <img className="media-object dp img-circle"
+                                     src="http://www.huffmancode.com/img/hardik.jpg"
+                                     style={{width: "100px", height: "100px"}} alt="sdf"/>
                             </a>
                             <div className="media-body">
                                 <h4 className="media-heading">Hardik Sondagar <small> India</small></h4>
                                 <h5>Software Developer at <a href="http://gridle.in">Gridle.in</a></h5>
-                                <hr style={{margin:"8px auto"}} />
+                                <hr style={{margin: "8px auto"}}/>
 
                                 <span className="label label-default">HTML5/CSS3</span>
                                 <span className="label label-default">jQuery</span>
@@ -39,7 +41,6 @@ class User extends Component {
                         </div>
 
                     </div>
-
 
 
                 </div>
@@ -59,10 +60,10 @@ class User extends Component {
 
     showProducts(products) {
         var result = null;
-        var { onDeleteProduct } = this.props;
+        var {onDeleteProduct} = this.props;
         if (products.length > 0) {
             result = products.map((product, index) => {
-                return <ProductItem product={product} key={index} index={index} onDeleteProduct={onDeleteProduct} />
+                return <ProductItem product={product} key={index} index={index} onDeleteProduct={onDeleteProduct}/>
             });
         }
         return result;
@@ -74,7 +75,7 @@ const mapStateToProps = state => {
     return {
         products: state.products
     }
-}
+};
 
 const mapDispatchToProps = (dispatch, props) => {
     return {
@@ -85,6 +86,6 @@ const mapDispatchToProps = (dispatch, props) => {
             dispatch(actDeleteProductRequest(id));
         }
     }
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(User);
