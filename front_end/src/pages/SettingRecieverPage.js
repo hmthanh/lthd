@@ -3,14 +3,17 @@ import { Control, Errors, LocalForm } from 'react-redux-form'
 import {
   Container, Row, Col, Breadcrumb, BreadcrumbItem, Table,
   Button, Modal, ModalHeader, ModalBody, ModalFooter, ButtonGroup, ButtonToolbar
-} from 'reactstrap';
+} from 'reactstrap'
+import { connect } from 'react-redux'
+import { Create, Edit, Delete, Fetch } from '../redux/creators/nameReminscentCreator';
 
 const required = (val) => val && val.length;
 
 const ModalAddNew = (props) => {
   const {
     buttonLabel,
-    className
+    className,
+    handleCreate
   } = props;
 
   const [modal, setModal] = useState(false);
@@ -19,7 +22,7 @@ const ModalAddNew = (props) => {
 
   const handleSubmit = (values) => {
     console.log(values)
-    setModal(false)
+    setModal(!modal)
   }
 
   return (
@@ -27,7 +30,7 @@ const ModalAddNew = (props) => {
       <Button color="success" onClick={toggle}>{buttonLabel}</Button>
       <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
         <ModalHeader toggle={toggle}>Thêm mới tài khoản</ModalHeader>
-        <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autocomplete="off">
+        <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
           <ModalBody>
             <div className='form-group'>
               <label htmlFor='accountNum'>Số tài Khoản</label>
@@ -53,6 +56,87 @@ const ModalAddNew = (props) => {
         </LocalForm>
 
 
+      </Modal>
+    </div>
+  );
+}
+
+const ModalEdit = (props) => {
+  const {
+    buttonLabel,
+    className,
+    handleEdit,
+    accountNum,
+    aliasName
+  } = props;
+
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => setModal(!modal);
+
+  const handleSubmit = (values) => {
+    console.log(values)
+    setModal(!modal)
+  }
+
+  return (
+    <div>
+      <Button color="primary" onClick={toggle}>{buttonLabel}</Button>
+      <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
+        <ModalHeader toggle={toggle}>Thêm mới tài khoản</ModalHeader>
+        <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
+          <ModalBody>
+            <div className='form-group'>
+              <label htmlFor='accountNum'>Số tài Khoản</label>
+              <Control.text model='.accountNum' id='accountNum' name='accountNum'
+                className='form-control' autoComplete='off'
+                validators={{ required }} value={accountNum} disabled={true} />
+              <Errors className='text-danger' model='.accountNum' show="touched"
+                messages={{ required: 'Required' }} />
+            </div>
+            <div className='form-group'>
+              <label htmlFor='aliasName'>Tên gợi nhớ</label>
+              <Control.text model='.aliasName' id='aliasName' name='aliasName'
+                className='form-control' rows='6' autoComplete='off'
+                validators={{ required }} value={aliasName}/>
+              <Errors className='text-danger' model='.aliasName' show="touched"
+                messages={{ required: 'Required' }} />
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <button type="submit" className="btn btn-primary">Đồng ý</button>
+          </ModalFooter>
+
+        </LocalForm>
+
+
+      </Modal>
+    </div>
+  );
+}
+
+const ConfirmDelete = (props) => {
+  const {
+    buttonLabel,
+    className
+  } = props;
+
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => setModal(!modal);
+
+  return (
+    <div>
+      <Button color="danger" onClick={toggle}>{buttonLabel}</Button>
+      <Modal isOpen={modal} toggle={toggle} className={className}>
+        <ModalHeader toggle={toggle}>xóa</ModalHeader>
+        <ModalBody>
+          bạn có chăc muốn xóa không
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggle}>đồng ý</Button>{' '}
+          <Button color="secondary" onClick={toggle}>bỏ qua</Button>
+        </ModalFooter>
       </Modal>
     </div>
   );
@@ -88,8 +172,8 @@ class SettingReceiver extends Component {
               <td>
                 <ButtonToolbar>
                   <ButtonGroup>
-                    <Button color='danger'>xóa</Button>
-                    <Button color='primary'>sửa</Button>
+                    <ModalEdit buttonLabel={'Sửa'} />
+                    <ConfirmDelete buttonLabel={'xóa'} />
                   </ButtonGroup>
                 </ButtonToolbar>
               </td>
@@ -114,4 +198,18 @@ class SettingReceiver extends Component {
   }
 }
 
-export default SettingReceiver;
+const mapDispatchToProps = dispatch => ({
+  Create: (item) => dispatch(Create(item)),
+  Edit: (item) => dispatch(Edit(item)),
+  Delete: (id) => dispatch(Delete(id)),
+  Fetch: (id) => dispatch(Fetch(id))
+});
+
+const mapStateToProps = (state) => {
+  return {
+    Reminscent: state.Reminscent
+  }
+}
+
+// export default SettingReceiver
+export default connect(mapStateToProps, mapDispatchToProps)(SettingReceiver);

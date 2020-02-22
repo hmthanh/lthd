@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
             userName
         }
         msg = 'successfully'
-        errorCode = 201
+        errorCode = 200
     }
     else {
         errorCode = 400
@@ -122,7 +122,7 @@ router.post('/ref/account/id', async (req, res) => {
       receivers
     }
   }
-  res.status(200).json(ret)
+  res.status(errorCode).json(ret)
 })
   
 module.exports = router

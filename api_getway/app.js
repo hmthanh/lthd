@@ -9,6 +9,25 @@ require('express-async-errors');
 const config = require('./config');
 
 
+// var mysql      = require('mysql');
+// var connection = mysql.createConnection({
+//   host     : 'db4free.net',
+//   port     : 3306,
+//   user     : 'banking_user',
+//   password : 'Abcde123',
+//   database : 'banking_db'
+// });
+ 
+// connection.connect();
+ 
+// connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
+//   if (error) 
+//     console.log('The error is: ', error);
+//   console.log('The solution is: ', results[0].solution);
+// });
+ 
+// connection.end();
+
 
 var app = express();
 
@@ -42,6 +61,12 @@ app.use('/api/auth', require('./routes/auth.route'));
 
 app.use('/api/accounts', require('./routes/account.route'))
 
+app.use('/api/receiver', require('./routes/receiver.route'))
+
+// don't remoe implement late
+// app.use('/api/reminscent', require('./routes/reminscent.route'))
+
+app.use('/api/debt', require('./routes/debt.route'))
 
 app.use((req, res, next) => {
   throw createError(404, 'Resource not found.');

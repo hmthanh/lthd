@@ -28,7 +28,7 @@ const InfoUser = (props) => {
       </div>
     )
   } else {
-    if (permistion == 1) {
+    if (permistion === 1) {
       return (
         <div>
           <NavbarToggler onClick={toggle}></NavbarToggler>
@@ -37,7 +37,7 @@ const InfoUser = (props) => {
           </Collapse >
         </div>
       )
-    } else if (permistion == 2) {
+    } else if (permistion === 2) {
       return (
         <div>
           <NavbarToggler onClick={toggle}></NavbarToggler>
