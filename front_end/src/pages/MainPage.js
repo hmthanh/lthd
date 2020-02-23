@@ -3,6 +3,7 @@ import {Route, Switch} from 'react-router-dom'
 import {Container, Spinner} from 'reactstrap';
 import Header from '../layout/Header'
 import ListAccountPage from './ListAccountPage/ListAccountPage';
+import ListReceiverPage from "./ListReceiverPage/ListReceiverPage";
 
 const LoginPage = lazy(() => import('./Login'));
 const Register = lazy(() => import('./Register'));
@@ -46,7 +47,7 @@ class Main extends Component {
                             <Route exact path='/forget-password' component={ForgetPassword}/>
                             <Route exact path='/setting' component={SettingPage}/>
                             <Route exact path='/transfer' component={Transfer}/>
-                        </Switch>
+                            <Route exact path='/list-receiver' component={ListReceiverPage}/></Switch>
                     </Suspense>
                 </main>
             </Container>
