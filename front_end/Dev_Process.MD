@@ -1,10 +1,6 @@
 1. Phân hệ khách hàng customer
 1.3 Thiết lập danh sách người nhận
 
-1.4 Chuyển khoản
-	1.4.1 Chuyển khoản nội bộ (cùng ngân hàng)
-	1.4.2 Chuyển khoản liên ngân hàng
-
 1.5 Quản lý nhắc nợ
 1.5.1 Tạo nhắc nợ
 	1.5.2 Xem danh sách nợ
