@@ -46,7 +46,7 @@ class Main extends Component {
                             <Route exact path='/forget-password' component={ForgetPassword}/>
                             <Route exact path='/list-receiver' component={SettingPage}/>
                             <Route exact path='/transfer' component={Transfer}/>
-                            <Route exact path='/list-receiver' component={ListReceiverPage}/></Switch>
+                            </Switch>
                     </Suspense>
                 </main>
             </Container>
