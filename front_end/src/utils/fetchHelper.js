@@ -8,7 +8,7 @@
 //                                                                 body: JSON.stringify(data) 
 //                                                               })
 
-export const fetchFrom = async (url = '', method = 'POST', data = {}) => {
+export const fetchFrom = async (url = '', method = 'POST', data = {}, accessToken = '') => {
     // Default options are marked with *
     const response = await fetch(url, {
         method: method, // *GET, POST, PUT, DELETE, etc.
@@ -16,8 +16,9 @@ export const fetchFrom = async (url = '', method = 'POST', data = {}) => {
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
         credentials: 'same-origin', // include, *same-origin, omit
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
             // 'Content-Type': 'application/x-www-form-urlencoded',
+            'x-access-token': accessToken
         },
         body: JSON.stringify(data) // body data type must match "Content-Type" header
     });
