@@ -3,7 +3,7 @@ import {Route, Switch} from 'react-router-dom'
 import {Container, Spinner} from 'reactstrap';
 import Header from '../layout/Header'
 
-const ListAccountPage = lazy(() => './ListAccountPage/ListAccountPage')
+const ListAccountPage = lazy(() => import('./ListAccountPage'))
 const LoginPage = lazy(() => import('./Login'));
 const Register = lazy(() => import('./Register'));
 const UserInfo = lazy(() => import('./UserInfo'));

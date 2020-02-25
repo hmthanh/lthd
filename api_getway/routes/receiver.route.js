@@ -6,7 +6,7 @@ router.post('/', async (req, res) => {
   console.log(req.body)
   let entity = {
     account_num: req.body.accountNum,
-    ower_id: req.body.ownerId,
+    owner_id: req.body.ownerId,
     alias_name: req.body.aliasName,
     partner_bank: req.body.banking
   }
@@ -31,9 +31,40 @@ router.post('/', async (req, res) => {
   res.status(errorCode).json(ret)
 })
 
-router.post('/:id', async (req, res) => {  
-  // console.log(req.params.id)
-  res.status(200).json("")
+
+router.patch('/', async (req, res) => {  
+  let entity = {
+    account_num: req.body.accountNum,
+    owner_id: req.body.ownerId,
+    alias_name: req.body.aliasName
+  }
+  const item = await receiverModel.update(req.body.id, entity)
+
+  let ret, errorCode = 200
+  msg = 'successfully'
+  ret = {
+      item,
+      msg
+  }
+  res.status(errorCode).json(ret)
+})
+
+router.delete('/', async (req, res) => {  
+  console.log('router.delete', req.body)
+  let ret, errorCode = 200, item = null
+  item = receiverModel.delete(req.body.id)
+  msg = 'successfully'
+  ret = {
+      item,
+      msg
+  }
+  res.status(errorCode).json(ret)
+})
+
+router.post('/:id', async (req, res) => { 
+  let rows = await receiverModel.get(req.params.id)
+  console.log(rows)
+  res.status(200).json(rows)
 })
 
 module.exports = router

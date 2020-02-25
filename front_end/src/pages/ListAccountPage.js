@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Table} from 'reactstrap'
-import {getAllAccount} from '../../redux/creators/accountCreator'
+import {getAllAccount} from '../redux/creators/accountCreator'
 
 class ListAccountPage extends Component {
 
