@@ -10,7 +10,8 @@ import {fetchFrom} from '../../utils/fetchHelper'
 
 export const Fetch = (id) => (dispatch) => {
     dispatch(Loading());
-    return fetchFrom(UrlApi + `/api/receiver/${id}`, 'GET')
+    // console.log(`=====/api/receiver/${id}`)
+    return fetchFrom(UrlApi + `/api/receiver/${id}`, 'POST')
         .then(res => {
             console.log(res);
             Success(res.item)
@@ -23,29 +24,42 @@ export const Fetch = (id) => (dispatch) => {
 
 export const Create = (data) => (dispatch) => {
     dispatch(Loading());
-    return fetchFrom(UrlApi + '/api/receiver', 'POST', data)
-        .then(response => {
-            console.log(response);
-            if (response.item) {
-                fetchFrom(UrlApi + '/api/reminscent', 'POST', data)
-                    .then(res => {
-                        if (res.err !== 200) {
-                            dispatch(ErrorAccount('Lỗi hệ thống'));
-                        } else {
-                            Success(res.item)
-                        }
-                    }).catch(err => {
-                    console.log(err);
-                    dispatch(ErrorAccount('không thể kết nối server'));
-                })
-            } else {
-                dispatch(ErrorAccount('Tài Khoản Không Tồn Tại'));
-            }
-        })
-        .catch(err => {
-            console.log(err);
-            dispatch(ErrorAccount('không thể kết nối server'));
-        })
+    return  fetchFrom(UrlApi + '/api/receiver', 'POST', data)
+            .then(res => {
+              console.log(res)
+              if (res.err !== 200) {
+                dispatch(ErrorAccount('Lỗi hệ thống'));
+              } else {
+                Success(res.item)
+              }
+            }).catch(err => {
+              console.log(err);
+              dispatch(ErrorAccount('không thể kết nối server'));
+            })
+
+    // fetchFrom(UrlApi + '/api/receiver', 'POST', data)
+    //     .then(response => {
+    //         console.log(response);
+    //         if (response.item) {
+                // fetchFrom(UrlApi + '/api/reminscent', 'POST', data)
+                //     .then(res => {
+                //         if (res.err !== 200) {
+                //             dispatch(ErrorAccount('Lỗi hệ thống'));
+                //         } else {
+                //             Success(res.item)
+                //         }
+                //     }).catch(err => {
+                //     console.log(err);
+                //     dispatch(ErrorAccount('không thể kết nối server'));
+                // })
+        //     } else {
+        //         dispatch(ErrorAccount('Tài Khoản Không Tồn Tại'));
+        //     }
+        // })
+        // .catch(err => {
+        //     console.log(err);
+        //     dispatch(ErrorAccount('không thể kết nối server'));
+        // })
 };
 
 export const Edit = (data) => (dispatch) => {
