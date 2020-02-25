@@ -1,67 +1,79 @@
-import React, { Component } from 'react';
-import './Transfer.css';
-import { Link } from 'react-router-dom';
-
-import { connect } from 'react-redux';
-import ProductList from '../../components/ProductList/ProductList';
-import ProductItem from '../../components/ProductItem/ProductItem';
-import { actFetchProductsRequest, actDeleteProductRequest } from '../../actions/index';
+import React, {Component} from 'react';
+import {Button, Form, FormGroup, Input, Label} from "reactstrap";
 
 class Transfer extends Component {
-
-    componentDidMount() {
-        // Gọi trước khi component đc render lần đầu tiên
-        this.props.fetchAllProducts();
-    }
-
     render() {
-
-        var { products } = this.props;
 
         return (
             <div className="container">
-                <div className="row">
-                    <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <Link to="/product/add" className="btn btn-primary mb-5">
-                            <i className="glyphicon glyphicon-plus"></i> Thêm Sản Phẩm
-                        </Link>
-                        <ProductList>
-                            {this.showProducts(products)}
-                        </ProductList>
+                <div className="container-fluid py-3">
+                    <div className="row">
+                        <div className="col-12 col-sm-8 col-md-6 col-lg-4 mx-auto">
+                            <div id="pay-invoice" className="card">
+                                <div className="card-body">
+                                    <div className="card-title">
+                                        <h3 className="text-center">Chuyển khoản</h3>
+                                    </div>
+                                    <hr/>
+                                    <Form method="post" noValidate="novalidate"
+                                          className="needs-validation">
+                                        <FormGroup>
+                                            <Label for="exampleSelect">Tài khoản gửi</Label>
+                                            <Input type="select" name="select" id="sourceTransfer">
+                                                <option>Tài khoản thanh toán
+                                                    1
+                                                </option>
+                                                <option>Tài khoản thanh toán
+                                                    2
+                                                </option>
+                                                <option>Tài khoản
+                                                    tiết kiệm
+                                                </option>
+                                            </Input>
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <Label for="receiverTransfer">Thông tin
+                                                người nhận</Label>
+                                            <Input type="text" name="receiverTransfer" id="receiverTransfer"
+                                                   placeholder="Thông tin người nhận"/>
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <Label for="moneyTransfer">Số tiền</Label>
+                                            <Input type="number" name="money" id="moneyTransfer" required/>
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <Label for="msgTransfer">Nội dung chuyển tiền</Label>
+                                            <Input type="textarea" name="text" id="msgTransfer"/>
+                                        </FormGroup>
+                                        <FormGroup tag="fieldset">
+                                            <FormGroup check>
+                                                <Label check>
+                                                    <Input type="radio" name="radio1"/>{' '}
+                                                    Người nhận trả phí
+                                                </Label>
+                                            </FormGroup>
+                                            <FormGroup check>
+                                                <Label check>
+                                                    <Input type="radio" name="radio1"/>{' '}
+                                                    Người gửi trả phí
+                                                </Label>
+                                            </FormGroup>
+                                        </FormGroup>
+                                        <div>
+                                            <Button id="btnTransfer" type="submit"
+                                                    className="btn btn-lg btn-info btn-block">
+                                                <span id="lblTransfer">Chuyển tiền</span>
+                                            </Button>
+                                        </div>
+                                    </Form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         );
     }
-
-    showProducts(products) {
-        var result = null;
-        var { onDeleteProduct } = this.props;
-        if (products.length > 0) {
-            result = products.map((product, index) => {
-                return <ProductItem product={product} key={index} index={index} onDeleteProduct={onDeleteProduct} />
-            });
-        }
-        return result;
-    }
-
 }
 
-const mapStateToProps = state => {
-    return {
-        products: state.products
-    }
-}
-
-const mapDispatchToProps = (dispatch, props) => {
-    return {
-        fetchAllProducts: () => {
-            dispatch(actFetchProductsRequest());
-        },
-        onDeleteProduct: (id) => {
-            dispatch(actDeleteProductRequest(id));
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Transfer);
+export default Transfer;

@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Table} from 'reactstrap'
-import {getAllAccount} from '../../redux/creators/accountCreator'
+import {getAllReceiver} from '../../redux/creators/receiverInfoCreator'
 
-class ListAccountPage extends Component {
+class ListReceiverPage extends Component {
 
     constructor(props) {
         super(props);
@@ -11,7 +11,7 @@ class ListAccountPage extends Component {
     }
 
     componentDidMount() {
-        this.props.getAllAccount(1);
+        this.props.getAllReceiver(1);
     }
 
     render() {
@@ -27,20 +27,18 @@ class ListAccountPage extends Component {
                                         <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Loại tài khoản</th>
                                             <th>Số tài khoản</th>
-                                            <th>Số dư hiện tại</th>
+                                            <th>Tên tài khoản</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {
-                                            this.props.AccountInfo.data.val &&
-                                            this.props.AccountInfo.data.val.map(item => (
+                                            this.props.ReceiverInfo.data.val &&
+                                            this.props.ReceiverInfo.data.val.map(item => (
                                                 <tr key={item.id}>
                                                     <th scope="row">{item.id}</th>
-                                                    <td>{item.type}</td>
                                                     <td>{item.number}</td>
-                                                    <td>{item.money}</td>
+                                                    <td>{item.name}</td>
                                                 </tr>
                                             ))
                                         }
@@ -57,13 +55,13 @@ class ListAccountPage extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    getAllAccount: (id) => dispatch(getAllAccount(id))
+    getAllReceiver: (id) => dispatch(getAllReceiver(id))
 });
 
 const mapStateToProps = (state) => {
     return {
-        AccountInfo: state.AccountInfo
+        ReceiverInfo: state.ReceiverInfo
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListAccountPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ListReceiverPage);

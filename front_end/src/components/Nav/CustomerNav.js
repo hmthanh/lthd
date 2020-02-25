@@ -1,7 +1,5 @@
-import React, { Component } from 'react'
-import {
-    Navbar, Nav, NavItem, NavLink, DropdownToggle, UncontrolledDropdown, DropdownMenu, DropdownItem
-} from 'reactstrap'
+import React, {Component} from 'react'
+import {DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem, NavLink, UncontrolledDropdown} from 'reactstrap'
 
 class CustomerNav extends Component {
     render() {
@@ -25,13 +23,13 @@ class CustomerNav extends Component {
                 <UncontrolledDropdown nav inNavbar>
                     <DropdownToggle nav caret>
                         Tài khoản
-                  </DropdownToggle>
+                    </DropdownToggle>
                     <DropdownMenu right>
                         {/* onClick={this.props.infoUser} */}
                         <DropdownItem>
                             <NavLink href="/info">Thông tin</NavLink>
                         </DropdownItem>
-                        <DropdownItem divider />
+                        <DropdownItem divider/>
                         <DropdownItem>
                             <NavLink href="/transfer-history">Lịch sử giao dịch</NavLink>
                         </DropdownItem>

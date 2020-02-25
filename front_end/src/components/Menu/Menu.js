@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Link, Route } from 'react-router-dom';
+import React, {Component} from 'react';
+import {Link, Route} from 'react-router-dom';
 
 const menus = [
     {
@@ -8,15 +8,15 @@ const menus = [
         exact: true
     },
     {
-        name : 'Quản Lý Sản Phẩm',
-        to : '/product-list',
-        exact : false
+        name: 'Quản Lý Sản Phẩm',
+        to: '/product-list',
+        exact: false
     }
-]
+];
 
-const MenuLink = ({ label, to, activeOnlyWhenExact }) => {
+const MenuLink = ({label, to, activeOnlyWhenExact}) => {
     return (
-        <Route path={to} exact={activeOnlyWhenExact} children={({ match }) => {
+        <Route path={to} exact={activeOnlyWhenExact} children={({match}) => {
             var active = match ? 'active' : '';
             return (
                 <li className={`${active}`}>
@@ -25,9 +25,9 @@ const MenuLink = ({ label, to, activeOnlyWhenExact }) => {
                     </Link>
                 </li>
             )
-        }} />
+        }}/>
     )
-}
+};
 
 class Menu extends Component {
 
