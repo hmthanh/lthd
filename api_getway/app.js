@@ -64,7 +64,7 @@ app.use('/api/accounts', require('./routes/account.route'))
 app.use('/api/receiver', require('./routes/receiver.route'))
 
 // don't remoe implement late
-// app.use('/api/reminscent', require('./routes/reminscent.route'))
+app.use('/api/reminscent', require('./routes/reminscent.route'))
 
 app.use('/api/debt', require('./routes/debt.route'))
 

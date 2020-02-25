@@ -29,7 +29,9 @@ const ModalAddNew = (props) => {
     const toggle = () => setModal(!modal);
 
     const handleSubmit = (values) => {
-        console.log(values);
+        values = { ... values, banking: 0}
+        console.log(values)
+        handleCreate(values)
         setModal(!modal)
     };
 
@@ -40,6 +42,13 @@ const ModalAddNew = (props) => {
                 <ModalHeader toggle={toggle}>Thêm mới tài khoản</ModalHeader>
                 <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
                     <ModalBody>
+                        <div className='form-group'>
+                            <label htmlFor='banking'>Ngân Hàng</label>
+                            <Control.select className='form-control' model=".banking"  id='banking' name='banking'>
+                              <option value='0' defaultValue={true}>New Vimo</option>
+                            </Control.select>
+                        </div>
+
                         <div className='form-group'>
                             <label htmlFor='accountNum'>Số tài Khoản</label>
                             <Control.text model='.accountNum' id='accountNum' name='accountNum'
@@ -154,6 +163,18 @@ class SettingReceiver extends Component {
 
     constructor(props) {
         super(props)
+        this.handleCreate = this.handleCreate.bind(this)
+    }
+
+    componentDidMount() {
+      console.log("SettingReceiver")
+      this.props.Fetch(localStorage.getItem('uid'));
+    }
+
+    handleCreate(data) {
+      console.log('localStorage.getItem("uid")', localStorage.getItem('uid'))
+      data = {...data , ownerId: localStorage.getItem('uid')}
+      this.props.Create(data)
     }
 
     render() {
@@ -162,7 +183,7 @@ class SettingReceiver extends Component {
                 <Breadcrumb>
                     <BreadcrumbItem active>Thiết Lập Danh Sách Người Nhận</BreadcrumbItem>
                 </Breadcrumb>
-                <ModalAddNew buttonLabel={'Thêm Mới'}/>
+                <ModalAddNew buttonLabel={'Thêm Mới'} handleCreate={this.handleCreate}/>
                 <Table striped>
                     <thead>
                     <tr>
@@ -180,7 +201,7 @@ class SettingReceiver extends Component {
                         <td>
                             <ButtonToolbar>
                                 <ButtonGroup>
-                                    <ModalEdit buttonLabel={'Sửa'}/>
+                                    <ModalEdit buttonLabel={'Sửa'} />
                                     <ConfirmDelete buttonLabel={'xóa'}/>
                                 </ButtonGroup>
                             </ButtonToolbar>
