@@ -40,7 +40,9 @@ app.use(express.json());
 // SSE
 // app.get('/categoryAddedEvent', events.subscribeCategoryAdded);
 
-app.use('/api/auth', require('./routes/auth.route'));
+app.use('/api/auth', require('./routes/auth.route'))
+
+app.use('/api/accounts', require('./routes/account.route'))
 // app.use('/api/users', require('./routes/user.route'));
 
 // app.use('/openapi/transfer', require('./routes/auth.route'));
@@ -63,8 +65,6 @@ app.use('/api/auth', require('./routes/auth.route'));
 // }
 
 
-app.use('/api/accounts', require('./routes/account.route'))
-
 app.use('/api/receiver', require('./routes/receiver.route'))
 
 // don't remote implement late
@@ -75,7 +75,7 @@ app.use('/api/transfer', require('./routes/reminscent.route'))
 // app.use('/api/debt', require('./routes/debt.route'))
 
 // WS
-require('./ws');
+// require('./ws');
 
 // app.use('/api/notify', require('./controller/notification.controller'));
 

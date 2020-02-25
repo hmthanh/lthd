@@ -10,11 +10,11 @@ import {fetchFrom} from '../../utils/fetchHelper'
 
 export const Fetch = (id) => (dispatch) => {
     dispatch(Loading());
-    // console.log(`=====/api/receiver/${id}`)
+    console.log(`=====/api/receiver/${id}`)
     return fetchFrom(UrlApi + `/api/receiver/${id}`, 'POST')
         .then(res => {
             console.log(res);
-            Success(res.item)
+            dispatch(Success({item: res}))
         })
         .catch(err => {
             console.log(err);
@@ -30,7 +30,7 @@ export const Create = (data) => (dispatch) => {
               if (res.err !== 200) {
                 dispatch(ErrorAccount('Lỗi hệ thống'));
               } else {
-                Success(res.item)
+                dispatch(Success(res.item))
               }
             }).catch(err => {
               console.log(err);
@@ -64,12 +64,12 @@ export const Create = (data) => (dispatch) => {
 
 export const Edit = (data) => (dispatch) => {
     dispatch(Loading());
-    return fetchFrom(UrlApi + '/api/reminscent', 'PATCH', data)
+    return fetchFrom(UrlApi + '/api/receiver', 'PATCH', data)
         .then(res => {
             if (res.err !== 200) {
                 dispatch(ErrorAccount('Lỗi hệ thống'));
             } else {
-                SuccessEdit(res.item)
+              dispatch(SuccessEdit(res.item))
             }
         }).catch(err => {
             console.log(err);
@@ -79,15 +79,16 @@ export const Edit = (data) => (dispatch) => {
 
 export const Delete = (id) => (dispatch) => {
     dispatch(Loading());
-    return fetchFrom(UrlApi + '/api/reminscent', 'DELETE', id)
+    return fetchFrom(UrlApi + '/api/receiver', 'DELETE', {id})
         .then(res => {
+            console.log(res)
             if (res.err !== 200) {
                 dispatch(ErrorAccount('Lỗi hệ thống'));
             } else {
-                SuccessDelete(res.item)
+              dispatch(SuccessDelete(res.item))
             }
         }).catch(err => {
-            console.log(err);
+            console.log('Delete==================', err);
             dispatch(ErrorAccount('không thể kết nối server'));
         })
 };
