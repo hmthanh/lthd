@@ -1,7 +1,7 @@
-var WebSocket = require('ws');
-
-var SOCKET_PORT = process.env.SOCKET_PORT || 40510;
-var socketServer;
+const WebSocket = require('ws');
+const config = require('./config');
+const SOCKET_PORT = process.env.SOCKET_PORT || 40510;
+let socketServer = null
 
 if (!socketServer) {
     socketServer = new WebSocket.Server({
