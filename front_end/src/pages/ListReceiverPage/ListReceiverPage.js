@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {Button, Table} from 'reactstrap';
 import {connect} from 'react-redux';
-import {getAllDebt} from '../redux/creators/debtCreator'
+import {Table} from 'reactstrap'
+import {getAllReceiver} from '../../redux/creators/receiverInfoCreator'
 
-class debtPage extends Component {
+class ListReceiverPage extends Component {
 
     constructor(props) {
         super(props);
@@ -11,9 +11,8 @@ class debtPage extends Component {
     }
 
     componentDidMount() {
-        this.props.getAll(1);
+        this.props.getAllReceiver(1);
     }
-
 
     render() {
         return (
@@ -23,31 +22,23 @@ class debtPage extends Component {
                         <div className="card-group mb-0">
                             <div className="card p-6">
                                 <div className="card-block">
-                                    <h1>Danh sách nợ chưa thanh toán</h1>
-                                    <Button color="success">Thêm mới</Button>
+                                    <h1 className="col-centered table-heading">Danh sách tài khoản</h1>
                                     <Table>
                                         <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Tài khoản nợ</th>
-                                            <th>Số tiền</th>
-                                            <th>Ngày giao dịch</th>
-                                            <th>Nhắc nhở</th>
-                                            <th>Xóa</th>
+                                            <th>Số tài khoản</th>
+                                            <th>Tên tài khoản</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {
-                                            this.props.DebtInfo.data.val &&
-                                            // console.log(this.props.DebtInfo.data.val)
-                                            this.props.DebtInfo.data.val.map(item => (
+                                            this.props.ReceiverInfo.data.val &&
+                                            this.props.ReceiverInfo.data.val.map(item => (
                                                 <tr key={item.id}>
                                                     <th scope="row">{item.id}</th>
-                                                    <td>{item.userdebt}</td>
-                                                    <td>{item.total}</td>
-                                                    <td>{item.day.toString()}</td>
-                                                    <td><Button outline color="warning">Nhắc nhở</Button></td>
-                                                    <td><Button outline color="danger">Xóa</Button></td>
+                                                    <td>{item.number}</td>
+                                                    <td>{item.name}</td>
                                                 </tr>
                                             ))
                                         }
@@ -64,13 +55,13 @@ class debtPage extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    getAll: (id) => dispatch(getAllDebt(id))
+    getAllReceiver: (id) => dispatch(getAllReceiver(id))
 });
 
 const mapStateToProps = (state) => {
     return {
-        DebtInfo: state.DebtInfo,
+        ReceiverInfo: state.ReceiverInfo
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(debtPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ListReceiverPage);
