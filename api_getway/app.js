@@ -43,6 +43,10 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/auth.route'));
 // app.use('/api/users', require('./routes/user.route'));
 
+// app.use('/openapi/transfer', require('./routes/auth.route'));
+// app.use('/openapi/info', require('./routes/auth.route'));
+// app.use('/openapi/peyment', require('./routes/auth.route'));
+
 // function verifyAccessToken(req, res, next) {
 //   // console.log(req.headers);
 //   const token = req.headers['x-access-token'];
@@ -63,10 +67,17 @@ app.use('/api/accounts', require('./routes/account.route'))
 
 app.use('/api/receiver', require('./routes/receiver.route'))
 
-// don't remoe implement late
+// don't remote implement late
 app.use('/api/reminscent', require('./routes/reminscent.route'))
 
-app.use('/api/debt', require('./routes/debt.route'))
+app.use('/api/transfer', require('./routes/reminscent.route'))
+
+// app.use('/api/debt', require('./routes/debt.route'))
+
+// WS
+require('./ws');
+
+// app.use('/api/notify', require('./controller/notification.controller'));
 
 app.use((req, res, next) => {
   throw createError(404, 'Resource not found.');
