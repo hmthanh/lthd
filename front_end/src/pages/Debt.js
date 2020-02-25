@@ -11,7 +11,8 @@ class debtPage extends Component {
     }
 
     componentDidMount() {
-        this.props.getAll(1);
+        let accessToken = localStorage.getItem('accessToken')
+        this.props.getAll(1, accessToken);
     }
 
 

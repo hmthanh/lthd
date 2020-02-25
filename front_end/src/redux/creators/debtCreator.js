@@ -2,9 +2,9 @@ import {DEBT_FAILED, DEBT_LOADING, DEBT_SUCCESS} from '../actions/actionType'
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'
 
-export const getAllDebt = (id) => (dispatch) => {
+export const getAllDebt = (id, accessToken) => (dispatch) => {
     dispatch(loadingDebt());
-    return fetchFrom(UrlApi + '/api/accounts/id', 'POST', {id})
+    return fetchFrom(UrlApi + '/api/debt', 'POST', {id}, accessToken)
         .then(response => {
             response = {
                 val: [
