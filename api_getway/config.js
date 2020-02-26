@@ -15,6 +15,8 @@ module.exports = {
   TIME_OUT_TOKEN: +process.env.TIME_OUT_TOKEN,
   SECRET_KEY_TOKEN: process.env.SECRET_KEY_TOKEN,
   LENGTH_REFREST_TOKEN: process.env.LENGTH_REFREST_TOKEN,
+  SECRET_TOKEN: process.env.SECRET_TOKEN,
+  EXPIRES_OTP: process.env.EXPIRES_OTP,
 
   MAILER_PORT:  process.env.MAILER_PORT,
 };
