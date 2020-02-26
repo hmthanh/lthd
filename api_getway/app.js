@@ -8,28 +8,7 @@ require('express-async-errors');
 //my packet
 const config = require('./config');
 
-
-// var mysql      = require('mysql');
-// var connection = mysql.createConnection({
-//   host     : 'db4free.net',
-//   port     : 3306,
-//   user     : 'banking_user',
-//   password : 'Abcde123',
-//   database : 'banking_db'
-// });
- 
-// connection.connect();
- 
-// connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
-//   if (error) 
-//     console.log('The error is: ', error);
-//   console.log('The solution is: ', results[0].solution);
-// });
- 
-// connection.end();
-
-
-var app = express();
+const app = express();
 
 app.use(morgan('dev'));
 app.use(cors());
@@ -91,6 +70,8 @@ app.use(function (err, req, res, next) {
     res.status(err.status).send(err);
   }
 })
+
+// mailController.sentMail()
 
 app.listen(config.EXPOSE_PORT, () => {
     console.log(`API running on PORT ${config.EXPOSE_PORT}`);

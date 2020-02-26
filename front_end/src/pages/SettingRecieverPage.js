@@ -5,10 +5,10 @@ import {
   ModalFooter, ModalHeader, Table
 } from 'reactstrap'
 import { connect } from 'react-redux'
-import { Create, Delete, Edit, Fetch } from '../redux/creators/nameReminscentCreator';
-import Loading from '../components/Loading';
+import { Create, Delete, Edit, Fetch } from '../redux/creators/nameReminscentCreator'
+import Loading from '../components/Loading'
 
-const required = (val) => val && val.length;
+const required = (val) => val && val.length
 
 const ModalAddNew = (props) => {
   const {
@@ -69,7 +69,7 @@ const ModalAddNew = (props) => {
       </Modal>
     </div>
   );
-};
+}
 
 const ModalEdit = (props) => {
   const {
@@ -96,7 +96,7 @@ const ModalEdit = (props) => {
       <Button color="primary" onClick={toggle}>{buttonLabel}</Button>
       <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
         <ModalHeader toggle={toggle}>Thêm mới tài khoản</ModalHeader>
-        <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
+        <LocalForm id='edit-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
           <ModalBody>
             <div className='form-group'>
               <label htmlFor='accountNum'>Số tài Khoản</label>
@@ -125,7 +125,7 @@ const ModalEdit = (props) => {
       </Modal>
     </div>
   );
-};
+}
 
 const ConfirmDelete = (props) => {
   const {
@@ -158,7 +158,7 @@ const ConfirmDelete = (props) => {
       </Modal>
     </div>
   );
-};
+}
 
 class SettingReceiver extends Component {
 
@@ -253,13 +253,13 @@ const mapDispatchToProps = dispatch => ({
   Edit: (item) => dispatch(Edit(item)),
   Delete: (id) => dispatch(Delete(id)),
   Fetch: (id) => dispatch(Fetch(id))
-});
+})
 
 const mapStateToProps = (state) => {
   return {
     Reminscent: state.Reminscent
   }
-};
+}
 
 // export default SettingReceiver
-export default connect(mapStateToProps, mapDispatchToProps)(SettingReceiver);
+export default connect(mapStateToProps, mapDispatchToProps)(SettingReceiver)

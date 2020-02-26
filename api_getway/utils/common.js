@@ -50,6 +50,38 @@ const nonAccentVietnamese = (str) => {
     return str;
 }
 
+const msgTemplate = (name, requestName, OTP) => {
+  return `Dear ${name}!
+
+  A request requires verification OTP. To complete the sign in, enter the OTP code on the request device.
+  
+  Request: ${requestName}
+  OTP code: ${OTP}
+  
+  This OTP code expires in 3 minute.
+
+  If you did not this request. your password may be compromised. Visit New Vimo to create a new, strong password for your New Vimo account.
+  
+  Thanks,
+  The New Vimo Team`
+}
+
+const htmlMsgTemplate = (name, requestName, OTP) => {
+  return `Dear ${name}! <br/></br>
+
+  A request requires verification OTP. To complete the sign in, enter the OTP code on the request device. </br>
+  
+  Request: ${requestName}</br>
+  OTP code:</br> <br> <h2>${OTP}</h2></br>
+
+  This OTP code expires in 3 minute. </br>
+  
+  If you did not this request. your password may be compromised. Visit New Vimo to create a new, strong password for your New Vimo account.</br>
+  
+  Thanks,</br>
+  The New Vimo Team`
+}
+
 module.exports = {
     required,
     maxLength,
@@ -58,5 +90,7 @@ module.exports = {
     validEmail,
     genagrateAccountNumber,
     convertStrToDate,
-    nonAccentVietnamese
+    nonAccentVietnamese,
+    msgTemplate,
+    htmlMsgTemplate
 };
