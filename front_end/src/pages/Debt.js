@@ -1,7 +1,76 @@
-import React, {Component} from 'react';
-import {Button, Table} from 'reactstrap';
+import React, {Component, useState} from 'react';
+import { Control, Errors, LocalForm } from 'react-redux-form'
+import {
+    Breadcrumb, BreadcrumbItem, Button, ButtonGroup, ButtonToolbar, Modal, ModalBody,
+    ModalFooter, ModalHeader, Table
+  } from 'reactstrap'
 import {connect} from 'react-redux';
-import {getAllDebt} from '../redux/creators/debtCreator'
+import {getAllDebt,Create, Delete, Edit} from '../redux/creators/debtCreator';
+import Loading from '../components/Loading';
+
+
+
+
+// const required = (val) => val && val.length;
+
+// const ModalAddNew = (props) => {
+//   const {
+//     buttonLabel,
+//     className,
+//     handleCreate
+//   } = props;
+
+//   const [modal, setModal] = useState(false);
+
+//   const toggle = () => setModal(!modal);
+
+//   const handleSubmit = (values) => {
+//     values = { ...values, banking: 0 }
+//     console.log(values)
+//     handleCreate(values)
+//     setModal(!modal)
+//   };
+
+//   return (
+//     <div>
+//       <Button color="success" onClick={toggle}>{buttonLabel}</Button>
+//       <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
+//         <ModalHeader toggle={toggle}>Thêm mới nợ</ModalHeader>
+//         <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
+//           <ModalBody>
+
+//             <div className='form-group'>
+//               <label htmlFor='accountNum'>Số tài Khoản</label>
+//               <Control.text model='.accountNum' id='accountNum' name='accountNum'
+//                 className='form-control' autoComplete='off'
+//                 validators={{ required }} />
+//               <Errors className='text-danger' model='.accountNum' show="touched"
+//                 messages={{ required: 'Required' }} />
+//             </div>
+//             <div className='form-group'>
+//               <label htmlFor='aliasName'>Tên gợi nhớ</label>
+//               <Control.text model='.aliasName' id='aliasName' name='aliasName'
+//                 className='form-control' rows='6' autoComplete='off'
+//                 validators={{ required }} />
+//               <Errors className='text-danger' model='.aliasName' show="touched"
+//                 messages={{ required: 'Required' }} />
+//             </div>
+//           </ModalBody>
+//           <ModalFooter>
+//             <button type="submit" className="btn btn-primary">Đồng ý</button>
+//           </ModalFooter>
+
+//         </LocalForm>
+
+
+//       </Modal>
+//     </div>
+//   );
+// };
+
+
+
+
 
 class debtPage extends Component {
 
@@ -12,7 +81,8 @@ class debtPage extends Component {
 
     componentDidMount() {
         let accessToken = localStorage.getItem('accessToken')
-        this.props.getAll(1, accessToken);
+        let uid = localStorage.getItem('uid');
+        this.props.getAll(uid, accessToken);
     }
 
 

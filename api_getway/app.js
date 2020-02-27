@@ -51,7 +51,7 @@ app.use('/api/reminscent', require('./routes/reminscent.route'))
 
 app.use('/api/transfer', require('./routes/reminscent.route'))
 
-// app.use('/api/debt', require('./routes/debt.route'))
+app.use('/api/debt', require('./routes/debt.route'))
 
 // WS
 // require('./ws');
