@@ -54,9 +54,9 @@ app.use('/api/transfer', require('./routes/reminscent.route'))
 app.use('/api/debt', require('./routes/debt.route'))
 
 // WS
-// require('./ws');
+require('./ws')
 
-// app.use('/api/notify', require('./controller/notification.controller'));
+app.use('/api/notify', require('./controller/notification.controller'))
 
 app.use((req, res, next) => {
   throw createError(404, 'Resource not found.');

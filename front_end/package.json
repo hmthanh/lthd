@@ -18,6 +18,7 @@
         "react-router": "^4.3.1",
         "react-router-dom": "^4.3.1",
         "react-scripts": "^3.3.0",
+        "react-websocket": "^2.1.0",
         "reactstrap": "^8.3.2",
         "redux": "3.7.2",
         "redux-logger": "3.0.6",

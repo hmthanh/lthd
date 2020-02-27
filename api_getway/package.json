@@ -23,6 +23,7 @@
     "moment": "^2.24.0",
     "morgan": "^1.9.1",
     "mysql": "^2.17.1",
+    "node-rsa": "^1.0.7",
     "nodemailer": "^6.4.3",
     "otplib": "^12.0.1",
     "rand-token": "^0.4.0",
