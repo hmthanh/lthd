@@ -1,8 +1,8 @@
 const express = require('express');
 const moment = require('moment');
 
-const events = require('./events');
-const broadcastAll = require('../ws').broadcastAll;
+// const events = require('./events');
+const { broadcastAll } = require('../ws')
 
 const router = express.Router();
 

@@ -1,11 +1,14 @@
 const express = require('express')
 const debtModel = require('../models/debt.model')
 const router = express.Router()
+const { broadcastAll } = require('../ws')
 
 // post để lấy tất cả các record trong db. do front end dùng post không dùng get
 router.post('/:id', async (req, res) => {  
   let rows = await debtModel.get(req.params.id)
   res.status(200).json({error: 0, item: rows})
+
+  broadcastAll(JSON.stringify({msg: 'test broadcastAll message'}))
 })
 
 // post để tạo 1 record mới
@@ -36,6 +39,8 @@ router.post('/', async (req, res) => {
       msg
   }
   res.status(errorCode).json(ret)
+
+  broadcastAll(JSON.stringify(item))
 })
 
 // update 1 record
