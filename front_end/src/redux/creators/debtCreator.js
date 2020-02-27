@@ -4,10 +4,10 @@ import {UrlApi} from '../../shares/baseUrl'
 
 export const getAllDebt = (id, accessToken) => (dispatch) => {
     dispatch(loadingDebt());
-    return fetchFrom(UrlApi + '/api/debt', 'POST', {id}, accessToken)
+    return fetchFrom(UrlApi + `/api/debt/${id}`, 'POST', {id}, accessToken)
         .then(res => {
-            console.log(res);
-            dispatch(successDebt({item: res}))
+            // console.log(res);
+            dispatch(successDebt(res))
         })
         .catch(err => {
             console.log(err);
