@@ -25,7 +25,7 @@ const ModalAddNew = (props) => {
   const toggle = () => setModal(!modal);
 
   const handleSubmit = (values) => {
-    values = { ...values,datetime:Date().toString()}
+    values = { ...values, datetime: new Date()}
     console.log(values)
     handleCreate(values)
     setModal(!modal)
