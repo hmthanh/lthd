@@ -1,11 +1,11 @@
-import React, {Component, useState} from 'react';
+import React, { Component, useState } from 'react';
 import { Control, Errors, LocalForm } from 'react-redux-form'
 import {
-    Breadcrumb, BreadcrumbItem, Button, ButtonGroup, ButtonToolbar, Modal, ModalBody,
-    ModalFooter, ModalHeader, Table
-  } from 'reactstrap'
-import {connect} from 'react-redux';
-import {getAllDebt,Create, Delete, Edit} from '../redux/creators/debtCreator';
+  Breadcrumb, BreadcrumbItem, Button, ButtonGroup, ButtonToolbar, Modal, ModalBody,
+  ModalFooter, ModalHeader, Table
+} from 'reactstrap'
+import { connect } from 'react-redux';
+import { getAllDebt, Create, Delete, Edit } from '../redux/creators/debtCreator';
 import Loading from '../components/Loading';
 
 
@@ -74,74 +74,76 @@ import Loading from '../components/Loading';
 
 class debtPage extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {}
-    }
+  constructor(props) {
+    super(props);
+    this.state = {}
+  }
 
-    componentDidMount() {
-        let accessToken = localStorage.getItem('accessToken')
-        let uid = localStorage.getItem('uid');
-        this.props.getAll(uid, accessToken);
-    }
+  componentDidMount() {
+    let accessToken = localStorage.getItem('accessToken')
+    let uid = localStorage.getItem('uid');
+    this.props.getAll(uid, accessToken);
+  }
 
 
-    render() {
-        return (
-            <div className="container" style={{marginTop: '20px'}}>
-                <div className="row justify-content-center">
-                    <div className="col-md-12">
-                        <div className="card-group mb-0">
-                            <div className="card p-6">
-                                <div className="card-block">
-                                    <h1>Danh sách nợ chưa thanh toán</h1>
-                                    <Button color="success">Thêm mới</Button>
-                                    <Table>
-                                        <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Tài khoản nợ</th>
-                                            <th>Số tiền</th>
-                                            <th>Ngày giao dịch</th>
-                                            <th>Nhắc nhở</th>
-                                            <th>Xóa</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {
-                                            this.props.DebtInfo.data.val &&
-                                            // console.log(this.props.DebtInfo.data.val)
-                                            this.props.DebtInfo.data.val.map(item => (
-                                                <tr key={item.id}>
-                                                    <th scope="row">{item.id}</th>
-                                                    <td>{item.userdebt}</td>
-                                                    <td>{item.total}</td>
-                                                    <td>{item.day.toString()}</td>
-                                                    <td><Button outline color="warning">Nhắc nhở</Button></td>
-                                                    <td><Button outline color="danger">Xóa</Button></td>
-                                                </tr>
-                                            ))
-                                        }
-                                        </tbody>
-                                    </Table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  render() {
+    return (
+      <div className="container" style={{ marginTop: '20px' }}>
+        <div className="row justify-content-center">
+          <div className="col-md-12">
+            <div className="card-group mb-0">
+              <div className="card p-6">
+                <div className="card-block">
+                  <h1>Danh sách nhắc nợ</h1>
+                  <Button color="success">Thêm mới</Button>
+                  <Table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Tên Tài Khoản</th>
+                        <th>Số Tài Khoản</th>
+                        <th>Số Tiền</th>
+                        <th>Ngày giao dịch</th>
+                        <th>Ghi chú</th>
+                        <th>Nhắc nhở</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        this.props.DebtInfo.data.item &&
+                        this.props.DebtInfo.data.item.map((it, index) => (
+                          <tr key={it.id}>
+                            <th scope="row">{index + 1}</th>
+                            <td>{it.name}</td>
+                            <td>{it.account_num}</td>
+                            <td>{it.debt_val}</td>
+                            <td>{it.date_time.toString()}</td>
+                            <td>{it.note}</td>
+                            <td><Button outline color="warning">Nhắc nhở</Button></td>
+                            <td><Button outline color="danger">Xóa</Button></td>
+                          </tr>
+                        ))
+                      }
+                    </tbody>
+                  </Table>
                 </div>
+              </div>
             </div>
-        );
-    }
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 const mapDispatchToProps = dispatch => ({
-    getAll: (id) => dispatch(getAllDebt(id))
+  getAll: (id) => dispatch(getAllDebt(id))
 });
 
 const mapStateToProps = (state) => {
-    return {
-        DebtInfo: state.DebtInfo,
-    }
+  return {
+    DebtInfo: state.DebtInfo,
+  }
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(debtPage);

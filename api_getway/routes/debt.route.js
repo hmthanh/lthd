@@ -2,6 +2,13 @@ const express = require('express')
 const debtModel = require('../models/debt.model')
 const router = express.Router()
 
+// post để lấy tất cả các record trong db. do front end dùng post không dùng get
+router.post('/:id', async (req, res) => {  
+  let rows = await debtModel.get(req.params.id)
+  res.status(200).json({error: 0, item: rows})
+})
+
+// post để tạo 1 record mới
 router.post('/', async (req, res) => {  
   console.log(req.body)
   let entity = {
@@ -31,7 +38,7 @@ router.post('/', async (req, res) => {
   res.status(errorCode).json(ret)
 })
 
-
+// update 1 record
 
 router.patch('/', async (req, res) => {  
   let entity = {
@@ -49,7 +56,7 @@ router.patch('/', async (req, res) => {
   }
   res.status(errorCode).json(ret)
 })
-
+// xóa 1 record
 router.delete('/', async (req, res) => {  
   console.log('router.delete', req.body)
   let ret, errorCode = 200, item = null
@@ -62,10 +69,5 @@ router.delete('/', async (req, res) => {
   res.status(errorCode).json(ret)
 })
 
-router.post('/:id', async (req, res) => { 
-  let rows = await debtModel.get(req.params.id)
-  console.log(rows)
-  res.status(200).json(rows)
-})
 
 module.exports = router
