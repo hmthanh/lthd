@@ -6,7 +6,11 @@ export const changepwd = (uId, newPwd, OTP) => (dispatch) => {
   dispatch(ChangePasswordLoading());
 
   return fetchFrom(UrlApi + '/api/auth', 'PATCH', {uId, newPwd, OTP}).then(response => {
-    dispatch(ChangePasswordSuccess(response));
+    console.log(response)
+    if(response.error !== 0)
+      dispatch(ChangePasswordFailed('sai otp'))
+    else
+      dispatch(ChangePasswordSuccess(response))
   }).catch(err => {
     console.log(err);
     dispatch(ChangePasswordFailed());
