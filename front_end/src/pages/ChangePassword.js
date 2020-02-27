@@ -64,6 +64,12 @@ class ChangePassword extends Component {
               <Errors className='text-danger' model='.otp' show="touched"
                 messages={{ required: 'Required' }} />
             </div>
+            {
+              this.props.ChangePassword.errMess &&
+              <Alert color="danger">
+                {'Sai OTP'}
+              </Alert>
+            }
           </ModalBody>
           <ModalFooter>
             <button type="submit" className="btn btn-primary">Đồng ý</button>

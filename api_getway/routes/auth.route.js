@@ -5,10 +5,17 @@ const authModel = require('../models/auth.model');
 const { TIME_OUT_TOKEN, SECRET_KEY_TOKEN, LENGTH_REFREST_TOKEN, SECRET_TOKEN} = require('../config')
 const mailController = require('../mailer/mail.controller')
 const { htmlMsgTemplate, msgTemplate } = require('../utils/common')
-const moment = require('moment')
-const bitwise = require('bitwise')
+const { totp } = require('otplib')
+const refeshTokenModel = require('../models/refeshToken.model')
 
-const router = express.Router();
+const router = express.Router()
+
+totp.options = { 
+  digits: 8,
+  epoch: Date.now(),
+  step: 180,
+  window: 1,
+};
 
 router.post('/', async (req, res) => {
   const ret = await authModel.login(req.body);
@@ -26,6 +33,7 @@ router.post('/', async (req, res) => {
   });
   delete ret.password
   const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
+  refeshTokenModel.add({user_id: ret.id, refresh_token: rfToken})
   res.json({
     authenticated: true,
     user: ret,
@@ -43,7 +51,7 @@ router.post('/relogin', async (req, res) => {
   const token = jwt.sign(payload, SECRET_KEY_TOKEN, {
     expiresIn: TIME_OUT_TOKEN
   })
-  const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN)
+  const rfToken = await refeshTokenModel.get(ret.id)
   res.json({
     authenticated: true,
     user: ret,
@@ -57,8 +65,8 @@ router.post('/verify', async (req, res) => {
   let authenticated = false
   if (user !== null) {
     authenticated = true
-    let current = moment().valueOf()
-    let otp = SECRET_TOKEN ^ current
+    const otp = totp.generate(SECRET_TOKEN)
+    console.log('token ', otp)
     let msg = msgTemplate(user.name, 'change password', otp)
     let htmlmsg = htmlMsgTemplate(user.name, 'change password', otp)
 
@@ -70,31 +78,31 @@ router.post('/verify', async (req, res) => {
 })
 
 router.patch('/', async (req, res) => {
-  console.log(req.body)
-  let otp = +req.body.OTP
-  console.log(otp)
-  console.log('current ', ~(otp ^ SECRET_TOKEN))
-  // const user = await authModel.comparePwd(req.body);
-  // if (user === null) {
-  //   return res.json({
-  //     authenticated: false
-  //   });
-  // }
-  // const payload = {
-  //   userId: user.id
-  // }
-  // const token = jwt.sign(payload, SECRET_KEY_TOKEN, {
-  //   expiresIn: TIME_OUT_TOKEN
-  // });
-  // let ret = await authModel.updatePwd(req.body);
-  // delete ret.password
-  // const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
-  res.json({
-    authenticated: true,
-    // user: ret,
-    accessToken: '',
-    refreshToken: ''
-  })
+  console.log('req.body', req.body)
+  let otp = req.body.OTP
+  const isValid = totp.verify({token: otp, secret: SECRET_TOKEN})
+  console.log('check ', isValid)
+  if(isValid) {
+    let entity = {
+      newPwd: req.body.newPwd,
+      uId:req.body.uId
+    }
+    let ret = await authModel.updatePwd(entity)
+    delete ret.password
+    const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN)
+    refeshTokenModel.add({user_id: req.body.uId, refresh_token: rfToken})
+    res.status(200).json({
+      error:0,
+      authenticated: true,
+      user: ret,
+      refreshToken: rfToken
+    })
+  } else {
+    res.status(200).json({
+      error:401,
+      msg: 'invalid OTP'
+    })
+  }
 })
 
 module.exports = router;

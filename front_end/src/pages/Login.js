@@ -3,8 +3,10 @@ import { connect } from 'react-redux'
 import { Control, Errors, LocalForm } from 'react-redux-form'
 import { Alert } from 'reactstrap'
 import { login } from '../redux/creators/loginCreator'
+import ReCAPTCHA from "react-google-recaptcha";
 
 const required = (val) => val && val.length
+const recaptchaRef = React.createRef();
 
 class LoginPage extends Component {
 
@@ -17,20 +19,21 @@ class LoginPage extends Component {
   }
 
   handleSubmit(values) {
-    this.props.login(values.userName, values.password)
-      .then(() => {
-        //localStorage.setItem('user', this.props.Login.data)
-        // console.log(this.props.Login)
-        if (this.props.Login.data.authenticated) {
-          // console.log('login ', this.props.Login.data)
-          localStorage.setItem('uid', this.props.Login.data.user.id)
-          localStorage.setItem('accessToken', this.props.Login.data.accessToken)
-          localStorage.setItem('refreshToken', this.props.Login.data.refreshToken)
-          this.props.history.push("/")
-        } else {
-          this.setState({ isFailed: true })
-        }
-      })
+    let recaptcha = recaptchaRef.current.getValue()
+    console.log('recaptcha ', recaptcha)
+    if(recaptcha) {
+      this.props.login(values.userName, values.password)
+        .then(() => {
+          if (this.props.Login.data.authenticated) {
+            localStorage.setItem('uid', this.props.Login.data.user.id)
+            localStorage.setItem('accessToken', this.props.Login.data.accessToken)
+            localStorage.setItem('refreshToken', this.props.Login.data.refreshToken)
+            this.props.history.push("/")
+          } else {
+            this.setState({ isFailed: true })
+          }
+        })
+    }
   }
 
   render() {
@@ -67,6 +70,10 @@ class LoginPage extends Component {
                       <Errors className='text-danger' model='.password' show="touched"
                         messages={{ required: 'Required' }} />
                     </div>
+                    <ReCAPTCHA
+                      ref={recaptchaRef}
+                      sitekey="6LcPtdwUAAAAAGb2pehug_-EHNmV5Ywj7d_9gsWn"
+                    />
                     <button type="submit" className="btn btn-primary">Login</button>
                   </LocalForm>
                 </div>
