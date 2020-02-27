@@ -11,63 +11,176 @@ import Loading from '../components/Loading';
 
 
 
-// const required = (val) => val && val.length;
+const required = (val) => val && val.length;
 
-// const ModalAddNew = (props) => {
-//   const {
-//     buttonLabel,
-//     className,
-//     handleCreate
-//   } = props;
+const ModalAddNew = (props) => {
+  const {
+    buttonLabel,
+    className,
+    handleCreate
+  } = props;
 
-//   const [modal, setModal] = useState(false);
+  const [modal, setModal] = useState(false);
 
-//   const toggle = () => setModal(!modal);
+  const toggle = () => setModal(!modal);
 
-//   const handleSubmit = (values) => {
-//     values = { ...values, banking: 0 }
-//     console.log(values)
-//     handleCreate(values)
-//     setModal(!modal)
-//   };
+  const handleSubmit = (values) => {
+    values = { ...values,datetime:Date().toString()}
+    console.log(values)
+    handleCreate(values)
+    setModal(!modal)
+  };
 
-//   return (
-//     <div>
-//       <Button color="success" onClick={toggle}>{buttonLabel}</Button>
-//       <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
-//         <ModalHeader toggle={toggle}>Thêm mới nợ</ModalHeader>
-//         <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
-//           <ModalBody>
+  return (
+    <div>
+      <Button color="success" onClick={toggle}>{buttonLabel}</Button>
+      <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
+        <ModalHeader toggle={toggle}>Thêm mới nợ</ModalHeader>
+        <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
+          <ModalBody>
+          
 
-//             <div className='form-group'>
-//               <label htmlFor='accountNum'>Số tài Khoản</label>
-//               <Control.text model='.accountNum' id='accountNum' name='accountNum'
-//                 className='form-control' autoComplete='off'
-//                 validators={{ required }} />
-//               <Errors className='text-danger' model='.accountNum' show="touched"
-//                 messages={{ required: 'Required' }} />
-//             </div>
-//             <div className='form-group'>
-//               <label htmlFor='aliasName'>Tên gợi nhớ</label>
-//               <Control.text model='.aliasName' id='aliasName' name='aliasName'
-//                 className='form-control' rows='6' autoComplete='off'
-//                 validators={{ required }} />
-//               <Errors className='text-danger' model='.aliasName' show="touched"
-//                 messages={{ required: 'Required' }} />
-//             </div>
-//           </ModalBody>
-//           <ModalFooter>
-//             <button type="submit" className="btn btn-primary">Đồng ý</button>
-//           </ModalFooter>
+            <div className='form-group'>
+              <label htmlFor='accountNum'>Số tài Khoản</label>
+              <Control.text model='.accountNum' id='accountNum' name='accountNum'
+                className='form-control' autoComplete='off'
+                validators={{ required }} />
+              <Errors className='text-danger' model='.accountNum' show="touched"
+                messages={{ required: 'Required' }} />
+            </div>
+            <div className='form-group'>
+              <label htmlFor='debtval'>Số tiền</label>
+              <Control.text model='.debtval' id='debtval' name='debtval'
+                className='form-control' rows='6' autoComplete='off'
+                validators={{ required }} />
+              <Errors className='text-danger' model='.debtval' show="touched"
+                messages={{ required: 'Required' }} />
+            </div>
 
-//         </LocalForm>
+            <div className='form-group'>
+              <label htmlFor='note'>Ghi chú</label>
+              <Control.text model='.note' id='note' name='note'
+                className='form-control' rows='6' autoComplete='off'
+                validators={{ required }} />
+              <Errors className='text-danger' model='.note' show="touched"
+                messages={{ required: 'Required' }} />
+            </div>
+
+          </ModalBody>
+          <ModalFooter>
+            <button type="submit" className="btn btn-primary">Đồng ý</button>
+          </ModalFooter>
+
+        </LocalForm>
 
 
-//       </Modal>
-//     </div>
-//   );
-// };
+      </Modal>
+    </div>
+  );
+};
 
+
+
+
+const ModalEdit = (props) => {
+  const {
+    buttonLabel,
+    className,
+    handleEdit,
+    accountNum,
+    debtval,
+    datetime,
+    note,
+    accountId
+  } = props;
+
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => setModal(!modal);
+
+  const handleSubmit = (values) => {
+    values = {...values, id: accountId}
+    handleEdit(values)
+    setModal(!modal)
+  };
+
+  return (
+    <div>
+      <Button color="primary" onClick={toggle}>{buttonLabel}</Button>
+      <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
+        <ModalHeader toggle={toggle}>Nhắc nợ</ModalHeader>
+        <LocalForm id='edit-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
+          <ModalBody>
+          <div className='form-group'>
+              <label htmlFor='accountNum'>Số tài Khoản</label>
+              <Control.text model='.accountNum' id='accountNum' name='accountNum'
+                className='form-control' autoComplete='off'
+                validators={{ required }} defaultValue={accountNum} />
+              <Errors className='text-danger' model='.accountNum' show="touched"
+                messages={{ required: 'Required' }} />
+            </div>
+            <div className='form-group'>
+              <label htmlFor='debtval'>Số tiền</label>
+              <Control.text model='.debtval' id='debtval' name='debtval'
+                className='form-control' rows='6' autoComplete='off'
+                validators={{ required }} defaultValue={debtval} />
+              <Errors className='text-danger' model='.debtval' show="touched"
+                />
+            </div>
+
+            <div className='form-group'>
+              <label htmlFor='note'>Ghi chú</label>
+              <Control.text model='.note' id='note' name='note'
+                className='form-control' rows='6' autoComplete='off'
+                validators={{ required }} />
+              <Errors className='text-danger' model='.note' show="touched"
+                messages={{ required: 'Required' }} />
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <button type="submit" className="btn btn-primary">Đồng ý</button>
+          </ModalFooter>
+
+        </LocalForm>
+
+
+      </Modal>
+    </div>
+  );
+}
+
+const ConfirmDelete = (props) => {
+  const {
+    buttonLabel,
+    className,
+    handleDelete,
+    accountId
+  } = props;
+
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => setModal(!modal)
+  const deleteAccount = () => {
+    handleDelete(accountId)
+    setModal(!modal)
+  }
+
+  return (
+    <div>
+      <Button color="danger" onClick={toggle}>{buttonLabel}</Button>
+      <Modal isOpen={modal} toggle={toggle} className={className}>
+        <ModalHeader toggle={toggle}>xóa</ModalHeader>
+        <ModalBody>
+          bạn có chăc muốn xóa không
+                </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={deleteAccount}>đồng ý</Button>{' '}
+          <Button color="secondary" onClick={toggle}>bỏ qua</Button>
+        </ModalFooter>
+      </Modal>
+    </div>
+  );
+}
 
 
 
@@ -75,8 +188,11 @@ import Loading from '../components/Loading';
 class debtPage extends Component {
 
   constructor(props) {
-    super(props);
-    this.state = {}
+    super(props)
+    this.handleCreate = this.handleCreate.bind(this)
+    this.handleEdit = this.handleEdit.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
+  
   }
 
   componentDidMount() {
@@ -84,6 +200,32 @@ class debtPage extends Component {
     let uid = localStorage.getItem('uid');
     this.props.getAll(uid, accessToken);
   }
+
+  handleCreate(data) {
+    const uid = localStorage.getItem('uid')
+    console.log('localStorage.getItem("uid")', uid)
+    data = { ...data, ownerId: uid }
+    this.props.Create(data).then(() => {
+      this.props.getAll(uid);
+    })
+  }
+
+  handleEdit(data) {
+    const uid = localStorage.getItem('uid')
+    data = { ...data, ownerId: uid }
+    this.props.Edit(data).then(() => {
+      this.props.getAll(uid);
+    })
+  }
+
+  handleDelete(id) {
+    const uid = localStorage.getItem('uid')
+    this.props.Delete(id).then(() => {
+      this.props.getAll(uid);
+    })
+  }
+
+  
 
 
   render() {
@@ -95,7 +237,7 @@ class debtPage extends Component {
               <div className="card p-6">
                 <div className="card-block">
                   <h1>Danh sách nhắc nợ</h1>
-                  <Button color="success">Thêm mới</Button>
+                  <ModalAddNew buttonLabel={'Thêm Mới'} handleCreate={this.handleCreate} />
                   <Table>
                     <thead>
                       <tr>
@@ -106,6 +248,8 @@ class debtPage extends Component {
                         <th>Ngày giao dịch</th>
                         <th>Ghi chú</th>
                         <th>Nhắc nhở</th>
+
+                        <th>Xóa</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -119,8 +263,10 @@ class debtPage extends Component {
                             <td>{it.debt_val}</td>
                             <td>{it.date_time.toString()}</td>
                             <td>{it.note}</td>
-                            <td><Button outline color="warning">Nhắc nhở</Button></td>
-                            <td><Button outline color="danger">Xóa</Button></td>
+                            <td><ModalEdit buttonLabel={'Nhắc'} accountId={it.id} datetime={it.date_time} note={it.note} accountNum={it.account_num} debtval={it.debt_val} handleEdit={this.handleEdit} />
+                          {' '}</td>
+                          <td><ConfirmDelete buttonLabel={'xóa'} accountId={it.id} handleDelete={this.handleDelete}/>
+                          </td>
                           </tr>
                         ))
                       }
@@ -137,7 +283,10 @@ class debtPage extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  getAll: (id) => dispatch(getAllDebt(id))
+  getAll: (id) => dispatch(getAllDebt(id)),
+  Create: (item) => dispatch(Create(item)),
+  Edit: (item) => dispatch(Edit(item)),
+  Delete: (id) => dispatch(Delete(id))
 });
 
 const mapStateToProps = (state) => {

@@ -14,8 +14,9 @@ router.post('/', async (req, res) => {
   let entity = {
     account_num: req.body.accountNum,
     owner_id: req.body.ownerId,
-    date_time: req.body.date_time,
-    debt_val: req.body.debt_val
+    date_time: req.body.datetime,
+    debt_val: req.body.debtval,
+    note: req.body.note
   }
   console.log('entity',entity)
   let ret, errorCode, item = null
@@ -43,8 +44,9 @@ router.post('/', async (req, res) => {
 router.patch('/', async (req, res) => {  
   let entity = {
     account_num: req.body.accountNum,
-    date_time: req.body.date_time,
-    debt_val: req.body.debt_val
+    date_time: req.body.datetime,
+    debt_val: req.body.debt_val,
+    note: req.body.note
   }
   const item = await debtModel.update(req.body.id, entity)
 
