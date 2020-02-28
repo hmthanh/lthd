@@ -17,6 +17,8 @@ module.exports = {
   LENGTH_REFREST_TOKEN: process.env.LENGTH_REFREST_TOKEN,
   SECRET_TOKEN: process.env.SECRET_TOKEN,
   EXPIRES_OTP: process.env.EXPIRES_OTP,
+  SECRET_RSA: process.env.SECRET_RSA,
+  SECRET_PGP: process.env.SECRET_PGP,
 
   MAILER_PORT:  process.env.MAILER_PORT,
 };
