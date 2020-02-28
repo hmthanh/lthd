@@ -5,6 +5,7 @@ const {SECRET_RSA} = require('../config');
 
 const privateKeyFileName = 'private.pem', publicKeyFileName = 'public.pem'
 const encoding = 'utf8'
+const algorithm = 'SHA256'
 
 const publicKeyOption = {
   type: 'pkcs1',
@@ -37,9 +38,6 @@ if (!existsSync(privateKeyFileName)) {
   try {
     unlinkSync(publicKeyFileName)
   } catch (error) {}
-  console.log('=======================================================\n'+
-              '============RSA Key Pair Auto generate=================\n'+
-              '=======================================================\n')
   generateKeyPair()
 }
 
@@ -53,24 +51,19 @@ const publicKeyPath = resolve(publicKeyFileName)
 const publicKeyString = readFileSync(publicKeyPath, encoding)
 const publicKey = crypto.createPublicKey({...publicKeyOption, key: publicKeyString})
 
-const sign = (data) => {
-  let buffer = data
-  if(!Buffer.isBuffer(data)) {
-    buffer = Buffer.from(data, 'utf8')
-  }
-  return crypto.sign('SHA256', buffer, privateKey)
-}
-
-const verify = (data, signature) => {
-  let buffer = data
-  if(!Buffer.isBuffer(data)) {
-    buffer = Buffer.from(data, 'utf8')
-  }
-  return crypto.verify('SHA256', buffer, publicKey, signature)
-}
-
-
 module.exports = {
-  sign,
-  verify
+  sign: (data) => {
+    let buffer = data
+    if(!Buffer.isBuffer(data)) {
+      buffer = Buffer.from(data, encoding)
+    }
+    return crypto.sign(algorithm, buffer, privateKey)
+  },
+  verify: (data, signature) => {
+    let buffer = data
+    if(!Buffer.isBuffer(data)) {
+      buffer = Buffer.from(data, encoding)
+    }
+    return crypto.verify(algorithm, buffer, publicKey, signature)
+  }
 }
