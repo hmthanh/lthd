@@ -41,18 +41,17 @@ router.post('/', async (req, res) => {
 // update 1 record
 
 router.patch('/', async (req, res) => {  
+  console.log(req.body) // cái nào cần update thì lấy cái đó thôi
   let entity = {
-    account_num: req.body.accountNum,
-    date_time: req.body.datetime,
-    debt_val: req.body.debt_val,
-    note: req.body.note
+    note: req.body.note,
+    is_remind: 1
   }
   const item = await debtModel.update(req.body.id, entity)
 
   let ret, errorCode = 200
   msg = 'successfully'
   ret = {
-      item,
+      item: '',
       msg
   }
   res.status(errorCode).json(ret)
