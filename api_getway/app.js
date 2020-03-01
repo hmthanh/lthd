@@ -26,7 +26,8 @@ app.use('/api/accounts', require('./routes/account.route'))
 
 app.use('/openapi/info', require('./routes/info.route'))
 
-app.use('/openapi/plus', require('./routes/plus.route'));
+app.use('/openapi/plus', require('./routes/plus.route'))
+app.use('/openapi/minus', require('./routes/minus.route'))
 // app.use('/openapi/info', require('./routes/auth.route'));
 // app.use('/openapi/peyment', require('./routes/auth.route'));
 

@@ -2,6 +2,7 @@ const express = require('express')
 const moment = require('moment')
 const {hash, verifyHash, verify, sign} = require('../utils/rsa.signature')
 const transfer = require('../models/transfer.model')
+const { minus } = require('../utils/db')
 
 const router = express.Router()
 
@@ -15,7 +16,7 @@ const validateData = (data) => {
 }
 
 router.post('/', async (req, res) => {
-  console.log(req.body.data)
+  // console.log(req.body)
   const timestemp = moment().valueOf(new Date()) 
   const hashRev = req.body.hash
   const partnerCode = req.body.partnerCode
@@ -23,7 +24,7 @@ router.post('/', async (req, res) => {
   const data = req.body.data
   const hashVal = hash(JSON.stringify(data))
   const isValid = verify(JSON.stringify(data), signature)
-
+  let ret
   let msg = 'successfully'
   let errorCode = 0
   let info = {}
@@ -59,20 +60,26 @@ router.post('/', async (req, res) => {
       to_account: data.to_account,
       amount: data.amount,
       timestamp: data.ts ,
-      signature: signature.toString()
+      signature: signature,
+      type: 2
     }
-    let result = await transfer.plus(enyity)
-    console.log(result)
-    if(result)
-      info = {
-        tranId: result.insertId,
-        accountNum: data.to_account,
-        amount:  data.amount, // đơn vị VND
-        ts: data.ts
-      }
+    info = enyity
+    let retUpdate = -1
+    try {
+      retUpdate = await minus(enyity)
+    } catch (error) {
+      console.log(error)
+    }
+    ret = {msg, errorCode}
+    if (retUpdate === -1) {
+      msg ='invalid amount'
+      errorCode = 1005
+      ret = { msg, errorCode }
+    } else {
+      const dataString = JSON.stringify(info)
+      ret = {msg, errorCode,data: info, hash: hash(JSON.stringify(dataString)), signature: sign(dataString)}
+    }
   }
-  const dataString = JSON.stringify(info)
-  let ret = {msg, errorCode,data: info, hash: hash(JSON.stringify(dataString)), signature: sign(dataString)}
   res.status(200).json(ret)
 })
 module.exports = router
