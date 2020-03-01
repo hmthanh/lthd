@@ -89,7 +89,6 @@ const ModalEdit = (props) => {
     handleEdit,
     accountNum,
     debtval,
-    datetime,
     note,
     accountId
   } = props;
@@ -115,7 +114,7 @@ const ModalEdit = (props) => {
               <label htmlFor='accountNum'>Số tài Khoản</label>
               <Control.text model='.accountNum' id='accountNum' name='accountNum'
                 className='form-control' autoComplete='off'
-                validators={{ required }} defaultValue={accountNum} />
+                validators={{ required }} defaultValue={accountNum} disabled={true} />
               <Errors className='text-danger' model='.accountNum' show="touched"
                 messages={{ required: 'Required' }} />
             </div>
@@ -123,7 +122,7 @@ const ModalEdit = (props) => {
               <label htmlFor='debtval'>Số tiền</label>
               <Control.text model='.debtval' id='debtval' name='debtval'
                 className='form-control' rows='6' autoComplete='off'
-                validators={{ required }} defaultValue={debtval} />
+                defaultValue={debtval} disabled={true} />
               <Errors className='text-danger' model='.debtval' show="touched"
                 />
             </div>
@@ -132,7 +131,7 @@ const ModalEdit = (props) => {
               <label htmlFor='note'>Ghi chú</label>
               <Control.text model='.note' id='note' name='note'
                 className='form-control' rows='6' autoComplete='off'
-                validators={{ required }} />
+                validators={{ required }} defaultValue={note} />
               <Errors className='text-danger' model='.note' show="touched"
                 messages={{ required: 'Required' }} />
             </div>
@@ -263,7 +262,7 @@ class debtPage extends Component {
                             <td>{it.debt_val}</td>
                             <td>{it.date_time.toString()}</td>
                             <td>{it.note}</td>
-                            <td><ModalEdit buttonLabel={'Nhắc'} accountId={it.id} datetime={it.date_time} note={it.note} accountNum={it.account_num} debtval={it.debt_val} handleEdit={this.handleEdit} />
+                            <td><ModalEdit buttonLabel={'Nhắc'} accountId={it.id}  note={it.note} accountNum={it.account_num} debtval={it.debt_val} handleEdit={this.handleEdit} />
                           {' '}</td>
                           <td><ConfirmDelete buttonLabel={'xóa'} accountId={it.id} handleDelete={this.handleDelete}/>
                           </td>
