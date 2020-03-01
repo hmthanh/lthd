@@ -14,6 +14,7 @@ const debtPage = lazy(() => import('./Debt'))
 const ChangePassword = lazy(() => import('./ChangePassword'))
 const ForgetPassword = lazy(() => import('./ForgetPassword'))
 const SettingPage = lazy(() => import('./SettingRecieverPage'))
+const remindPage = lazy(() => import('./Remind'))
 
 
 // lazy loading example
@@ -31,7 +32,7 @@ class Main extends Component {
     }
   }
 
-  handleOpen()  {
+  handleOpen() {
     // alert("connected:)");
     console.log('connected:)')
   }
@@ -52,33 +53,34 @@ class Main extends Component {
         <Websocket url='ws://localhost:6500/api/notify'
           onMessage={this.handleData.bind(this)} onOpen={this.handleOpen.bind(this)} onClose={this.handleClose.bind(this)} />
         <Container className="themed-container">
-        <Header />
-        <main className="main">
-          <Suspense fallback={<div>
-            <Spinner type="grow" color="primary" />
-            <Spinner type="grow" color="secondary" />
-            <Spinner type="grow" color="success" />
-            <Spinner type="grow" color="danger" />
-            <Spinner type="grow" color="warning" />
-            <Spinner type="grow" color="info" />
-            <Spinner type="grow" color="light" />
-          </div>}>
-            <Switch>
-              <Route exact path='/login' component={LoginPage} />
-              <Route exact path='/register' component={Register} />
-              <Route exact path='/info' component={UserInfo} />
-              <Route exact path='/transfer-history' component={HistoryPage} />
-              <Route exact path='/manage-debt' component={debtPage} />
-              <Route exact path='/change-password' component={ChangePassword} />
-              <Route exact path='/list-account' component={ListAccountPage} />
-              <Route exact path='/forget-password' component={ForgetPassword} />
-              <Route exact path='/list-receiver' component={SettingPage} />
-              <Route exact path='/transfer' component={Transfer} />
-            </Switch>
-          </Suspense>
-        </main>
-      </Container>
-    
+          <Header />
+          <main className="main">
+            <Suspense fallback={<div>
+              <Spinner type="grow" color="primary" />
+              <Spinner type="grow" color="secondary" />
+              <Spinner type="grow" color="success" />
+              <Spinner type="grow" color="danger" />
+              <Spinner type="grow" color="warning" />
+              <Spinner type="grow" color="info" />
+              <Spinner type="grow" color="light" />
+            </div>}>
+              <Switch>
+                <Route exact path='/login' component={LoginPage} />
+                <Route exact path='/register' component={Register} />
+                <Route exact path='/info' component={UserInfo} />
+                <Route exact path='/transfer-history' component={HistoryPage} />
+                <Route exact path='/manage-debt' component={debtPage} />
+                <Route exact path='/change-password' component={ChangePassword} />
+                <Route exact path='/list-account' component={ListAccountPage} />
+                <Route exact path='/forget-password' component={ForgetPassword} />
+                <Route exact path='/list-receiver' component={SettingPage} />
+                <Route exact path='/transfer' component={Transfer} />
+                <Route exact path='/remind' component={remindPage} />
+              </Switch>
+            </Suspense>
+          </main>
+        </Container>
+
       </div>
     )
   }
