@@ -1,20 +1,29 @@
 const express = require('express')
 const moment = require('moment')
-const {hash, verifyHash, verify} = require('../utils/rsa.signature')
+const {hash, verifyHash, verify, sign} = require('../utils/rsa.signature')
 const {} = require('../utils/rsa.signature')
-const userModel = require('../models/user.model')
+const transfer = require('../models/transfer.model')
 
 const router = express.Router()
 
+const validateData = (data) => {
+  if(!data.from) return false
+  if(!data.from_account) return false
+  if(!data.to_account) return false
+  if(!data.amount) return false
+  if(!data.ts) return false
+  return true
+}
+
 router.post('/', async (req, res) => {
-  // console.log(req.body)
-  let timestemp = moment().valueOf(new Date()) 
+  console.log(req.body.data)
+  const timestemp = moment().valueOf(new Date()) 
+  const hashRev = req.body.hash
   const partnerCode = req.body.partnerCode
-  const signature =req.body.signature
+  const signature = Buffer.from(req.body.signature.data)
   const data = req.body.data
-  console.log(signature.data)
   const hashVal = hash(JSON.stringify(data))
-  const isValid = verify(JSON.stringify(data), Buffer.from(signature.data))
+  const isValid = verify(JSON.stringify(data), signature)
 
   let msg = 'successfully'
   let errorCode = 0
@@ -30,19 +39,41 @@ router.post('/', async (req, res) => {
     errorCode = 1002
   } else if(!isValid) {
     msg = 'invalid signature'
+    errorCode = 1004
+  } else if(!validateData(data)){
+    msg ='invalid data'
     errorCode = 1003
+    info = {
+      example: {
+        from:'nguyễn văn a',
+        from_account: 231421321,
+        to_account: 73983492348,
+        amount: 100000, // đơn vị VND
+        note: 'ghi chú',
+        ts: data.ts
+     }
+    }
+  }else {
+    const enyity = {
+      acc_name: data.from,
+      from_account: data.from_account,
+      to_account: data.to_account,
+      amount: data.amount,
+      timestamp: data.ts ,
+      signature: signature.toString()
+    }
+    let result = await transfer.plus(enyity)
+    console.log(result)
+    if(result)
+      info = {
+        tranId: result.insertId,
+        accountNum: data.to_account,
+        amount:  data.amount, // đơn vị VND
+        ts: data.ts
+      }
   }
-  //else {
-  //   let rows = await userModel.singleByUser(userName, accountNum)
-  //   // console.log(rows)
-  //   if(rows)
-  //     info = {
-  //       name: rows[0].name,
-  //       accountNum: rows[0].account_num,
-  //       userName: rows[0].user_name
-  //     }
-  // }
-  let ret = {msg, errorCode, ...info}
+  const dataString = JSON.stringify(info)
+  let ret = {msg, errorCode,data: info, hash: hash(JSON.stringify(dataString)), signature: sign(dataString)}
   res.status(200).json(ret)
 })
 module.exports = router

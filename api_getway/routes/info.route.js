@@ -27,7 +27,10 @@ router.post('/', async (req, res) => {
   } else if (!verifyHash(hashRev, hashVal)) {
     msg = 'invalid hash'
     errorCode = 1002
-  } else {
+  } else if(!userName && !accountNum){
+    msg = 'invalid params'
+    errorCode = 1003
+  } else{
     // if(userName) userName = 'default'
     let rows = await userModel.singleByUser(userName, accountNum)
     // console.log(rows)
