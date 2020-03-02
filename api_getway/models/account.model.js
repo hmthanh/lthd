@@ -22,5 +22,8 @@ module.exports = {
   },
   getInfoBanking: (id) => {
     return db.load(`Select * from banking_account where owner_id=${id}`)
+  },
+  getInfoAccount: (id) => {
+    return db.load(`select u.*, b.surplus from user_info u join banking_account b on u.id = b.owner_id where b.id = '${uId}'`)
   }
 };

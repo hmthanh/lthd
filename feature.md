@@ -37,7 +37,7 @@ api respone về như sau nếu số tiền trong tài khoản đủ để thự
 ```javascript
 {
     msg: 'successfully',
-    errorCode: 0, // mã lỗi số tiền không đủ thực hiện giao dịch
+    errorCode: 0, // mã lỗi thành công
     transId: 2717 // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
 } 
 ```
@@ -63,7 +63,7 @@ api respone về như sau nếu thành công:
 ```javascript
 {
     msg: 'successfully',
-    errorCode: 0, // mã lỗi số tiền không đủ thực hiện giao dịch
+    errorCode: 0, 
     transId: 2717, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
     to_account: '213214214', // số tài khoản thụ hưởng
     amount: 831882193 // số tiền giao dịch

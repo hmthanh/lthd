@@ -1,9 +1,12 @@
 const express = require('express')
 const moment = require('moment')
 const {hash, verifyHash, verify, sign} = require('../utils/rsa.signature')
-const { plus } = require('../utils/db')
 const {SECRET_TOKEN, OTP} = require('../config')
 const mailController = require('../mailer/mail.controller')
+const userModel = require('../models/user.model')
+const transferModel = require('../models/transfer.model')
+const { getInfoAccount } = require('../models/account.model')
+const { htmlMsgTemplate, msgTemplate } = require('../utils/common')
 const router = express.Router()
 
 const validateData = (data) => {
@@ -16,19 +19,39 @@ const validateData = (data) => {
 }
 
 router.post('/', async (req, res) => {
-  const transferType = req.body.transferType
-  const partner_code = req.body.partner_code
-  console.log(req.body.data)
+  console.log(req.body)
+  const rows = await getInfoAccount(req.body.uid)
+  const sender = rows[0]
+  const entity = {
+    acc_name: sender.name,
+    from_account: sender.account_num,
+    to_account: req.body.to_account,
+    note: req.body.note,
+    amount: req.body.amount,
+    partner_code: req.body.partner_code,
+    timestamp: moment().valueOf(new Date())
+  }
+  if (sender.surplus < req.body.amount) {
+    res.status(200).json({
+      msg: 'failure',
+      errorCode: -201,
+     }
+    )
+    return
+  }
+  const insertVal = await transferModel.add(entity)
   const otp = OTP.generate(SECRET_TOKEN)
-  console.log('token ', otp)
-  let msg = msgTemplate(user.name, 'transfer', otp)
-  let htmlmsg = htmlMsgTemplate(user.name, 'transfer', otp)
-  mailController.sentMail(user.email, '[New Vimo] Please verify OTP for transaction', msg, htmlmsg)
+  console.log('OTP tranfer', otp)
+  let msg = msgTemplate(sender.name, 'transfer', otp)
+  console.log(sender.email, sender)
+  let htmlmsg = htmlMsgTemplate(sender.name, 'transfer', otp)
+  mailController.sentMail(sender.email, '[New Vimo] Please verify OTP for transaction', msg, htmlmsg)
 
   res.status(200).json({
     msg: 'successfully',
     errorCode: 0, // mã lỗi số tiền không đủ thực hiện giao dịch
-    transId: 2717 }
+    transId: insertVal.insertId
+   }
   )
 })
 
