@@ -1,5 +1,13 @@
-const dotenv = require('dotenv');
-dotenv.config();
+const dotenv = require('dotenv')
+dotenv.config()
+const { totp } = require('otplib')
+totp.options = { 
+  digits: 8,
+  epoch: Date.now(),
+  step: 180,
+  window: 1,
+}
+
 module.exports = {
   HOST_NAME: process.env.HOST_NAME,
 
@@ -19,6 +27,7 @@ module.exports = {
   EXPIRES_OTP: process.env.EXPIRES_OTP,
   SECRET_RSA: process.env.SECRET_RSA,
   SECRET_PGP: process.env.SECRET_PGP,
+  OTP: totp,
 
   MAILER_PORT:  process.env.MAILER_PORT,
 };

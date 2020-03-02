@@ -61,7 +61,9 @@ router.post('/', async (req, res) => {
       amount: data.amount,
       timestamp: data.ts ,
       signature: signature,
-      type: 2
+      type: 2,
+      partner_code: partnerCode,
+      statte: 1
     }
     info = enyity
     let retUpdate = -1

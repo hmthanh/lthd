@@ -1,7 +1,7 @@
 const express = require('express')
 const moment = require('moment')
 const {hash, verifyHash, verify, sign} = require('../utils/rsa.signature')
-const transfer = require('../models/transfer.model')
+const { plus } = require('../utils/db')
 
 const router = express.Router()
 
@@ -59,9 +59,12 @@ router.post('/', async (req, res) => {
       to_account: data.to_account,
       amount: data.amount,
       timestamp: data.ts ,
-      signature: signature.toString()
+      signature: signature.toString(),
+      type: 0,
+      partner_code: partnerCode,
+      statte: 1
     }
-    let result = await transfer.plus(enyity)
+    let result = await plus(enyity)
     console.log(result)
     if(result)
       info = {

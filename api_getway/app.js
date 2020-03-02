@@ -1,9 +1,10 @@
-const express = require('express');
-const morgan = require('morgan');
-const createError = require('http-errors');
-const jwt = require('jsonwebtoken');
-const cors = require('cors');
-require('express-async-errors');
+const express = require('express')
+const morgan = require('morgan')
+const createError = require('http-errors')
+const jwt = require('jsonwebtoken')
+const cors = require('cors')
+const { SECRET_KEY_TOKEN } = require('./config')
+require('express-async-errors')
 
 //my packet
 const config = require('./config');
@@ -28,16 +29,14 @@ app.use('/openapi/info', require('./routes/info.route'))
 
 app.use('/openapi/plus', require('./routes/plus.route'))
 app.use('/openapi/minus', require('./routes/minus.route'))
-// app.use('/openapi/info', require('./routes/auth.route'));
-// app.use('/openapi/peyment', require('./routes/auth.route'));
+
 
 // function verifyAccessToken(req, res, next) {
 //   // console.log(req.headers);
 //   const token = req.headers['x-access-token'];
 //   if (token) {
-//     jwt.verify(token, 'shhhhh', function (err, payload) {
+//     jwt.verify(token, SECRET_KEY_TOKEN , function (err, payload) {
 //       if (err) throw createError(403, err);
-
 //       console.log(payload);
 //       next();
 //     });
@@ -50,9 +49,11 @@ app.use('/openapi/minus', require('./routes/minus.route'))
 app.use('/api/receiver', require('./routes/receiver.route'))
 
 // don't remote implement late
-app.use('/api/reminscent', require('./routes/reminscent.route'))
+// app.use('/api/reminscent', require('./routes/reminscent.route'))
 
-app.use('/api/transfer', require('./routes/reminscent.route'))
+app.use('/api/transfer', require('./routes/transfer.route'))
+
+app.use('/api/associate', require('./routes/associate.route'))
 
 app.use('/api/debt', require('./routes/debt.route'))
 
