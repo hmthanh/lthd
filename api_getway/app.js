@@ -57,6 +57,8 @@ app.use('/api/associate', require('./routes/associate.route'))
 
 app.use('/api/debt', require('./routes/debt.route'))
 
+app.use('/api/remind', require('./routes/remind.route'))
+
 // WS
 require('./ws')
 
