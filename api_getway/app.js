@@ -55,6 +55,8 @@ app.use('/api/transfer', require('./routes/reminscent.route'))
 
 app.use('/api/debt', require('./routes/debt.route'))
 
+app.use('/api/remind', require('./routes/remind.route'))
+
 // WS
 require('./ws')
 
