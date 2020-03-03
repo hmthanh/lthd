@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
 import {
+    Badge,
     Button,
     ButtonGroup,
     Card,
     CardTitle,
+    Col,
+    Collapse,
     Form,
     FormGroup,
     Input,
@@ -18,247 +21,236 @@ class Transfer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            interbankID: 1,
-            isInterbank: true
+            isInterbank: false,
+            isSavedList: false,
+            senderAccountType: 4,
+            listSenderAccount: [
+                {name: 'Tài khoản thanh toán 1', value: 1},
+                {name: 'Tài khoản thanh toán 2', value: 2},
+                {name: 'Tài khoản thanh toán 3', value: 3},
+                {name: 'Tài khoản tiết kiệm', value: 4}
+            ],
+            receiverBank: 2,
+            listReceiverBank: [
+                {name: 'Vietcombank', value: 1},
+                {name: 'Agribank', value: 2},
+                {name: 'Sacombank', value: 3}
+            ],
+            receiverSavedList: 2,
+            listReceiverSaved: [
+                {name: 'Hoàng Minh Thanh', value: 1},
+                {name: 'Trần Văn Quang', value: 2},
+                {name: 'Nguyễn Hữu Nghĩa', value: 3}
+            ],
+            receiverId: '',
+            receiverName: '',
+            moneyTransfer: 0,
+            messageTransfer: '',
+            isSenderPay: true
         };
-        this.setRSelected = this.setRSelected.bind(this);
-        this.changeInterbank = this.changeInterbank(this);
     }
 
-    changeInterbank() {
-        this.setState({
-            isInterbank: false
-        })
-    }
+    changeInterbank = () => this.setState({
+        isInterbank: !this.state.isInterbank
+    });
 
-    setRSelected(number) {
+    changeSavedList = () => this.setState({
+        isSavedList: !this.state.isSavedList
+    });
+
+    changeTypeTransfer = () => this.setState({
+        isSenderPay: !this.state.isSenderPay
+    });
+
+    onChange = (e) => {
+        let target = e.target;
+        let name = target.name;
+        let value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
-            interbankID: number
-        })
-    }
+            [name]: value
+        });
+    };
+
+    onSubmit = (e) => {
+        e.preventDefault();
+        let {
+            senderAccountType,
+            isInterbank,
+            receiverBank,
+            receiverId,
+            receiverName,
+            moneyTransfer,
+            messageTransfer,
+            isSenderPay
+        } = this.state;
+        let transferInfo = {
+            senderAccountType: senderAccountType,
+            isInterbank: isInterbank,
+            receiverBank: receiverBank,
+            receiverId: receiverId,
+            receiverName: receiverName,
+            moneyTransfer: moneyTransfer,
+            messageTransfer: messageTransfer,
+            isSenderPay: isSenderPay
+        };
+
+        console.log(transferInfo)
+    };
 
     render() {
+        let {
+            isInterbank,
+            senderAccountType,
+            listSenderAccount,
+            isSavedList,
+            receiverBank,
+            listReceiverBank,
+            receiverSavedList,
+            listReceiverSaved,
+            receiverId,
+            receiverName,
+            moneyTransfer,
+            messageTransfer,
+            isSenderPay
+        } = this.state;
+
         return (
             <div className="container">
-
                 <div className="container-fluid py-3">
-                    <Row className=" d-flex justify-content-center">
-                        <h3 className="text-center">CHUYỂN KHOẢN</h3>
-                    </Row>
                     <Row>
-                        <ButtonGroup className="mb-2">
-                            <Button color="primary" onClick={() => this.setRSelected(1)}
-                                    active={this.state.interbankID === 1}>Nội bộ</Button>
-                            <Button color="primary" onClick={() => this.setRSelected(2)}
-                                    active={this.state.interbankID === 2}>Liên ngân hàng</Button>
-                        </ButtonGroup>
-                    </Row>
+                        <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
 
-                    <Row>
-                        <div className="col-12 col-sm-8 col-md-6 col-lg-5 mx-auto">
+
                             <Card id="localBank">
                                 <div className="card-body">
                                     <CardTitle>
-                                        <h3 className="text-center">Nội bộ</h3>
+                                        <h3 className="text-center">CHUYỂN KHOẢN</h3>
                                     </CardTitle>
                                     <hr/>
                                     <Form method="post" noValidate="novalidate"
-                                          className="needs-validation">
+                                          className="needs-validation" onSubmit={this.onSubmit}>
                                         <h4>1. Người gửi</h4>
                                         <FormGroup>
-                                            <Label for="receiverTransfer">Thông tin người gửi</Label>
-                                            <Input type="select" name="select" id="sourceTransfer">
-                                                <option>Tài khoản thanh toán 1
-                                                </option>
-                                                <option>Tài khoản thanh toán 2
-                                                </option>
-                                                <option>Tài khoản tiết kiệm
-                                                </option>
+                                            <Label for="senderAccountType">Tải khoản người
+                                                gửi {this.showFieldRequire()}</Label>
+                                            <Input type="select" onChange={this.onChange}
+                                                   name="senderAccountType"
+                                                   id="senderAccountType" value={senderAccountType}>
+                                                {listSenderAccount.map((item, index) => {
+                                                    return <option key={index} value={item.value}>{item.name}</option>
+                                                })}
                                             </Input>
                                         </FormGroup>
                                         <h4>2. Người nhận</h4>
                                         <FormGroup>
-                                            <Label for="receiverTransfer">Loại ngân hàng</Label>
-                                            <br/>
-                                            <ButtonGroup className="mb-2">
-                                                <Button color="primary" onClick={() => this.setRSelected(1)}
-                                                        active={this.state.interbankID === 1}>Nội bộ</Button>
-                                                <Button color="primary" onClick={() => this.setRSelected(2)}
-                                                        active={this.state.interbankID === 2}>Liên ngân hàng</Button>
-                                            </ButtonGroup>
-                                        </FormGroup>
-                                        <FormGroup>
                                             <Label for="receiverTransfer">Chọn ngân hàng</Label>
-                                            <Input type="select" name="select" id="sourceTransfer">
-                                                <option>Ngân hàng 1</option>
-                                                <option>Ngân hàng 2</option>
-                                            </Input>
+                                            <div>
+                                                <ButtonGroup className="mb-2 ">
+                                                    <Button color="primary" onClick={this.changeInterbank}
+                                                            active={isInterbank === false}>Nội bộ</Button>
+                                                    <Button color="primary" onClick={this.changeInterbank}
+                                                            active={isInterbank === true}>Liên ngân hàng</Button>
+                                                </ButtonGroup>
+                                            </div>
+                                            <Collapse isOpen={isInterbank}>
+                                                <Input type="select"
+                                                       value={receiverBank}
+                                                       onChange={this.onChange}
+                                                       name="receiverBank" id="receiverBank">
+                                                    {listReceiverBank.map((item, index) => {
+                                                        return <option key={index}
+                                                                       value={item.value}>{item.name}</option>
+                                                    })}
+                                                </Input>
+
+                                            </Collapse>
                                         </FormGroup>
                                         <FormGroup>
-                                            <Label for="receiverTransfer">Thông tin
-                                                người nhận</Label>
-                                            <Input type="select" name="select" id="sourceTransfer">
-                                                <option>-- Chọn --
-                                                </option>
-                                                <option>Tài khoản Trần Văn A
-                                                </option>
-                                                <option>Tài khoản Nguyễn Văn B
-                                                </option>
-                                            </Input>
+                                            <Label for="receiverSavedList">Thông tin người
+                                                nhận {this.showFieldRequire()}</Label>
+                                            <div>
+                                                <ButtonGroup className="mb-2 ">
+                                                    <Button color="primary" onClick={this.changeSavedList}
+                                                            active={isSavedList === false}>Nhập thông tin mới</Button>
+                                                    <Button color="primary" onClick={this.changeSavedList}
+                                                            active={isSavedList === true}>Danh sách đã lưu</Button>
+                                                </ButtonGroup>
+                                            </div>
+                                            <Collapse isOpen={isSavedList}>
+                                                <Input type="select"
+                                                       value={receiverSavedList}
+                                                       onChange={this.onChange}
+                                                       name="receiverSavedList" id="receiverSavedList">
+                                                    {listReceiverSaved.map((item, index) => {
+                                                        return <option key={index}
+                                                                       value={item.value}>{item.name}</option>
+                                                    })}
+                                                </Input>
+                                            </Collapse>
                                         </FormGroup>
                                         <FormGroup>
                                             <InputGroup className="mb-2">
                                                 <InputGroupAddon addonType="prepend">
                                                     <InputGroupText>Số tài khoản</InputGroupText>
                                                 </InputGroupAddon>
-                                                <Input type="text" name="receiverTransfer" id="receiverTransfer"
+                                                <Input type="text" name="receiverId" id="receiverId"
+                                                       onChange={this.onChange}
+                                                       value={receiverId}
                                                        placeholder="2343-5928-3472"/>
                                             </InputGroup>
                                             <InputGroup>
                                                 <InputGroupAddon addonType="prepend">
                                                     <InputGroupText>Họ và tên</InputGroupText>
                                                 </InputGroupAddon>
-                                                <Input type="text" name="fullNameTransfer" id="fullNameTransfer"
+                                                <Input type="text" name="receiverName" id="receiverName"
+                                                       onChange={this.onChange}
+                                                       value={receiverName}
                                                        placeholder="Nguyễn Văn A"/>
                                             </InputGroup>
                                         </FormGroup>
-                                        <h4 for="moneyTransfer">3. Thông tin cần chuyển tiền</h4>
+                                        <h4>3. Thông tin cần chuyển tiền</h4>
                                         <FormGroup>
-                                            <Label for="msgTransfer">Số tiền</Label>
-                                            <Input type="number" name="money" id="moneyTransfer" required/>
+                                            <Label for="moneyTransfer">Số tiền {this.showFieldRequire()}</Label>
+                                            <Input type="number" name="moneyTransfer" id="moneyTransfer"
+                                                   onChange={this.onChange}
+                                                   value={moneyTransfer}
+                                                   required/>
                                         </FormGroup>
                                         <FormGroup>
-                                            <Label for="msgTransfer">Nội dung chuyển tiền</Label>
-                                            <Input type="textarea" name="text" id="msgTransfer"/>
+                                            <Label for="messageTransfer">Nội dung chuyển tiền</Label>
+                                            <Input type="textarea" name="messageTransfer"
+                                                   value={messageTransfer}
+                                                   onChange={this.onChange}
+                                                   id="messageTransfer"/>
                                         </FormGroup>
-                                        <FormGroup tag="fieldset">
-                                            <FormGroup check>
-                                                <Label check>
-                                                    <Input type="radio" name="radio1"/>{' '}
-                                                    Người nhận trả phí
-                                                </Label>
-                                            </FormGroup>
-                                            <FormGroup check>
-                                                <Label check>
-                                                    <Input type="radio" name="radio1"/>{' '}
-                                                    Người gửi trả phí
-                                                </Label>
-                                            </FormGroup>
-                                        </FormGroup>
-                                        <div>
-                                            <Button id="btnTransfer" type="submit"
-                                                    className="btn btn-lg btn-info btn-block">
-                                                <span id="lblTransfer">Chuyển tiền</span>
-                                            </Button>
-                                        </div>
-                                    </Form>
-                                </div>
-                            </Card>
-                        </div>
-                        <div className="col-12 col-sm-8 col-md-6 col-lg-5 mx-auto">
-                            <Card id="interBank">
-                                <div className="card-body">
-                                    <CardTitle>
-                                        <h3 className="text-center">Liên ngân hàng</h3>
-                                    </CardTitle>
-                                    <hr/>
-                                    <Form method="post" noValidate="novalidate"
-                                          className="needs-validation">
-                                        <h4>1. Người gửi</h4>
                                         <FormGroup>
-                                            <Label for="receiverTransfer">Thông tin người gửi</Label>
-                                            <Input type="select" name="select" id="sourceTransfer">
-                                                <option>Tài khoản thanh toán 1
-                                                </option>
-                                                <option>Tài khoản thanh toán 2
-                                                </option>
-                                                <option>Tài khoản tiết kiệm
-                                                </option>
-                                            </Input>
-                                        </FormGroup>
-                                        <h4>2. Người nhận</h4>
-                                        <FormGroup>
-                                            <Label for="receiverTransfer">Loại ngân hàng</Label>
-                                            <br/>
-                                            <ButtonGroup className="mb-2">
-                                                <Button color="primary" onClick={() => this.setRSelected(1)}
-                                                        active={this.state.interbankID === 1}>Nội bộ</Button>
-                                                <Button color="primary" onClick={() => this.setRSelected(2)}
-                                                        active={this.state.interbankID === 2}>Liên ngân hàng</Button>
+                                            <Label>Hình thức trả phí</Label>
+                                            <ButtonGroup className="mb-2 ">
+                                                <Button color="primary" onClick={this.changeTypeTransfer}
+                                                        active={isSenderPay === true}>Người nhận trả phí</Button>
+                                                <Button color="primary" onClick={this.changeTypeTransfer}
+                                                        active={isSenderPay === false}>Người gửi trả phí</Button>
                                             </ButtonGroup>
                                         </FormGroup>
-                                        <FormGroup>
-                                            <Label for="receiverTransfer">Chọn ngân hàng</Label>
-                                            <Input type="select" name="select" id="sourceTransfer">
-                                                <option>Ngân hàng 1</option>
-                                                <option>Ngân hàng 2</option>
-                                            </Input>
-                                        </FormGroup>
-                                        <FormGroup>
-                                            <Label for="receiverTransfer">Thông tin
-                                                người nhận</Label>
-                                            <Input type="select" name="select" id="sourceTransfer">
-                                                <option>-- Chọn --
-                                                </option>
-                                                <option>Tài khoản Trần Văn A
-                                                </option>
-                                                <option>Tài khoản Nguyễn Văn B
-                                                </option>
-                                            </Input>
-                                        </FormGroup>
-                                        <FormGroup>
-                                            <InputGroup className="mb-2">
-                                                <InputGroupAddon addonType="prepend">
-                                                    <InputGroupText>Số tài khoản</InputGroupText>
-                                                </InputGroupAddon>
-                                                <Input type="text" name="receiverTransfer" id="receiverTransfer"
-                                                       placeholder="2343-5928-3472"/>
-                                            </InputGroup>
-                                            <InputGroup>
-                                                <InputGroupAddon addonType="prepend">
-                                                    <InputGroupText>Họ và tên</InputGroupText>
-                                                </InputGroupAddon>
-                                                <Input type="text" name="fullNameTransfer" id="fullNameTransfer"
-                                                       placeholder="Nguyễn Văn A"/>
-                                            </InputGroup>
-                                        </FormGroup>
-                                        <h4 htmlFor="moneyTransfer">3. Thông tin cần chuyển tiền</h4>
-                                        <FormGroup>
-                                            <Label for="msgTransfer">Số tiền</Label>
-                                            <Input type="number" name="money" id="moneyTransfer" required/>
-                                        </FormGroup>
-                                        <FormGroup>
-                                            <Label for="msgTransfer">Nội dung chuyển tiền</Label>
-                                            <Input type="textarea" name="text" id="msgTransfer"/>
-                                        </FormGroup>
-                                        <FormGroup tag="fieldset">
-                                            <FormGroup check>
-                                                <Label check>
-                                                    <Input type="radio" name="radio1"/>{' '}
-                                                    Người nhận trả phí
-                                                </Label>
-                                            </FormGroup>
-                                            <FormGroup check>
-                                                <Label check>
-                                                    <Input type="radio" name="radio1"/>{' '}
-                                                    Người gửi trả phí
-                                                </Label>
-                                            </FormGroup>
-                                        </FormGroup>
                                         <div>
-                                            <Button id="btnTransfer" type="submit"
+                                            <Button id="btnTransferLocal" type="submit"
                                                     className="btn btn-lg btn-info btn-block">
-                                                <span id="lblTransfer">Chuyển tiền</span>
+                                                Chuyển tiền
                                             </Button>
                                         </div>
                                     </Form>
                                 </div>
                             </Card>
-                        </div>
+                        </Col>
                     </Row>
                 </div>
             </div>
         );
+    }
+
+
+    showFieldRequire() {
+        return <Badge color="danger" pill>Yêu cầu</Badge>
     }
 }
 
