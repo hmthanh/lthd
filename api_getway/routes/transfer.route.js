@@ -91,7 +91,7 @@ router.post('/:id', async (req, res) => {
       url: UrlApi,
       data: requestBody
     })
-    .then (respose => {
+    .then ( async respose => {
       if(respose.data.errorCode == 0) {
         let retsult = await transferModel.done(req.body.transId)
         if(retsult) {
