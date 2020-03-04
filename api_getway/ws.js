@@ -25,7 +25,7 @@ if (!socketServer) {
 
 var broadcastAll = msg => {
     for (var c of socketServer.clients) {
-    	console.log(c.readyState);
+        console.log(c.readyState);
         if (c.readyState === WebSocket.OPEN) {
             c.send(msg);
         }

@@ -3,7 +3,7 @@ const morgan = require('morgan')
 const createError = require('http-errors')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
-const { SECRET_KEY_TOKEN } = require('./config')
+const {SECRET_KEY_TOKEN} = require('./config')
 require('express-async-errors')
 
 //my packet
@@ -14,7 +14,6 @@ const app = express();
 app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
-
 
 
 // SSE
@@ -65,16 +64,16 @@ require('./ws')
 app.use('/api/notify', require('./controller/notification.controller'))
 
 app.use((req, res, next) => {
-  throw createError(404, 'Resource not found.');
+    throw createError(404, 'Resource not found.');
 })
 
 app.use(function (err, req, res, next) {
-  if (typeof err.status === 'undefined' || err.status === 500) {
-    console.error(err.stack);
-    res.status(500).send('View error log on console.');
-  } else {
-    res.status(err.status).send(err);
-  }
+    if (typeof err.status === 'undefined' || err.status === 500) {
+        console.error(err.stack);
+        res.status(500).send('View error log on console.');
+    } else {
+        res.status(err.status).send(err);
+    }
 })
 
 // mailController.sentMail()
