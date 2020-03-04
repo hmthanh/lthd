@@ -7,13 +7,14 @@ import AdministratorNav from '../components/Nav/AdministratorNav';
 import CustomerNav from '../components/Nav/CustomerNav';
 import EmployeeNav from '../components/Nav/EmployeeNav';
 
-const InfoUser = (props) => {
+const InfoUser = ({authenticated, permistion}) => {
+
+  console.log('InfoUser render Header', authenticated, permistion)
 
   const [isOpen, setIsOpen] = useState(false);
-  const toggle = () => setIsOpen(!isOpen);
-  const permistion = 1;
+  const toggle = () => setIsOpen(!isOpen)
 
-  if (!props.authenticated) {
+  if (!authenticated) {
     return (
       <div>
         <Button color="info" outline className="mr-2">
@@ -25,16 +26,16 @@ const InfoUser = (props) => {
       </div>
     )
   } else {
-    if (permistion === 1) {
+    if (permistion === '3') {
       return (
         <div>
           <NavbarToggler onClick={toggle}></NavbarToggler>
           <Collapse isOpen={isOpen} navbar>
-            <CustomerNav logout={props.logout}></CustomerNav>
+            <CustomerNav logout={logout}></CustomerNav>
           </Collapse>
         </div>
       )
-    } else if (permistion === 2) {
+    } else if (permistion === '2') {
       return (
         <div>
           <NavbarToggler onClick={toggle}></NavbarToggler>
@@ -50,24 +51,15 @@ const InfoUser = (props) => {
       )
     }
   }
-};
+}
 
 class Header extends Component {
   constructor(props) {
     super(props);
     this.logout = this.logout.bind(this);
     this.state = {
-      isOpen: false,
-      authenticated: false
+      isOpen: false
     };
-    // let uid = localStorage.getItem('uid');
-    // if (uid) {
-    //   this.props.relogin(uid)
-    //     .then(() => {
-    //       if (this.props.Login.data.authenticated) {
-    //         this.setState({ authenticated: true })
-    //       }
-    //     })
     // }
   }
 
@@ -77,20 +69,25 @@ class Header extends Component {
     // this.props.history.push("/")
   }
 
+  componentDidMount() {
+    
+  }
+
   componentWillReceiveProps(props) {
-    if (props.Login.data.authenticated) {
-      this.setState({ authenticated: true })
-    } else {
-      this.setState({ authenticated: false })
-    }
+    
+    console.log('componentWillReceiveProps Header', props.Login)
   }
 
   render() {
+    const uid = localStorage.getItem('uid')
+    const role = localStorage.getItem('role')
+    const isAuthen = !uid
+    console.log('render Header', uid, role, isAuthen)
     return (
       <div>
         <Navbar color="light" light expand="md">
           <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
-          <InfoUser authenticated={this.state.authenticated} user={this.props.Login.data.user}
+          <InfoUser authenticated={!isAuthen} permistion={role}
             logout={this.logout}
             infoUser={this.infoUser} />
         </Navbar>
@@ -110,4 +107,4 @@ const mapStateToProps = (state) => {
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(Header)

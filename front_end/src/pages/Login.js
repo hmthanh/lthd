@@ -26,6 +26,7 @@ class LoginPage extends Component {
         .then(() => {
           if (this.props.Login.data.authenticated) {
             localStorage.setItem('uid', this.props.Login.data.user.id)
+            localStorage.setItem('role', this.props.Login.data.user.role)
             localStorage.setItem('accessToken', this.props.Login.data.accessToken)
             localStorage.setItem('refreshToken', this.props.Login.data.refreshToken)
             this.props.history.push("/")

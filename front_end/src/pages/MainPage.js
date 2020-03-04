@@ -3,6 +3,8 @@ import { Route, Switch } from 'react-router-dom'
 import { Container, Spinner } from 'reactstrap'
 import Header from '../layout/Header'
 import Websocket from 'react-websocket'
+import { connect } from 'react-redux'
+import { logout, relogin } from '../redux/creators/loginCreator'
 
 const ListAccountPage = lazy(() => import('./ListAccountPage'))
 const LoginPage = lazy(() => import('./Login'))
@@ -32,6 +34,23 @@ class Main extends Component {
     }
   }
 
+
+
+  logout() {
+    localStorage.clear()
+    this.props.logout()
+    // this.props.history.push("/")
+  }
+
+  componentWillReceiveProps(props) {
+    
+    console.log('componentWillReceiveProps Main', props.Login)
+  }
+
+  componentDidMount() {
+    console.log('componentDidMount Main', this.props)
+  }
+
   handleOpen() {
     // alert("connected:)");
     console.log('connected:)')
@@ -53,7 +72,7 @@ class Main extends Component {
         <Websocket url='ws://localhost:6500/api/notify'
           onMessage={this.handleData.bind(this)} onOpen={this.handleOpen.bind(this)} onClose={this.handleClose.bind(this)} />
         <Container className="themed-container">
-          <Header />
+          <Header relogin={this.props.relogin} logout={this.props.logout}/>
           <main className="main">
             <Suspense fallback={<div>
               <Spinner type="grow" color="primary" />
@@ -85,5 +104,18 @@ class Main extends Component {
     )
   }
 }
+
+const mapDispatchToProps = dispatch => ({
+  relogin: (uid) => dispatch(relogin(uid)),
+  logout: () => dispatch(logout()),
+});
+
+const mapStateToProps = (state) => {
+  return {
+    Login: state.Login,
+  }
+};
+
+// export default connect(mapStateToProps, mapDispatchToProps)(Main)
 
 export default Main;

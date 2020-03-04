@@ -12,6 +12,7 @@ class HistoryPage extends Component {
 
   componentDidMount() {
     const uid = localStorage.getItem('uid')
+    console.log('componentDidMount ' + uid)
     this.props.getAll(uid)
   }
 
@@ -31,25 +32,31 @@ class HistoryPage extends Component {
                         <th>#</th>
                         <th>Ngày giao dịch</th>
                         <th>Loại giao dịch</th>
-                        <th>Người gửi</th>
-                        <th>Người nhận</th>
+                        <th>Tài khoản giao dịch</th>
+                        <th>Tài khoản thụ hưởng</th>
                         <th>Số tiền</th>
                         <th>Số dư</th>
                       </tr>
                     </thead>
                     <tbody>
                       {
-                        this.props.HistoryInfo.data.val &&
-                        // console.log(this.props.HistoryInfo.data.val)
-                        this.props.HistoryInfo.data.val.map(item => (
+                        this.props.HistoryInfo.data.item &&
+                        this.props.HistoryInfo.data.item.map(item => (
                           <tr key={item.id}>
                             <th scope="row">{item.id}</th>
-                            <td>{item.day.toString()}</td>
-                            <td>{item.type}</td>
-                            <td>{item.send}</td>
-                            <td>{item.recieve}</td>
-                            <td>{item.money}</td>
-                            <td>{item.excess}</td>
+                            <td>{ new Intl.DateTimeFormat('vi-US', {
+                                    hour: 'numeric',
+                                    minute: 'numeric',
+                                    year: 'numeric',
+                                    month: 'numeric',
+                                    day: '2-digit',
+
+                                }).format(new Date(item.timestamp))}</td>
+                            <td>{item.type === 1 ? 'Cộng tiền' : 'Trừ tiền'}</td>
+                            <td>{item.from_account}</td>
+                            <td>{item.to_account}</td>
+                            <td>{item.amount}</td>
+                            <td>{item.surplus}</td>
                           </tr>
                         ))
                       }
