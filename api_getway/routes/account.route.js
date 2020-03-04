@@ -63,6 +63,7 @@ router.post('/', async (req, res) => {
 
 router.post('/id', async (req, res) => {  
     let info = await accountModel.getInfoBanking(req.body.id)
+    let account = await accountModel.getInfoAccount(req.body.id)
     let errorCode = 400
     let ret = {
       msg: 'invalid parameters',
@@ -78,7 +79,8 @@ router.post('/id', async (req, res) => {
         ret = {
           msg: 'successfully',
           saving_money,
-          main
+          main,
+          account: account[0]
         }
     }
     res.status(errorCode).json(ret)

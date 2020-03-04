@@ -4,32 +4,9 @@ import {UrlApi} from '../../shares/baseUrl'
 
 export const getAllHistory = (id) => (dispatch) => {
     dispatch(loadingHistory());
-    return fetchFrom(UrlApi + '/api/accounts/id', 'POST', {id})
+    return fetchFrom(UrlApi + '/api/history', 'POST', {uid: id})
         .then(response => {
-            response = {
-                val: [
-                    {
-                        id: 1,
-                        day: new Date(),
-                        type: 'Nội bộ',
-                        send: 'thanh',
-                        recieve: 'tam',
-                        money: 120000,
-                        excess: 100000
-                    },
-                    {
-                        id: 2,
-                        day: new Date(),
-                        type: 'ngoaij bang',
-                        send: 'sdf',
-                        recieve: 'tam',
-                        money: 990000,
-                        excess: 1200000
-                    },
-                    {id: 3, day: new Date(), type: 'Nội bộ', send: 'sdas', recieve: 'asf', money: 10000, excess: 300000}
-                ]
-            };
-            // console.log(response)
+            console.log(response)
             dispatch(successHistory(response));
         })
         .catch(err => {

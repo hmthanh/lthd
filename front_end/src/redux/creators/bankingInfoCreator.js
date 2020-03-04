@@ -6,7 +6,7 @@ export const getBankingInfo = (id) => (dispatch) => {
     dispatch(BankingLoading());
     return fetchFrom(UrlApi + '/api/accounts/id', 'POST', {id})
         .then(response => {
-            // console.log(response)
+            console.log(response)
             dispatch(BankingSuccess(response));
         })
         .catch(err => {
