@@ -37,6 +37,7 @@ module.exports = {
                 throw error
               })
             else {
+              entity.surplus = surplus
               connection.query(`INSERT INTO transaction_tranfer SET ?`, entity, (error, results, fields) => {
                 if (error)
                   return connection.rollback(function() {
@@ -81,6 +82,7 @@ module.exports = {
                   throw error
                 })
               else {
+                entity.surplus = surplus
                 connection.query(`INSERT INTO transaction_tranfer SET ?`, entity, (error, results, fields) => {
                   if (error)
                     return connection.rollback(function() {
@@ -126,7 +128,7 @@ module.exports = {
                   throw error
                 })
               else {
-                connection.query(`UPDATE transaction_tranfer SET state=1 WHERE ?`, [{trans_id : tranId}], (error, results, fields) => {
+                connection.query(`UPDATE transaction_tranfer SET state=1 WHERE ?`, [{trans_id : tranId, surplus: surplus}], (error, results, fields) => {
                   if (error)
                     return connection.rollback(function() {
                       throw error
