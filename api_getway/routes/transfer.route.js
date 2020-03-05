@@ -96,7 +96,7 @@ router.post('/:id', async (req, res) => {
         let retsult = await transferModel.done(req.body.transId)
         if(retsult) {
           const err = await minusTransfer(req.body.transId, transaction.amount, transaction.from_account)
-          if (err = 0) {
+          if (err == 0) {
             res.status(200).json({
               msg: 'successfully',
               errorCode: 0, 
