@@ -196,6 +196,7 @@ class debtPage extends Component {
 
   componentDidMount() {
     let accessToken = localStorage.getItem('accessToken')
+    console.log('debtPage ' + accessToken)
     let uid = localStorage.getItem('uid');
     this.props.getAll(uid, accessToken);
   }
@@ -203,24 +204,29 @@ class debtPage extends Component {
   handleCreate(data) {
     const uid = localStorage.getItem('uid')
     console.log('localStorage.getItem("uid")', uid)
+    let accessToken = localStorage.getItem('accessToken')
+
+    console.log('handleCreate.localStorage.getItem("accessToken")', accessToken)
     data = { ...data, ownerId: uid }
-    this.props.Create(data).then(() => {
-      this.props.getAll(uid);
+    this.props.Create(data, accessToken).then(() => {
+      this.props.getAll(uid, accessToken);
     })
   }
 
   handleEdit(data) {
     const uid = localStorage.getItem('uid')
     data = { ...data, ownerId: uid }
-    this.props.Edit(data).then(() => {
-      this.props.getAll(uid);
+    let accessToken = localStorage.getItem('accessToken')
+    this.props.Edit(data, accessToken).then(() => {
+      this.props.getAll(uid, accessToken);
     })
   }
 
   handleDelete(id) {
     const uid = localStorage.getItem('uid')
-    this.props.Delete(id).then(() => {
-      this.props.getAll(uid);
+    let accessToken = localStorage.getItem('accessToken')
+    this.props.Delete(id, accessToken).then(() => {
+      this.props.getAll(uid, accessToken);
     })
   }
 
@@ -282,10 +288,10 @@ class debtPage extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  getAll: (id) => dispatch(getAllDebt(id)),
-  Create: (item) => dispatch(Create(item)),
-  Edit: (item) => dispatch(Edit(item)),
-  Delete: (id) => dispatch(Delete(id))
+  getAll: (id, accessToken) => dispatch(getAllDebt(id, accessToken)),
+  Create: (item, accessToken) => dispatch(Create(item, accessToken)),
+  Edit: (item, accessToken) => dispatch(Edit(item, accessToken)),
+  Delete: (id, accessToken) => dispatch(Delete(id, accessToken))
 });
 
 const mapStateToProps = (state) => {

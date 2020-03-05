@@ -170,30 +170,35 @@ class SettingReceiver extends Component {
   }
 
   componentDidMount() {
-    this.props.Fetch(localStorage.getItem('uid'));
+    const accessToken = localStorage.getItem('accessToken')
+    this.props.Fetch(localStorage.getItem('uid'), accessToken);
   }
 
   handleCreate(data) {
     const uid = localStorage.getItem('uid')
     console.log('localStorage.getItem("uid")', uid)
+    const accessToken = localStorage.getItem('accessToken')
+    console.log('debtPage ' + accessToken)
     data = { ...data, ownerId: uid }
-    this.props.Create(data).then(() => {
-      this.props.Fetch(uid);
+    this.props.Create(data, accessToken).then(() => {
+      this.props.Fetch(uid, accessToken);
     })
   }
 
   handleEdit(data) {
     const uid = localStorage.getItem('uid')
+    const accessToken = localStorage.getItem('accessToken')
     data = { ...data, ownerId: uid }
-    this.props.Edit(data).then(() => {
-      this.props.Fetch(uid);
+    this.props.Edit(data, accessToken).then(() => {
+      this.props.Fetch(uid, accessToken);
     })
   }
 
   handleDelete(id) {
+    const accessToken = localStorage.getItem('accessToken')
     const uid = localStorage.getItem('uid')
-    this.props.Delete(id).then(() => {
-      this.props.Fetch(uid);
+    this.props.Delete(id, accessToken).then(() => {
+      this.props.Fetch(uid, accessToken);
     })
   }
 
@@ -249,10 +254,10 @@ class SettingReceiver extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  Create: (item) => dispatch(Create(item)),
-  Edit: (item) => dispatch(Edit(item)),
-  Delete: (id) => dispatch(Delete(id)),
-  Fetch: (id) => dispatch(Fetch(id))
+  Create: (item, accessToken) => dispatch(Create(item, accessToken)),
+  Edit: (item, accessToken) => dispatch(Edit(item, accessToken)),
+  Delete: (id, accessToken) => dispatch(Delete(id, accessToken)),
+  Fetch: (id, accessToken) => dispatch(Fetch(id, accessToken))
 })
 
 const mapStateToProps = (state) => {

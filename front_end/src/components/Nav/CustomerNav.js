@@ -1,10 +1,14 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem, NavLink, UncontrolledDropdown } from 'reactstrap'
 import {
 	Card, CardImg, Badge
 } from 'reactstrap';
 
 class CustomerNav extends Component {
+
+
+
 	render() {
 		return (
 			<Nav className="mr-auto" navbar>
@@ -52,11 +56,10 @@ class CustomerNav extends Component {
 				<NavItem>
 					<NavLink href="/remind">
 						<Card style={{ position: "relative" }}>
-						<Badge style={{ position: "absolute", top: '0px', right: '0px', fontSize: '8px' }} color="secondary">0
+						<Badge style={{ position: "absolute", top: '0px', right: '0px', fontSize: '8px' }} color="secondary">{this.props.notifyCount}
 						</Badge>
 						<CardImg src="/image/notifi.png" style={{ width: '20px' }} />
 						</Card>
-						
 					</NavLink>
 				</NavItem>
 			</Nav>
@@ -65,3 +68,14 @@ class CustomerNav extends Component {
 }
 
 export default CustomerNav;
+
+// const mapDispatchToProps = dispatch => ({
+ 
+// });
+
+// const mapStateToProps = (state) => {
+//   return {
+//   }
+// };
+
+// export default connect(mapStateToProps, mapDispatchToProps)(CustomerNav)

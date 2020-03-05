@@ -11,8 +11,10 @@ class UserInfo extends Component {
     console.log('componentDidMount', this.props)
   //   if (this.props.Login.data.authenticated) {
     const uid = localStorage.getItem('uid')
-    this.props.getBankingInfo(uid)
-    // }
+    if (uid)
+      this.props.getBankingInfo(uid)
+    else
+      this.props.history.push("/login")
   }
 
   render() {

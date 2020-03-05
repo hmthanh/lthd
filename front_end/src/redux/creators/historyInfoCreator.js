@@ -2,9 +2,9 @@ import {HISTORY_FAILED, HISTORY_LOADING, HISTORY_SUCCESS} from '../actions/actio
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'
 
-export const getAllHistory = (id) => (dispatch) => {
+export const getAllHistory = (id, accessToken) => (dispatch) => {
     dispatch(loadingHistory());
-    return fetchFrom(UrlApi + '/api/history', 'POST', {uid: id})
+    return fetchFrom(UrlApi + '/api/history', 'POST', {uid: id}, accessToken)
         .then(response => {
             console.log(response)
             dispatch(successHistory(response));
