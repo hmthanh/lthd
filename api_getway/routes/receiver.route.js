@@ -31,6 +31,12 @@ router.post('/', async (req, res) => {
   res.status(errorCode).json(ret)
 })
 
+router.post('/:id', async (req, res) => { 
+  let rows = await receiverModel.get(req.params.id)
+  // console.log(rows)
+  res.status(200).json(rows)
+})
+
 
 router.patch('/', async (req, res) => {  
   let entity = {
@@ -61,10 +67,6 @@ router.delete('/', async (req, res) => {
   res.status(errorCode).json(ret)
 })
 
-router.post('/:id', async (req, res) => { 
-  let rows = await receiverModel.get(req.params.id)
-  console.log(rows)
-  res.status(200).json(rows)
-})
+
 
 module.exports = router

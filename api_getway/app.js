@@ -31,35 +31,36 @@ app.use('/openapi/plus', require('./routes/plus.route'))
 app.use('/openapi/minus', require('./routes/minus.route'))
 
 
-// function verifyAccessToken(req, res, next) {
-//   // console.log(req.headers);
-//   const token = req.headers['x-access-token'];
-//   if (token) {
-//     jwt.verify(token, SECRET_KEY_TOKEN , function (err, payload) {
-//       if (err) throw createError(403, err);
-//       console.log(payload);
-//       next();
-//     });
-//   } else {
-//     throw createError(401, 'NO_TOKEN');
-//   }
-// }
+function verifyAccessToken(req, res, next) {
+  console.log(req.headers['x-access-token'])
+  const token = req.headers['x-access-token'];
+  if (token) {
+    jwt.verify(token, SECRET_KEY_TOKEN , function (err, payload) {
+      if (err) throw createError(403, err);
+      console.log(payload);
+      next();
+    });
+  } else {
+    throw createError(401, 'NO_TOKEN');
+  }
+}
 
+app.use('/api/refresh', require('./routes/refresh.route'))
 
 app.use('/api/receiver', require('./routes/receiver.route'))
 
 // don't remote implement late
 // app.use('/api/reminscent', require('./routes/reminscent.route'))
 
-app.use('/api/transfer', require('./routes/transfer.route'))
+app.use('/api/transfer', verifyAccessToken, require('./routes/transfer.route'))
 
-app.use('/api/associate', require('./routes/associate.route'))
+app.use('/api/associate', verifyAccessToken, require('./routes/associate.route'))
 
-app.use('/api/debt', require('./routes/debt.route'))
+app.use('/api/debt', verifyAccessToken, require('./routes/debt.route'))
 
 app.use('/api/remind', require('./routes/remind.route'))
 
-app.use('/api/history', require('./routes/history.route'))
+app.use('/api/history', verifyAccessToken, require('./routes/history.route'))
 
 // WS
 require('./ws')

@@ -2,12 +2,13 @@ import React, { Component, useState } from 'react'
 import { connect } from 'react-redux'
 import { Button, Collapse, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap'
 import { Link } from 'react-router-dom'
-import { logout, relogin } from '../redux/creators/loginCreator';
-import AdministratorNav from '../components/Nav/AdministratorNav';
-import CustomerNav from '../components/Nav/CustomerNav';
-import EmployeeNav from '../components/Nav/EmployeeNav';
+import { logout, relogin } from '../redux/creators/loginCreator'
+import AdministratorNav from '../components/Nav/AdministratorNav'
+import CustomerNav from '../components/Nav/CustomerNav'
+import EmployeeNav from '../components/Nav/EmployeeNav'
+import { getAllRemind } from '../redux/creators/remindCreator'
 
-const InfoUser = ({authenticated, permistion}) => {
+const InfoUser = ({authenticated, permistion, notifyCount}) => {
 
   console.log('InfoUser render Header', authenticated, permistion)
 
@@ -31,7 +32,7 @@ const InfoUser = ({authenticated, permistion}) => {
         <div>
           <NavbarToggler onClick={toggle}></NavbarToggler>
           <Collapse isOpen={isOpen} navbar>
-            <CustomerNav logout={logout}></CustomerNav>
+            <CustomerNav logout={logout} notifyCount={notifyCount}></CustomerNav>
           </Collapse>
         </div>
       )
@@ -70,7 +71,8 @@ class Header extends Component {
   }
 
   componentDidMount() {
-    
+    const uid = localStorage.getItem('uid')
+    this.props.getAllRemind(uid)
   }
 
   componentWillReceiveProps(props) {
@@ -89,7 +91,7 @@ class Header extends Component {
           <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
           <InfoUser authenticated={!isAuthen} permistion={role}
             logout={this.logout}
-            infoUser={this.infoUser} />
+            infoUser={this.infoUser} notifyCount={this.props.RemindInfo.data.num}/>
         </Navbar>
       </div>
     );
@@ -99,11 +101,13 @@ class Header extends Component {
 const mapDispatchToProps = dispatch => ({
   relogin: (uid) => dispatch(relogin(uid)),
   logout: (uid) => dispatch(logout()),
+  getAllRemind: (account_num) => dispatch(getAllRemind(account_num))
 });
 
 const mapStateToProps = (state) => {
   return {
     Login: state.Login,
+    RemindInfo: state.RemindInfo,
   }
 };
 
