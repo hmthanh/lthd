@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import {
     Badge,
     Button,
@@ -14,10 +14,39 @@ import {
     InputGroupAddon,
     InputGroupText,
     Label,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
     Row
 } from "reactstrap";
 import {getInterbankAssociate, transfer} from "../../redux/creators/transferCreator";
 import {connect} from "react-redux";
+
+const InvalidTransferModel = (props) => {
+    const {
+        className,
+        modalState
+    } = props;
+
+    const [modal, setModal] = useState(modalState);
+    const toggle = () => setModal(!modal);
+
+    return (
+        <div>
+            <Modal isOpen={modal} toggle={toggle} className={className}>
+                <ModalHeader toggle={toggle}>Chuyển tiền không thành công</ModalHeader>
+                <ModalBody>
+                    Số tiền của bạn không đủ !
+                    Vui lòng kiểm tra lại tài khoản
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="success" onClick={toggle}>Đồng ý</Button>
+                </ModalFooter>
+            </Modal>
+        </div>
+    );
+};
 
 class Transfer extends Component {
     constructor(props) {
@@ -45,9 +74,9 @@ class Transfer extends Component {
             receiverName: '',
             moneyTransfer: 0,
             messageTransfer: '',
-            isSenderPay: true
+            isSenderPay: true,
+            isInvalidTransfer: false
         };
-
     }
 
 
@@ -126,7 +155,8 @@ class Transfer extends Component {
             receiverName,
             moneyTransfer,
             messageTransfer,
-            isSenderPay
+            isSenderPay,
+            isInvalidTransfer
         } = this.state;
 
         return (
@@ -255,6 +285,7 @@ class Transfer extends Component {
                                             </Button>
                                         </div>
                                     </Form>
+                                    <InvalidTransferModel modalState={isInvalidTransfer}></InvalidTransferModel>
                                 </div>
                             </Card>
                         </Col>
@@ -272,7 +303,7 @@ class Transfer extends Component {
 
 const mapDispatchToProps = dispatch => ({
     getInterbankAssociate: (accessToken) => dispatch(getInterbankAssociate(accessToken)),
-    transfer: (data) => dispatch(transfer(data))
+    transfer: (data, accessToken) => dispatch(transfer(data, accessToken))
 });
 
 const mapStateToProps = (state) => {

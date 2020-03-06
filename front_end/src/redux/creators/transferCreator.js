@@ -20,6 +20,7 @@ export const transfer = (data, accessToken) => (dispatch) => {
             if (response.errorCode === 0) {
                 dispatch(transferSuccess(response));
             } else {
+
                 dispatch(transferInvalid(response));
             }
         })
