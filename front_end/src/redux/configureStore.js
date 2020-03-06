@@ -1,7 +1,6 @@
 import {applyMiddleware, combineReducers, createStore} from 'redux'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
-
 import {Login} from './actions/login'
 import {Register} from './actions/register'
 import {ChangePassword} from './actions/changepassword'
@@ -12,7 +11,7 @@ import {GetDebtInfo} from './actions/getDebt'
 import {ReminscentAcction} from './actions/reminscentAcc'
 import {GetAllReceiver} from './actions/getAllReceiver'
 import {GetRemindInfo} from './actions/getRemind'
-
+import {InterbankAssociate, TransferInfo} from './actions/transfer'
 
 export const ConfigureStore = () => {
     const store = createStore(
@@ -26,8 +25,9 @@ export const ConfigureStore = () => {
             AccountInfo: GetAllAccount,
             Reminscent: ReminscentAcction,
             ReceiverInfo: GetAllReceiver,
-            RemindInfo: GetRemindInfo
-            
+            RemindInfo: GetRemindInfo,
+            InterbankAssociate: InterbankAssociate,
+            TransferInfo: TransferInfo
         }),
         applyMiddleware(logger),
         applyMiddleware(thunk),

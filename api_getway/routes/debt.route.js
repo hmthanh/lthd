@@ -4,7 +4,7 @@ const router = express.Router()
 const { broadcastAll } = require('../ws')
 
 // post để lấy tất cả các record trong db. do front end dùng post không dùng get
-router.post('/:id', async (req, res) => {  
+router.post('/:id', async (req, res) => {
   let rows = await debtModel.get(req.params.id)
   res.status(200).json({error: 0, item: rows})
 
@@ -12,7 +12,7 @@ router.post('/:id', async (req, res) => {
 })
 
 // post để tạo 1 record mới
-router.post('/', async (req, res) => {  
+router.post('/', async (req, res) => {
   // console.log(req.body)
   let entity = {
     account_num: req.body.accountNum,
@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
   let rows = await debtModel.add(entity)
   if (rows) item = entity
   console.log('await', rows)
-  errorCode = 200 
+  errorCode = 200
   msg = 'successfully'
 
   ret = {
@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
 
 // update 1 record
 
-router.patch('/', async (req, res) => {  
+router.patch('/', async (req, res) => {
   console.log(req.body) // cái nào cần update thì lấy cái đó thôi
   let entity = {
     note: req.body.note,
@@ -57,7 +57,7 @@ router.patch('/', async (req, res) => {
   res.status(errorCode).json(ret)
 })
 // xóa 1 record
-router.delete('/', async (req, res) => {  
+router.delete('/', async (req, res) => {
   console.log('router.delete', req.body)
   let ret, errorCode = 200, item = null
   item = debtModel.delete(req.body.id)

@@ -1,21 +1,26 @@
-import { DEBT_FAILED, DEBT_LOADING, DEBT_SUCCESS, NAME_DEBT_DELETED, NAME_DEBT_EDIT, NAME_DEBT_LOADING } from '../actions/actionType'
-import { fetchFrom } from '../../utils/fetchHelper'
-import { UrlApi } from '../../shares/baseUrl'
+import {
+    DEBT_FAILED,
+    DEBT_LOADING,
+    DEBT_SUCCESS,
+    NAME_DEBT_DELETED,
+    NAME_DEBT_EDIT,
+    NAME_DEBT_LOADING
+} from '../actions/actionType'
+import {fetchFrom} from '../../utils/fetchHelper'
+import {UrlApi} from '../../shares/baseUrl'
 
 export const getAllDebt = (id, accessToken) => (dispatch) => {
-  dispatch(loadingDebt());
-  return fetchFrom(UrlApi + `/api/debt/${id}`, 'POST', { id }, accessToken)
-    .then(res => {
-      // console.log(res);
-      dispatch(successDebt(res))
-    })
-    .catch(err => {
-      console.log(err);
+    dispatch(loadingDebt());
+    return fetchFrom(UrlApi + `/api/debt/${id}`, 'POST', {id}, accessToken)
+        .then(res => {
+            // console.log(res);
+            dispatch(successDebt(res))
+        })
+        .catch(err => {
+            console.log(err);
       dispatch(failedDebt(err));
     })
 };
-
-
 
 export const Create = (data) => (dispatch) => {
   dispatch(Loading());
@@ -31,8 +36,6 @@ export const Create = (data) => (dispatch) => {
       console.log(err);
       dispatch(failedDebt('không thể kết nối server'));
     })
-
-
 };
 
 export const Edit = (data) => (dispatch) => {
