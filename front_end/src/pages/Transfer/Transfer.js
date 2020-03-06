@@ -108,7 +108,8 @@ class Transfer extends Component {
     };
 
     componentDidMount() {
-        this.props.getInterbankAssociate();
+        let accessToken = localStorage.getItem('accessToken');
+        this.props.getInterbankAssociate(accessToken);
     }
 
     render() {
@@ -270,7 +271,7 @@ class Transfer extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    getInterbankAssociate: () => dispatch(getInterbankAssociate()),
+    getInterbankAssociate: (accessToken) => dispatch(getInterbankAssociate(accessToken)),
     transfer: (data) => dispatch(transfer(data))
 });
 

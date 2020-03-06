@@ -3,7 +3,7 @@ const morgan = require('morgan')
 const createError = require('http-errors')
 const jwt = require('jsonwebtoken')
 const cors = require('cors')
-const {SECRET_KEY_TOKEN} = require('./config')
+const { SECRET_KEY_TOKEN } = require('./config')
 require('express-async-errors')
 
 //my packet
@@ -14,6 +14,7 @@ const app = express();
 app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
+
 
 
 // SSE
@@ -31,17 +32,17 @@ app.use('/openapi/minus', require('./routes/minus.route'))
 
 
 function verifyAccessToken(req, res, next) {
-  console.log(req.headers['x-access-token'])
-  const token = req.headers['x-access-token'];
-  if (token) {
-    jwt.verify(token, SECRET_KEY_TOKEN , function (err, payload) {
-      if (err) throw createError(403, err);
-      console.log(payload);
-      next();
-    });
-  } else {
-    throw createError(401, 'NO_TOKEN');
-  }
+    console.log(req.headers['x-access-token'])
+    const token = req.headers['x-access-token'];
+    if (token) {
+        jwt.verify(token, SECRET_KEY_TOKEN , function (err, payload) {
+            if (err) throw createError(403, err);
+            console.log(payload);
+            next();
+        });
+    } else {
+        throw createError(401, 'NO_TOKEN');
+    }
 }
 
 app.use('/api/refresh', require('./routes/refresh.route'))

@@ -12,8 +12,8 @@ import {GetDebtInfo} from './actions/getDebt'
 import {ReminscentAcction} from './actions/reminscentAcc'
 import {GetAllReceiver} from './actions/getAllReceiver'
 import {GetRemindInfo} from './actions/getRemind'
-import { GetRemindDetail } from './actions/getRemindDetail'
-
+import {GetRemindDetail} from './actions/getRemindDetail'
+import {InterbankAssociate, TransferInfo} from './actions/transfer'
 
 export const ConfigureStore = () => {
     const store = createStore(
@@ -28,7 +28,9 @@ export const ConfigureStore = () => {
             Reminscent: ReminscentAcction,
             ReceiverInfo: GetAllReceiver,
             RemindInfo: GetRemindInfo,
-            RemindDetail: GetRemindDetail
+            RemindDetail: GetRemindDetail,
+            InterbankAssociate: InterbankAssociate,
+            TransferInfo: TransferInfo
         }),
         applyMiddleware(logger),
         applyMiddleware(thunk),

@@ -2,7 +2,7 @@ const express = require('express')
 const receiverModel = require('../models/receiverInfo.model')
 const router = express.Router()
 
-router.post('/', async (req, res) => {  
+router.post('/', async (req, res) => {
   console.log(req.body)
   let entity = {
     account_num: req.body.accountNum,
@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
     let rows = await receiverModel.add(entity)
     if (rows) item = entity
     console.log('await', rows)
-    errorCode = 200 
+    errorCode = 200
     msg = 'successfully'
   // }
   ret = {
@@ -31,14 +31,14 @@ router.post('/', async (req, res) => {
   res.status(errorCode).json(ret)
 })
 
-router.post('/:id', async (req, res) => { 
+router.post('/:id', async (req, res) => {
   let rows = await receiverModel.get(req.params.id)
   // console.log(rows)
   res.status(200).json(rows)
 })
 
 
-router.patch('/', async (req, res) => {  
+router.patch('/', async (req, res) => {
   let entity = {
     account_num: req.body.accountNum,
     owner_id: req.body.ownerId,
@@ -55,7 +55,7 @@ router.patch('/', async (req, res) => {
   res.status(errorCode).json(ret)
 })
 
-router.delete('/', async (req, res) => {  
+router.delete('/', async (req, res) => {
   console.log('router.delete', req.body)
   let ret, errorCode = 200, item = null
   item = receiverModel.delete(req.body.id)

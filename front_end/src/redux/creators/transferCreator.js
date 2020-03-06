@@ -29,9 +29,9 @@ export const transfer = (data, accessToken) => (dispatch) => {
         })
 };
 
-export const getInterbankAssociate = () => (dispatch) => {
+export const getInterbankAssociate = (accessToken) => (dispatch) => {
     dispatch(interbankAssociateLoading());
-    return fetchFrom(UrlApi + '/api/associate', 'POST', {})
+    return fetchFrom(UrlApi + '/api/associate', 'POST', {}, accessToken)
         .then(res => {
             // console.log(res);
             dispatch(interbankAssociateSuccess(res))
