@@ -1,8 +1,13 @@
 const db = require('../utils/db')
-
+// as num, u.name, d.debt_val, d.note, d.is_pay
+//JOJN user_info as u on d.account_num = u.account_num 
 module.exports = {
-    get: (account_num) => {
-        return db.load(`Select count(d.id) as num from debt_info d join user_info u on d.account_num = u.account_num where d.account_num=${account_num} and d.is_remind = 1`)
-    },
+  count: (id) => {
+    return db.load(`SELECT count(d.owner_id) as num  FROM debt_info as d JOIN user_info as u on d.account_num = u.account_num WHERE u.id=${id} and d.is_pay=0` )
+  },
 
+  get: (id) => {
+    return db.load(`SELECT u.name, d.debt_val, d.note FROM debt_info as d JOIN user_info as u on d.account_num = u.account_num WHERE u.id=${id}`)
+  },
+  
 };

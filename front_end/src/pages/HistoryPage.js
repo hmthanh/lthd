@@ -12,8 +12,9 @@ class HistoryPage extends Component {
 
   componentDidMount() {
     const uid = localStorage.getItem('uid')
-    console.log('componentDidMount ' + uid)
-    this.props.getAll(uid)
+    const accessToken = localStorage.getItem('accessToken')
+    console.log('componentDidMount ' + uid + 'accessToken' + accessToken)
+    this.props.getAll(uid, accessToken)
   }
 
 
@@ -73,7 +74,7 @@ class HistoryPage extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  getAll: (id) => dispatch(getAllHistory(id))
+  getAll: (id, accessToken) => dispatch(getAllHistory(id, accessToken))
 })
 
 const mapStateToProps = (state) => {

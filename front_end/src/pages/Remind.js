@@ -1,12 +1,26 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import {
-  Badge
+  Badge,Alert,
+  Card, CardImg, CardText, CardBody,
+  CardTitle, CardSubtitle, Button
 } from 'reactstrap'
 import { connect } from 'react-redux';
-import { getAllRemind } from '../redux/creators/remindCreator';
+import { getAllRemindDetaill } from '../redux/creators/remindDetailCreator';
 
 
-class remindPage extends Component {
+const AlertExample = ({data}) => {
+  const [visible, setVisible] = useState(true);
+
+  const onDismiss = () => setVisible(false);
+
+  return (
+    <Alert color="info" isOpen={visible} toggle={onDismiss}>
+      {data.name} nhắc nợ bạn khoản nợ {data.debt_val} ghi chú {data.note}
+    </Alert>
+  );
+}
+
+class RemindPage extends Component {
 
     constructor(props) {
       super(props);
@@ -14,21 +28,34 @@ class remindPage extends Component {
     }
   
     componentDidMount() {
-      const account_num = localStorage.getItem('account_num')
-      this.props.getAll(account_num)
+      const uid = localStorage.getItem('uid')
+      this.props.getAllRemindDetaill(uid)
     }
   
   
     render() {
       return (
 
-                          this.props.RemindInfo.data.val &&
-                          // console.log(this.props.HistoryInfo.data.val)
-                          this.props.RemindInfo.data.val.map(item => ( 
-                            <Badge style={{ position: "absolute", top: '0px', right: '0px', fontSize: '8px' }}
-                             color="secondary">{item.num}
-                            </Badge>
-                          ))
+        <div style={{marginTop: '20px'}}>
+          <Card>
+            <CardBody>
+              {
+                this.props.RemindDetail.data.item && 
+                this.props.RemindDetail.data.item.length  == 0 &&
+                <CardTitle>Không có thông báo</CardTitle>
+                
+              }
+              {
+                this.props.RemindDetail.data.item && 
+                this.props.RemindDetail.data.item.map( (item, index)=>(
+                  <AlertExample key={index} data={item}/>
+                ))
+              }
+
+             
+            </CardBody>
+          </Card>
+      </div>
                         
                       
       )
@@ -36,13 +63,13 @@ class remindPage extends Component {
   }
   
   const mapDispatchToProps = dispatch => ({
-    account_num: (account_num) => dispatch(getAllRemind(account_num))
+    getAllRemindDetaill: (id) => dispatch(getAllRemindDetaill(id))
   })
   
   const mapStateToProps = (state) => {
     return {
-      RemindInfo: state.RemindInfo,
+      RemindDetail: state.RemindDetail,
     }
   }
   
-  export default connect(mapStateToProps, mapDispatchToProps)(remindPage)
+  export default connect(mapStateToProps, mapDispatchToProps)(RemindPage)

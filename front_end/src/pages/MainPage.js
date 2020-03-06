@@ -5,6 +5,8 @@ import Header from '../layout/Header'
 import Websocket from 'react-websocket'
 import { connect } from 'react-redux'
 import { logout, relogin } from '../redux/creators/loginCreator'
+import { fetchFrom } from '../utils/fetchHelper'
+import { UrlApi } from '../shares/baseUrl'
 
 const ListAccountPage = lazy(() => import('./ListAccountPage'))
 const LoginPage = lazy(() => import('./Login'))
@@ -17,6 +19,7 @@ const ChangePassword = lazy(() => import('./ChangePassword'))
 const ForgetPassword = lazy(() => import('./ForgetPassword'))
 const SettingPage = lazy(() => import('./SettingRecieverPage'))
 const remindPage = lazy(() => import('./Remind'))
+const LogoutPage = lazy(() => import('./logoutPage'))
 
 
 // lazy loading example
@@ -25,21 +28,25 @@ const remindPage = lazy(() => import('./Remind'))
 // const BadgePage = React.lazy(() => import('pages/BadgePage'));
 //
 
+let GetAccessTokenWorker = (uid, refresh) => {
+  return fetchFrom(UrlApi + '/api/refresh', 'POST', {id: uid, refreshToken: refresh})
+  .then( (res)=> {
+    console.log(res)
+    localStorage.setItem('accessToken', res.accessToken)
+  })
+}
+
 class Main extends Component {
 
   constructor(props) {
     super(props)
-    this.state = {
-
+    const uid = localStorage.getItem('uid')
+    const refreshToken = localStorage.getItem('refreshToken')
+    if (!uid) {
+      this.props.history.push("/login")
+    } else {
+      setInterval(GetAccessTokenWorker(uid, refreshToken), 1000 * 60 * 8)
     }
-  }
-
-
-
-  logout() {
-    localStorage.clear()
-    this.props.logout()
-    // this.props.history.push("/")
   }
 
   componentWillReceiveProps(props) {
@@ -62,8 +69,6 @@ class Main extends Component {
 
   handleData(data) {
     let result = JSON.parse(data)
-    console.log('=======Websocket handleData==========')
-    console.log(result)
   }
 
   render() {
@@ -95,6 +100,7 @@ class Main extends Component {
                 <Route exact path='/list-receiver' component={SettingPage} />
                 <Route exact path='/transfer' component={Transfer} />
                 <Route exact path='/remind' component={remindPage} />
+                <Route exact path='/logout' component={LogoutPage} />
               </Switch>
             </Suspense>
           </main>

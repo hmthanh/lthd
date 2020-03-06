@@ -2,16 +2,16 @@ import { REMIND_FAILED, REMIND_LOADING, REMIND_SUCCESS } from '../actions/action
 import { fetchFrom } from '../../utils/fetchHelper'
 import { UrlApi } from '../../shares/baseUrl'
 
-export const getAllRemind = (account_num, accessToken) => (dispatch) => {
+export const getAllRemind = (id, accessToken) => (dispatch) => {
   dispatch(loadingRemind());
-  return fetchFrom(UrlApi + `/api/remind/${account_num}`, 'POST', { account_num }, accessToken)
+  return fetchFrom(UrlApi + `/api/remind/${id}`, 'POST', { id }, accessToken)
     .then(res => {
-      // console.log(res);
-      dispatch(successRemind(res))
+     
+      dispatch(successRemind(res.item))
     })
     .catch(err => {
-      console.log(err);
-      dispatch(failedRemind(err));
+      console.log(err)
+      dispatch(failedRemind(err))
     })
 };
 
