@@ -1,54 +1,72 @@
-import {TRANSFER_MONEY_FAILED, TRANSFER_MONEY_LOADING, TRANSFER_MONEY_SUCCESS} from '../actions/actionType'
+import {
+    INTERBANK_ASSOCIATE_FAILED,
+    INTERBANK_ASSOCIATE_LOADING,
+    INTERBANK_ASSOCIATE_SUCCESS,
+    TRANSFER_FAILED,
+    TRANSFER_INVALID,
+    TRANSFER_LOADING,
+    TRANSFER_SUCCESS
+} from '../actions/actionType'
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'
 
-export const transferMoney = (id) => (dispatch) => {
-    dispatch(transferMoneyLoading());
-    return fetchFrom(UrlApi + '/api/accounts/id', 'POST', {id})
+export const transfer = (data, accessToken) => (dispatch) => {
+    console.log("4data", data);
+    console.log("5accessToken", accessToken);
+    dispatch(transferLoading());
+    return fetchFrom(UrlApi + '/api/transfer', 'POST', data, accessToken)
         .then(response => {
-            response = {
-                val: [
-                    {
-                        id: 1,
-                        day: new Date(),
-                        type: 'Nội bộ',
-                        send: 'thanh',
-                        recieve: 'tam',
-                        money: 120000,
-                        excess: 100000
-                    },
-                    {
-                        id: 2,
-                        day: new Date(),
-                        type: 'ngoaij bang',
-                        send: 'sdf',
-                        recieve: 'tam',
-                        money: 990000,
-                        excess: 1200000
-                    },
-                    {id: 3, day: new Date(), type: 'Nội bộ', send: 'sdas', recieve: 'asf', money: 10000, excess: 300000}
-                ]
-            };
-            // console.log(response)
-            dispatch(transferMoneySuccess(response));
+            console.log("response.errorCode", response.errorCode);
+            if (response.errorCode === 0) {
+                dispatch(transferSuccess(response));
+            } else {
+                dispatch(transferInvalid(response));
+            }
         })
         .catch(err => {
             console.log(err);
-            dispatch(transferMoneySuccessFailed(err));
+            dispatch(transferFailed(err));
         })
 };
 
-export const transferMoneyLoading = () => ({
-    type: TRANSFER_MONEY_LOADING
-});
+export const getInterbankAssociate = (accessToken) => (dispatch) => {
+    dispatch(interbankAssociateLoading());
+    return fetchFrom(UrlApi + '/api/associate', 'POST', {}, accessToken)
+        .then(res => {
+            // console.log(res);
+            dispatch(interbankAssociateSuccess(res))
+        })
+        .catch(err => {
+            console.log(err);
+            dispatch(interbankAssociateFail(err));
+        })
+};
 
-export const transferMoneySuccess = (response) => ({
-    type: TRANSFER_MONEY_SUCCESS,
+export const interbankAssociateLoading = () => ({
+    type: INTERBANK_ASSOCIATE_LOADING
+});
+export const interbankAssociateSuccess = (response) => ({
+    type: INTERBANK_ASSOCIATE_SUCCESS,
     payload: response
 });
+export const interbankAssociateFail = (error_msg) => ({
+    type: INTERBANK_ASSOCIATE_FAILED,
+    payload: error_msg
+});
 
 
-export const transferMoneySuccessFailed = (error_msg) => ({
-    type: TRANSFER_MONEY_FAILED,
+export const transferLoading = () => ({
+    type: TRANSFER_LOADING
+});
+export const transferSuccess = (response) => ({
+    type: TRANSFER_SUCCESS,
+    payload: response
+});
+export const transferInvalid = (response) => ({
+    type: TRANSFER_INVALID,
+    payload: response
+});
+export const transferFailed = (error_msg) => ({
+    type: TRANSFER_FAILED,
     payload: error_msg
 });

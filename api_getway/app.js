@@ -32,17 +32,17 @@ app.use('/openapi/minus', require('./routes/minus.route'))
 
 
 function verifyAccessToken(req, res, next) {
-  console.log(req.headers['x-access-token'])
-  const token = req.headers['x-access-token'];
-  if (token) {
-    jwt.verify(token, SECRET_KEY_TOKEN , function (err, payload) {
-      if (err) throw createError(403, err);
-      console.log(payload);
-      next();
-    });
-  } else {
-    throw createError(401, 'NO_TOKEN');
-  }
+    console.log(req.headers['x-access-token'])
+    const token = req.headers['x-access-token'];
+    if (token) {
+        jwt.verify(token, SECRET_KEY_TOKEN , function (err, payload) {
+            if (err) throw createError(403, err);
+            console.log(payload);
+            next();
+        });
+    } else {
+        throw createError(401, 'NO_TOKEN');
+    }
 }
 
 app.use('/api/refresh', require('./routes/refresh.route'))
@@ -68,16 +68,16 @@ require('./ws')
 app.use('/api/notify', require('./controller/notification.controller'))
 
 app.use((req, res, next) => {
-  throw createError(404, 'Resource not found.');
+    throw createError(404, 'Resource not found.');
 })
 
 app.use(function (err, req, res, next) {
-  if (typeof err.status === 'undefined' || err.status === 500) {
-    console.error(err.stack);
-    res.status(500).send('View error log on console.');
-  } else {
-    res.status(err.status).send(err);
-  }
+    if (typeof err.status === 'undefined' || err.status === 500) {
+        console.error(err.stack);
+        res.status(500).send('View error log on console.');
+    } else {
+        res.status(err.status).send(err);
+    }
 })
 
 // mailController.sentMail()
