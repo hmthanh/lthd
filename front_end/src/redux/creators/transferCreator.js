@@ -2,6 +2,9 @@ import {
     INTERBANK_ASSOCIATE_FAILED,
     INTERBANK_ASSOCIATE_LOADING,
     INTERBANK_ASSOCIATE_SUCCESS,
+    RECEIVER_SAVED_FAILED,
+    RECEIVER_SAVED_LOADING,
+    RECEIVER_SAVED_SUCCESS,
     TRANSFER_FAILED,
     TRANSFER_INVALID,
     TRANSFER_LOADING,
@@ -16,11 +19,10 @@ export const transfer = (data, accessToken) => (dispatch) => {
     dispatch(transferLoading());
     return fetchFrom(UrlApi + '/api/transfer', 'POST', data, accessToken)
         .then(response => {
-            console.log("response.errorCode", response.errorCode);
             if (response.errorCode === 0) {
+                console.log("success");
                 dispatch(transferSuccess(response));
             } else {
-
                 dispatch(transferInvalid(response));
             }
         })
@@ -40,6 +42,18 @@ export const getInterbankAssociate = (accessToken) => (dispatch) => {
         .catch(err => {
             console.log(err);
             dispatch(interbankAssociateFail(err));
+        })
+};
+
+export const getListReceiverSaved = (uid, accessToken) => (dispatch) => {
+    dispatch(receiverSavedLoading());
+    return fetchFrom(UrlApi + `/api/receiver/${uid}`, 'POST', {}, accessToken)
+        .then(res => {
+            dispatch(receiverSavedSuccess(res))
+        })
+        .catch(err => {
+            console.log(err);
+            dispatch(receiverSavedFailed(err));
         })
 };
 
@@ -69,5 +83,18 @@ export const transferInvalid = (response) => ({
 });
 export const transferFailed = (error_msg) => ({
     type: TRANSFER_FAILED,
+    payload: error_msg
+});
+
+
+export const receiverSavedLoading = () => ({
+    type: RECEIVER_SAVED_LOADING
+});
+export const receiverSavedSuccess = (response) => ({
+    type: RECEIVER_SAVED_SUCCESS,
+    payload: response
+});
+export const receiverSavedFailed = (error_msg) => ({
+    type: RECEIVER_SAVED_FAILED,
     payload: error_msg
 });
