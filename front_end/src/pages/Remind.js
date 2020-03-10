@@ -1,24 +1,20 @@
-import React, { Component, useState } from 'react';
-import {
-  Badge,Alert,
-  Card, CardImg, CardText, CardBody,
-  CardTitle, CardSubtitle, Button
-} from 'reactstrap'
-import { connect } from 'react-redux';
-import { getAllRemindDetaill } from '../redux/creators/remindDetailCreator';
+import React, {Component, useState} from 'react';
+import {Alert, Card, CardBody, CardTitle} from 'reactstrap'
+import {connect} from 'react-redux';
+import {getAllRemindDetaill} from '../redux/creators/remindDetailCreator';
 
 
 const AlertExample = ({data}) => {
-  const [visible, setVisible] = useState(true);
+    const [visible, setVisible] = useState(true);
 
-  const onDismiss = () => setVisible(false);
+    const onDismiss = () => setVisible(false);
 
-  return (
-    <Alert color="info" isOpen={visible} toggle={onDismiss}>
-      {data.name} nhắc nợ bạn khoản nợ {data.debt_val} ghi chú {data.note}
-    </Alert>
-  );
-}
+    return (
+        <Alert color="info" isOpen={visible} toggle={onDismiss}>
+            {data.name} nhắc nợ bạn khoản nợ {data.debt_val} ghi chú {data.note}
+        </Alert>
+    );
+};
 
 class RemindPage extends Component {
 
@@ -29,7 +25,7 @@ class RemindPage extends Component {
   
     componentDidMount() {
       const uid = localStorage.getItem('uid')
-      this.props.getAllRemindDetaill(uid)
+        // this.props.getAllRemindDetaill(uid)
     }
   
   
@@ -61,15 +57,15 @@ class RemindPage extends Component {
       )
     }
   }
-  
-  const mapDispatchToProps = dispatch => ({
+
+const mapDispatchToProps = dispatch => ({
     getAllRemindDetaill: (id) => dispatch(getAllRemindDetaill(id))
-  })
-  
-  const mapStateToProps = (state) => {
+});
+
+const mapStateToProps = (state) => {
     return {
-      RemindDetail: state.RemindDetail,
+        RemindDetail: state.RemindDetail,
     }
-  }
+};
   
   export default connect(mapStateToProps, mapDispatchToProps)(RemindPage)

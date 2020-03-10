@@ -22,7 +22,7 @@ module.exports = {
             html: htmlmsg // html body
         }, (err, info) => {
             // console.log("Message sent: %s", err)
-            console.log("Message sent: %s", info.messageId)
+            console.log("Message sent: %s", info)
             // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
         })
     }

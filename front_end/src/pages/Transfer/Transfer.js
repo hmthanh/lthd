@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component} from 'react';
 import {
     Badge,
     Button,
@@ -14,10 +14,6 @@ import {
     InputGroupAddon,
     InputGroupText,
     Label,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
     Row,
     Spinner
 } from "reactstrap";
@@ -26,33 +22,7 @@ import {getInterbankAssociate, getListReceiverSaved, transfer} from "../../redux
 import {connect} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import {convertObjectToArray} from "../../utils/utils";
-
-const InvalidTransferModel = (props) => {
-    const {
-        className,
-        isOpen
-    } = props;
-
-    console.log("isOpen", isOpen);
-
-    const [modal, setModal] = useState(true);
-    const toggle = () => setModal(!modal);
-
-    return (
-        <div>
-            <Modal isOpen={modal} toggle={toggle} className={className}>
-                <ModalHeader toggle={toggle}>Chuyển tiền không thành công</ModalHeader>
-                <ModalBody>
-                    Số tiền của bạn không đủ !
-                    Vui lòng kiểm tra lại tài khoản
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="success" onClick={toggle}>Đồng ý</Button>
-                </ModalFooter>
-            </Modal>
-        </div>
-    );
-};
+import ModalOTP from "../../components/Modal/ModalOTP";
 
 class Transfer extends Component {
     constructor(props) {
@@ -68,13 +38,13 @@ class Transfer extends Component {
             ],
             receiverBank: 0,
             receiverSavedList: 0,
-            listReceiverSaved: [],
             receiverId: '',
             receiverName: '',
             moneyTransfer: 0,
             messageTransfer: '',
             isSenderPay: true,
-            isInvalidTransfer: false
+            isShowInvalidModal: false,
+            isShowVerifyOTPModal: false
         };
     }
 
@@ -110,6 +80,17 @@ class Transfer extends Component {
         this.setState({
             [name]: value
         });
+    };
+
+    onChangeReceiverSaved = (e) => {
+        let target = e.target;
+        this.setState({
+            receiverId: target.value
+        });
+
+        if (!this.state.isSavedList) {
+            this.changeReceiverId();
+        }
     };
 
     loadInvalidTransferModal = () => this.setState({
@@ -151,7 +132,7 @@ class Transfer extends Component {
             uid: '1',
             to_account: '12',
             note: 'abc',
-            amount: 234234234234224,
+            amount: 23,
             cost_type: 0
         };
 
@@ -176,15 +157,37 @@ class Transfer extends Component {
         // this.props.transfer(data, accessToken);
     }
 
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        console.log("shouldComponentUpdatesdfs dfsdf", nextProps);
+        return true;
+    }
+
     componentWillReceiveProps(props) {
-        let isInvalidModal = this.props.TransferInfo.errMess;
-        if (isInvalidModal === 0) {
+        console.log("propasdfsdfsds", props);
+        let errorCode = this.props.TransferInfo.errorCode;
+        console.log("errorCode", errorCode);
+        if (errorCode === 1) {
+            console.log("isVerifyModal");
+            this.setState({
+                isShowVerifyOTPModal: true
+            });
             // this.loadInvalidTransferModal();
-            console.log("abc")
-        } else {
-            this.loadInvalidTransferModal();
+            // console.log("abc")
+        } else if (errorCode === -206) {
             console.log("isInvalidModal");
+            this.setState({
+                isShowInvalidModal: true
+            });
+            // this.loadInvalidTransferModal();
+
         }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log("prevProps", prevProps);
+        console.log("prevState", prevState);
+        console.log("snapshot", snapshot);
+
     }
 
     render() {
@@ -199,8 +202,11 @@ class Transfer extends Component {
             receiverName,
             moneyTransfer,
             messageTransfer,
-            isSenderPay
+            isSenderPay,
+            isShowInvalidModal,
+            isShowVerifyModal
         } = this.state;
+        let transId = 0;
         let listReceiverSaved = convertObjectToArray(this.props.ReceiverSaved.data);
 
         return <div className="container">
@@ -267,7 +273,7 @@ class Transfer extends Component {
                                         <Collapse isOpen={isSavedList}>
                                             <Input type="select"
                                                    value={receiverSavedList}
-                                                   onChange={this.onChange}
+                                                   onChange={this.onChangeReceiverSaved}
                                                    name="receiverSavedList" id="receiverSavedList">
                                                 {
                                                     listReceiverSaved &&
@@ -336,8 +342,8 @@ class Transfer extends Component {
                                         </Button>
                                     </div>
                                 </Form>
-                                <MessageBox
-                                    isOpen={this.props.TransferInfo.errMess === -201}></MessageBox>
+                                <MessageBox isOpen={isShowInvalidModal}></MessageBox>
+                                <ModalOTP isOpen={isShowVerifyModal} transId={transId}></ModalOTP>
                             </div>
                         </Card>
                     </Col>

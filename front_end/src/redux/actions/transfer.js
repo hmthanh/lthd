@@ -8,7 +8,10 @@ import {
     TRANSFER_FAILED,
     TRANSFER_INVALID,
     TRANSFER_LOADING,
-    TRANSFER_SUCCESS
+    TRANSFER_SUCCESS,
+    VERIFY_OTP_FAILED,
+    VERIFY_OTP_LOADING,
+    VERIFY_OTP_SUCCESS
 } from './actionType'
 
 export const TransferInfo = (state = {
@@ -59,6 +62,24 @@ export const ReceiverSaved = (state = {
             return {...state, isLoading: false, errMess: action.payload, data: []};
         case RECEIVER_SAVED_SUCCESS:
             return {...state, isLoading: false, errMess: null, next: 0, data: {...action.payload}};
+        default:
+            return state;
+    }
+};
+
+
+export const VerifyResult = (state = {
+    isLoading: true,
+    errMess: null,
+    data: []
+}, action) => {
+    switch (action.type) {
+        case VERIFY_OTP_LOADING:
+            return {isLoading: true, errMess: null, data: []};
+        case VERIFY_OTP_FAILED:
+            return {...state, isLoading: false, errMess: action.payload, data: []};
+        case VERIFY_OTP_SUCCESS:
+            return {...state, isLoading: false, errMess: null, data: {...action.payload}};
         default:
             return state;
     }

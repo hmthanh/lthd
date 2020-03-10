@@ -13,7 +13,7 @@ import {ReminscentAcction} from './actions/reminscentAcc'
 import {GetAllReceiver} from './actions/getAllReceiver'
 import {GetRemindInfo} from './actions/getRemind'
 import {GetRemindDetail} from './actions/getRemindDetail'
-import {InterbankAssociate, ReceiverSaved, TransferInfo} from './actions/transfer'
+import {InterbankAssociate, ReceiverSaved, TransferInfo, VerifyResult} from './actions/transfer'
 
 export const ConfigureStore = () => {
     const store = createStore(
@@ -31,7 +31,8 @@ export const ConfigureStore = () => {
             RemindDetail: GetRemindDetail,
             InterbankAssociate: InterbankAssociate,
             TransferInfo: TransferInfo,
-            ReceiverSaved: ReceiverSaved
+            ReceiverSaved: ReceiverSaved,
+            VerifyResult: VerifyResult
         }),
         applyMiddleware(logger),
         applyMiddleware(thunk),
