@@ -7,9 +7,9 @@ import {connect} from "react-redux";
 class ModalOTP extends Component {
     constructor(props) {
         super(props);
+        console.log(props);
         this.state = {
-            isOpen: false,
-            otpCode: 0,
+            OTP: 0,
             transId: props.transId
         };
     }
@@ -21,14 +21,13 @@ class ModalOTP extends Component {
     };
 
     onChange = (e) => {
-        let value = e.value;
         this.setState({
-            otpCode: value
+            OTP: e.target.value
         });
     };
 
     handleVerifyOTP = () => {
-        let {OTP, transId} = this.props;
+        let {OTP, transId} = this.state;
         let data = {
             transId: transId,
             OTP: OTP
@@ -39,18 +38,18 @@ class ModalOTP extends Component {
     };
 
     render() {
-        let {isOpen, className, otpCode} = this.state;
-        let {transId, handleDelete} = this.props;
+        let {className, OTP} = this.state;
+        console.log("ppsdf", this.props.transId);
+
         return (
             <div>
-                <Modal isOpen={isOpen} toggle={this.toggle} className={className}>
-                    <ModalHeader toggle={this.toggle}>Vui lòng nhập mã OTP để xác nhận</ModalHeader>
+                <Modal isOpen={true} toggle={this.toggle} className={className}>
+                    <ModalHeader>Vui lòng nhập mã OTP để xác nhận</ModalHeader>
                     <ModalBody>
-                        <Input type="number" name="otpCode" id="otpCode"
+                        <Input type="number" name="OTP" id="OTP"
                                onChange={this.onChange}
-                               value={otpCode}
+                               value={OTP}
                                required/>
-
                     </ModalBody>
                     <ModalFooter>
                         <Button color="success" onClick={this.handleVerifyOTP}>Đồng ý</Button>
@@ -63,7 +62,7 @@ class ModalOTP extends Component {
 
 
 const mapDispatchToProps = dispatch => ({
-    verifyOTP: (transID, data, accessTocken) => dispatch(verifyOTP(transID, data, accessTocken))
+    verifyOTP: (transID, data, accessToken) => dispatch(verifyOTP(transID, data, accessToken))
 });
 
 const mapStateToProps = (state) => {

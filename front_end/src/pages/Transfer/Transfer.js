@@ -7,6 +7,7 @@ import {
     CardTitle,
     Col,
     Collapse,
+    Container,
     Form,
     FormGroup,
     Input,
@@ -26,7 +27,6 @@ import ModalOTP from "../../components/Modal/ModalOTP";
 
 class Transfer extends Component {
     constructor(props) {
-        // console.log("1. transfer");
         super(props);
         this.state = {
             isInterbank: false,
@@ -123,7 +123,7 @@ class Transfer extends Component {
             amount: amount,
             cost_type: cost_type,
         };
-        console.log("data", data);
+        // console.log("data", data);
         let accessToken = localStorage.getItem('accessToken');
         // this.props.transfer(data, accessToken);
 
@@ -139,7 +139,12 @@ class Transfer extends Component {
         this.props.transfer(xxx, accessToken);
     };
 
+    componentWillMount() {
+        // console.log("componentWillMount");
+    }
+
     componentDidMount() {
+        // console.log("componentDidMount")
         let accessToken = localStorage.getItem('accessToken');
         let uid = localStorage.getItem('uid');
         this.props.getInterbankAssociate(accessToken);
@@ -158,12 +163,12 @@ class Transfer extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        console.log("shouldComponentUpdatesdfs dfsdf", nextProps);
+        // console.log("shouldComponentUpdate", nextProps);
         return true;
     }
 
     componentWillReceiveProps(props) {
-        console.log("propasdfsdfsds", props);
+        // console.log("componentWillReceiveProps", props);
         let errorCode = this.props.TransferInfo.errorCode;
         console.log("errorCode", errorCode);
         if (errorCode === 1) {
@@ -184,10 +189,9 @@ class Transfer extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log("prevProps", prevProps);
-        console.log("prevState", prevState);
-        console.log("snapshot", snapshot);
-
+        // console.log("componentDidUpdate")
+        // console.log("prevProps", prevProps);
+        // console.log("prevState", prevState);
     }
 
     render() {
@@ -202,14 +206,12 @@ class Transfer extends Component {
             receiverName,
             moneyTransfer,
             messageTransfer,
-            isSenderPay,
-            isShowInvalidModal,
-            isShowVerifyModal
+            isSenderPay
         } = this.state;
-        let transId = 0;
         let listReceiverSaved = convertObjectToArray(this.props.ReceiverSaved.data);
+        console.log("Result : ", this.props.TransferInfo.errorCode);
 
-        return <div className="container">
+        return <Container>
             <div className="container-fluid py-3">
                 <Row>
                     <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
@@ -342,14 +344,19 @@ class Transfer extends Component {
                                         </Button>
                                     </div>
                                 </Form>
-                                <MessageBox isOpen={isShowInvalidModal}></MessageBox>
-                                <ModalOTP isOpen={isShowVerifyModal} transId={transId}></ModalOTP>
+                                {
+                                    (this.props.TransferInfo.errorCode === -206 ?
+                                        <MessageBox isOpen={true}></MessageBox> : "")
+                                }
                             </div>
+                            <ModalOTP isOpen={this.props.TransferInfo.errorCode === 1}
+                                      handleVerifyOTP={this.handleVerifyOTP}
+                                      transId={this.props.TransferInfo.transId}></ModalOTP>
                         </Card>
                     </Col>
                 </Row>
             </div>
-        </div>;
+        </Container>;
     }
 
     showFieldRequire() {
