@@ -4,7 +4,7 @@ const { totp } = require('otplib')
 totp.options = { 
   digits: 8,
   epoch: Date.now(),
-  step: 180,
+  step: 30,
   window: 1,
 }
 

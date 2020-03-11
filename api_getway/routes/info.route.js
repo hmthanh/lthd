@@ -38,10 +38,11 @@ router.post('/', async (req, res) => {
       info = {
         name: rows[0].name,
         accountNum: rows[0].account_num,
-        userName: rows[0].user_name
+        userName: rows[0].user_name,
+        birthDay: moment(rows[0].date_of_birth).format('MM/DD/YYYY')
       }
   }
-  let ret = {msg, errorCode, ...info}
+  let ret = {msg, errorCode, data: info}
   res.status(200).json(ret)
 })
 
