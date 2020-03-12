@@ -2,10 +2,16 @@ import {
     INTERBANK_ASSOCIATE_FAILED,
     INTERBANK_ASSOCIATE_LOADING,
     INTERBANK_ASSOCIATE_SUCCESS,
+    RECEIVER_SAVED_FAILED,
+    RECEIVER_SAVED_LOADING,
+    RECEIVER_SAVED_SUCCESS,
     TRANSFER_FAILED,
     TRANSFER_INVALID,
     TRANSFER_LOADING,
-    TRANSFER_SUCCESS
+    TRANSFER_SUCCESS,
+    VERIFY_OTP_FAILED,
+    VERIFY_OTP_LOADING,
+    VERIFY_OTP_SUCCESS
 } from '../actions/actionType'
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'
@@ -16,8 +22,8 @@ export const transfer = (data, accessToken) => (dispatch) => {
     dispatch(transferLoading());
     return fetchFrom(UrlApi + '/api/transfer', 'POST', data, accessToken)
         .then(response => {
-            console.log("response.errorCode", response.errorCode);
             if (response.errorCode === 0) {
+                console.log("success");
                 dispatch(transferSuccess(response));
             } else {
                 dispatch(transferInvalid(response));
@@ -39,6 +45,31 @@ export const getInterbankAssociate = (accessToken) => (dispatch) => {
         .catch(err => {
             console.log(err);
             dispatch(interbankAssociateFail(err));
+        })
+};
+
+export const getListReceiverSaved = (uid, accessToken) => (dispatch) => {
+    dispatch(receiverSavedLoading());
+    console.log("uid", uid, "accessToken", accessToken);
+    return fetchFrom(UrlApi + `/api/receiver/${uid}`, 'POST', {}, accessToken)
+        .then(res => {
+            dispatch(receiverSavedSuccess(res))
+        })
+        .catch(err => {
+            console.log(err);
+            dispatch(receiverSavedFailed(err));
+        })
+};
+
+export const verifyOTP = (transID, data, accessToken) => (dispatch) => {
+    dispatch(verifyOTPLoading());
+    return fetchFrom(UrlApi + `/api/transfer/${transID}`, 'POST', data, accessToken)
+        .then(res => {
+            dispatch(verifyOTPSuccess(res))
+        })
+        .catch(err => {
+            console.log(err);
+            dispatch(verifyOTPFailed(err));
         })
 };
 
@@ -68,5 +99,31 @@ export const transferInvalid = (response) => ({
 });
 export const transferFailed = (error_msg) => ({
     type: TRANSFER_FAILED,
+    payload: error_msg
+});
+
+
+export const receiverSavedLoading = () => ({
+    type: RECEIVER_SAVED_LOADING
+});
+export const receiverSavedSuccess = (response) => ({
+    type: RECEIVER_SAVED_SUCCESS,
+    payload: response
+});
+export const receiverSavedFailed = (error_msg) => ({
+    type: RECEIVER_SAVED_FAILED,
+    payload: error_msg
+});
+
+
+export const verifyOTPLoading = () => ({
+    type: VERIFY_OTP_LOADING
+});
+export const verifyOTPSuccess = (response) => ({
+    type: VERIFY_OTP_SUCCESS,
+    payload: response
+});
+export const verifyOTPFailed = (error_msg) => ({
+    type: VERIFY_OTP_FAILED,
     payload: error_msg
 });
