@@ -32,10 +32,10 @@ router.post('/', async (req, res) => {
 })
 
 router.post('/:id', async (req, res) => {
-  console.log("hello")
+  // console.log("hello")
   let rows = await receiverModel.get(req.params.id)
-  console.log("2")
-  console.log(rows)
+  // console.log("2")
+  // console.log(rows)
   res.status(200).json(rows)
 })
 
