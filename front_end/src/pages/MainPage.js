@@ -46,7 +46,9 @@ class Main extends Component {
     if (!uid) {
       this.props.history.push("/login")
     } else {
-      setInterval(GetAccessTokenWorker(uid, refreshToken), 1000 * 60 * 8)
+      setInterval(() => {
+        GetAccessTokenWorker(uid, refreshToken)
+      }, 1000 * 60 * 8)
     }
   }
 

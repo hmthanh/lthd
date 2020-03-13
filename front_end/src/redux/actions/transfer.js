@@ -33,7 +33,7 @@ export const TransferInfo = (state = {
     }
 };
 
-export const InterbankAssociate = (state = {
+export const BankingAssociate = (state = {
     isLoading: true,
     errMess: null,
     data: []
