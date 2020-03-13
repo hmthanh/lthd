@@ -14,6 +14,7 @@ const Register = lazy(() => import('./Register'))
 const UserInfo = lazy(() => import('./UserInfo'))
 const HistoryPage = lazy(() => import('./HistoryPage'))
 const Transfer = lazy(() => import('./Transfer/Transfer'))
+const Transfer2 = lazy(() => import('./TransferPage'))
 const debtPage = lazy(() => import('./Debt'))
 const ChangePassword = lazy(() => import('./ChangePassword'))
 const ForgetPassword = lazy(() => import('./ForgetPassword'))
@@ -45,7 +46,9 @@ class Main extends Component {
     if (!uid) {
       this.props.history.push("/login")
     } else {
-      setInterval(GetAccessTokenWorker(uid, refreshToken), 1000 * 60 * 8)
+      setInterval(() => {
+        GetAccessTokenWorker(uid, refreshToken)
+      }, 1000 * 60 * 8)
     }
   }
 
@@ -99,6 +102,7 @@ class Main extends Component {
                 <Route exact path='/forget-password' component={ForgetPassword} />
                 <Route exact path='/list-receiver' component={SettingPage} />
                 <Route exact path='/transfer' component={Transfer} />
+                <Route exact path='/transfer2' component={Transfer2} />
                 <Route exact path='/remind' component={remindPage} />
                 <Route exact path='/logout' component={LogoutPage} />
               </Switch>

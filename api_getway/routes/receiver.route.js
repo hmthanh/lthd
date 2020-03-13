@@ -32,11 +32,15 @@ router.post('/', async (req, res) => {
 })
 
 router.post('/:id', async (req, res) => {
-  console.log("hello")
-  let rows = await receiverModel.get(req.params.id)
-  console.log("2")
-  console.log(rows)
-  res.status(200).json(rows)
+  console.log(req.body)
+  let rows = await receiverModel.getByPartner(req.params.id, req.body.partnerCode)
+  // console.log("2")
+  // console.log(rows)
+  res.status(200).json({
+    errorCode: 0,
+    msg: 'successfully',
+    item: rows
+  })
 })
 
 
