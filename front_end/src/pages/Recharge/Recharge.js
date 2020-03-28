@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useCallback} from 'react';
 import {
   Badge,
   Button,
@@ -18,12 +18,13 @@ import {
 import './Recharge.css';
 import {connect} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
+import {recharge} from "../../redux/creators/rechargeCreator";
 
 class Recharge extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: 0,
+      numberAccount: 0,
       moneyTransfer: 0
     };
   }
@@ -78,77 +79,20 @@ class Recharge extends Component {
   });
 
   onSubmit = (e) => {
-    // e.preventDefault();
-    // let {
-    //   isInterbank,
-    //   receiverBank,
-    //   receiverId,
-    //   moneyTransfer,
-    //   messageTransfer,
-    //   isSenderPay
-    // } = this.state;
-    // let partner_code = 0;
-    // if (isInterbank) {
-    //   partner_code = receiverBank;
-    // }
-    // let uid = localStorage.getItem('uid');
-    // let to_account = receiverId, note = messageTransfer, amount = moneyTransfer;
-    // let cost_type = isSenderPay ? 0 : 1;
-    //
-    // let data = {
-    //   partner_code: partner_code,
-    //   uid: uid,
-    //   to_account: to_account,
-    //   note: note,
-    //   amount: amount,
-    //   cost_type: cost_type,
-    // };
-    // // console.log("data", data);
-    // let accessToken = localStorage.getItem('accessToken');
-    // // this.props.transfer(data, accessToken);
-    //
-    // let xxx = {
-    //   partner_code: '0',
-    //   uid: '1',
-    //   to_account: '12',
-    //   note: 'abc',
-    //   amount: 23,
-    //   cost_type: 0
-    // };
-    //
-    // this.props.transfer(xxx, accessToken);
+    e.preventDefault();
+    console.log("Bat dau o day");
+    let {numberAccount, moneyTransfer} = this.state;
+    let data = {
+      "account_num": numberAccount,
+      "money": moneyTransfer
+    };
+    console.log("data", data);
+    let accessToken = localStorage.getItem('accessToken');
+    this.props.recharge(data, accessToken);
   };
 
-  componentWillMount() {
-    // console.log("componentWillMount");
-  }
-
-  componentDidMount() {
-    // // console.log("componentDidMount")
-    // let accessToken = localStorage.getItem('accessToken');
-    // let uid = localStorage.getItem('uid');
-    // this.props.getInterbankAssociate(accessToken);
-    // this.props.getListReceiverSaved(uid, accessToken);
-    // // listReceiverSaved
-
-    // let data = {
-    //     partner_code: '0',
-    //     uid: '1',
-    //     to_account: '2173891742',
-    //     note: 'abc',
-    //     amount: 234234234234224,
-    //     cost_type: 0
-    // };
-    // this.props.transfer(data, accessToken);
-  }
-
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    // console.log("shouldComponentUpdate", nextProps);
-    return true;
-  }
-
   componentWillReceiveProps(props) {
-    // // console.log("componentWillReceiveProps", props);
+    // // console.log("componentWillReceDiveProps", props);
     // let errorCode = this.props.TransferInfo.errorCode;
     // console.log("errorCode", errorCode);
     // if (errorCode === 1) {
@@ -170,10 +114,9 @@ class Recharge extends Component {
 
   render() {
     let {
-      userId,
+      numberAccount,
       moneyTransfer
     } = this.state;
-
 
     return (
         <Container>
@@ -191,14 +134,14 @@ class Recharge extends Component {
                       <h4>1. Thông tin tài khoản</h4>
 
                       <FormGroup>
-                        <Label for="userId">Số tài khoản hoặc tên đăng nhập {this.showFieldRequire()}</Label>
+                        <Label for="numberAccount">Số tài khoản hoặc tên đăng nhập {this.showFieldRequire()}</Label>
                         <InputGroup className="mb-2">
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>Số tài khoản</InputGroupText>
                           </InputGroupAddon>
-                          <Input type="text" name="userId" id="userId"
+                          <Input type="text" name="numberAccount" id="numberAccount"
                                  onChange={this.onChange}
-                                 value={userId}
+                                 value={numberAccount}
                                  placeholder="2343-5928-3472"/>
                         </InputGroup>
                       </FormGroup>
@@ -243,6 +186,7 @@ class Recharge extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
+  recharge: (data, accessToken) => dispatch(recharge(data, accessToken)),
   // getInterbankAssociate: (accessToken) => dispatch(getInterbankAssociate(accessToken)),
   // transfer: (data, accessToken) => dispatch(transfer(data, accessToken)),
   // getListReceiverSaved: (uid, accessToken) => dispatch(getListReceiverSaved(uid, accessToken))
@@ -250,6 +194,7 @@ const mapDispatchToProps = dispatch => ({
 
 const mapStateToProps = (state) => {
   return {
+    RechargeInfo: state.RechargeInfo
     // InterbankAssociate: state.InterbankAssociate,
     // TransferInfo: state.TransferInfo,
     // ReceiverSaved: state.ReceiverSaved

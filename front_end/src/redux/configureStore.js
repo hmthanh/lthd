@@ -15,6 +15,7 @@ import { GetRemindInfo } from './actions/getRemind'
 import { GetRemindDetail } from './actions/getRemindDetail'
 import { AccountNum } from './actions/accountNum.action'
 import { BankingAssociate, ReceiverSaved, TransferInfo, VerifyResult } from './actions/transfer'
+import {RechargeInfo} from "./actions/recharge.action";
 
 export const ConfigureStore = () => {
     const store = createStore(
@@ -34,8 +35,8 @@ export const ConfigureStore = () => {
             TransferInfo: TransferInfo,
             ReceiverSaved: ReceiverSaved,
             VerifyResult: VerifyResult,
-
             AccountNum: AccountNum,
+            RechargeInfo: RechargeInfo,
         }),
         applyMiddleware(logger),
         applyMiddleware(thunk),

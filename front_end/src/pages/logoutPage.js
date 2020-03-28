@@ -7,9 +7,9 @@ class logoutPage extends Component {
   }
 
   componentDidMount() {
-    localStorage.clear()
+    localStorage.clear();
     // this.props.logout()
-    this.props.history.push("/login")
+    this.props.history.push("/login");
   }
 
   render() {

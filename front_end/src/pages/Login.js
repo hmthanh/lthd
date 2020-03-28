@@ -19,17 +19,17 @@ class LoginPage extends Component {
   }
 
   handleSubmit(values) {
-    let recaptcha = recaptchaRef.current.getValue()
-    console.log('recaptcha ', recaptcha)
+    let recaptcha = recaptchaRef.current.getValue();
+    console.log('recaptcha ', recaptcha);
     if(recaptcha) {
       this.props.login(values.userName, values.password)
         .then(() => {
           if (this.props.Login.data.authenticated) {
-            localStorage.setItem('uid', this.props.Login.data.user.id)
-            localStorage.setItem('role', this.props.Login.data.user.role)
-            localStorage.setItem('accessToken', this.props.Login.data.accessToken)
-            localStorage.setItem('refreshToken', this.props.Login.data.refreshToken)
-            this.props.history.push("/")
+            localStorage.setItem('uid', this.props.Login.data.user.id);
+            localStorage.setItem('role', this.props.Login.data.user.role);
+            localStorage.setItem('accessToken', this.props.Login.data.accessToken);
+            localStorage.setItem('refreshToken', this.props.Login.data.refreshToken);
+            this.props.history.push("/");
           } else {
             this.setState({ isFailed: true })
           }
