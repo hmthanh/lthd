@@ -20,7 +20,7 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import {recharge} from "../../redux/creators/rechargeCreator";
-import useToggle from "./hooks";
+import useToggle from "../../utils/useToggle";
 
 const Recharge = () => {
   const dispatch = useDispatch();
@@ -30,6 +30,9 @@ const Recharge = () => {
   });
   const [numberAccount, setNumberAccount] = useState(0);
   const [moneyTransfer, setMoneyTransfer] = useState(0);
+
+  const titleMessage = ["", "Nạp tiền thất bại", "Nạp tiền thành công"];
+  const contentMessage = ["", "Đã xảy ra lỗi\nVui lòng kiểm tra lại", "Đã nạp tiền vào tài khoản thành công"];
 
   function changeNumberAccount(e) {
     setNumberAccount(e.target.value);
@@ -120,33 +123,17 @@ const Recharge = () => {
                       className={""}
                       isOpen={successModalToggle.active}
                       onClose={() => successModalToggle.setInActive()}
-                      messageId={rechargeSelector.messageId}
-                      moneyTransfer={moneyTransfer}
-                      numberAccount={numberAccount}
+                      title={titleMessage[rechargeSelector.statusId]}
+                      content={contentMessage[rechargeSelector.statusId]}
                   ></MessageBox>
                 </div>
-                {/* <ModalOTP isOpen={this.props.TransferInfo.errorCode === 1}
-                handleVerifyOTP={this.handleVerifyOTP}
-                transId={this.props.TransferInfo.transId}></ModalOTP> */}
               </Card>
             </Col>
           </Row>
         </div>
       </Container>
   );
-
-
 };
 
-const mapDispatchToProps = dispatch => ({
-  recharge: (data, accessToken) => dispatch(recharge(data, accessToken)),
-
-});
-
-const mapStateToProps = (state) => {
-  return {
-    RechargeInfo: state.RechargeInfo
-  }
-};
 
 export default Recharge;

@@ -15,26 +15,27 @@ import {
 } from './actionType'
 
 export const TransferInfo = (state = {
-    isLoading: true,
-    errMess: null,
+    isLoading: false,
+    statusId: 0,
+    errMess:null,
     data: []
 }, action) => {
     switch (action.type) {
         case TRANSFER_LOADING:
-            return {isLoading: true, errorCode: 0, errMess: null, data: []};
+            return {isLoading: true, statusId: 0, errMess: action.payload, data: []};
         case TRANSFER_FAILED:
-            return {...state, isLoading: false, errorCode: -1, errMess: action.payload, data: []};
+            return {...state, isLoading: false, statusId: 1, errMess: action.payload, data: []};
         case TRANSFER_INVALID:
-            return {...state, isLoading: false, errorCode: -206, errMess: null, data: {...action.payload}};
+            return {...state, isLoading: false, statusId: 2, data: {...action.payload}};
         case TRANSFER_SUCCESS:
-            return {...state, isLoading: false, errorCode: 1, errMess: null, next: 0, data: {...action.payload}};
+            return {...state, isLoading: false, statusId: 3, data: {...action.payload}};
         default:
             return state;
     }
 };
 
-export const BankingAssociate = (state = {
-    isLoading: true,
+export const InterBank = (state = {
+    isLoading: false,
     errMess: null,
     data: []
 }, action) => {
@@ -44,14 +45,14 @@ export const BankingAssociate = (state = {
         case INTERBANK_ASSOCIATE_FAILED:
             return {...state, isLoading: false, errMess: action.payload, data: []};
         case INTERBANK_ASSOCIATE_SUCCESS:
-            return {...state, isLoading: false, errMess: null, next: 0, data: {...action.payload}};
+            return {...state, isLoading: false, errMess: null, data: {...action.payload}};
         default:
             return state;
     }
 };
 
 export const ReceiverSaved = (state = {
-    isLoading: true,
+    isLoading: false,
     errMess: null,
     data: []
 }, action) => {
@@ -67,9 +68,8 @@ export const ReceiverSaved = (state = {
     }
 };
 
-
 export const VerifyResult = (state = {
-    isLoading: true,
+    isLoading: false,
     errMess: null,
     data: []
 }, action) => {
