@@ -8,6 +8,7 @@ router.post('/', async (req, res) => {
   //   "account_num": "0725174389964",
   //   "money": 30000000
   // };
+  console.log(req.body);
   const userInfo = await userModel.singleByAccountNum(req.body.account_num);
   let uid = userInfo[0].id;
   console.log("uid", uid);
