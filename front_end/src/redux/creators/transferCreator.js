@@ -10,6 +10,7 @@ import {
   TRANSFER_LOADING,
   TRANSFER_SUCCESS,
   VERIFY_OTP_FAILED,
+  VERIFY_OTP_INVALID,
   VERIFY_OTP_LOADING,
   VERIFY_OTP_SUCCESS
 } from '../actions/actionType'
@@ -29,7 +30,7 @@ export const transfer = (data, accessToken) => {
         } else {
           dispatch({type: TRANSFER_INVALID, payload: response});
         }
-        resolve(response.data);
+        resolve(response);
       } catch (e) {
         reject(e);
         console.log(e);
@@ -57,6 +58,8 @@ export const getInterbank = (accessToken) => {
 };
 
 export const getReceiverSaved = (uid, accessToken) => {
+  console.log("uid", uid);
+  console.log("accessToken", accessToken);
   return dispatch => {
     dispatch({type: RECEIVER_SAVED_LOADING});
     return new Promise(async (resolve, reject) => {
@@ -79,15 +82,16 @@ export const verifyOTP = (transID, data, accessToken) => {
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetchFrom(UrlApi + `/api/transfer/${transID}`, 'POST', data, accessToken);
-        dispatch({type: VERIFY_OTP_SUCCESS, payload: response});
+        if (response.errorCode === 0) {
+          dispatch({type: VERIFY_OTP_SUCCESS, payload: response});
+        } else {
+          dispatch({type: VERIFY_OTP_INVALID, payload: response});
+        }
         resolve(response);
       } catch (e) {
         console.log(e);
         reject(e);
-        dispatch({
-          type: VERIFY_OTP_FAILED,
-          payload: e
-        });
+        dispatch({type: VERIFY_OTP_FAILED, payload: e});
       }
     });
   }

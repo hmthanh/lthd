@@ -18,57 +18,65 @@ import {
   Row,
   Spinner
 } from "reactstrap";
-import {getInterbank} from "../../redux/creators/transferCreator";
-
+import {getInterbank, getReceiverSaved, transfer} from "../../redux/creators/transferCreator";
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
-// import { convertObjectToArray } from "../../utils/utils";
+import {convertObjectToArray} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
-// import ModalOTP from "../../components/Modal/ModalOTP";
 import useInputChange from "../../utils/useInputChange";
+import ModalOTP from "../../components/Modal/ModalOTP";
 
 const Transfer = () => {
-  const dispatch = useDispatch();
-  const isShowMessageBox = useToggle();
-  // const transferInfo = useSelector((state) => {
-  //   return state.TransferInfo
-  // });
-  const interBankInfo = useSelector((state) => {
-    return state.InterBank
-  });
-  // const listReceive = useSelector((state) => {
-  //   return state.ReceiverSaved
-  // });
-
   const listSenderAccount = [
     {name: 'Tài khoản thanh toán 1', value: 1},
     {name: 'Tài khoản thanh toán 2', value: 2}
   ];
+  const dispatch = useDispatch();
+  const transferInfo = useSelector((state) => {
+    return state.TransferInfo
+  });
+  const interBankInfo = useSelector((state) => {
+    return state.InterBank
+  });
+  const listSaved = useSelector((state) => {
+    return state.ReceiverSaved
+  });
 
-  // const isInterBank = useToggle(false);
-
-  // const [isSavedList, setIsSavedList] = useState(false);
   const sender = useInputChange(1);
-  const receiveBank = useInputChange(0);
+  const [receiveBank, setReceiveBank] = useState(0);
   const [isInterbank, setIsInterbank] = useState(false);
+  const [selectSaved, setSelectSaved] = useState(0);
   const [isUseSaved, setIsUseSaved] = useState(false);
-  // const [listSender, setListSender] = useState([{name: 'Tài khoản thanh toán 1', value: 1},
-  //   {name: 'Tài khoản thanh toán 2', value: 2}]);
-  // const [receiverSavedList, setReceiverSavedList] = useState(0);
-  // const [receiverId, setReceiverId] = useState('');
+  const [accountNum, setAccountNum] = useState(0);
   const name = useInputChange('');
   const money = useInputChange(0);
   const message = useInputChange('');
-  // const [isSenderPay, setIsSenderPay] = useState(true);
-  // const [isShowVerify, setIsShowVerify] = useState(false);
-  //let uid = localStorage.getItem('uid');
+  const isSenderPay = useToggle(true);
+  const messageBoxToggle = useToggle(false);
+  const showVerifyToggle = useToggle(false);
+  const [titleMessage, setTitleMessage] = useState("");
+  const [contentMessage, setContentMessage] = useState("");
+  const [transId, setTransId] = useState(0);
 
   function showFieldRequire() {
     return <Badge color="danger" pill>Yêu cầu</Badge>
   }
 
-  function onChangeLocalBank(e){
+  function onChangeSelectSaved(e) {
+    setSelectSaved(e.target.value);
+    setAccountNum(e.target.value);
+  }
+
+  function onChangeAccountNum(e) {
+    setAccountNum(e.target.value);
+  }
+
+  function onChangeLocalBank(e) {
     setIsInterbank(false);
+  }
+
+  function onChangeReceiveBank(e) {
+    setReceiveBank(e.target.value);
   }
 
   function onChangeInterbank(e) {
@@ -77,97 +85,95 @@ const Transfer = () => {
       let accessToken = localStorage.getItem('accessToken');
 
       dispatch(getInterbank(accessToken))
-          .then(() => {
-            console.log("getInterbank True");
+          .then((response) => {
+            let partner_code = response.item[0].partner_code;
+            setReceiveBank(partner_code);
           })
-          .catch(() => {
-            console.log("getInterbank False");
+          .catch((err) => {
+            let title = "Đã xảy ra lỗi";
+            let content = "Không thể tải ngân hàng liên kết\nError : " + err;
+            showMessageBox(title, content);
+            setIsInterbank(false);
           }, [dispatch]);
     }
   }
 
-  // function changeReceiverId(e){
-  //   setReceiverId(e)
-  //   this.setState({
-  //     receiverId: this.state.receiverSavedList
-  //   });
-  // };
-  //
-  // changeInterbank = () => {
-  //   this.setState({
-  //     isInterbank: !this.state.isInterbank
-  //   });
-  // };
-  //
-  // changeSavedList = () => {
-  //   if (!this.state.isSavedList) {
-  //     this.changeReceiverId();
-  //   }
-  //   this.setState({
-  //     isSavedList: !this.state.isSavedList
-  //   });
-  // };
-  //
-  // changeTypeTransfer = () => this.setState({
-  //   isSenderPay: !this.state.isSenderPay
-  // });
+  function onChangeNotUseSaved() {
+    setIsUseSaved(false);
+  }
 
-  //
-  // onChangeReceiverSaved = (e) => {
-  //   let target = e.target;
-  //   this.setState({
-  //     receiverId: target.value
-  //   });
-  //
-  //   if (!this.state.isSavedList) {
-  //     this.changeReceiverId();
-  //   }
-  // };
-  //
-  // onSubmit = (e) => {
-  //   e.preventDefault();
-  //   let {
-  //     isInterbank,
-  //     receiverBank,
-  //     receiverId,
-  //     moneyTransfer,
-  //     messageTransfer,
-  //     isSenderPay
-  //   } = this.state;
-  //   let partner_code = 0;
-  //   if (isInterbank) {
-  //     partner_code = receiverBank;
-  //   }
-  //   let uid = localStorage.getItem('uid');
-  //   let to_account = receiverId, note = messageTransfer, amount = moneyTransfer;
-  //   let cost_type = isSenderPay ? 0 : 1;
-  //
-  //   let data = {
-  //     partner_code: partner_code,
-  //     uid: uid,
-  //     to_account: to_account,
-  //     note: note,
-  //     amount: amount,
-  //     cost_type: cost_type,
-  //   };
-  //   // console.log("data", data);
-  //   let accessToken = localStorage.getItem('accessToken');
-  //   this.props.transfer(data, accessToken);
-  // };
-  //
+  function onChangeUseSaved(e) {
+    if (!e.target.value) {
+      setIsUseSaved(true);
+      let accessToken = localStorage.getItem('accessToken');
+      let uid = localStorage.getItem('uid');
 
+      dispatch(getReceiverSaved(uid, accessToken))
+          .then((response) => {
+            let accountNum = convertObjectToArray(response)[0].account_num;
+            setAccountNum(accountNum);
+          })
+          .catch((err) => {
+            let title = "Đã xảy ra lỗi";
+            let content = "Không thể tải danh sách đã lưu\nError : " + err;
+            showMessageBox(title, content);
+            setIsUseSaved(false);
+          }, [dispatch]);
+    }
+  }
 
-  // useEffect(() => {
-  //   let accessToken = localStorage.getItem('accessToken');
-  //   let uid = localStorage.getItem('uid');
-  //   dispatch(getInterbank(accessToken))
-  //       .then(() => {
-  //         console.log("getInterbank True");
-  //       })
-  //       .catch(() => {
-  //         console.log("getInterbank False");
-  //       }, [dispatch]);
-  // });
+  function showMessageBox(title, content) {
+    setTitleMessage(title);
+    setContentMessage(content);
+    messageBoxToggle.setActive();
+  }
+
+  function onVerifySuccess() {
+    let title = "Chuyển tiền thành công";
+    let content = "Đã xác thực OTP, Chuyển tiền thành công";
+    showMessageBox(title, content);
+  }
+
+  function onSubmitForm(e) {
+    e.preventDefault();
+    let partner_code = 0;
+    if (isInterbank) {
+      partner_code = receiveBank;
+    }
+    let uid = localStorage.getItem('uid');
+    let to_account = accountNum, note = message.value, amount = money.value;
+    let cost_type = isSenderPay.active ? 0 : 1;
+
+    let data = {
+      partner_code: partner_code,
+      uid: uid,
+      to_account: to_account,
+      note: note,
+      amount: amount,
+      cost_type: cost_type,
+    };
+    console.log(data);
+    let accessToken = localStorage.getItem('accessToken');
+
+    dispatch(transfer(data, accessToken))
+        .then((response) => {
+          console.log("response", response);
+          if (response.errorCode === 0) {
+            setTransId(response.transId);
+            showVerifyToggle.setActive();
+          } else {
+            let title = "Chuyển tiền thất bại";
+            let content = "Số dư của tài khoản không đủ";
+            showMessageBox(title, content);
+          }
+        })
+        .catch((err) => {
+          let title = "Chuyển tiền thất bại";
+          let content = "Đã xảy ra lỗi trong quá trình chuyển tiền\n Error : " + err;
+          showMessageBox(title, content);
+        }, [dispatch]);
+  }
+
 
   return (
       <Container>
@@ -181,7 +187,7 @@ const Transfer = () => {
                   </CardTitle>
                   <hr/>
                   <Form method="post" noValidate="novalidate"
-                        className="needs-validation">
+                        className="needs-validation" onSubmit={onSubmitForm}>
                     <h4>1. Người gửi</h4>
                     <FormGroup>
                       <Label for="senderAccountType">Tài khoản người gửi {showFieldRequire()}</Label>
@@ -207,14 +213,14 @@ const Transfer = () => {
                       </div>
                       <Collapse isOpen={isInterbank}>
                         <Input type="select"
-                            value={receiveBank.value}
-                            onChange={receiveBank.onChange}
+                               value={receiveBank}
+                               onChange={onChangeReceiveBank}
                                name="receiveBank" id="receiveBank">
                           {
                             interBankInfo.data.item &&
                             interBankInfo.data.item.map((item, index) => {
                               return <option key={index}
-                                value={item.partner_code}>{item.name}</option>
+                                             value={item.partner_code}>{item.name}</option>
                             })
                           }
                         </Input>
@@ -225,26 +231,25 @@ const Transfer = () => {
                         nhận {showFieldRequire()}</Label>
                       <div>
                         <ButtonGroup className="mb-2 ">
-                          <Button color="primary" onClick={this.changeSavedList}
-                                  active={isSavedList === false}>Nhập thông tin mới</Button>
-                          <Button color="primary" onClick={this.changeSavedList}
-                                  active={isSavedList === true}>Danh sách đã lưu</Button>
+                          <Button color="primary" onClick={onChangeNotUseSaved}
+                                  active={isUseSaved === false}>Nhập thông tin mới</Button>
+                          <Button color="primary" onClick={onChangeUseSaved}
+                                  active={isUseSaved === true}>Danh sách đã lưu</Button>
                         </ButtonGroup>
                       </div>
-                      <Collapse isOpen={false}>
-                        {/*isSavedList*/}
-                        {/*<Input type="select"*/}
-                        {/*       value={receiverSavedList}*/}
-                        {/*       onChange={this.onChangeReceiverSaved}*/}
-                        {/*       name="receiverSavedList" id="receiverSavedList">*/}
-                        {/*  /!*{*!/*/}
-                        {/*  /!*  listReceiverSaved &&*!/*/}
-                        {/*  /!*  listReceiverSaved.map((item, index) => {*!/*/}
-                        {/*  /!*    return <option key={index}*!/*/}
-                        {/*  /!*      value={item.account_num}>{item.alias_name}</option>*!/*/}
-                        {/*  /!*  })*!/*/}
-                        {/*  /!*}*!/*/}
-                        {/*</Input>*/}
+                      <Collapse isOpen={isUseSaved}>
+                        <Input type="select"
+                               value={selectSaved}
+                               onChange={onChangeSelectSaved}
+                               name="selectSaved" id="selectSaved">
+                          {
+                            listSaved.data != null &&
+                            convertObjectToArray(listSaved.data).map((item, index) => {
+                              return <option key={index}
+                                             value={item.account_num}>{item.alias_name}</option>
+                            })
+                          }
+                        </Input>
                       </Collapse>
                     </FormGroup>
                     <FormGroup>
@@ -252,10 +257,10 @@ const Transfer = () => {
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>Số tài khoản</InputGroupText>
                         </InputGroupAddon>
-                        {/*<Input type="text" name="receiverId" id="receiverId"*/}
-                        {/*       onChange={this.onChange}*/}
-                        {/*       value={receiverId}*/}
-                        {/*       placeholder="2343-5928-3472"/>*/}
+                        <Input type="text" name="accountNum" id="accountNum"
+                               onChange={onChangeAccountNum}
+                               value={accountNum}
+                               placeholder="0725922171392"/>
                       </InputGroup>
                       <InputGroup>
                         <InputGroupAddon addonType="prepend">
@@ -284,31 +289,46 @@ const Transfer = () => {
                     </FormGroup>
                     <FormGroup>
                       <Label>Hình thức trả phí</Label>
-                      {/*<ButtonGroup className="mb-2">*/}
-                      {/*  <Button color="primary" onClick={this.changeTypeTransfer}*/}
-                      {/*          active={isSenderPay === true}>Người nhận trả phí</Button>*/}
-                      {/*  <Button color="primary" onClick={this.changeTypeTransfer}*/}
-                      {/*          active={isSenderPay === false}>Người gửi trả phí</Button>*/}
-                      {/*</ButtonGroup>*/}
+                      <ButtonGroup className="mb-2">
+                        <Button color="primary" onClick={isSenderPay.setActive}
+                                active={isSenderPay.active === true}>Người nhận trả phí</Button>
+                        <Button color="primary" onClick={isSenderPay.setInActive}
+                                active={isSenderPay.active === false}>Người gửi trả phí</Button>
+                      </ButtonGroup>
                     </FormGroup>
                     <div>
-                      <Button id="btnTransferLocal" type="submit" color={"success"}
+                      <Button id="btnTransferLocal"
+                              type="submit"
+                              color={"success"}
                               size={"lg"}
                               block={true}
                               className="d-flex align-items-center justify-content-center"
-                              disabled={false}>
-                        <Spinner className={(false ? "visible" : "disable")} color="light"
-                                 size={"sm"} role="status"
-                                 aria-hidden="true"/>{' '}
-                        <span style={{marginLeft: "5px"}}>Chuyển Tiền</span>
+                              disabled={transferInfo.isLoading}
+                      >
+                        <span style={{marginRight: "10px"}}>
+                          {(transferInfo.isLoading ? <Spinner color="light"
+                                                              size={"sm"} role="status"
+                                                              aria-hidden="true"/> : "")}
+                        </span>
+
+                        <span>Chuyển Tiền</span>
                       </Button>
                     </div>
                   </Form>
-                  <MessageBox isOpen={false}></MessageBox>
+                  <MessageBox
+                      className={""}
+                      isOpen={messageBoxToggle.active}
+                      onClose={() => messageBoxToggle.setInActive()}
+                      title={titleMessage}
+                      content={contentMessage}
+                  ></MessageBox>
                 </div>
-                {/* <ModalOTP isOpen={this.props.TransferInfo.errorCode === 1}
-                handleVerifyOTP={this.handleVerifyOTP}
-                transId={this.props.TransferInfo.transId}></ModalOTP> */}
+                <ModalOTP
+                    isShow={showVerifyToggle.active}
+                    transId={transId}
+                    onClose={showVerifyToggle.setInActive}
+                    onVerifySuccess={onVerifySuccess}
+                ></ModalOTP>
               </Card>
             </Col>
           </Row>
@@ -317,19 +337,5 @@ const Transfer = () => {
   );
 };
 
-//
-// const mapDispatchToProps = dispatch => ({
-//   getInterbankAssociate: (accessToken) => dispatch(getInterbankAssociate(accessToken)),
-//   transfer: (data, accessToken) => dispatch(transfer(data, accessToken)),
-//   getListReceiverSaved: (uid, accessToken) => dispatch(getListReceiverSaved(uid, accessToken))
-// });
-//
-// const mapStateToProps = (state) => {
-//   return {
-//     InterbankAssociate: state.InterbankAssociate,
-//     TransferInfo: state.TransferInfo,
-//     ReceiverSaved: state.ReceiverSaved
-//   }
-// };
 
 export default Transfer;
