@@ -16,6 +16,7 @@ import {GetRemindDetail} from './actions/getRemindDetail'
 import {AccountNum} from './actions/accountNum.action'
 import {InterBank, ReceiverSaved, TransferInfo, VerifyResult} from './actions/transfer.action'
 import RechargeInfo from "./actions/recharge.action";
+import {HistoryTransfer} from "./actions/getHistoryTransfer.action";
 
 export const ConfigureStore = () => {
   const store = createStore(
@@ -37,6 +38,7 @@ export const ConfigureStore = () => {
         VerifyResult: VerifyResult,
         AccountNum: AccountNum,
         RechargeInfo: RechargeInfo,
+        HistoryTransfer: HistoryTransfer
       }),
       applyMiddleware(logger),
       applyMiddleware(thunk),

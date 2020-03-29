@@ -61,7 +61,9 @@ app.use('/api/remind', require('./routes/remind.route'));
 
 app.use('/api/history', verifyAccessToken, require('./routes/history.route'));
 
-app.use('/api/recharge',  require('./routes/recharge.route'));
+app.use('/api/recharge', require('./routes/recharge.route'));
+
+app.use('/api/history-account', require('./routes/historyTransfer.route'));
 
 // WS
 require('./ws');
