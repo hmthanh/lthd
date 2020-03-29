@@ -10,9 +10,7 @@ totp.options = {
 
 module.exports = {
   HOST_NAME: process.env.HOST_NAME,
-
   EXPOSE_PORT: process.env.EXPOSE_PORT,
-
   DB_HOST: process.env.DB_HOST,
   DB_PORT: process.env.DB_PORT,
   DB_USER: process.env.DB_USER,
@@ -28,6 +26,5 @@ module.exports = {
   SECRET_RSA: process.env.SECRET_RSA,
   SECRET_PGP: process.env.SECRET_PGP,
   OTP: totp,
-
   MAILER_PORT:  process.env.MAILER_PORT,
 };

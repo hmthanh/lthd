@@ -1,26 +1,28 @@
-import React, { Component, lazy, Suspense } from 'react'
-import { Route, Switch } from 'react-router-dom'
-import { Container, Spinner } from 'reactstrap'
+import React, {Component, lazy, Suspense} from 'react'
+import {Route, Switch} from 'react-router-dom'
+import {Container, Spinner} from 'reactstrap'
 import Header from '../layout/Header'
 import Websocket from 'react-websocket'
-import { connect } from 'react-redux'
-import { logout, relogin } from '../redux/creators/loginCreator'
-import { fetchFrom } from '../utils/fetchHelper'
-import { UrlApi } from '../shares/baseUrl'
+import {logout, relogin} from '../redux/creators/loginCreator'
+import {fetchFrom} from '../utils/fetchHelper'
+import {UrlApi} from '../shares/baseUrl'
+import Recharge from "./Recharge/Recharge";
+import HistoryAccount from "./HistoryAccount/HistoryAccount";
+import CreateAccount from "./CreateAccount/CreateAccount";
 
-const ListAccountPage = lazy(() => import('./ListAccountPage'))
-const LoginPage = lazy(() => import('./Login'))
-const Register = lazy(() => import('./Register'))
-const UserInfo = lazy(() => import('./UserInfo'))
-const HistoryPage = lazy(() => import('./HistoryPage'))
-const Transfer = lazy(() => import('./Transfer/Transfer'))
-const Transfer2 = lazy(() => import('./TransferPage'))
-const debtPage = lazy(() => import('./Debt'))
-const ChangePassword = lazy(() => import('./ChangePassword'))
-const ForgetPassword = lazy(() => import('./ForgetPassword'))
-const SettingPage = lazy(() => import('./SettingRecieverPage'))
-const remindPage = lazy(() => import('./Remind'))
-const LogoutPage = lazy(() => import('./logoutPage'))
+const ListAccountPage = lazy(() => import('./ListAccountPage'));
+const LoginPage = lazy(() => import('./Login'));
+const Register = lazy(() => import('./Register'));
+const UserInfo = lazy(() => import('./UserInfo'));
+const HistoryPage = lazy(() => import('./HistoryPage'));
+const Transfer = lazy(() => import('./Transfer/Transfer'));
+const Transfer2 = lazy(() => import('./TransferPage'));
+const debtPage = lazy(() => import('./Debt'));
+const ChangePassword = lazy(() => import('./ChangePassword'));
+const ForgetPassword = lazy(() => import('./ForgetPassword'));
+const SettingPage = lazy(() => import('./SettingRecieverPage'));
+const remindPage = lazy(() => import('./Remind'));
+const LogoutPage = lazy(() => import('./logoutPage'));
 
 
 // lazy loading example
@@ -31,20 +33,20 @@ const LogoutPage = lazy(() => import('./logoutPage'))
 
 let GetAccessTokenWorker = (uid, refresh) => {
   return fetchFrom(UrlApi + '/api/refresh', 'POST', {id: uid, refreshToken: refresh})
-  .then( (res)=> {
-    console.log(res)
-    localStorage.setItem('accessToken', res.accessToken)
-  })
-}
+      .then((res) => {
+        console.log(res);
+        localStorage.setItem('accessToken', res.accessToken)
+      })
+};
 
 class Main extends Component {
 
   constructor(props) {
-    super(props)
-    const uid = localStorage.getItem('uid')
-    const refreshToken = localStorage.getItem('refreshToken')
+    super(props);
+    const uid = localStorage.getItem('uid');
+    const refreshToken = localStorage.getItem('refreshToken');
     if (!uid) {
-      this.props.history.push("/login")
+      // this.props.history.push("/login")
     } else {
       setInterval(() => {
         GetAccessTokenWorker(uid, refreshToken)
@@ -93,23 +95,25 @@ class Main extends Component {
             </div>}>
               <Switch>
                 <Route exact path='/login' component={LoginPage} />
-                <Route exact path='/register' component={Register} />
-                <Route exact path='/info' component={UserInfo} />
-                <Route exact path='/transfer-history' component={HistoryPage} />
-                <Route exact path='/manage-debt' component={debtPage} />
-                <Route exact path='/change-password' component={ChangePassword} />
-                <Route exact path='/list-account' component={ListAccountPage} />
-                <Route exact path='/forget-password' component={ForgetPassword} />
-                <Route exact path='/list-receiver' component={SettingPage} />
-                <Route exact path='/transfer' component={Transfer} />
-                <Route exact path='/transfer2' component={Transfer2} />
-                <Route exact path='/remind' component={remindPage} />
-                <Route exact path='/logout' component={LogoutPage} />
+                <Route exact path='/register' component={Register}/>
+                <Route exact path='/info' component={UserInfo}/>
+                <Route exact path='/transfer-history' component={HistoryPage}/>
+                <Route exact path='/manage-debt' component={debtPage}/>
+                <Route exact path='/change-password' component={ChangePassword}/>
+                <Route exact path='/list-account' component={ListAccountPage}/>
+                <Route exact path='/forget-password' component={ForgetPassword}/>
+                <Route exact path='/list-receiver' component={SettingPage}/>
+                <Route exact path='/transfer' component={Transfer}/>
+                <Route exact path='/transfer2' component={Transfer2}/>
+                <Route exact path='/create-account' component={CreateAccount}/>
+                <Route exact path='/recharge' component={Recharge}/>
+                <Route exact path='/history-account' component={HistoryAccount}/>
+                <Route exact path='/remind' component={remindPage}/>
+                <Route exact path='/logout' component={LogoutPage}/>
               </Switch>
             </Suspense>
           </main>
         </Container>
-
       </div>
     )
   }

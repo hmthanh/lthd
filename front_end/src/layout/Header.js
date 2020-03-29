@@ -1,19 +1,19 @@
-import React, { Component, useState } from 'react'
-import { connect } from 'react-redux'
-import { Button, Collapse, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap'
-import { Link } from 'react-router-dom'
-import { logout, relogin } from '../redux/creators/loginCreator'
+import React, {Component, useState} from 'react'
+import {connect} from 'react-redux'
+import {Button, Collapse, Navbar, NavbarBrand, NavbarToggler} from 'reactstrap'
+import {Link} from 'react-router-dom'
+import {logout, relogin} from '../redux/creators/loginCreator'
 import AdministratorNav from '../components/Nav/AdministratorNav'
 import CustomerNav from '../components/Nav/CustomerNav'
 import EmployeeNav from '../components/Nav/EmployeeNav'
-import { getAllRemind } from '../redux/creators/remindCreator'
+import {getAllRemind} from '../redux/creators/remindCreator'
 
 const InfoUser = ({authenticated, permistion, notifyCount}) => {
 
-  console.log('InfoUser render Header', authenticated, permistion)
+  console.log('InfoUser render Header', authenticated, permistion);
 
   const [isOpen, setIsOpen] = useState(false);
-  const toggle = () => setIsOpen(!isOpen)
+  const toggle = () => setIsOpen(!isOpen);
 
   if (!authenticated) {
     return (
@@ -45,14 +45,14 @@ const InfoUser = ({authenticated, permistion, notifyCount}) => {
       )
     } else {
       return (
-        <div>
-          <NavbarToggler onClick={toggle}></NavbarToggler>
-          <AdministratorNav logout={logout}></AdministratorNav>
-        </div>
+          <div>
+            <NavbarToggler onClick={toggle}></NavbarToggler>
+            <AdministratorNav logout={logout}></AdministratorNav>
+          </div>
       )
     }
   }
-}
+};
 
 class Header extends Component {
   constructor(props) {
@@ -61,39 +61,38 @@ class Header extends Component {
     this.state = {
       isOpen: false
     };
-    // }
   }
 
   logout() {
-    localStorage.clear()
+    localStorage.clear();
     this.props.logout()
     // this.props.history.push("/")
   }
 
   componentDidMount() {
-    const uid = localStorage.getItem('uid')
+    const uid = localStorage.getItem('uid');
     this.props.getAllRemind(uid)
   }
 
   componentWillReceiveProps(props) {
-    
+
     console.log('componentWillReceiveProps Header', props.Login)
   }
 
   render() {
-    const uid = localStorage.getItem('uid')
-    const role = localStorage.getItem('role')
-    const isAuthen = !uid
-    console.log('render Header', uid, role, isAuthen)
+    const uid = localStorage.getItem('uid');
+    const role = localStorage.getItem('role');
+    const isAuthen = !uid;
+    console.log('render Header', uid, role, isAuthen);
     return (
-      <div>
-        <Navbar color="light" light expand="md">
-          <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
-          <InfoUser authenticated={!isAuthen} permistion={role}
-            logout={this.logout}
-            infoUser={this.infoUser} notifyCount={this.props.RemindInfo.data.num}/>
-        </Navbar>
-      </div>
+        <div>
+          <Navbar color="light" light expand="md">
+            <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
+            <InfoUser authenticated={!isAuthen} permistion={role}
+                      logout={this.logout}
+                      infoUser={this.infoUser} notifyCount={this.props.RemindInfo.data.num}/>
+          </Navbar>
+        </div>
     );
   }
 }
