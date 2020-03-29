@@ -2,7 +2,7 @@ const { writeFileSync, existsSync, unlinkSync, readFileSync } = require('fs')
 const {resolve} = require('path')
 const openpgp = require('openpgp')
 const privateKeyFileName = 'private.pgp'
-const publicKeyFileName = 'public.pgp'
+const publicKeyFileName = 'thirt_app/public.pgp'
 const encoding = 'utf8'
 
 const curve = 'Curve25519'  // ECC curve name
