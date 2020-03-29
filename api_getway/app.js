@@ -19,7 +19,11 @@ app.use(express.json());
 // SSE
 // app.get('/categoryAddedEvent', events.subscribeCategoryAdded);
 
-app.use('/api/auth', require('./routes/auth.route'));
+app.use('/api/ping', async (req, res) => {
+  res.json({msg: 'successfully!', errCode: 0})
+})
+
+app.use('/api/auth', require('./routes/auth.route'))
 
 app.use('/api/accounts', require('./routes/account.route'));
 // app.use('/api/users', require('./routes/user.route'));
