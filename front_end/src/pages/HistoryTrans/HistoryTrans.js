@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Button, Card, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row} from 'reactstrap'
 import './HistoryAccount.css';
@@ -6,16 +6,20 @@ import TableInfoTransfer from "./TableInfoTransfer";
 import MessageBox from "../../components/Modal/MessageBox";
 import useToggle from "../../utils/useToggle";
 
-const HistoryAccount = () => {
+const HistoryTrans = () => {
   const dispatch = useDispatch();
-  const showMessageBoxToggle= useToggle();
-  const historyTransfer = useSelector(state =>{
+  const showMessageBoxToggle = useToggle();
+  const historyTransfer = useSelector(state => {
     return state.HistoryTransfer
   });
   const [titleMessage, setTitleMessage] = useState("");
   const [contentMessage, setContentMessage] = useState("");
 
-  function findHistoryAccount(e){
+  useEffect(() => {
+
+  }, [dispatch]);
+
+  function findHistoryAccount() {
 
   }
 
@@ -67,6 +71,7 @@ const HistoryAccount = () => {
       moneyTransaction: 999000000
     },
   ];
+
   return (
       <Container>
         <div className="container-fluid py-3">
@@ -126,10 +131,11 @@ const HistoryAccount = () => {
             </Col>
           </Row>
         </div>
-        <MessageBox isOpen={showMessageBoxToggle.active} onClose={showMessageBoxToggle.setInActive} title={titleMessage} content={contentMessage}></MessageBox>
+        <MessageBox isOpen={showMessageBoxToggle.active} onClose={showMessageBoxToggle.setInActive} title={titleMessage}
+                    content={contentMessage}></MessageBox>
       </Container>
   );
 };
 
 
-export default HistoryAccount;
+export default HistoryTrans;

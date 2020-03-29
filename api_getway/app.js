@@ -17,7 +17,7 @@ app.use(express.json());
 
 
 // SSE
-// app.get('/categoryAddedEvent', events.subscribeCategoryAdded);
+// app.get('/categoryAddedEventevents.js', events.subscribeCategoryAdded);
 
 app.use('/api/auth', require('./routes/auth.route'));
 
