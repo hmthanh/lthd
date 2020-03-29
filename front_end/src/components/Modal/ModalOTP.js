@@ -1,74 +1,91 @@
-import React, {Component} from 'react';
+import React from 'react';
 import './MessageBox.css';
-import {Button, Input, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
+import {
+  Button,
+  Form,
+  FormFeedback,
+  FormGroup,
+  Input,
+  Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Spinner
+} from "reactstrap";
+import useInputChange from "../../utils/useInputChange";
 import {verifyOTP} from "../../redux/creators/transferCreator";
-import {connect} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import useToggle from "../../utils/useToggle";
 
-class ModalOTP extends Component {
-    constructor(props) {
-        super(props);
-        console.log(props);
-        this.state = {
-            OTP: 0,
-            transId: props.transId
-        };
-    }
+const ModalOTP = ({isShow, transId, onClose, onVerifySuccess}) => {
+  const dispatch = useDispatch();
+  const verifyInfo = useSelector((state) => {
+    return state.VerifyResult
+  });
+  const invalidOTPToggle = useToggle(false);
+  const OTP = useInputChange(0);
 
-    toggle = () => {
-        this.setState({
-            isOpen: !this.state.isOpen
+  function onVerify(e) {
+    let data = {
+      transId: transId,
+      OTP: OTP.value
+    };
+    let accessToken = localStorage.getItem('accessToken');
+    dispatch(verifyOTP(transId, data, accessToken))
+        .then((response) => {
+          if (response.errorCode === 0) {
+            console.log('success');
+            onClose();
+            onVerifySuccess();
+          } else {
+            invalidOTPToggle.setActive();
+          }
+          console.log(response);
         })
-    };
+        .catch((err) => {
+          console.log("Error", err);
+          invalidOTPToggle.setActive();
+        }, [dispatch]);
+  }
 
-    onChange = (e) => {
-        this.setState({
-            OTP: e.target.value
-        });
-    };
+  console.log(transId);
 
-    handleVerifyOTP = () => {
-        let {OTP, transId} = this.state;
-        let data = {
-            transId: transId,
-            OTP: OTP
-        };
-        console.log(data);
-        let accessToken = localStorage.getItem('accessToken');
-        this.props.verifyOTP(transId, data, accessToken);
-    };
+  return (
+      <div>
+        <Modal isOpen={isShow} toggle={onClose}>
+          <ModalHeader>Vui lòng nhập mã OTP để xác nhận</ModalHeader>
+          <ModalBody>
+            <Form>
+              <FormGroup>
+                <Label for="OTP">Nhập mã OTP</Label>
+                <Input type="number" name="OTP" id="OTP"
+                       onChange={OTP.onChange}
+                       value={OTP.value}
+                       invalid={invalidOTPToggle.active}
+                       required
+                />
+                <FormFeedback>Mã OTP không chính xác, vui lòng kiểm tra lại</FormFeedback>
+              </FormGroup>
+            </Form>
 
-    render() {
-        let {className, OTP} = this.state;
-        console.log("ppsdf", this.props.transId);
-
-        return (
-            <div>
-                <Modal isOpen={true} toggle={this.toggle} className={className}>
-                    <ModalHeader>Vui lòng nhập mã OTP để xác nhận</ModalHeader>
-                    <ModalBody>
-                        <Input type="number" name="OTP" id="OTP"
-                               onChange={this.onChange}
-                               value={OTP}
-                               required/>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="success" onClick={this.handleVerifyOTP}>Đồng ý</Button>
-                    </ModalFooter>
-                </Modal>
-            </div>
-        );
-    }
-}
-
-
-const mapDispatchToProps = dispatch => ({
-    verifyOTP: (transID, data, accessToken) => dispatch(verifyOTP(transID, data, accessToken))
-});
-
-const mapStateToProps = (state) => {
-    return {
-        VerifyResult: state.VerifyResult
-    }
+          </ModalBody>
+          <ModalFooter>
+            <Button color="success"
+                    className="d-flex align-items-center justify-content-center"
+                    onClick={onVerify}
+                    disabled={verifyInfo.isLoading}
+            >
+              <span style={{marginLeft: "40px"}}>
+                {(verifyInfo.isLoading ? <Spinner color="light"
+                                                  size={"sm"} role="status"
+                                                  aria-hidden="true"/> : "")}
+              </span>
+              <span style={{marginLeft: "5px", paddingRight: "40px"}}>Đồng ý</span></Button>
+          </ModalFooter>
+        </Modal>
+      </div>
+  );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ModalOTP);
+export default ModalOTP;

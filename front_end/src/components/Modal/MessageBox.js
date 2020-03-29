@@ -1,46 +1,23 @@
-import React, {Component} from 'react';
+import React from 'react';
 import './MessageBox.css';
 import {Button, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 
-class MessageBox extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isOpen: false
-        };
-    }
+const MessageBox = ({className, isOpen, onClose, title, content}) => {
 
-    toggle = () => {
-        this.setState({
-            isOpen: !this.state.isOpen
-        })
-    };
-
-    componentWillReceiveProps(nextProps, nextContext) {
-        console.log("componentWillReceiveProps", nextProps);
-        this.setState({
-            isOpen: nextProps.isOpen
-        });
-    }
-
-    render() {
-        let {isOpen, className} = this.state;
-        return (
-            <div>
-                <Modal isOpen={isOpen} toggle={this.toggle} className={className}>
-                    <ModalHeader toggle={this.toggle}>Chuyển tiền không thành công</ModalHeader>
-                    <ModalBody>
-                        Số tiền của bạn không đủ !
-                        Vui lòng kiểm tra lại tài khoản
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="success" onClick={this.toggle}>Đồng ý</Button>
-                    </ModalFooter>
-                </Modal>
-            </div>
-        );
-    }
-}
+  return (
+      <>
+        <Modal isOpen={isOpen} className={className}>
+          <ModalHeader>{title}</ModalHeader>
+          <ModalBody>
+            {content}
+          </ModalBody>
+          <ModalFooter>
+            <Button color="success" onClick={onClose}>Đồng ý</Button>
+          </ModalFooter>
+        </Modal>
+      </>
+  );
+};
 
 
 export default MessageBox
