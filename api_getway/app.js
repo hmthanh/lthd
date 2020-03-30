@@ -61,7 +61,7 @@ app.use('/api/associate', verifyAccessToken, require('./routes/associate.route')
 
 app.use('/api/debt', verifyAccessToken, require('./routes/debt.route'));
 
-app.use('/api/remind', require('./routes/remind.route'));
+app.use('/api/remind', verifyAccessToken, require('./routes/remind.route'));
 
 app.use('/api/history', verifyAccessToken, require('./routes/history.route'));
 
