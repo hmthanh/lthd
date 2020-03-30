@@ -1,4 +1,4 @@
-import {HISTORY_FAILED, HISTORY_LOADING, HISTORY_SUCCESS} from './actionType'
+import {HISTORY_USER_TRANS_FAILED, HISTORY_USER_TRANS_LOADING, HISTORY_USER_TRANS_SUCCESS} from './actionType'
 
 export const GetHistoryInfo = (state = {
     isLoading: true,
@@ -6,11 +6,11 @@ export const GetHistoryInfo = (state = {
     data: []
 }, action) => {
     switch (action.type) {
-        case HISTORY_FAILED:
+        case HISTORY_USER_TRANS_LOADING:
             return {isLoading: true, errMess: null, data: []};
-        case HISTORY_LOADING:
+        case HISTORY_USER_TRANS_FAILED:
             return {...state, isLoading: false, errMess: action.payload, data: []};
-        case HISTORY_SUCCESS:
+        case HISTORY_USER_TRANS_SUCCESS:
             return {...state, isLoading: false, errMess: null, next: 0, data: {...action.payload}};
         default:
             return state;

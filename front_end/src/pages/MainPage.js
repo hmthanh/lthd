@@ -7,14 +7,14 @@ import {logout, relogin} from '../redux/creators/loginCreator'
 import {fetchFrom} from '../utils/fetchHelper'
 import {UrlApi} from '../shares/baseUrl'
 import Recharge from "./Recharge/Recharge";
-import HistoryAccount from "./HistoryAccount/HistoryAccount";
+import HistoryTrans from "./HistoryTrans/HistoryTrans";
 import CreateAccount from "./CreateAccount/CreateAccount";
 
 const ListAccountPage = lazy(() => import('./ListAccountPage'));
-const LoginPage = lazy(() => import('./Login'));
+const LoginPage = lazy(() => import('./Login/Login'));
 const Register = lazy(() => import('./Register'));
 const UserInfo = lazy(() => import('./UserInfo'));
-const HistoryPage = lazy(() => import('./HistoryPage'));
+const HistoryPage = lazy(() => import('./HistoryUserTrans/HistoryUserTrans'));
 const Transfer = lazy(() => import('./Transfer/Transfer'));
 const Transfer2 = lazy(() => import('./TransferPage'));
 const debtPage = lazy(() => import('./Debt'));
@@ -107,7 +107,7 @@ class Main extends Component {
                 <Route exact path='/transfer2' component={Transfer2}/>
                 <Route exact path='/create-account' component={CreateAccount}/>
                 <Route exact path='/recharge' component={Recharge}/>
-                <Route exact path='/history-account' component={HistoryAccount}/>
+                <Route exact path='/history-account' component={HistoryTrans}/>
                 <Route exact path='/remind' component={remindPage}/>
                 <Route exact path='/logout' component={LogoutPage}/>
               </Switch>

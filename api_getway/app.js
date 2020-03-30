@@ -17,7 +17,7 @@ app.use(express.json());
 
 
 // SSE
-// app.get('/categoryAddedEvent', events.subscribeCategoryAdded);
+// app.get('/categoryAddedEventevents.js', events.subscribeCategoryAdded);
 
 app.use('/api/ping', async (req, res) => {
   res.json({msg: 'successfully!', errCode: 0})
@@ -65,7 +65,9 @@ app.use('/api/remind', verifyAccessToken, require('./routes/remind.route'));
 
 app.use('/api/history', verifyAccessToken, require('./routes/history.route'));
 
-app.use('/api/recharge',  require('./routes/recharge.route'));
+app.use('/api/recharge', require('./routes/recharge.route'));
+
+app.use('/api/history-account', require('./routes/historyTransfer.route'));
 
 // WS
 require('./ws');
