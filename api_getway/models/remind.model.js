@@ -7,7 +7,7 @@ module.exports = {
   },
 
   get: (id) => {
-    return db.load(`SELECT u.name, d.debt_val, d.note FROM debt_info as d JOIN user_info as u on d.account_num = u.account_num WHERE u.id=${id}`)
+    return db.load(`SELECT u.name, d.debt_val, d.date_time, d.note FROM debt_info as d JOIN user_info as u on d.account_num = u.account_num WHERE u.id=${id}  order by d.id DESC`)
   },
 
 };
