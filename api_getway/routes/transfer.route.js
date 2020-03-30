@@ -22,9 +22,9 @@ const validateData = (data) => {
 };
 
 router.post('/', async (req, res) => {
-  console.log(req.body);
+  console.log(req.body)
   const rows = await getInfoAccount(req.body.uid);
-  const sender = rows[0];
+  const sender = rows[0]
   const entity = {
     acc_name: sender.name,
     from_account: sender.account_num,
@@ -39,16 +39,16 @@ router.post('/', async (req, res) => {
           msg: 'failure',
           errorCode: -201,
         }
-    );
+    )
     return
   }
-  const insertVal = await transferModel.add(entity);
+  const insertVal = await transferModel.add(entity)
   const otp = OTP.generate(SECRET_TOKEN);
   console.log('OTP tranfer', otp);
-  let msg = msgTemplate(sender.name, 'transfer', otp);
+  let msg = msgTemplate(sender.name, 'transfer', otp)
   console.log(sender.email, sender);
-  let htmlmsg = htmlMsgTemplate(sender.name, 'transfer', otp);
-  mailController.sentMail(sender.email, '[New Vimo] Please verify OTP for transaction', msg, htmlmsg);
+  let htmlmsg = htmlMsgTemplate(sender.name, 'transfer', otp)
+  mailController.sentMail(sender.email, '[New Vimo] Please verify OTP for transaction', msg, htmlmsg)
 
   res.status(200).json({
         msg: 'successfully',

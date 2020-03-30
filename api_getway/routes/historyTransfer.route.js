@@ -14,11 +14,14 @@ router.post('/', async (req, res) => {
     console.log(accountNum)
     const historyData = await get(accountNum)
     console.log(historyData)
+    historyData.map((val, index) => {
+      val.timestamp = moment(val.timestamp).format('HH:mm:ss, DD-MM-YYYY')
+    })
     res.status(200).json({
       msg: 'successfully',
       errorCode: 0,
       item: historyData
-    });
+    })
 
 
 
@@ -36,4 +39,4 @@ router.post('/', async (req, res) => {
   // })
 });
 
-module.exports = router;
+module.exports = router
