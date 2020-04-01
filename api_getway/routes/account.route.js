@@ -19,6 +19,7 @@ function validateReceiverData(data) {
 }
 
 router.post('/', async (req, res) => {
+  console.log(req.body);
   let data = {...req.body};
   let DoB = data['date_of_birth'];
   const isValid = common.validate(data);

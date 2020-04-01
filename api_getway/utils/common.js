@@ -90,7 +90,7 @@ const validate = (data) => {
   data['phone'] = '84' + (+data['phone']);
   let DoB = data['date_of_birth'];
   data['password'] = DoB.split('-').join('');
-  
+
   return true
 };
 

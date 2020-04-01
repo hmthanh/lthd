@@ -3,7 +3,7 @@ import {Route, Switch} from 'react-router-dom'
 import {Container, Spinner} from 'reactstrap'
 import Header from '../layout/Header'
 import Websocket from 'react-websocket'
-import {logout, relogin} from '../redux/creators/loginCreator'
+// import {logout, relogin} from '../redux/creators/loginCreator'
 import {fetchFrom} from '../utils/fetchHelper'
 import {UrlApi} from '../shares/baseUrl'
 import Recharge from "./Recharge/Recharge";
@@ -21,7 +21,7 @@ const debtPage = lazy(() => import('./Debt'));
 const ChangePassword = lazy(() => import('./ChangePassword'));
 const ForgetPassword = lazy(() => import('./ForgetPassword'));
 const SettingPage = lazy(() => import('./SettingRecieverPage'));
-const remindPage = lazy(() => import('./Remind'));
+const remindPage = lazy(() => import('./Remind/Remind'));
 const LogoutPage = lazy(() => import('./logoutPage'));
 
 
@@ -48,7 +48,7 @@ class Main extends Component {
 
       // this.props.history.push("/login");
     } else {
-      GetAccessTokenWorker(uid, refreshToken)
+      GetAccessTokenWorker(uid, refreshToken);
       setInterval(() => {
         GetAccessTokenWorker(uid, refreshToken)
       }, 1000 * 60 * 8)
@@ -56,7 +56,7 @@ class Main extends Component {
   }
 
   componentWillReceiveProps(props) {
-    
+
     console.log('componentWillReceiveProps Main', props.Login)
   }
 
@@ -68,68 +68,70 @@ class Main extends Component {
     // alert("connected:)");
     console.log('connected:)')
   }
+
   handleClose() {
     // alert("disconnected:(");
     console.log('disconnected:(')
   }
 
   handleData(data) {
-    let result = JSON.parse(data)
+    // let result = JSON.parse(data)
   }
 
   render() {
     return (
-      <div>
-        <Websocket url='ws://localhost:6500'
-          onMessage={this.handleData.bind(this)} onOpen={this.handleOpen.bind(this)} onClose={this.handleClose.bind(this)} />
-        <Container className="themed-container">
-          <Header relogin={this.props.relogin} logout={this.props.logout}/>
-          <main className="main">
-            <Suspense fallback={<div>
-              <Spinner type="grow" color="primary" />
-              <Spinner type="grow" color="secondary" />
-              <Spinner type="grow" color="success" />
-              <Spinner type="grow" color="danger" />
-              <Spinner type="grow" color="warning" />
-              <Spinner type="grow" color="info" />
-              <Spinner type="grow" color="light" />
-            </div>}>
-              <Switch>
-                <Route exact path='/login' component={LoginPage} />
-                <Route exact path='/register' component={Register}/>
-                <Route exact path='/info' component={UserInfo}/>
-                <Route exact path='/transfer-history' component={HistoryPage}/>
-                <Route exact path='/manage-debt' component={debtPage}/>
-                <Route exact path='/change-password' component={ChangePassword}/>
-                <Route exact path='/list-account' component={ListAccountPage}/>
-                <Route exact path='/forget-password' component={ForgetPassword}/>
-                <Route exact path='/list-receiver' component={SettingPage}/>
-                <Route exact path='/transfer' component={Transfer}/>
-                <Route exact path='/transfer2' component={Transfer2}/>
-                <Route exact path='/create-account' component={CreateAccount}/>
-                <Route exact path='/recharge' component={Recharge}/>
-                <Route exact path='/history-account' component={HistoryTrans}/>
-                <Route exact path='/remind' component={remindPage}/>
-                <Route exact path='/logout' component={LogoutPage}/>
-              </Switch>
-            </Suspense>
-          </main>
-        </Container>
-      </div>
+        <div>
+          <Websocket url='ws://localhost:6500'
+                     onMessage={this.handleData.bind(this)} onOpen={this.handleOpen.bind(this)}
+                     onClose={this.handleClose.bind(this)}/>
+          <Container className="themed-container">
+            <Header relogin={this.props.relogin} logout={this.props.logout}/>
+            <main className="main">
+              <Suspense fallback={<div>
+                <Spinner type="grow" color="primary"/>
+                <Spinner type="grow" color="secondary"/>
+                <Spinner type="grow" color="success"/>
+                <Spinner type="grow" color="danger"/>
+                <Spinner type="grow" color="warning"/>
+                <Spinner type="grow" color="info"/>
+                <Spinner type="grow" color="light"/>
+              </div>}>
+                <Switch>
+                  <Route exact path='/login' component={LoginPage}/>
+                  <Route exact path='/register' component={Register}/>
+                  <Route exact path='/info' component={UserInfo}/>
+                  <Route exact path='/transfer-history' component={HistoryPage}/>
+                  <Route exact path='/manage-debt' component={debtPage}/>
+                  <Route exact path='/change-password' component={ChangePassword}/>
+                  <Route exact path='/list-account' component={ListAccountPage}/>
+                  <Route exact path='/forget-password' component={ForgetPassword}/>
+                  <Route exact path='/list-receiver' component={SettingPage}/>
+                  <Route exact path='/transfer' component={Transfer}/>
+                  <Route exact path='/transfer2' component={Transfer2}/>
+                  <Route exact path='/create-account' component={CreateAccount}/>
+                  <Route exact path='/recharge' component={Recharge}/>
+                  <Route exact path='/history-account' component={HistoryTrans}/>
+                  <Route exact path='/remind' component={remindPage}/>
+                  <Route exact path='/logout' component={LogoutPage}/>
+                </Switch>
+              </Suspense>
+            </main>
+          </Container>
+        </div>
     )
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  relogin: (uid) => dispatch(relogin(uid)),
-  logout: () => dispatch(logout()),
-});
-
-const mapStateToProps = (state) => {
-  return {
-    Login: state.Login,
-  }
-};
+// const mapDispatchToProps = dispatch => ({
+//   relogin: (uid) => dispatch(relogin(uid)),
+//   logout: () => dispatch(logout()),
+// });
+//
+// const mapStateToProps = (state) => {
+//   return {
+//     Login: state.Login,
+//   }
+// };
 
 // export default connect(mapStateToProps, mapDispatchToProps)(Main)
 

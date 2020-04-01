@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Badge,
   Button,
@@ -16,68 +16,68 @@ import {
   Row
 } from "reactstrap";
 import './CreateAccount.css';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import useInputChange from "../../utils/useInputChange";
+import {createAcc} from "../../redux/creators/accountCreator";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import {formatFormalDate} from "../../utils/utils";
+import useToggle from "../../utils/useToggle";
 
 const CreateAccount = () => {
   const dispatch = useDispatch();
-  const username = useInputChange("");
-  const password = useInputChange("");
+  const CreateAccount = useSelector((state) => {
+    return state.CreateAccount
+  });
+  const messageBoxToggle = useToggle(false);
+  const [contentMessage, setContentMessage] = useState("");
+  const [titleMessage, setTitleMessage] = useState("");
+  // const username = useInputChange("");
+  // const password = useInputChange("");
   const fullName = useInputChange("");
   const email = useInputChange("");
   const phone = useInputChange("");
+  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+
+  // date => {
+  //   props.onChange(date);
+  //   return setStartDate(date);
+  // }
 
   function showFieldRequire() {
     return <Badge color="danger" pill>Yêu cầu</Badge>
   }
 
-  // changeReceiverId = () => {
-  //   this.setState({
-  //     receiverId: this.state.receiverSavedList
-  //   });
-  // };
-  //
-  // changeInterbank = () => {
-  //   this.setState({
-  //     isInterbank: !this.state.isInterbank
-  //   });
-  // };
-  //
-  // changeSavedList = () => {
-  //   if (!this.state.isSavedList) {
-  //     this.changeReceiverId();
-  //   }
-  //   this.setState({
-  //     isSavedList: !this.state.isSavedList
-  //   });
-  // };
-  //
-  // changeTypeTransfer = () => this.setState({
-  //   isSenderPay: !this.state.isSenderPay
-  // });
-  //
-  // onChange = (e) => {
-  //   let target = e.target;
-  //   let name = target.name;
-  //   let value = target.type === 'checkbox' ? target.checked : target.value;
-  //   this.setState({
-  //     [name]: value
-  //   });
-  // };
+  function onSetDateOfBirth(value) {
+    setDateOfBirth(value);
+  }
 
   function onCreateAccount(e) {
     e.preventDefault();
     let data = {
-      username: username.value,
-      password: password.value,
-      fullName: fullName.value,
+      phone: phone.value,
       email: email.value,
-      phone: phone.value
+      name: fullName.value,
+      date_of_birth: formatFormalDate(dateOfBirth),
+      // user_name: username.value,
+      // password: password.value,
     };
-    console.log(data);
     let accessToken = localStorage.getItem('accessToken');
-    // this.props.transfer(data, accessToken);
+    dispatch(createAcc(data, accessToken))
+        .then((response) => {
+          if (response.msg == "successfully") {
+            setTitleMessage("Thành công");
+            setContentMessage("Đã tạo tài khoản thành công !");
+            messageBoxToggle.setActive();
+          }
+        })
+        .catch((e) => {
+          messageBoxToggle.active();
+          setTitleMessage("Thất bại");
+          setContentMessage("Đã xảy ra lỗi trong quá trình tạo tài khoản !");
+          console.log("error", e);
+        });
   }
 
   return (
@@ -93,54 +93,62 @@ const CreateAccount = () => {
                   <hr/>
                   <Form method="post" noValidate="novalidate"
                         className="needs-validation" onSubmit={onCreateAccount}>
-                    <h4>1. Thông tin tài khoản</h4>
+                    {/*<h4>1. Thông tin tài khoản</h4>*/}
+                    {/*<FormGroup>*/}
+                    {/*  <Label for="username">Tên tài khoản {showFieldRequire()}</Label>*/}
+                    {/*  <InputGroup className="mb-2">*/}
+                    {/*    <Input type="text" name="username" id="username"*/}
+                    {/*           onChange={username.onChange}*/}
+                    {/*           value={username.value}*/}
+                    {/*           placeholder=""/>*/}
+                    {/*  </InputGroup>*/}
+                    {/*</FormGroup>*/}
+                    {/*<FormGroup>*/}
+                    {/*  <Label for="password">Mật khẩu {showFieldRequire()}</Label>*/}
+                    {/*  <InputGroup className="mb-2">*/}
+                    {/*    <Input type="password" name="password" id="password"*/}
+                    {/*           onChange={password.onChange}*/}
+                    {/*           value={password.value}*/}
+                    {/*           placeholder=""/>*/}
+                    {/*  </InputGroup>*/}
+                    {/*</FormGroup>*/}
+                    <h4>Thông tin cá nhân</h4>
                     <FormGroup>
-                      <Label for="username">Tên tài khoản {showFieldRequire()}</Label>
+                      <Label for="fullName">Họ và tên {showFieldRequire()}</Label>
                       <InputGroup className="mb-2">
-                        <Input type="text" name="username" id="username"
-                               onChange={username.onChange}
-                               value={username.value}
-                               placeholder=""/>
-                      </InputGroup>
-                    </FormGroup>
-                    <FormGroup>
-                      <Label for="password">Mật khẩu {showFieldRequire()}</Label>
-                      <InputGroup className="mb-2">
-                        <Input type="password" name="password" id="password"
-                               onChange={password.onChange}
-                               value={password.value}
-                               placeholder=""/>
-                      </InputGroup>
-                    </FormGroup>
-                    <h4>2. Thông tin cá nhân</h4>
-                    <FormGroup>
-                      <InputGroup className="mb-2">
-                        <InputGroupAddon addonType="prepend">
-                          <InputGroupText>Họ và tên</InputGroupText>
-                        </InputGroupAddon>
-                        <Input type="text" name="fullName" id="fullName"
+                        <Input type="text"
+                               name="fullName"
+                               id="fullName"
                                onChange={fullName.onChange}
-                               value={fullName.value}/>
+                               value={fullName.value}
+                               placeholder="Nguyễn Văn A"
+                        />
                       </InputGroup>
-
+                      <Label for="email">Email {showFieldRequire()}</Label>
                       <InputGroup className="mb-2">
-                        <InputGroupAddon addonType="prepend">
-                          <InputGroupText>Email</InputGroupText>
-                        </InputGroupAddon>
                         <Input type="email" name="email" id="email"
                                onChange={email.onChange}
                                value={email.value}
-                               placeholder=""/>
+                               placeholder="someone@gmail.com"/>
                       </InputGroup>
-
+                      <Label for="phone">Số điện thoại {showFieldRequire()}</Label>
                       <InputGroup className="mb-2">
-                        <InputGroupAddon addonType="prepend">
-                          <InputGroupText>Số điện thoại</InputGroupText>
-                        </InputGroupAddon>
                         <Input type="text" name="phone" id="phone"
                                onChange={phone.onChange}
                                value={phone.value}
-                               placeholder=""/>
+                               placeholder="0913-472506"/>
+                      </InputGroup>
+                      <Label for="phone">Ngày sinh {showFieldRequire()}</Label>
+                      <InputGroup className="mb-2">
+                        <DatePicker
+                            className="form-control"
+                            type="text"
+                            name="date_of_birth"
+                            dateFormat="dd-MM-yyyy"
+                            onSelect={onSetDateOfBirth}
+                            onChange={onSetDateOfBirth}
+                            selected={dateOfBirth}
+                        />
                       </InputGroup>
                     </FormGroup>
                     <div>
@@ -153,10 +161,12 @@ const CreateAccount = () => {
                       </Button>
                     </div>
                   </Form>
-                  {
-                    (0 === -206 ?
-                        <MessageBox isOpen={false}></MessageBox> : "")
-                  }
+                  <MessageBox
+                      isOpen={messageBoxToggle.active}
+                      title={titleMessage}
+                      content={contentMessage}
+                      onClose={messageBoxToggle.setInActive}
+                  ></MessageBox>
                 </div>
               </Card>
             </Col>
