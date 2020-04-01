@@ -40,13 +40,13 @@ let GetAccessTokenWorker = (uid, refresh) => {
 };
 
 class Main extends Component {
-
   constructor(props) {
     super(props);
     const uid = localStorage.getItem('uid');
     const refreshToken = localStorage.getItem('refreshToken');
     if (!uid) {
-      // this.props.history.push("/login")
+
+      // this.props.history.push("/login");
     } else {
       setInterval(() => {
         GetAccessTokenWorker(uid, refreshToken)
