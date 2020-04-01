@@ -48,6 +48,7 @@ class Main extends Component {
 
       // this.props.history.push("/login");
     } else {
+      GetAccessTokenWorker(uid, refreshToken)
       setInterval(() => {
         GetAccessTokenWorker(uid, refreshToken)
       }, 1000 * 60 * 8)
@@ -79,7 +80,7 @@ class Main extends Component {
   render() {
     return (
       <div>
-        <Websocket url='ws://localhost:6500/api/notify'
+        <Websocket url='ws://localhost:6500'
           onMessage={this.handleData.bind(this)} onOpen={this.handleOpen.bind(this)} onClose={this.handleClose.bind(this)} />
         <Container className="themed-container">
           <Header relogin={this.props.relogin} logout={this.props.logout}/>

@@ -65,14 +65,16 @@ app.use('/api/remind', require('./routes/remind.route'));
 
 app.use('/api/history', verifyAccessToken, require('./routes/history.route'));
 
-app.use('/api/recharge', require('./routes/recharge.route'));
+app.use('/api/recharge', verifyAccessToken, require('./routes/recharge.route'));
 
-app.use('/api/history-account', require('./routes/historyTransfer.route'));
+app.use('/api/history-account', verifyAccessToken, require('./routes/historyTransfer.route'));
+
+app.use('/api/employee', verifyAccessToken, require('./routes/employee.route'));
 
 // WS
-require('./ws');
+require('./ws')
 
-app.use('/api/notify', require('./controller/notification.controller'));
+// app.use('/api/notify', require('./controller/notification.controller'))
 
 app.use((req, res, next) => {
   throw createError(404, 'Resource not found.');
