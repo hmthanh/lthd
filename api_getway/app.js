@@ -43,9 +43,9 @@ const verifyAccessToken = (req, res, next) => {
   } else {
     throw createError(401, 'NO_TOKEN');
   }
-};
+}
 
-app.use('/api/accounts', verifyAccessToken, require('./routes/account.route'));
+app.use('/api/accounts', require('./routes/account.route'));
 // app.use('/api/users', require('./routes/user.route'));
 
 app.use('/api/refresh', require('./routes/refresh.route'));

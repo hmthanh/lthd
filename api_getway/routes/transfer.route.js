@@ -79,7 +79,7 @@ router.post('/:id', async (req, res) => {
     }
     // chuyển khoản nội bộ
     if(transaction.partner_code == null || transaction.partner_code == 0) {
-
+      
     } else {
       //chuyển khoản liên ngân hàng
     }

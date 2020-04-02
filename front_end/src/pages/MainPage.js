@@ -106,7 +106,7 @@ class Main extends Component {
                   <Route exact path='/forget-password' component={ForgetPassword}/>
                   <Route exact path='/list-receiver' component={SettingPage}/>
                   <Route exact path='/transfer' component={Transfer}/>
-                  <Route exact path='/transfer2' component={Transfer2}/>
+                  {/* <Route exact path='/transfer2' component={Transfer2}/> */}
                   <Route exact path='/create-account' component={CreateAccount}/>
                   <Route exact path='/recharge' component={Recharge}/>
                   <Route exact path='/history-account' component={HistoryTrans}/>

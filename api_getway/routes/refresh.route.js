@@ -7,17 +7,28 @@ const refeshTokenModel = require('../models/refeshToken.model')
 const router = express.Router()
 
 router.post('/', async (req, res) => {
-
-  const payload = {
-    userId: req.body.id
+  const refreshToken = req.body.refreshToken
+  const uid = req.body.id
+  const rows = refeshTokenModel.get(uid, refreshToken)
+  if(rows.length === 0) {
+    res.json({
+      errorCode: -203,
+      msg: 'Refesh Token not found'
+    })
+  } else {
+    const payload = {
+      userId: uid
+    }
+  
+    const accessToken = jwt.sign(payload, SECRET_KEY_TOKEN, {
+      expiresIn: TIME_OUT_TOKEN
+    })
+    res.json({
+      errorCode: 200,
+      msg: 'successfully',
+      accessToken,
+    })
   }
-
-  const token = jwt.sign(payload, SECRET_KEY_TOKEN, {
-    expiresIn: TIME_OUT_TOKEN
-  })
-  res.json({
-    accessToken: token
-  })
 })
 
 module.exports = router;

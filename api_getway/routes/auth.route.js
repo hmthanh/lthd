@@ -5,33 +5,54 @@ const authModel = require('../models/auth.model');
 const { TIME_OUT_TOKEN, SECRET_KEY_TOKEN, LENGTH_REFREST_TOKEN, SECRET_TOKEN, OTP} = require('../config')
 const mailController = require('../mailer/mail.controller')
 const { htmlMsgTemplate, msgTemplate } = require('../utils/common')
+const userModel = require('../models/user.model')
 const refeshTokenModel = require('../models/refeshToken.model')
+const bcrypt = require('bcryptjs')
 
 const router = express.Router()
 
 router.post('/', async (req, res) => {
-  const ret = await authModel.login(req.body);
-  if (ret === null) {
-    return res.json({
-      authenticated: false
-    });
-  }
 
-  const payload = {
-    userId: ret.id
+  const rows = await userModel.singleByUserName(req.body.userName);
+
+  if (rows.length !== 0) {
+    const user = rows[0]
+    const hashPwd = user.password;
+    if (!bcrypt.compareSync(req.body.password, hashPwd)) {
+      res.json({
+        errcode: -201,
+        msg: 'password incorrectly',
+        authenticated: false,
+      })
+    } else {
+      if(user.status === 0){
+        res.json({
+          errcode: -202,
+          msg: 'account not acctive',
+          authenticated: false,
+        })
+      } else {
+        delete user.password
+        const refreshToken = rndToken.generate(LENGTH_REFREST_TOKEN)
+        refeshTokenModel.add({user_id: user.id, refresh_token: refreshToken})
+        const accessToken = jwt.sign({userId: user.id}, SECRET_KEY_TOKEN, {
+          expiresIn: TIME_OUT_TOKEN
+        })
+        res.json({
+          authenticated: true,
+          user,
+          accessToken,
+          refreshToken
+        })
+      }
+    }
+  } else {
+    res.json({
+      errcode: -200,
+      msg: 'account not exits',
+      authenticated: false,
+    })
   }
-  const token = jwt.sign(payload, SECRET_KEY_TOKEN, {
-    expiresIn: TIME_OUT_TOKEN
-  });
-  delete ret.password
-  const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
-  refeshTokenModel.add({user_id: ret.id, refresh_token: rfToken})
-  res.json({
-    authenticated: true,
-    user: ret,
-    accessToken: token,
-    refreshToken: rfToken
-  })
 })
 
 router.post('/relogin', async (req, res) => {
@@ -58,7 +79,7 @@ router.post('/verify', async (req, res) => {
   if (user !== null) {
     authenticated = true
     const otp = OTP.generate(SECRET_TOKEN)
-    console.log('token ', otp)
+    console.log('OTP change password:  ', otp)
     let msg = msgTemplate(user.name, 'change password', otp)
     let htmlmsg = htmlMsgTemplate(user.name, 'change password', otp)
 
@@ -77,7 +98,8 @@ router.patch('/', async (req, res) => {
   if(isValid) {
     let entity = {
       newPwd: req.body.newPwd,
-      uId:req.body.uId
+      uId:req.body.uId,
+      status: 1
     }
     let ret = await authModel.updatePwd(entity)
     delete ret.password
