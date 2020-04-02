@@ -10,7 +10,6 @@ module.exports = {
     isExists: (id, token) => {
         return db.load(`Select * from ${tableName} where user_id=${id} AND refresh_token=${token}`)
     },
-    get: (id, refreshToken) => {
-        return db.load(`Select refresh_token from ${tableName} where user_id=${id} AND refresh_token=${refreshToken}`)
-    }
+    get: (id, refreshToken) =>db.load(`SELECT * FROM ${tableName} WHERE user_id=${id} AND refresh_token='${refreshToken}'`)
+    
 };

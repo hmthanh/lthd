@@ -94,3 +94,19 @@ dưới đây là phân mô tả update lại `api`
 4. `http://localhost:3000/transfer/` cần check kĩ. backend phân biệt chuyển khoản nội bộ hay ở ngoài qua `parner_code` nế `parner_code = 0` chuyển khoản nội bộ.
 
 5. `http://localhost:3000/manage-debt/` này mới có danh sách mình nhắc nợ người khác chưa có danh sách mình nhắc nợ. đọc kỹ yêu cầu của thầy ở đây `https://hackmd.io/@nndkhoa9/cnm-ibproj#15-Qu%E1%BA%A3n-l%C3%BD-nh%E1%BA%AFc-n%E1%BB%A3`
+
+6. Front_end sử lý event `websocket` khi bị nhắc nợ ở file Main 
+``` javascript
+ <Websocket url='ws://localhost:6500'
+  onMessage={this.handleData.bind(this)} onOpen={this.handleOpen.bind(this)}
+  onClose={this.handleClose.bind(this)}/>
+```
+7. đựa vào `role` lúc login phân quyền trên `front_end`
+
+
+***Back_End cần làm***
+
+1.   hoàn thành api chuyển tiền.
+2.   phân quyền cho các api
+3.   tách các config với ngân hàng lưu vào db
+4.   api trả về danh sách bị nhăc nợ
