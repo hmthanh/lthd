@@ -25,17 +25,14 @@ app.use('/api/ping', async (req, res) => {
 
 app.use('/api/auth', require('./routes/auth.route'))
 
-app.use('/api/accounts', require('./routes/account.route'));
-// app.use('/api/users', require('./routes/user.route'));
-
 app.use('/openapi/info', require('./routes/info.route'));
 
 app.use('/openapi/plus', require('./routes/plus.route'));
 app.use('/openapi/minus', require('./routes/minus.route'));
 
-
-function verifyAccessToken(req, res, next) {
-  console.log(req.headers['x-access-token']);
+const verifyAccessToken = (req, res, next) => {
+  console.log(req.body);
+  console.log("headers", req.headers['x-access-token']);
   const token = req.headers['x-access-token'];
   if (token) {
     jwt.verify(token, SECRET_KEY_TOKEN, function (err, payload) {
@@ -46,7 +43,10 @@ function verifyAccessToken(req, res, next) {
   } else {
     throw createError(401, 'NO_TOKEN');
   }
-}
+};
+
+app.use('/api/accounts', verifyAccessToken, require('./routes/account.route'));
+// app.use('/api/users', require('./routes/user.route'));
 
 app.use('/api/refresh', require('./routes/refresh.route'));
 
@@ -72,7 +72,7 @@ app.use('/api/history-account', verifyAccessToken, require('./routes/historyTran
 app.use('/api/employee', verifyAccessToken, require('./routes/employee.route'));
 
 // WS
-require('./ws')
+require('./ws');
 
 // app.use('/api/notify', require('./controller/notification.controller'))
 

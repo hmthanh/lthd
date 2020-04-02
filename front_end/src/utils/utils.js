@@ -10,3 +10,16 @@ export const isNumberText = ' Trường yêu cầu định dạng số';
 export const maxLengthText = (val) => `Tối đa: ${val} kí tự`;
 export const minLengthText = (val) => `Tối thiểu: ${val} kí tự`;
 export const convertObjectToArray = (object) => Object.keys(object).map(i => object[i]);
+export const formatFormalDate = (date) => {
+  let d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+  if (month.length < 2)
+    month = '0' + month;
+  if (day.length < 2)
+    day = '0' + day;
+
+  return [day, month, year].join('-');
+};

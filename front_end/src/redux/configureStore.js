@@ -17,6 +17,7 @@ import {AccountNum} from './actions/accountNum.action'
 import {InterBank, ReceiverSaved, TransferInfo, VerifyResult} from './actions/transfer.action'
 import RechargeInfo from "./actions/recharge.action";
 import {HistoryTransfer} from "./actions/getHistoryTransfer.action";
+import CreateAcc from "./actions/createAcc.action";
 
 export const ConfigureStore = () => {
   const store = createStore(
@@ -38,7 +39,8 @@ export const ConfigureStore = () => {
         VerifyResult: VerifyResult,
         AccountNum: AccountNum,
         RechargeInfo: RechargeInfo,
-        HistoryTransfer: HistoryTransfer
+        HistoryTransfer: HistoryTransfer,
+        CreateAccount: CreateAcc
       }),
       applyMiddleware(logger),
       applyMiddleware(thunk),

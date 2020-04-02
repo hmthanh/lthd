@@ -2,11 +2,11 @@ import React from 'react';
 import './MessageBox.css';
 import {Button, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 
-const MessageBox = ({className, isOpen, onClose, title, content}) => {
+const MessageBox = ({isOpen, onClose, title, content}) => {
 
   return (
       <>
-        <Modal isOpen={isOpen} className={className}>
+        <Modal isOpen={isOpen}>
           <ModalHeader>{title}</ModalHeader>
           <ModalBody>
             {content}

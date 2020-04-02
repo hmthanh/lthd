@@ -11,7 +11,7 @@ export const GetAllAccount = (state = {
         case ALL_ACCOUNT_FAILED:
             return {...state, isLoading: false, errMess: action.payload, data: []};
         case ALL_ACCOUNT_SUCCESS:
-            return {...state, isLoading: false, errMess: null, next: 0, data: {...action.payload}};
+            return {...state, isLoading: false, errMess: null, data: {...action.payload}};
         default:
             return state;
     }

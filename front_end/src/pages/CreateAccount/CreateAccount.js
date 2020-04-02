@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import {
   Badge,
   Button,
@@ -16,206 +16,164 @@ import {
   Row
 } from "reactstrap";
 import './CreateAccount.css';
-import {connect} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
+import useInputChange from "../../utils/useInputChange";
+import {createAcc} from "../../redux/creators/accountCreator";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import {formatFormalDate} from "../../utils/utils";
+import useToggle from "../../utils/useToggle";
 
-class CreateAccount extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: '',
-      password: '',
-      fullname: '',
-      email: '',
-      phone: ''
-    };
-  }
-
-  changeReceiverId = () => {
-    this.setState({
-      receiverId: this.state.receiverSavedList
-    });
-  };
-
-  changeInterbank = () => {
-    this.setState({
-      isInterbank: !this.state.isInterbank
-    });
-  };
-
-  changeSavedList = () => {
-    if (!this.state.isSavedList) {
-      this.changeReceiverId();
-    }
-    this.setState({
-      isSavedList: !this.state.isSavedList
-    });
-  };
-
-  changeTypeTransfer = () => this.setState({
-    isSenderPay: !this.state.isSenderPay
+const CreateAccount = () => {
+  const dispatch = useDispatch();
+  const CreateAccount = useSelector((state) => {
+    return state.CreateAccount
   });
+  const messageBoxToggle = useToggle(false);
+  const [contentMessage, setContentMessage] = useState("");
+  const [titleMessage, setTitleMessage] = useState("");
+  // const username = useInputChange("");
+  // const password = useInputChange("");
+  const fullName = useInputChange("");
+  const email = useInputChange("");
+  const phone = useInputChange("");
+  const [dateOfBirth, setDateOfBirth] = useState(new Date());
 
-  onChange = (e) => {
-    let target = e.target;
-    let name = target.name;
-    let value = target.type === 'checkbox' ? target.checked : target.value;
-    this.setState({
-      [name]: value
-    });
-  };
+  // date => {
+  //   props.onChange(date);
+  //   return setStartDate(date);
+  // }
 
-  onSubmit = (e) => {
-    e.preventDefault();
-    let {
-      username,
-      password,
-      fullname,
-      email,
-      phone
-    } = this.state;
-
-    let data = {
-      username: username,
-      password: password,
-      fullname: fullname,
-      email: email,
-      phone: phone
-    };
-    let accessToken = localStorage.getItem('accessToken');
-    console.log(data);
-    // this.props.transfer(data, accessToken);
-  };
-
-
-  componentDidMount() {
-    // // console.log("componentDidMount")
-    // let accessToken = localStorage.getItem('accessToken');
-    // let uid = localStorage.getItem('uid');
-    // this.props.getInterbankAssociate(accessToken);
-    // this.props.getListReceiverSaved(uid, accessToken);
-    // // listReceiverSaved
-
-    // let data = {
-    //     partner_code: '0',
-    //     uid: '1',
-    //     to_account: '2173891742',
-    //     note: 'abc',
-    //     amount: 234234234234224,
-    //     cost_type: 0
-    // };
-    // this.props.transfer(data, accessToken);
-  }
-
-  render() {
-    let {username, password, fullname, email, phone} = this.state;
-
-    return (
-        <Container>
-          <div className="container-fluid py-3">
-            <Row>
-              <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
-                <Card id="localBank">
-                  <div className="card-body">
-                    <CardTitle>
-                      <h3 className="text-center">TẠO TÀI KHOẢN</h3>
-                    </CardTitle>
-                    <hr/>
-                    <Form method="post" noValidate="novalidate"
-                          className="needs-validation" onSubmit={this.onSubmit}>
-                      <h4>1. Thông tin tài khoản</h4>
-                      <FormGroup>
-                        <Label for="username">Tên tài khoản {this.showFieldRequire()}</Label>
-                        <InputGroup className="mb-2">
-                          <Input type="text" name="username" id="username"
-                                 onChange={this.onChange}
-                                 value={username}
-                                 placeholder=""/>
-                        </InputGroup>
-                      </FormGroup>
-                      <FormGroup>
-                        <Label for="password">Mật khẩu {this.showFieldRequire()}</Label>
-                        <InputGroup className="mb-2">
-                          <Input type="password" name="password" id="password"
-                                 onChange={this.onChange}
-                                 value={password}
-                                 placeholder=""/>
-                        </InputGroup>
-                      </FormGroup>
-                      <h4>2. Thông tin cá nhân</h4>
-                      <FormGroup>
-                        <InputGroup className="mb-2">
-                          <InputGroupAddon addonType="prepend">
-                            <InputGroupText>Họ và tên</InputGroupText>
-                          </InputGroupAddon>
-                          <Input type="text" name="fullname" id="fullname"
-                                 onChange={this.onChange}
-                                 value={fullname}/>
-                        </InputGroup>
-
-                        <InputGroup className="mb-2">
-                          <InputGroupAddon addonType="prepend">
-                            <InputGroupText>Email</InputGroupText>
-                          </InputGroupAddon>
-                          <Input type="email" name="email" id="email"
-                                 onChange={this.onChange}
-                                 value={email}
-                                 placeholder=""/>
-                        </InputGroup>
-
-                        <InputGroup className="mb-2">
-                          <InputGroupAddon addonType="prepend">
-                            <InputGroupText>Số điện thoại</InputGroupText>
-                          </InputGroupAddon>
-                          <Input type="text" name="phone" id="phone"
-                                 onChange={this.onChange}
-                                 value={phone}
-                                 placeholder=""/>
-                        </InputGroup>
-                      </FormGroup>
-                      <div>
-                        <Button id="btnRecharge" type="submit" color={"success"}
-                                size={"lg"}
-                                block={true}
-                                className="d-flex align-items-center justify-content-center"
-                                disabled={false}>
-                          <span>Tạo tài khoản</span>
-                        </Button>
-                      </div>
-                    </Form>
-                    {
-                      (0 === -206 ?
-                          <MessageBox isOpen={true}></MessageBox> : "")
-                    }
-                  </div>
-                  {/* <ModalOTP isOpen={this.props.TransferInfo.errorCode === 1}
-                handleVerifyOTP={this.handleVerifyOTP}
-                transId={this.props.TransferInfo.transId}></ModalOTP> */}
-                </Card>
-              </Col>
-            </Row>
-          </div>
-        </Container>
-    )
-  }
-
-  showFieldRequire() {
+  function showFieldRequire() {
     return <Badge color="danger" pill>Yêu cầu</Badge>
   }
-}
 
-const mapDispatchToProps = dispatch => ({
-  // getInterbankAssociate: (accessToken) => dispatch(getInterbankAssociate(accessToken)),
-  // transfer: (data, accessToken) => dispatch(transfer(data, accessToken)),
-  // getListReceiverSaved: (uid, accessToken) => dispatch(getListReceiverSaved(uid, accessToken))
-});
-
-const mapStateToProps = (state) => {
-  return {
-    // InterbankAssociate: state.InterbankAssociate,
-    // TransferInfo: state.TransferInfo,
-    // ReceiverSaved: state.ReceiverSaved
+  function onSetDateOfBirth(value) {
+    setDateOfBirth(value);
   }
+
+  function onCreateAccount(e) {
+    e.preventDefault();
+    let data = {
+      phone: phone.value,
+      email: email.value,
+      name: fullName.value,
+      date_of_birth: formatFormalDate(dateOfBirth),
+      // user_name: username.value,
+      // password: password.value,
+    };
+    let accessToken = localStorage.getItem('accessToken');
+    dispatch(createAcc(data, accessToken))
+        .then((response) => {
+          if (response.msg == "successfully") {
+            setTitleMessage("Thành công");
+            setContentMessage("Đã tạo tài khoản thành công !");
+            messageBoxToggle.setActive();
+          }
+        })
+        .catch((e) => {
+          messageBoxToggle.active();
+          setTitleMessage("Thất bại");
+          setContentMessage("Đã xảy ra lỗi trong quá trình tạo tài khoản !");
+          console.log("error", e);
+        });
+  }
+
+  return (
+      <Container>
+        <div className="container-fluid py-3">
+          <Row>
+            <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
+              <Card id="localBank">
+                <div className="card-body">
+                  <CardTitle>
+                    <h3 className="text-center">TẠO TÀI KHOẢN</h3>
+                  </CardTitle>
+                  <hr/>
+                  <Form method="post" noValidate="novalidate"
+                        className="needs-validation" onSubmit={onCreateAccount}>
+                    {/*<h4>1. Thông tin tài khoản</h4>*/}
+                    {/*<FormGroup>*/}
+                    {/*  <Label for="username">Tên tài khoản {showFieldRequire()}</Label>*/}
+                    {/*  <InputGroup className="mb-2">*/}
+                    {/*    <Input type="text" name="username" id="username"*/}
+                    {/*           onChange={username.onChange}*/}
+                    {/*           value={username.value}*/}
+                    {/*           placeholder=""/>*/}
+                    {/*  </InputGroup>*/}
+                    {/*</FormGroup>*/}
+                    {/*<FormGroup>*/}
+                    {/*  <Label for="password">Mật khẩu {showFieldRequire()}</Label>*/}
+                    {/*  <InputGroup className="mb-2">*/}
+                    {/*    <Input type="password" name="password" id="password"*/}
+                    {/*           onChange={password.onChange}*/}
+                    {/*           value={password.value}*/}
+                    {/*           placeholder=""/>*/}
+                    {/*  </InputGroup>*/}
+                    {/*</FormGroup>*/}
+                    <h4>Thông tin cá nhân</h4>
+                    <FormGroup>
+                      <Label for="fullName">Họ và tên {showFieldRequire()}</Label>
+                      <InputGroup className="mb-2">
+                        <Input type="text"
+                               name="fullName"
+                               id="fullName"
+                               onChange={fullName.onChange}
+                               value={fullName.value}
+                               placeholder="Nguyễn Văn A"
+                        />
+                      </InputGroup>
+                      <Label for="email">Email {showFieldRequire()}</Label>
+                      <InputGroup className="mb-2">
+                        <Input type="email" name="email" id="email"
+                               onChange={email.onChange}
+                               value={email.value}
+                               placeholder="someone@gmail.com"/>
+                      </InputGroup>
+                      <Label for="phone">Số điện thoại {showFieldRequire()}</Label>
+                      <InputGroup className="mb-2">
+                        <Input type="text" name="phone" id="phone"
+                               onChange={phone.onChange}
+                               value={phone.value}
+                               placeholder="0913-472506"/>
+                      </InputGroup>
+                      <Label for="phone">Ngày sinh {showFieldRequire()}</Label>
+                      <InputGroup className="mb-2">
+                        <DatePicker
+                            className="form-control"
+                            type="text"
+                            name="date_of_birth"
+                            dateFormat="dd-MM-yyyy"
+                            onSelect={onSetDateOfBirth}
+                            onChange={onSetDateOfBirth}
+                            selected={dateOfBirth}
+                        />
+                      </InputGroup>
+                    </FormGroup>
+                    <div>
+                      <Button id="btnRecharge" type="submit" color={"success"}
+                              size={"lg"}
+                              block={true}
+                              className="d-flex align-items-center justify-content-center"
+                              disabled={false}>
+                        <span>Tạo tài khoản</span>
+                      </Button>
+                    </div>
+                  </Form>
+                  <MessageBox
+                      isOpen={messageBoxToggle.active}
+                      title={titleMessage}
+                      content={contentMessage}
+                      onClose={messageBoxToggle.setInActive}
+                  ></MessageBox>
+                </div>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+      </Container>
+  )
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateAccount);
+export default CreateAccount;
