@@ -1,16 +1,30 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import {
-  Badge, Button, ButtonGroup, CardTitle, Col, Collapse, Container, Breadcrumb, BreadcrumbItem,
-  Form, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label, Row, Spinner,
-  Card, CardImg, CardText, CardBody, CardSubtitle
+  Badge,
+  Breadcrumb,
+  BreadcrumbItem,
+  Button,
+  ButtonGroup,
+  Card,
+  CardBody,
+  CardTitle,
+  Collapse,
+  Container,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Label
 } from "reactstrap"
-import { connect } from "react-redux"
-import { queryAccountNum } from '../redux/creators/queryNumAcc.creator'
-import { queryBankingAssociate } from '../redux/creators/queryBankingAssociate.creator'
-import { queryReceiverSaved } from '../redux/creators/queryReceiver.creator'
+import {connect} from "react-redux"
+import {queryAccountNum} from '../redux/creators/queryNumAcc.creator'
+import {queryBankingAssociate} from '../redux/creators/queryBankingAssociate.creator'
+import {queryReceiverSaved} from '../redux/creators/queryReceiver.creator'
 
 
-const ShowFieldRequire = () => <Badge color="danger" pill>Yêu cầu</Badge>
+const ShowFieldRequire = () => <Badge color="danger" pill>Yêu cầu</Badge>;
 
 
 class Transfer extends Component {
@@ -34,26 +48,26 @@ class Transfer extends Component {
       fullState: false,
       defaultName: 'Nguyễn văn A',
       defaultAccount: '123456789',
-    }
+    };
 
-    this.changeBanking = this.changeBanking.bind(this)
-    this.selectBanking = this.selectBanking.bind(this)
-    this.onChangeReceiverBanking = this.onChangeReceiverBanking.bind(this)
-    this.onChangeReceiverBanking = this.onChangeReceiverBanking.bind(this)
-    this.receiverInfo = this.receiverInfo.bind(this)
-    this.newInfo = this.newInfo.bind(this)
-    this.onChangeReceiverInfo = this.onChangeReceiverInfo.bind(this)
+    this.changeBanking = this.changeBanking.bind(this);
+    this.selectBanking = this.selectBanking.bind(this);
+    this.onChangeReceiverBanking = this.onChangeReceiverBanking.bind(this);
+    this.onChangeReceiverBanking = this.onChangeReceiverBanking.bind(this);
+    this.receiverInfo = this.receiverInfo.bind(this);
+    this.newInfo = this.newInfo.bind(this);
+    this.onChangeReceiverInfo = this.onChangeReceiverInfo.bind(this);
     this.findInfo = this.findInfo.bind(this)
   }
 
   componentDidMount() {
-    console.log("componentDidMount.Transfer")
+    console.log("componentDidMount.Transfer");
     let accessToken = localStorage.getItem('accessToken');
     let uid = localStorage.getItem('uid');
     this.props.getAccountNum(uid, accessToken)
-    .then(() => console.log(this.props.AccountNum))
+        .then(() => console.log(this.props.AccountNum));
     this.props.queryBankingAssociate(accessToken)
-    .then(() => console.log(this.props.AccountNum))
+        .then(() => console.log(this.props.AccountNum))
     // this.props.getListReceiverSaved(uid, accessToken);
     // listReceiverSaved
 
@@ -94,11 +108,11 @@ class Transfer extends Component {
 
   onChangeReceiverBanking(evt) {
 
-    let target = evt.target
-    let val = target.value
-    console.log('onChangeReceiverBanking ' + val)
+    let target = evt.target;
+    let val = target.value;
+    console.log('onChangeReceiverBanking ' + val);
     if (val !== '0') {
-      let data = this.state.data
+      let data = this.state.data;
       data.partnerCode = val;
       this.setState({
         collapseInfoRev: true,
@@ -115,15 +129,15 @@ class Transfer extends Component {
     this.setState({
       listRev: true,
       revQuery: false,
-    })
-    let accessToken = localStorage.getItem('accessToken')
-    let uid = localStorage.getItem('uid')
-    this.props.queryReceiverSaved(uid, this.state.data.partnerCode ,accessToken)
-    .then(() => console.log(this.props.ReceiverSaved))
+    });
+    let accessToken = localStorage.getItem('accessToken');
+    let uid = localStorage.getItem('uid');
+    this.props.queryReceiverSaved(uid, this.state.data.partnerCode, accessToken)
+        .then(() => console.log(this.props.ReceiverSaved))
   }
 
   newInfo() {
-    let data = this.state.data
+    let data = this.state.data;
     data.revNum = 0;
     this.setState({
       revQuery: true,
@@ -136,11 +150,11 @@ class Transfer extends Component {
 
   onChangeReceiverInfo(evt) {
 
-    let target = evt.target
-    let val = JSON.parse(target.value)
-    console.log('onChangeReceiverInfo ', val)
+    let target = evt.target;
+    let val = JSON.parse(target.value);
+    console.log('onChangeReceiverInfo ', val);
     if (val !== null) {
-      let data = this.state.data
+      let data = this.state.data;
       data.revNum = val.account_num;
       this.setState({
         fullState: true,
@@ -188,22 +202,8 @@ class Transfer extends Component {
     // // console.log("data", data);
     // let accessToken = localStorage.getItem('accessToken');
     // // this.props.transfer(data, accessToken);
+  };
 
-    // let xxx = {
-    //   partner_code: '0',
-    //   uid: '1',
-    //   to_account: '12',
-    //   note: 'abc',
-    //   amount: 23,
-    //   cost_type: 0
-    // };
-
-    // this.props.transfer(xxx, accessToken);
-  }
-
-  componentWillMount() {
-    // console.log("componentWillMount");
-  }
 
   componentWillReceiveProps(props) {
     // // console.log("componentWillReceiveProps", props);
@@ -226,163 +226,161 @@ class Transfer extends Component {
     // }
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-  }
-
   render() {
-
-
     return (
-      <div>
-        <Breadcrumb>
-          <BreadcrumbItem active>Chuyển Khoản</BreadcrumbItem>
-        </Breadcrumb>
-        <Container>
-          <Card>
-            <CardBody>
-              <CardTitle>Chuuyển Khoản</CardTitle>
-              <h4>1. Người gửi</h4>
-              <Form method="post" noValidate="novalidate"
-                className="needs-validation">
-                <FormGroup>
-                  <Label for="senderAccountType">Tài khoản người
-                                      gửi : <b>Tài khoản thanh toán (mặc định)</b> </Label>
-                  {
-                    this.props.AccountNum.data && this.props.AccountNum.data.item &&
-                    <Input type="text" disabled defaultValue={this.props.AccountNum.data.item.account_num} />
-                  }
-                  
-                </FormGroup>
+        <div>
+          <Breadcrumb>
+            <BreadcrumbItem active>Chuyển Khoản</BreadcrumbItem>
+          </Breadcrumb>
+          <Container>
+            <Card>
+              <CardBody>
+                <CardTitle>Chuuyển Khoản</CardTitle>
+                <h4>1. Người gửi</h4>
+                <Form method="post" noValidate="novalidate"
+                      className="needs-validation">
+                  <FormGroup>
+                    <Label for="senderAccountType">Tài khoản người
+                      gửi : <b>Tài khoản thanh toán (mặc định)</b> </Label>
+                    {
+                      this.props.AccountNum.data && this.props.AccountNum.data.item &&
+                      <Input type="text" disabled defaultValue={this.props.AccountNum.data.item.account_num}/>
+                    }
 
-                <FormGroup>
-                  <Label for="name">Họ Tên </Label>
-                  {
-                    this.props.AccountNum.data && this.props.AccountNum.data.item &&
-                    <Input type="text" disabled defaultValue={this.props.AccountNum.data.item.name} />
-                  }
-                  
-                </FormGroup>
-
-
-                <h4>2. Người nhận</h4>
-                <FormGroup>
-                  <Label for="receiverTransfer">Chọn ngân hàng</Label>
-                  <div>
-                    <ButtonGroup className="mb-2 ">
-                      <Button color="primary" type='button'
-                        active={this.state.banking.internal} onClick={this.changeBanking}>Nội bộ</Button>
-                      <Button color="primary" type='button'
-                        active={this.state.banking.notInternal} onClick={this.selectBanking}>Liên ngân hàng</Button>
-                    </ButtonGroup>
-                  </div>
-                  <Collapse isOpen={this.state.collapseRevBank}>
-                    <Input type="select" onChange={this.onChangeReceiverBanking}
-                      name="receiverBank" id="receiverBank">
-                      <option value={0}>{'------chọn ngân hàng--------'}</option>
-                      {
-                        this.props.BankingAssociate.data && this.props.BankingAssociate.data.item &&
-                        this.props.BankingAssociate.data.item.map((it, index) => {
-                          return <option key={index}
-                            value={it.partner_code}>{it.name}</option>
-                        })
-                      }
-                    </Input>
-                  </Collapse>
-                </FormGroup>
-                {/* main Collapse */}
-                <Collapse isOpen={this.state.collapseInfoRev}>
+                  </FormGroup>
 
                   <FormGroup>
-                    <Label for="receiverSavedList">Thông tin người
-                                        nhận <ShowFieldRequire /></Label>
+                    <Label for="name">Họ Tên </Label>
+                    {
+                      this.props.AccountNum.data && this.props.AccountNum.data.item &&
+                      <Input type="text" disabled defaultValue={this.props.AccountNum.data.item.name}/>
+                    }
+
+                  </FormGroup>
+
+
+                  <h4>2. Người nhận</h4>
+                  <FormGroup>
+                    <Label for="receiverTransfer">Chọn ngân hàng</Label>
                     <div>
                       <ButtonGroup className="mb-2 ">
-                        <Button color="primary" type='button' onClick={this.newInfo}
-                          active={false}>Nhập thông tin mới</Button>
-                        <Button color="primary" type='button' onClick={this.receiverInfo}
-                          active={true}>Chọn từ danh sách đã lưu</Button>
+                        <Button color="primary" type='button'
+                                active={this.state.banking.internal} onClick={this.changeBanking}>Nội bộ</Button>
+                        <Button color="primary" type='button'
+                                active={this.state.banking.notInternal} onClick={this.selectBanking}>Liên ngân
+                          hàng</Button>
                       </ButtonGroup>
                     </div>
-                    <Collapse isOpen={this.state.listRev}>
-                      <Input type="select" onChange={this.onChangeReceiverInfo}
-                        name="receiverSavedList" id="receiverSavedList">
-                        <option value={null}>{'------chọn danh sach da luu--------'}</option>
+                    <Collapse isOpen={this.state.collapseRevBank}>
+                      <Input type="select" onChange={this.onChangeReceiverBanking}
+                             name="receiverBank" id="receiverBank">
+                        <option value={0}>{'------chọn ngân hàng--------'}</option>
                         {
-                          this.props.ReceiverSaved.data && this.props.ReceiverSaved.data.item &&
-                          this.props.ReceiverSaved.data.item.map((item, index) => {
+                          this.props.BankingAssociate.data && this.props.BankingAssociate.data.item &&
+                          this.props.BankingAssociate.data.item.map((it, index) => {
                             return <option key={index}
-                              value={JSON.stringify(item)}>{item.alias_name}</option>
+                                           value={it.partner_code}>{it.name}</option>
                           })
-                      }
+                        }
                       </Input>
                     </Collapse>
                   </FormGroup>
+                  {/* main Collapse */}
+                  <Collapse isOpen={this.state.collapseInfoRev}>
 
-                  <FormGroup>
+                    <FormGroup>
+                      <Label for="receiverSavedList">Thông tin người
+                        nhận <ShowFieldRequire/></Label>
+                      <div>
+                        <ButtonGroup className="mb-2 ">
+                          <Button color="primary" type='button' onClick={this.newInfo}
+                                  active={false}>Nhập thông tin mới</Button>
+                          <Button color="primary" type='button' onClick={this.receiverInfo}
+                                  active={true}>Chọn từ danh sách đã lưu</Button>
+                        </ButtonGroup>
+                      </div>
+                      <Collapse isOpen={this.state.listRev}>
+                        <Input type="select" onChange={this.onChangeReceiverInfo}
+                               name="receiverSavedList" id="receiverSavedList">
+                          <option value={null}>{'------chọn danh sach da luu--------'}</option>
+                          {
+                            this.props.ReceiverSaved.data && this.props.ReceiverSaved.data.item &&
+                            this.props.ReceiverSaved.data.item.map((item, index) => {
+                              return <option key={index}
+                                             value={JSON.stringify(item)}>{item.alias_name}</option>
+                            })
+                          }
+                        </Input>
+                      </Collapse>
+                    </FormGroup>
 
-                    <Collapse isOpen={this.state.revQuery}>
+                    <FormGroup>
+
+                      <Collapse isOpen={this.state.revQuery}>
+                        <InputGroup className="mb-2">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>Số tài khoản</InputGroupText>
+                          </InputGroupAddon>
+                          <Input type="text" name="receiverId" id="receiverId"
+                                 placeholder="nhập vào số tài khoản hoặc user name"/>
+                          <InputGroupAddon addonType="append">
+                            <Button color="secondary" type='button' onClick={this.findInfo}>Tìm kiếm</Button>
+                          </InputGroupAddon>
+                        </InputGroup>
+                      </Collapse>
+
+
                       <InputGroup className="mb-2">
                         <InputGroupAddon addonType="prepend">
-                          <InputGroupText>Số tài khoản</InputGroupText>
+                          <InputGroupText>Số tài khoản thụ hưởng</InputGroupText>
                         </InputGroupAddon>
-                        <Input type="text" name="receiverId" id="receiverId"
-                          placeholder="nhập vào số tài khoản hoặc user name" />
-                        <InputGroupAddon addonType="append">
-                          <Button color="secondary" type='button' onClick={this.findInfo}>Tìm kiếm</Button>
-                        </InputGroupAddon>
+                        <Input type="text" name="receiverId" id="receiverId" disabled
+                               value={this.state.defaultAccount}/>
                       </InputGroup>
-                    </Collapse>
+
+                      <InputGroup>
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText>Họ và tên</InputGroupText>
+                        </InputGroupAddon>
+                        <Input type="text" name="receiverName" id="receiverName" disabled
+                               value={this.state.defaultName}/>
+                      </InputGroup>
+                    </FormGroup>
+                  </Collapse>
 
 
-                    <InputGroup className="mb-2">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>Số tài khoản thụ hưởng</InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text" name="receiverId" id="receiverId" disabled value={this.state.defaultAccount} />
-                    </InputGroup>
+                  <Collapse isOpen={this.state.fullState}>
+                    <h4>3. Thông tin cần chuyển tiền</h4>
+                    <FormGroup>
+                      <Label for="moneyTransfer">Số tiền <ShowFieldRequire/></Label>
+                      <Input type="number" name="moneyTransfer" id="moneyTransfer"
+                             required/>
+                    </FormGroup>
 
-                    <InputGroup>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>Họ và tên</InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text" name="receiverName" id="receiverName" disabled value={this.state.defaultName} />
-                    </InputGroup>
-                  </FormGroup>
-                </Collapse>
+                    <FormGroup>
+                      <Label for="messageTransfer">Nội dung chuyển tiền</Label>
+                      <Input type="textarea" name="messageTransfer"
+                             id="messageTransfer"/>
+                    </FormGroup>
 
+                    <FormGroup>
+                      <Label>Hình thức trả phí</Label> <br/>
+                      <ButtonGroup className="mb-2">
+                        <Button color="primary" type='button'
+                                active={true}>Người nhận trả phí</Button>
+                        <Button color="primary" type='button'
+                                active={false}>Người gửi trả phí</Button>
+                      </ButtonGroup>
+                    </FormGroup>
 
-                <Collapse isOpen={this.state.fullState}>
-                  <h4>3. Thông tin cần chuyển tiền</h4>
-                  <FormGroup>
-                    <Label for="moneyTransfer">Số tiền <ShowFieldRequire /></Label>
-                    <Input type="number" name="moneyTransfer" id="moneyTransfer"
-                      required />
-                  </FormGroup>
+                    <Button color="success" type='button'>Chuyển Tiền</Button>
 
-                  <FormGroup>
-                    <Label for="messageTransfer">Nội dung chuyển tiền</Label>
-                    <Input type="textarea" name="messageTransfer"
-                      id="messageTransfer" />
-                  </FormGroup>
-
-                  <FormGroup>
-                    <Label>Hình thức trả phí</Label> <br />
-                    <ButtonGroup className="mb-2">
-                      <Button color="primary" type='button'
-                        active={true}>Người nhận trả phí</Button>
-                      <Button color="primary" type='button'
-                        active={false}>Người gửi trả phí</Button>
-                    </ButtonGroup>
-                  </FormGroup>
-
-                  <Button color="success" type='button'>Chuyển Tiền</Button>
-
-                </Collapse>
-              </Form>
-            </CardBody>
-          </Card>
-        </Container>
-      </div>
+                  </Collapse>
+                </Form>
+              </CardBody>
+            </Card>
+          </Container>
+        </div>
     )
   }
 }
@@ -390,7 +388,7 @@ class Transfer extends Component {
 const mapDispatchToProps = (dispatch) => ({
   getAccountNum: (uid, accessToken) => dispatch(queryAccountNum(uid, accessToken)),
   queryBankingAssociate: (accessToken) => dispatch(queryBankingAssociate(accessToken)),
-  queryReceiverSaved: (uid, partnerCode, accessToken)  => dispatch(queryReceiverSaved(uid, partnerCode, accessToken)),
+  queryReceiverSaved: (uid, partnerCode, accessToken) => dispatch(queryReceiverSaved(uid, partnerCode, accessToken)),
   // transfer: (data, accessToken) => dispatch(transfer(data, accessToken)),
   // getListReceiverSaved: (uid, accessToken) => dispatch(getListReceiverSaved(uid, accessToken))
 });

@@ -1,7 +1,6 @@
-.visible {
-    display: inherit;
-}
-
-.disable {
-    display: none;
+.react-datepicker-wrapper{
+    position: relative;
+    flex: 1 1;
+    min-width: 0;
+    margin-bottom: 0;
 }

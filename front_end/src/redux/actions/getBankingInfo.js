@@ -11,7 +11,7 @@ export const GetBankingInfo = (state = {
         case BANKING_INFO_FAILED:
             return {...state, isLoading: false, errMess: action.payload, data: []};
         case BANKING_INFO_SUCCESS:
-            return {...state, isLoading: false, errMess: null, next: 0, data: {...action.payload}};
+            return {...state, isLoading: false, errMess: null, data: {...action.payload}};
         default:
             return state;
     }
