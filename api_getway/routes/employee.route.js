@@ -7,7 +7,6 @@ const router = express.Router()
 
 router.post('/hist', async (req, res) => {
     const type = req.body.type;
-    console.log('=================='+ type)
     const historyData = await getall(type)
     historyData.map((val, index) => {
       val.timestamp = moment(val.timestamp).format('HH:mm:ss, DD-MM-YYYY')
@@ -22,7 +21,6 @@ router.post('/hist', async (req, res) => {
 
 router.post('/hist/:account', async (req, res) => {
   const type = req.body.type;
-  console.log('=================='+ type)
   const historyData = await getByAccountNum(req.params.account, type)
   historyData.map((val, index) => {
     val.timestamp = moment(val.timestamp).format('HH:mm:ss, DD-MM-YYYY')

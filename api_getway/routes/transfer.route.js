@@ -1,16 +1,16 @@
-const express = require('express');
-const moment = require('moment');
-const {hash, verifyHash, verify, sign} = require('../utils/rsa.signature');
-const {SECRET_TOKEN, OTP} = require('../config');
-const mailController = require('../mailer/mail.controller');
+const express = require('express')
+const moment = require('moment')
+const { hash, verifyHash, verify, sign } = require('../utils/rsa.signature')
+const { SECRET_TOKEN, OTP } = require('../config')
+const mailController = require('../mailer/mail.controller')
 // const userModel = require('../models/user.model');
-const transferModel = require('../models/transfer.model');
-const {getInfoAccount} = require('../models/account.model');
-const {htmlMsgTemplate, msgTemplate} = require('../utils/common');
-const {minusTransfer} = require('../utils/db');
-const router = express.Router();
+const transferModel = require('../models/transfer.model')
+const { getInfoAccount } = require('../models/account.model')
+const { htmlMsgTemplate, msgTemplate } = require('../utils/common')
+const { minusTransfer } = require('../utils/db')
+const router = express.Router()
 
-const axios = require("axios");
+const axios = require("axios")
 
 const validateData = (data) => {
   if (!data.from) return false;
@@ -19,7 +19,7 @@ const validateData = (data) => {
   if (!data.amount) return false;
   if (!data.ts) return false;
   return true
-};
+}
 
 router.post('/', async (req, res) => {
   console.log(req.body)
@@ -36,38 +36,36 @@ router.post('/', async (req, res) => {
   };
   if (sender.surplus < req.body.amount) {
     res.status(200).json({
-          msg: 'failure',
-          errorCode: -201,
-        }
-    )
-    return
-  }
-  const insertVal = await transferModel.add(entity)
-  const otp = OTP.generate(SECRET_TOKEN);
-  console.log('OTP tranfer', otp);
-  let msg = msgTemplate(sender.name, 'transfer', otp)
-  console.log(sender.email, sender);
-  let htmlmsg = htmlMsgTemplate(sender.name, 'transfer', otp)
-  mailController.sentMail(sender.email, '[New Vimo] Please verify OTP for transaction', msg, htmlmsg)
+      msg: 'failure',
+      errorCode: -201,
+    })
+  } else {
+    const insertVal = await transferModel.add(entity)
+    const otp = OTP.generate(SECRET_TOKEN);
+    console.log('OTP tranfer', otp);
+    let msg = msgTemplate(sender.name, 'transfer', otp)
+    // console.log(sender.email, sender);
+    let htmlmsg = htmlMsgTemplate(sender.name, 'transfer', otp)
+    mailController.sentMail(sender.email, '[New Vimo] Please verify OTP for transaction', msg, htmlmsg)
 
-  res.status(200).json({
-        msg: 'successfully',
-        errorCode: 0,
-        transId: insertVal.insertId
-      }
-  )
-});
+    res.status(200).json({
+      msg: 'successfully',
+      errorCode: 0,
+      transId: insertVal.insertId
+    })
+  }
+})
 
 router.post('/:id', async (req, res) => {
   console.log('req.body', req.body);
 
   let otp = req.body.OTP;
-  const isValid = OTP.verify({token: otp, secret: SECRET_TOKEN});
+  const isValid = OTP.verify({ token: otp, secret: SECRET_TOKEN });
   if (!isValid)
     res.status(200).json({
       msg: 'failure, invalid OTP',
       errorCode: -202, // mã lỗi OTP không hợp lệ
-    });
+    })
   else {
     const transaction = await transferModel.get(req.body.transId);
     let ts = moment().valueOf(new Date()); // get current milliseconds since the Unix Epoch
@@ -78,47 +76,56 @@ router.post('/:id', async (req, res) => {
       amount: transaction.amount, // đơn vị VND
       note: transaction.note,
       ts: ts
-    };
-    let hashVal = hash(JSON.stringify(data));
-    let signVal = sign(JSON.stringify(data));
-    let requestBody = {
-      hash: hashVal,
-      signature: signVal,
-      data: data,
-      partnerCode: '0725'
-    };
-    const UrlApi = '/openapi/minus';
+    }
+    // chuyển khoản nội bộ
+    if(transaction.partner_code == null || transaction.partner_code == 0) {
+      
+    } else {
+      //chuyển khoản liên ngân hàng
+    }
+
+
+    // let hashVal = hash(JSON.stringify(data));
+    // let signVal = sign(JSON.stringify(data));
+    // let requestBody = {
+    //   hash: hashVal,
+    //   signature: signVal,
+    //   data: data,
+    //   partnerCode: '0725'
+    // }
+
+    //const UrlApi = '/openapi/minus';
     // Sửa lổi ở đây
 
-    return axios({
-      method: 'POST',
-      headers: {'content-type': 'application/json'},
-      url: UrlApi,
-      data: requestBody
-    })
-        .then(async respose => {
-          if (respose.data.errorCode == 0) {
-            let result = await transferModel.done(req.body.transId);
-            if (result) {
-              const err = await minusTransfer(req.body.transId, transaction.amount, transaction.from_account);
-              if (err == 0) {
-                res.status(200).json({
-                  msg: 'successfully',
-                  errorCode: 0,
-                  transId: req.body.transId, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
-                  to_account: transaction.to_account, // số tài khoản thụ hưởng
-                  amount: transaction.amount // số tiền giao dịch
-                })
-              } else {
-                res.status(200).json({
-                  msg: 'failure, invalid OTP',
-                  errorCode: -202, // mã lỗi sOTP không hợp lệ
-                })
-              }
-            }
-          }
-        })
-        .catch(error => console.log(error))
+    //   return axios({
+    //     method: 'POST',
+    //     headers: { 'content-type': 'application/json' },
+    //     url: UrlApi,
+    //     data: requestBody
+    //   })
+    //     .then(async respose => {
+    //       if (respose.data.errorCode == 0) {
+    //         let result = await transferModel.done(req.body.transId);
+    //         if (result) {
+    //           const err = await minusTransfer(req.body.transId, transaction.amount, transaction.from_account);
+    //           if (err == 0) {
+    //             res.status(200).json({
+    //               msg: 'successfully',
+    //               errorCode: 0,
+    //               transId: req.body.transId, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
+    //               to_account: transaction.to_account, // số tài khoản thụ hưởng
+    //               amount: transaction.amount // số tiền giao dịch
+    //             })
+    //           } else {
+    //             res.status(200).json({
+    //               msg: 'failure, invalid OTP',
+    //               errorCode: -202, // mã lỗi sOTP không hợp lệ
+    //             })
+    //           }
+    //         }
+    //       }
+    //     })
+    //     .catch(error => console.log(error))
 
   }
 });

@@ -2,12 +2,12 @@ const nodemailer = require("nodemailer")
 
 // create reusable transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
-    host: 'localhost',
-    port: 1025,
-    auth: {
-        user: 'project.1',
-        pass: 'secret.1'
-    }
+  host: 'localhost',
+  port: 1025,
+  auth: {
+    user: 'project.1',
+    pass: 'secret.1'
+  }
 })
 
 module.exports = {
@@ -21,9 +21,10 @@ module.exports = {
             text: msg, // plain text body
             html: htmlmsg // html body
         }, (err, info) => {
-            // console.log("Message sent: %s", err)
-            console.log("Message sent: %s", info)
-            // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+            if(err)
+              console.log("Message sent: %s", err)
+            else 
+              console.log("Message sent: %s", info.messageId)
         })
     }
 }
