@@ -1,23 +1,27 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Table } from 'reactstrap'
-import { getAllAccount } from '../redux/creators/accountCreator'
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {Table} from 'reactstrap'
+import {getAllAccount} from '../redux/creators/accountCreator'
 
-class ListAccountPage extends Component {
+const ListAccountPage = onRejected => {
+  const dispatch = useDispatch();
+  const AccountInfo = useSelector((state) => {
+    return [state.AccountInfo.data.item]
+  });
 
-  constructor(props) {
-    super(props);
-    this.state = {}
-  }
+  useEffect(() => {
+    const uid = localStorage.getItem('uid');
+    const accessToken = localStorage.getItem('accessToken');
+    dispatch(getAllAccount(uid, accessToken))
+        .then((response) => {
+          console.log(response);
+        });
+  }, [dispatch]);
 
-  componentDidMount() {
-    const uid = localStorage.getItem('uid')
-    this.props.getAllAccount(uid)
-  }
+  console.log("AccountInfo", AccountInfo);
 
-  render() {
-    return (
-      <div className="container" style={{ marginTop: '20px' }}>
+  return (
+      <div className="container" style={{marginTop: '20px'}}>
         <div className="row justify-content-center">
           <div className="col-md-12">
             <div className="card-group mb-0">
@@ -26,25 +30,37 @@ class ListAccountPage extends Component {
                   <h1 className="col-centered table-heading">Danh sách tài khoản</h1>
                   <Table>
                     <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Loại tài khoản</th>
-                        <th>Số tài khoản</th>
-                        <th>Số dư hiện tại</th>
-                      </tr>
+                    <tr>
+                      <th>#</th>
+                      <th>Loại tài khoản</th>
+                      <th>Số tài khoản</th>
+                      <th>Số dư hiện tại</th>
+                    </tr>
                     </thead>
                     <tbody>
-                      {
-                        this.props.AccountInfo.data.val &&
-                        this.props.AccountInfo.data.val.map(item => (
-                          <tr key={item.id}>
-                            <th scope="row">{item.id}</th>
-                            <td>{item.type}</td>
-                            <td>{item.number}</td>
-                            <td>{item.money}</td>
+                    {/*{*/}
+                    {/*  AccountInfo.item &&*/}
+                    {/*  AccountInfo.item.map((item, index) =>*/}
+                    {/*      (*/}
+                    {/*          <tr key={index}>*/}
+                    {/*            <th scope="row">{item.id}</th>*/}
+                    {/*            <td>{item.type}</td>*/}
+                    {/*            <td>{item.number}</td>*/}
+                    {/*            <td>{item.money}</td>*/}
+                    {/*          </tr>*/}
+                    {/*      ))*/}
+                    {/*}*/}
+                    {
+                      AccountInfo && AccountInfo.map((item, index) => (
+                          <tr key={index}>
+                            <th scope="row">{1}</th>
+                            <td>{item.user_name}</td>
+                            <td>{item.account_num}</td>
+                            <td>{item.phone}</td>
                           </tr>
-                        ))
-                      }
+                        )
+                      )
+                    }
                     </tbody>
                   </Table>
                 </div>
@@ -53,18 +69,7 @@ class ListAccountPage extends Component {
           </div>
         </div>
       </div>
-    );
-  }
-}
-
-const mapDispatchToProps = dispatch => ({
-  getAllAccount: (id) => dispatch(getAllAccount(id))
-});
-
-const mapStateToProps = (state) => {
-  return {
-    AccountInfo: state.AccountInfo
-  }
+  );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListAccountPage)
+export default ListAccountPage;

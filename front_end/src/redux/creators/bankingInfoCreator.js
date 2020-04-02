@@ -2,30 +2,20 @@ import {BANKING_INFO_FAILED, BANKING_INFO_LOADING, BANKING_INFO_SUCCESS} from '.
 import {UrlApi} from '../../shares/baseUrl'
 import {fetchFrom} from '../../utils/fetchHelper'
 
-export const getBankingInfo = (id) => (dispatch) => {
-    dispatch(BankingLoading());
-    return fetchFrom(UrlApi + '/api/accounts/id', 'POST', {id})
-        .then(response => {
-            console.log(response)
-            dispatch(BankingSuccess(response));
-        })
-        .catch(err => {
-            console.log(err);
-            dispatch(BankingFailed());
-        })
+export const getBankingInfo = (id, accessTocken) => {
+  return (dispatch) => {
+    dispatch({type: BANKING_INFO_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/accounts/id', 'POST', {id}, accessTocken);
+        console.log(response);
+        dispatch({type: BANKING_INFO_SUCCESS, payload: response});
+        resolve(response);
+      } catch (e) {
+        console.log(e);
+        dispatch({type: BANKING_INFO_FAILED, payload: e});
+        reject(e);
+      }
+    });
+  }
 };
-
-export const BankingLoading = () => ({
-    type: BANKING_INFO_LOADING
-});
-
-
-export const BankingSuccess = (data) => ({
-    type: BANKING_INFO_SUCCESS,
-    payload: data
-});
-
-export const BankingFailed = (errMsg = 'không thể kết nối đến server!!!') => ({
-    type: BANKING_INFO_FAILED,
-    payload: errMsg
-});

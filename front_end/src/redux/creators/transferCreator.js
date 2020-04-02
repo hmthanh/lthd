@@ -58,8 +58,6 @@ export const getInterbank = (accessToken) => {
 };
 
 export const getReceiverSaved = (uid, accessToken) => {
-  console.log("uid", uid);
-  console.log("accessToken", accessToken);
   return dispatch => {
     dispatch({type: RECEIVER_SAVED_LOADING});
     return new Promise(async (resolve, reject) => {

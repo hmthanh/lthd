@@ -1,24 +1,27 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { Card, CardBody, CardTitle, Col, Form, FormGroup, Label } from 'reactstrap'
-import { getBankingInfo } from '../redux/creators/bankingInfoCreator'
-import { Link } from 'react-router-dom'
+import React, {useEffect} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import {Card, CardBody, CardTitle, Col, Form, FormGroup, Label} from 'reactstrap'
+import {getBankingInfo} from '../redux/creators/bankingInfoCreator'
+import {Link} from 'react-router-dom'
 import CurrencyFormat from 'react-currency-format';
 
-class UserInfo extends Component {
+const UserInfo = () => {
+  const dispatch = useDispatch();
+  const BankingInfo = useSelector((state) => {
+    return state.BankingInfo
+  });
 
-  componentDidMount() {
-    console.log('componentDidMount', this.props)
-  //   if (this.props.Login.data.authenticated) {
-    const uid = localStorage.getItem('uid')
-    if (uid)
-      this.props.getBankingInfo(uid)
-    else
-      this.props.history.push("/login")
-  }
+  useEffect(() => {
+    let accessToken = localStorage.getItem('accessToken');
+    const uid = localStorage.getItem('uid');
+    dispatch(getBankingInfo(uid, accessToken))
+        .then((response) => {
+          console.log(response);
+        });
 
-  render() {
-    return (
+  }, [dispatch]);
+
+  return (
       <div>
         <Card>
           <CardBody>
@@ -29,7 +32,7 @@ class UserInfo extends Component {
                   <Label>Số tài khoản</Label>
                 </Col>
                 <Col sm={8}>
-                  {this.props.BankingInfo.data.account && this.props.BankingInfo.data.account.account_num}
+                  {BankingInfo.data.account && BankingInfo.data.account.account_num}
                 </Col>
               </FormGroup>
 
@@ -41,15 +44,15 @@ class UserInfo extends Component {
                   <Label>tài khoản chính: </Label>
                 </Col>
                 <Col sm={3}>
-                  <CurrencyFormat value={this.props.BankingInfo.data.main} displayType={'text'}
-                    thousandSeparator={true} prefix={'VND '} />
+                  <CurrencyFormat value={BankingInfo.data.main} displayType={'text'}
+                                  thousandSeparator={true} prefix={'VND '}/>
                 </Col>
                 <Col sm={2}>
                   <Label>tài khoản tiết kiệm: </Label>
                 </Col>
                 <Col sm={3}>
-                  <CurrencyFormat value={this.props.BankingInfo.data.saving_money}
-                    displayType={'text'} thousandSeparator={true} prefix={'VND '} />
+                  <CurrencyFormat value={BankingInfo.data.saving_money}
+                                  displayType={'text'} thousandSeparator={true} prefix={'VND '}/>
                 </Col>
               </FormGroup>
 
@@ -58,7 +61,7 @@ class UserInfo extends Component {
                   <Label>user name</Label>
                 </Col>
                 <Col sm={8}>
-                  {this.props.BankingInfo.data.account && this.props.BankingInfo.data.account.user_name}
+                  {BankingInfo.data.account && BankingInfo.data.account.user_name}
                 </Col>
               </FormGroup>
 
@@ -67,7 +70,7 @@ class UserInfo extends Component {
                   <Label>Họ Tên</Label>
                 </Col>
                 <Col sm={8}>
-                  {this.props.BankingInfo.data.account && this.props.BankingInfo.data.account.name}
+                  {BankingInfo.data.account && BankingInfo.data.account.name}
                 </Col>
               </FormGroup>
 
@@ -76,7 +79,7 @@ class UserInfo extends Component {
                   <Label>Email</Label>
                 </Col>
                 <Col sm={8}>
-                  {this.props.BankingInfo.data.account && this.props.BankingInfo.data.account.email}
+                  {BankingInfo.data.account && BankingInfo.data.account.email}
                 </Col>
               </FormGroup>
 
@@ -85,7 +88,7 @@ class UserInfo extends Component {
                   <Label>Số Điện Thoại</Label>
                 </Col>
                 <Col sm={8}>
-                  +{this.props.BankingInfo.data.account && this.props.BankingInfo.data.account.phone}
+                  +{BankingInfo.data.account && BankingInfo.data.account.phone}
                 </Col>
               </FormGroup>
 
@@ -94,12 +97,12 @@ class UserInfo extends Component {
                   <Label>Ngày Tháng Năm Sinh</Label>
                 </Col>
                 <Col sm={8}>
-                { this.props.BankingInfo.data.account && new Intl.DateTimeFormat('vi-US', {
-                                    year: 'numeric',
-                                    month: 'numeric',
-                                    day: '2-digit',
+                  {BankingInfo.data.account && new Intl.DateTimeFormat('vi-US', {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: '2-digit',
 
-                                }).format(new Date(this.props.BankingInfo.data.account.date_of_birth))}
+                  }).format(new Date(BankingInfo.data.account.date_of_birth))}
                 </Col>
               </FormGroup>
 
@@ -108,21 +111,7 @@ class UserInfo extends Component {
           </CardBody>
         </Card>
       </div>
-    )
-  }
-}
-
-const mapDispatchToProps = dispatch => ({
-  getBankingInfo: (uid) => dispatch(getBankingInfo(uid)),
-});
-
-const mapStateToProps = (state) => {
-  return {
-    Login: state.Login,
-    BankingInfo: state.BankingInfo
-  }
+  )
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserInfo);
-
-// export default UserInfo;
+export default UserInfo;

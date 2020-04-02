@@ -56,7 +56,6 @@ class Main extends Component {
   }
 
   componentWillReceiveProps(props) {
-
     console.log('componentWillReceiveProps Main', props.Login)
   }
 

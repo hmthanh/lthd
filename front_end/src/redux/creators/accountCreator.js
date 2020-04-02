@@ -9,18 +9,18 @@ import {
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'
 
-export const getAllAccount = (id) => {
+export const getAllAccount = (id, accessToken) => {
   return (dispatch) => {
     dispatch({type: ALL_ACCOUNT_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetchFrom(UrlApi + '/api/accounts/id', 'POST', {id});
-        // response = {
-        //     val: [
-        //         {id: 1, type: 'Thanh toán', number: '12312', money: 120000},
-        //         {id: 2, type: 'Tiết kiêm', number: '123123123', money: 990000},
-        //         {id: 3, type: 'Tiết kiệm', number: '645674567', money: 10000}
-        //     ]
+        const response = await fetchFrom(UrlApi + `/api/accounts/${id}`, 'POST', {id}, accessToken);
+        // const response = {
+        //   val: [
+        //     {id: 1, type: 'Thanh toán', number: '12312', money: 120000},
+        //     {id: 2, type: 'Tiết kiêm', number: '123123123', money: 990000},
+        //     {id: 3, type: 'Tiết kiệm', number: '645674567', money: 10000}
+        //   ]
         // };
         console.log(response);
         dispatch({type: ALL_ACCOUNT_SUCCESS, payload: response});
