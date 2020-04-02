@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
         timestamp: moment().valueOf(new Date()),
         surplus: surplus
       }
-      await transferModel.add(entityTF)
+      const insertVal = await transferModel.add(entityTF)
 
       // update số dư
       
@@ -53,6 +53,7 @@ router.post('/', async (req, res) => {
 
       console.log("backing Update", item)
       if (item.affectedRows == 1) {
+        await transferModel.done(insertVal.insertId)
         res.status(200).json({
           msg: 'successfully',
           errorCode: 0
@@ -63,6 +64,7 @@ router.post('/', async (req, res) => {
           "errorCode": -201
         })
       }
+
     }
   }
 });
