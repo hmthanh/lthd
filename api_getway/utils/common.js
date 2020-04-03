@@ -3,7 +3,8 @@ const maxLength = (len) => (val) => !(val) || (val.length <= len);
 const minLength = (len) => (val) => val && (val.length >= len);
 const isNumber = (val) => !isNaN(Number(val));
 const validEmail = (val) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(val);
-const {BANKING_CODE} = require('../config');
+const {BANKING_CODE} = require('../config')
+const moment = require('moment')
 
 const convertStrToDate = (dateStr) => {
   let dateArr = dateStr.split('-');
@@ -17,11 +18,9 @@ const convertStrToDate = (dateStr) => {
 const genagrateAccountNumber = (id, dob) => {
   let _dob = convertStrToDate(dob);
   // console.log('genagrateAccountNumber ' + _dob)
-  let now = new Date();
-  let dobi64 = _dob.getTime();
-  let nowi64 = now.getTime();
-  let strNum = id.toString() + dobi64;
-  let val = (+nowi64) ^ (+strNum);
+  let dobi64 = moment().valueOf(_dob);
+  let nowi64 = moment().valueOf(new Date());
+  let val = (+nowi64) & (+dobi64);
   if (val < 0) val = -val;
   return BANKING_CODE + val
 };
@@ -82,6 +81,28 @@ const htmlMsgTemplate = (name, requestName, OTP) => {
   The New Vimo Team`
 };
 
+const msgLogingTemplate = (name, username, password) => {
+  return `Dear ${name}!
+
+  Account of you ready to use. Now, you can loging and change password to use
+  
+  Username: ${username}
+  Password: ${password}
+  Thanks,
+  The New Vimo Team`
+};
+
+const htmlMsgLogingTemplate = (name, username, password) => {
+  return `Dear ${name}! <br/></br>
+
+  Account of you ready to use. Now, you can loging and change password to use </br>
+  
+  Username: <h1>${username}</h1></br>
+  Password: <h1>${password}</h1></br>
+  Thanks,</br>
+  The New Vimo Team`
+};
+
 const validate = (data) => {
   if (!validEmail(data['email'])) return false;
   if (!isNumber(data['phone'])) return false;
@@ -105,5 +126,7 @@ module.exports = {
   nonAccentVietnamese,
   msgTemplate,
   htmlMsgTemplate,
-  validate
+  validate,
+  msgLogingTemplate,
+  htmlMsgLogingTemplate
 };

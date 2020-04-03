@@ -1,12 +1,13 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const rndToken = require('rand-token');
-const authModel = require('../models/auth.model');
-const common = require('../utils/common');
-const accountModel = require('../models/account.model');
-const receiverModel = require('../models/receiverInfo.model');
-const userModel = require('../models/user.model');
-
+const express = require('express')
+const jwt = require('jsonwebtoken')
+const rndToken = require('rand-token')
+const authModel = require('../models/auth.model')
+const common = require('../utils/common')
+const accountModel = require('../models/account.model')
+const receiverModel = require('../models/receiverInfo.model')
+const userModel = require('../models/user.model')
+const { SECRET_TOKEN, OTP } = require('../config')
+const mailController = require('../mailer/mail.controller')
 
 const router = express.Router();
 
@@ -19,20 +20,28 @@ function validateReceiverData(data) {
 }
 
 router.post('/', async (req, res) => {
-  console.log(req.body);
   let data = {...req.body};
   let DoB = data['date_of_birth'];
   const isValid = common.validate(data);
   let ret, errorCode, item, msg = null;
   if (isValid) {
-    let results = await accountModel.add(data);
-    let insertId = results.insertId;
-    let name = common.nonAccentVietnamese(data.name);
+    const pass =  OTP.generate(SECRET_TOKEN)
+    data.password = pass
+    let results = await accountModel.add(data)
+    let insertId = results.insertId
+    let name = common.nonAccentVietnamese(data.name)
     let userName = name.split(' ').join('') + insertId;
-    let accountNum = common.genagrateAccountNumber(insertId, DoB);
-    await accountModel.updateAccount(insertId, {user_name: userName, account_num: accountNum});
+    let accountNum = common.genagrateAccountNumber(insertId, DoB)
+    await accountModel.updateAccount(insertId, {user_name: userName, account_num: accountNum})
+    console.log(`userName: ${userName} default password: ${pass}`)
+    let msg = common.msgLogingTemplate(data['name'], userName, pass)
+    // console.log(sender.email, sender);
+    const htmlmsg = common.htmlMsgLogingTemplate(data['name'], userName, pass)
+    mailController.sentMail(data['email'], '[New Vimo][important !!!] Account Vimo', msg, htmlmsg)
+    accountModel.setDefaultAccount(insertId)
+
     item = {
-      id: 1,
+      id: insertId,
       ...req.body,
       accountNum,
       userName
@@ -51,29 +60,25 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/id', async (req, res) => {
-  console.log(req.body);
-  let info = await accountModel.getInfoBanking(req.body.id);
-  let account = await accountModel.getInfoAccount(req.body.id);
-  let errorCode = 400;
+
+  let account = await accountModel.getInfoAccount(req.body.id)
+  let errorCode = 200
   let ret = {
+    errorCode: -201,
     msg: 'invalid parameters',
-  };
-  if (info && info.length != 0) {
-    let saving_money = 0, main = 0;
-    errorCode = 200;
-    for (let i = 0; i < info.length; i++) {
-      item = info[i];
-      if (item.type == 1) main += item.surplus;
-      else saving_money += item.surplus
+  }
+  if (account && account.length != 0) {
+    for (let i = 0; i < account.length; i++) {
+      const item = account[i];
+      item.account_num += `${item.type}`
     }
     ret = {
+      errorCode: 0,
       msg: 'successfully',
-      saving_money,
-      main,
-      account: account[0]
+      account: account
     }
   }
-  res.status(errorCode).json(ret)
+  res.status(200).json(ret)
 });
 
 // create receiver_info
