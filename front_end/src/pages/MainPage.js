@@ -13,13 +13,13 @@ import CreateAccount from "./CreateAccount/CreateAccount";
 const ListAccountPage = lazy(() => import('./ListAccountPage'));
 const LoginPage = lazy(() => import('./Login/Login'));
 const Register = lazy(() => import('./Register'));
-const UserInfo = lazy(() => import('./UserInfo'));
+const UserInfo = lazy(() => import('./UserInfo/UserInfo'));
 const HistoryPage = lazy(() => import('./HistoryUserTrans/HistoryUserTrans'));
 const Transfer = lazy(() => import('./Transfer/Transfer'));
 const Transfer2 = lazy(() => import('./TransferPage'));
-const debtPage = lazy(() => import('./Debt'));
-const ChangePassword = lazy(() => import('./ChangePassword'));
-const ForgetPassword = lazy(() => import('./ForgetPassword'));
+const debtPage = lazy(() => import('./Dept/Debt'));
+const ChangePassword = lazy(() => import('./ChangePassword/ChangePassword'));
+const ForgetPassword = lazy(() => import('./ForgetPassword/ForgetPassword'));
 const SettingPage = lazy(() => import('./SettingRecieverPage'));
 const remindPage = lazy(() => import('./Remind/Remind'));
 const LogoutPage = lazy(() => import('./logoutPage'));
@@ -45,7 +45,6 @@ class Main extends Component {
     const uid = localStorage.getItem('uid');
     const refreshToken = localStorage.getItem('refreshToken');
     if (!uid) {
-
       // this.props.history.push("/login");
     } else {
       GetAccessTokenWorker(uid, refreshToken);
@@ -99,7 +98,7 @@ class Main extends Component {
                   <Route exact path='/login' component={LoginPage}/>
                   <Route exact path='/register' component={Register}/>
                   <Route exact path='/info' component={UserInfo}/>
-                  <Route exact path='/transfer-history' component={HistoryPage}/>
+                  <Route exact path='/user-trans-history' component={HistoryPage}/>
                   <Route exact path='/manage-debt' component={debtPage}/>
                   <Route exact path='/change-password' component={ChangePassword}/>
                   <Route exact path='/list-account' component={ListAccountPage}/>

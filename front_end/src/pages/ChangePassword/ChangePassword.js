@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Control, Errors, LocalForm } from 'react-redux-form';
 import { Alert } from 'reactstrap'
 import { Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap'
-import { changepwd, verifyPassword } from '../redux/creators/changePasswordCreator'
+import { changepwd, verifyPassword } from '../../redux/creators/changePasswordCreator'
 
 const required = (val) => val && val.length;
 

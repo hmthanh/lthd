@@ -45,7 +45,7 @@ class CustomerNav extends Component {
               </DropdownItem>
               <DropdownItem divider/>
               <DropdownItem>
-                <NavLink href="/transfer-history">Lịch sử giao dịch</NavLink>
+                <NavLink href="/user-trans-history">Lịch sử giao dịch</NavLink>
               </DropdownItem>
               <DropdownItem>
                 <NavLink href="/change-password">Đổi mật khẩu</NavLink>

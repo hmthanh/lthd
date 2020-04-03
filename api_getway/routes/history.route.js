@@ -9,9 +9,9 @@ router.post('/', async (req, res) => {
   console.log('==================' + uid);
   const info = await getAccount(uid);
   const accountNum = info[0].account_num;
-  console.log(accountNum);
+  // console.log(accountNum);
   const historyData = await get(accountNum);
-  console.log(historyData);
+  // console.log(historyData);
   res.status(200).json({
     msg: 'successfully',
     errorCode: 0,

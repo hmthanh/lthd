@@ -51,6 +51,7 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/id', async (req, res) => {
+  console.log(req.body);
   let info = await accountModel.getInfoBanking(req.body.id);
   let account = await accountModel.getInfoAccount(req.body.id);
   let errorCode = 400;

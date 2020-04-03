@@ -20,7 +20,7 @@ const TableInfoTransfer = ({data}) => {
           data.item &&
           data.item.map((item, index) => (
               <tr key={index}>
-                <th scope="row">{item.id}</th>
+                <th scope="row">{index}</th>
                 <td>{new Intl.DateTimeFormat('vi-US', {
                   hour: 'numeric',
                   minute: 'numeric',

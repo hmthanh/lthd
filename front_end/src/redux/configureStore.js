@@ -6,7 +6,7 @@ import {Login} from './actions/login'
 import {Register} from './actions/register'
 import {ChangePassword} from './actions/changepassword'
 import {GetBankingInfo} from './actions/getBankingInfo'
-import {GetHistoryInfo} from './actions/getHistory'
+import {HistoryDebt, UserHistoryTrans} from './actions/getHistory'
 import {GetAllAccount} from './actions/getAllAccount'
 import {GetDebtInfo} from './actions/getDebt'
 import {ReminscentAcction} from './actions/reminscentAcc'
@@ -26,7 +26,7 @@ export const ConfigureStore = () => {
         Register: Register,
         ChangePassword: ChangePassword,
         BankingInfo: GetBankingInfo,
-        HistoryInfo: GetHistoryInfo,
+        HistoryInfo: UserHistoryTrans,
         DebtInfo: GetDebtInfo,
         AccountInfo: GetAllAccount,
         Reminscent: ReminscentAcction,
@@ -40,6 +40,7 @@ export const ConfigureStore = () => {
         AccountNum: AccountNum,
         RechargeInfo: RechargeInfo,
         HistoryTransfer: HistoryTransfer,
+        HistoryDept: HistoryDebt,
         CreateAccount: CreateAcc
       }),
       applyMiddleware(logger),
