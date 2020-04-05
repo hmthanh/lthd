@@ -33,17 +33,10 @@ const CreateAccount = () => {
   const messageBoxToggle = useToggle(false);
   const [contentMessage, setContentMessage] = useState("");
   const [titleMessage, setTitleMessage] = useState("");
-  // const username = useInputChange("");
-  // const password = useInputChange("");
   const fullName = useInputChange("");
   const email = useInputChange("");
   const phone = useInputChange("");
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
-
-  // date => {
-  //   props.onChange(date);
-  //   return setStartDate(date);
-  // }
 
   function showFieldRequire() {
     return <Badge color="danger" pill>Yêu cầu</Badge>
@@ -60,8 +53,6 @@ const CreateAccount = () => {
       email: email.value,
       name: fullName.value,
       date_of_birth: formatFormalDate(dateOfBirth),
-      // user_name: username.value,
-      // password: password.value,
     };
     let accessToken = localStorage.getItem('accessToken');
     dispatch(createAcc(data, accessToken))

@@ -3,20 +3,21 @@ import {Route, Switch} from 'react-router-dom'
 import {Container, Spinner} from 'reactstrap'
 import Header from '../layout/Header'
 import Websocket from 'react-websocket'
-// import {logout, relogin} from '../redux/creators/loginCreator'
 import {fetchFrom} from '../utils/fetchHelper'
 import {UrlApi} from '../shares/baseUrl'
 import Recharge from "./Recharge/Recharge";
 import HistoryTrans from "./HistoryTrans/HistoryTrans";
 import CreateAccount from "./CreateAccount/CreateAccount";
+import {Redirect} from "react-router";
+// import {logout, relogin} from '../redux/creators/loginCreator'
 
 const ListAccountPage = lazy(() => import('./ListAccountPage'));
 const LoginPage = lazy(() => import('./Login/Login'));
-const Register = lazy(() => import('./Register'));
+const Register = lazy(() => import('./Register/Register'));
 const UserInfo = lazy(() => import('./UserInfo/UserInfo'));
 const HistoryPage = lazy(() => import('./HistoryUserTrans/HistoryUserTrans'));
 const Transfer = lazy(() => import('./Transfer/Transfer'));
-const Transfer2 = lazy(() => import('./TransferPage'));
+// const Transfer2 = lazy(() => import('./TransferPage'));
 const debtPage = lazy(() => import('./Dept/Debt'));
 const ChangePassword = lazy(() => import('./ChangePassword/ChangePassword'));
 const ForgetPassword = lazy(() => import('./ForgetPassword/ForgetPassword'));
@@ -78,7 +79,7 @@ class Main extends Component {
 
   render() {
     return (
-        <div>
+        <>
           <Websocket url='ws://localhost:6500'
                      onMessage={this.handleData.bind(this)} onOpen={this.handleOpen.bind(this)}
                      onClose={this.handleClose.bind(this)}/>
@@ -105,17 +106,17 @@ class Main extends Component {
                   <Route exact path='/forget-password' component={ForgetPassword}/>
                   <Route exact path='/list-receiver' component={SettingPage}/>
                   <Route exact path='/transfer' component={Transfer}/>
-                  {/* <Route exact path='/transfer2' component={Transfer2}/> */}
                   <Route exact path='/create-account' component={CreateAccount}/>
                   <Route exact path='/recharge' component={Recharge}/>
                   <Route exact path='/history-account' component={HistoryTrans}/>
                   <Route exact path='/remind' component={remindPage}/>
                   <Route exact path='/logout' component={LogoutPage}/>
+                  <Redirect from='*' to='/' />
                 </Switch>
               </Suspense>
             </main>
           </Container>
-        </div>
+        </>
     )
   }
 }

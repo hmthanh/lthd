@@ -7,66 +7,67 @@ import AdministratorNav from '../components/Nav/AdministratorNav'
 import CustomerNav from '../components/Nav/CustomerNav'
 import EmployeeNav from '../components/Nav/EmployeeNav'
 import {getAllRemind} from '../redux/creators/remindCreator'
+import useToggle from "../utils/useToggle";
 
-const InfoUser = ({authenticated, permistion, notifyCount}) => {
+const InfoUser = ({notifyCount}) => {
+  // authenticated={!isAuthen}
+  // permistion={role}
+  function logout(){
+    localStorage.clear();
+    // this.props.logout()
+    // this.props.history.push("/");
+  }
 
-  console.log('InfoUser render Header', authenticated, permistion);
+  const uid = localStorage.getItem('uid');
+  const role = localStorage.getItem('role');
+  // console.log('InfoUser render Header', authenticated, permistion);
 
-  const [isOpen, setIsOpen] = useState(false);
-  const toggle = () => setIsOpen(!isOpen);
 
-  if (!authenticated) {
-    return (
-      <div>
-        <Button color="info" outline className="mr-2">
-          <Link to="/login">Đăng nhập</Link>
-        </Button>
-        <Button color="success" outline className="mr-4">
-          <Link to="/register">Đăng ký</Link>
-        </Button>
-      </div>
-    )
-  } else {
-    if (permistion === '3') {
+
+  const navToggle = useToggle(false);
+
+  if (uid) {
+    if (role === '3') {
       return (
-        <div>
-          <NavbarToggler onClick={toggle}></NavbarToggler>
-          <Collapse isOpen={isOpen} navbar>
-            <CustomerNav logout={logout} notifyCount={notifyCount}></CustomerNav>
-          </Collapse>
-        </div>
+          <>
+            <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
+            <Collapse isOpen={navToggle.active} navbar>
+              <CustomerNav logout={logout} notifyCount={notifyCount}></CustomerNav>
+            </Collapse>
+          </>
       )
-    } else if (permistion === '2') {
+    } else if (role === '2') {
       return (
-        <div>
-          <NavbarToggler onClick={toggle}></NavbarToggler>
-          <EmployeeNav logout={logout}></EmployeeNav>
-        </div>
+          <>
+            <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
+            <EmployeeNav logout={logout}></EmployeeNav>
+          </>
       )
     } else {
       return (
-          <div>
-            <NavbarToggler onClick={toggle}></NavbarToggler>
+          <>
+            <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
             <AdministratorNav logout={logout}></AdministratorNav>
-          </div>
+          </>
       )
     }
+  } else {
+    return (
+        <>
+          <Button color="info" outline className="mr-2">
+            <Link to="/login">Đăng nhập</Link>
+          </Button>
+          <Button color="info" outline className="mr-4">
+            <Link to="/register">Đăng ký</Link>
+          </Button>
+        </>
+    )
   }
 };
 
 class Header extends Component {
   constructor(props) {
     super(props);
-    this.logout = this.logout.bind(this);
-    this.state = {
-      isOpen: false
-    };
-  }
-
-  logout() {
-    localStorage.clear();
-    this.props.logout()
-    // this.props.history.push("/")
   }
 
   componentDidMount() {
@@ -74,23 +75,12 @@ class Header extends Component {
     this.props.getAllRemind(uid)
   }
 
-  componentWillReceiveProps(props) {
-
-    console.log('componentWillReceiveProps Header', props.Login)
-  }
-
   render() {
-    const uid = localStorage.getItem('uid');
-    const role = localStorage.getItem('role');
-    const isAuthen = !uid;
-    console.log('render Header', uid, role, isAuthen);
     return (
-        <div>
+        <div style={{marginBottom:"15px"}}>
           <Navbar color="light" light expand="md">
             <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
-            <InfoUser authenticated={!isAuthen} permistion={role}
-                      logout={this.logout}
-                      infoUser={this.infoUser} notifyCount={this.props.RemindInfo.data.num}/>
+            <InfoUser infoUser={this.infoUser} />
           </Navbar>
         </div>
     );

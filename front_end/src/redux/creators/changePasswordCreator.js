@@ -1,14 +1,14 @@
-import { CHANGE_PASSWORD_FAILED, CHANGE_PASSWORD_LOADING, CHANGE_PASSWORD_SUCCESS } from '../actions/actionType'
-import { UrlApi } from '../../shares/baseUrl';
-import { fetchFrom } from '../../utils/fetchHelper'
+import {CHANGE_PASSWORD_FAILED, CHANGE_PASSWORD_LOADING, CHANGE_PASSWORD_SUCCESS} from '../actions/actionType'
+import {UrlApi} from '../../shares/baseUrl';
+import {fetchFrom} from '../../utils/fetchHelper'
 
 export const changepwd = (uId, newPwd, OTP) => (dispatch) => {
   dispatch(ChangePasswordLoading());
 
   return fetchFrom(UrlApi + '/api/auth', 'PATCH', {uId, newPwd, OTP}).then(response => {
-    console.log(response)
-    if(response.error !== 0)
-      dispatch(ChangePasswordFailed('sai otp'))
+    console.log(response);
+    if (response.error !== 0)
+      dispatch(ChangePasswordFailed('sai otp'));
     else
       dispatch(ChangePasswordSuccess(response))
   }).catch(err => {
@@ -26,7 +26,7 @@ export const verifyPassword = (uId, oldPwd, newPw1, newPw2) => (dispatch) => {
       resolve(dispatch(ChangePasswordFailed('Mật Khẩu 2 lần không giống nhau')))
     })
   } else {
-    return fetchFrom(UrlApi + '/api/auth/verify', 'POST', { oldPwd, uId }).then(response => {
+    return fetchFrom(UrlApi + '/api/auth/verify', 'POST', {oldPwd, uId}).then(response => {
       dispatch(ChangePasswordSuccess(response))
     }).catch(err => {
       console.log(err);

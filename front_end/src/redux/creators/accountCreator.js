@@ -14,7 +14,7 @@ export const getAllAccount = (id, accessToken) => {
     dispatch({type: ALL_ACCOUNT_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetchFrom(UrlApi + `/api/accounts/${id}`, 'POST', {id}, accessToken);
+        const response = await fetchFrom(UrlApi + `/api/accounts/${id}`, 'POST', {id:id}, accessToken);
         // const response = {
         //   val: [
         //     {id: 1, type: 'Thanh toán', number: '12312', money: 120000},
