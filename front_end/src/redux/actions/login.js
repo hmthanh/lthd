@@ -1,4 +1,4 @@
-import {LOGIN, LOGIN_FAILED, LOGIN_SUCCESS} from './actionType'
+import {LOGIN_AUTH_FAILED, LOGIN_AUTH_SUCCESS, LOGIN_FAILED, LOGIN_LOADING} from './actionType'
 
 export const LoginInfo = (state = {
   isLoading: false,
@@ -6,11 +6,13 @@ export const LoginInfo = (state = {
   data: []
 }, action) => {
   switch (action.type) {
-    case LOGIN:
+    case LOGIN_LOADING:
       return {isLoading: true, errMess: null, data: []};
     case LOGIN_FAILED:
       return {...state, isLoading: false, errMess: action.payload, data: []};
-    case LOGIN_SUCCESS:
+    case LOGIN_AUTH_FAILED:
+      return {...state, isLoading: false, errMess: null, data: {...action.payload}};
+    case LOGIN_AUTH_SUCCESS:
       return {...state, isLoading: false, errMess: null, data: {...action.payload}};
     default:
       return state;

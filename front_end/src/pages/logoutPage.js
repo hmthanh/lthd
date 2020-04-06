@@ -2,9 +2,9 @@ import React, {Component} from 'react'
 
 class logoutPage extends Component {
   componentDidMount() {
-    localStorage.clear();
-    // this.props.logout()
-    this.props.history.push("/login");
+    // localStorage.clear();
+    // // this.props.logout()
+    // this.props.history.push("/login");
   }
 
   render() {

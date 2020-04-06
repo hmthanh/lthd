@@ -19,12 +19,17 @@ import {login} from '../../redux/creators/loginCreator'
 import ReCAPTCHA from "react-google-recaptcha";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import useInputRequire from "../../utils/useInputRequire";
-import { useHistory } from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
+import {AuthAdmin, AuthCustomer, AuthEmployee, AuthFailed, DispatchRole} from "../../redux/creators/authCreator";
+import {required} from "../../utils/utils";
 
 const recaptchaRef = React.createRef();
 
 const LoginPage = () => {
   const dispatch = useDispatch();
+  const Auth = useSelector(state => {
+    return state.Auth
+  });
   const history = useHistory();
   const LoginInfo = useSelector(state => {
     return state.LoginInfo;
@@ -34,7 +39,14 @@ const LoginPage = () => {
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (password.invalid || username.invalid) {
+    if (!required(username.value)) {
+      username.setInValid(true);
+      username.setInValidMsg("Không được để trống");
+      return;
+    }
+    if (!required(password.value)){
+      password.setInValid(true);
+      password.setInValidMsg("Không được để trống");
       return;
     }
     let recaptcha = recaptchaRef.current.getValue();
@@ -47,24 +59,39 @@ const LoginPage = () => {
       dispatch(login(data))
           .then((response) => {
             if (response.authenticated) {
-              console.log(response);
+              let {accessToken, refreshToken, user} = response;
               username.setValid(true);
               password.setValid(true);
-              localStorage.setItem('uid', response.user.id);
-              localStorage.setItem('role', response.user.role);
-              localStorage.setItem('accessToken', response.accessToken);
-              localStorage.setItem('refreshToken', response.refreshToken);
+              localStorage.setItem('uid', user.id.toString());
+              localStorage.setItem('role', user.role);
+              localStorage.setItem('accessToken', accessToken);
+              localStorage.setItem('refreshToken', refreshToken);
+
+              // dispatch(AuthCustomer());
+              if (user.role === 3){
+                dispatch(AuthCustomer());
+              }
+              else if (user.role === 2){
+                dispatch(AuthEmployee());
+              }
+              else if (user.role === 1){
+                dispatch(AuthAdmin());
+              }else{
+                dispatch(AuthFailed());
+              }
               history.push("/");
             } else {
+              let {errcode} = response;
+              dispatch(AuthFailed());
               username.setInValidMsg("");
-              username.setInValid(true);
-              password.setInValid(true);
-              if (response.errcode === -200) {
+              if (errcode === -200) {
                 password.setInValidMsg("Tài khoản không tồn tại");
-              } else if (response.errcode === -201) {
+              } else if (errcode === -201) {
                 password.setInValidMsg("Mật khẩu không đúng");
-              } else if (response.errcode === -202) {
+              } else if (errcode === -202) {
                 password.setInValidMsg("Tài khoản không hoạt động");
+              }else{
+                password.setInValidMsg("Đăng nhập không thành công");
               }
             }
           })
@@ -73,6 +100,10 @@ const LoginPage = () => {
             password.setInValid(true);
             password.setInValidMsg(e);
           }, [dispatch]);
+    }
+    else{
+      password.setInValid(true);
+      password.setInValidMsg("Vui lòng chọn xác nhận không phải robot");
     }
   }
 

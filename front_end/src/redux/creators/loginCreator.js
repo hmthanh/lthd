@@ -1,14 +1,20 @@
-import {LOGIN, LOGIN_FAILED, LOGIN_SUCCESS} from '../actions/actionType'
+import {LOGIN_LOADING, LOGIN_FAILED, LOGIN_AUTH_SUCCESS, LOGIN_AUTH_FAILED} from '../actions/actionType'
 import {UrlApi} from '../../shares/baseUrl';
 import {fetchFrom} from '../../utils/fetchHelper'
 
 export const login = (data) => {
   return (dispatch) => {
-    dispatch(LoginLoading());
+    dispatch({type: LOGIN_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetchFrom(UrlApi + '/api/auth', 'POST', data);
-        dispatch(LoginSuccess(response));
+        if (response.authenticated){
+          if (response.user.role)
+          dispatch({type: LOGIN_AUTH_SUCCESS, payload: response});
+        }
+        else{
+          dispatch({type: LOGIN_AUTH_FAILED, payload: response});
+        }
         resolve(response);
       } catch (e) {
         reject(e);
@@ -21,7 +27,7 @@ export const login = (data) => {
 
 export const relogin = (uId) => {
   return (dispatch) => {
-    dispatch(LoginLoading());
+    dispatch({type: LOGIN_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetchFrom(UrlApi + '/api/auth/relogin', 'POST', {uId});
@@ -65,12 +71,8 @@ export const logout = () => (dispatch) => {
   dispatch(LoginSuccess({}));
 };
 
-export const LoginLoading = () => ({
-  type: LOGIN
-});
-
 export const LoginSuccess = (data) => ({
-  type: LOGIN_SUCCESS,
+  type: LOGIN_AUTH_SUCCESS,
   payload: data
 });
 

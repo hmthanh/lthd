@@ -43,12 +43,12 @@ export const login = (data) => (dispatch) => {
 }
 
 export const LoginLoading = () => ({
-  type: LOGIN
+  type: LOGIN_LOADING
 })
 
 
 export const LoginSuccess = (data) => ({
-  type: LOGIN_SUCCESS,
+  type: LOGIN_AUTH_SUCCESS,
   payload: data
 })
 

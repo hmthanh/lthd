@@ -1,55 +1,71 @@
-import React, {Component, useState} from 'react'
-import {connect} from 'react-redux'
+import React, {Component, useEffect} from 'react'
+import {connect, useDispatch, useSelector} from 'react-redux'
 import {Button, Collapse, Navbar, NavbarBrand, NavbarToggler} from 'reactstrap'
 import {Link} from 'react-router-dom'
-import {logout, relogin} from '../redux/creators/loginCreator'
 import AdministratorNav from '../components/Nav/AdministratorNav'
 import CustomerNav from '../components/Nav/CustomerNav'
 import EmployeeNav from '../components/Nav/EmployeeNav'
 import {getAllRemind} from '../redux/creators/remindCreator'
 import useToggle from "../utils/useToggle";
+import {fetchFrom} from "../utils/fetchHelper";
+import {UrlApi} from "../shares/baseUrl";
+import {AuthFailed, DispatchRole} from "../redux/creators/authCreator";
+import history from "../utils/history";
 
-const InfoUser = ({notifyCount}) => {
-  // authenticated={!isAuthen}
-  // permistion={role}
-  function logout(){
-    localStorage.clear();
-    // this.props.logout()
-    // this.props.history.push("/");
-  }
+const GetAccessTokenWorker = (uid, refresh) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let data = {id: uid, refreshToken: refresh};
+      const response = await fetchFrom(UrlApi + '/api/refresh', 'POST', data);
+      localStorage.setItem('accessToken', response.accessToken);
+      resolve(response);
+    } catch (e) {
+      console.log(e);
+      reject(e);
+    }
+  });
+};
 
-  const uid = localStorage.getItem('uid');
-  const role = localStorage.getItem('role');
-  // console.log('InfoUser render Header', authenticated, permistion);
-
-
-
+const InfoUser = () => {
+  const dispatch = useDispatch();
   const navToggle = useToggle(false);
+  const Auth = useSelector(state => {
+    return state.Auth
+  });
+  useEffect(() => {
+    const uid = localStorage.getItem('uid');
+    const refreshToken = localStorage.getItem('refreshToken');
+    const role = localStorage.getItem('role');
 
-  if (uid) {
-    if (role === '3') {
-      return (
-          <>
-            <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
-            <Collapse isOpen={navToggle.active} navbar>
-              <CustomerNav logout={logout} notifyCount={notifyCount}></CustomerNav>
-            </Collapse>
-          </>
-      )
-    } else if (role === '2') {
-      return (
-          <>
-            <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
-            <EmployeeNav logout={logout}></EmployeeNav>
-          </>
-      )
+    if (!uid) {
+      AuthFailed();
+      history.push("/login");
     } else {
-      return (
-          <>
-            <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
-            <AdministratorNav logout={logout}></AdministratorNav>
-          </>
-      )
+      DispatchRole(role, dispatch);
+      GetAccessTokenWorker(uid, refreshToken);
+      setInterval(() => {
+        GetAccessTokenWorker(uid, refreshToken)
+      }, 1000 * 60 * 8)
+    }
+  }, [dispatch]);
+
+  if (Auth.isAuth) {
+    switch (Auth.role) {
+      case 1:
+        return (<>
+          <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
+          <AdministratorNav></AdministratorNav>
+        </>);
+      case 2:
+        return (<>
+          <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
+          <EmployeeNav></EmployeeNav>
+        </>);
+      default:
+        return (<>
+          <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
+          <CustomerNav></CustomerNav>
+        </>);
     }
   } else {
     return (
@@ -65,11 +81,8 @@ const InfoUser = ({notifyCount}) => {
   }
 };
 
-class Header extends Component {
-  constructor(props) {
-    super(props);
-  }
 
+class Header extends Component {
   componentDidMount() {
     const uid = localStorage.getItem('uid');
     this.props.getAllRemind(uid)
@@ -77,25 +90,23 @@ class Header extends Component {
 
   render() {
     return (
-        <div style={{marginBottom:"15px"}}>
-          <Navbar color="light" light expand="md">
-            <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
-            <InfoUser infoUser={this.infoUser} />
-          </Navbar>
-        </div>
+        <Navbar color="light" light expand="md" style={{marginBottom: "15px"}}>
+          <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
+          <InfoUser/>
+        </Navbar>
     );
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  relogin: (uid) => dispatch(relogin(uid)),
-  logout: (uid) => dispatch(logout()),
+  // relogin: (uid) => dispatch(relogin(uid)),
+  // logout: (uid) => dispatch(logout()),
   getAllRemind: (account_num) => dispatch(getAllRemind(account_num))
 });
 
 const mapStateToProps = (state) => {
   return {
-    Login: state.Login,
+    Auth: state.Auth,
     RemindInfo: state.RemindInfo,
   }
 };
