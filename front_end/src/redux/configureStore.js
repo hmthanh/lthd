@@ -2,11 +2,11 @@ import {applyMiddleware, combineReducers, createStore} from 'redux'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 
-import {Login} from './actions/login'
+import {LoginInfo} from './actions/login'
 import {Register} from './actions/register'
 import {ChangePassword} from './actions/changepassword'
 import {GetBankingInfo} from './actions/getBankingInfo'
-import {GetHistoryInfo} from './actions/getHistory'
+import {HistoryDebt, UserHistoryTrans} from './actions/getHistory'
 import {GetAllAccount} from './actions/getAllAccount'
 import {GetDebtInfo} from './actions/getDebt'
 import {ReminscentAcction} from './actions/reminscentAcc'
@@ -18,15 +18,16 @@ import {InterBank, ReceiverSaved, TransferInfo, VerifyResult} from './actions/tr
 import RechargeInfo from "./actions/recharge.action";
 import {HistoryTransfer} from "./actions/getHistoryTransfer.action";
 import CreateAcc from "./actions/createAcc.action";
+import {Auth} from "./actions/auth.action";
 
 export const ConfigureStore = () => {
   const store = createStore(
       combineReducers({
-        Login: Login,
+            LoginInfo: LoginInfo,
         Register: Register,
         ChangePassword: ChangePassword,
         BankingInfo: GetBankingInfo,
-        HistoryInfo: GetHistoryInfo,
+        HistoryInfo: UserHistoryTrans,
         DebtInfo: GetDebtInfo,
         AccountInfo: GetAllAccount,
         Reminscent: ReminscentAcction,
@@ -40,7 +41,9 @@ export const ConfigureStore = () => {
         AccountNum: AccountNum,
         RechargeInfo: RechargeInfo,
         HistoryTransfer: HistoryTransfer,
-        CreateAccount: CreateAcc
+        HistoryDept: HistoryDebt,
+        CreateAccount: CreateAcc,
+        Auth:Auth,
       }),
       applyMiddleware(logger),
       applyMiddleware(thunk),

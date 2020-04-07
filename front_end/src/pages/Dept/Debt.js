@@ -2,7 +2,7 @@ import React, { Component, useState } from 'react';
 import { Control, Errors, LocalForm } from 'react-redux-form'
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Table } from 'reactstrap'
 import { connect } from 'react-redux';
-import { Create, Delete, Edit, getAllDebt } from '../redux/creators/debtCreator';
+import { Create, Delete, Edit, getAllDebt } from '../../redux/creators/debtCreator';
 
 
 const required = (val) => val && val.length;

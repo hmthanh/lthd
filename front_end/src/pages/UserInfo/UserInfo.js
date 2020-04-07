@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {Card, CardBody, CardTitle, Col, Form, FormGroup, Label} from 'reactstrap'
-import {getBankingInfo} from '../redux/creators/bankingInfoCreator'
+import {getBankingInfo} from '../../redux/creators/bankingInfoCreator'
 import {Link} from 'react-router-dom'
 import CurrencyFormat from 'react-currency-format';
 
@@ -16,10 +16,12 @@ const UserInfo = () => {
     const uid = localStorage.getItem('uid');
     dispatch(getBankingInfo(uid, accessToken))
         .then((response) => {
-          console.log(response);
+          console.log("response", response);
         });
 
   }, [dispatch]);
+
+  console.log(BankingInfo);
 
   return (
       <div>

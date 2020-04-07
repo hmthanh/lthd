@@ -1,22 +1,25 @@
 import React, {Component} from 'react'
 import {Nav, NavItem, NavLink} from 'reactstrap'
+import NavLogout from "./NavLogout";
+import {AdminLink} from "../../shares/routes";
 
 class AdministratorNav extends Component {
-    render() {
-        return (
-            <Nav>
-                < NavItem>
-                    <NavLink href="/list-staff/">Danh sách nhân viên</NavLink>
-                </NavItem>
-                <NavItem>
-                    <NavLink href="/list-transfer/">Danh sách giao dịch</NavLink>
-                </NavItem>
-                <NavItem onClick={this.props.logout}>
-                    <NavLink href="/logout">Đăng xuất</NavLink>
-                </NavItem>
-            </Nav>
-        )
-    }
+  render() {
+    return (
+        <Nav>
+          {
+            AdminLink.map((link, index) => {
+              return (
+                  <NavItem key={index}>
+                    <NavLink href={link.path}>{link.title}</NavLink>
+                  </NavItem>
+              )
+            })
+          }
+          <NavLogout/>
+        </Nav>
+    )
+  }
 }
 
 export default AdministratorNav;
