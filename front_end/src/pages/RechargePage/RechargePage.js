@@ -22,7 +22,7 @@ import MessageBox from "../../components/Modal/MessageBox";
 import {recharge} from "../../redux/creators/rechargeCreator";
 import useToggle from "../../utils/useToggle";
 
-const Recharge = () => {
+const RechargePage = () => {
   const dispatch = useDispatch();
   const successModalToggle = useToggle();
   const rechargeSelector = useSelector((state) => {
@@ -136,4 +136,4 @@ const Recharge = () => {
 };
 
 
-export default Recharge;
+export default RechargePage;

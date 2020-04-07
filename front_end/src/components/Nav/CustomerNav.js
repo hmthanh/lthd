@@ -11,10 +11,8 @@ import {
   NavLink,
   UncontrolledDropdown
 } from 'reactstrap'
-import {useDispatch, useSelector} from "react-redux";
-import {AuthFailed} from "../../redux/creators/authCreator";
-import {createBrowserHistory as history} from 'history';
-import {CustomerLink} from "../../shares/routes";
+import {useSelector} from "react-redux";
+import {CustomerItemLink, CustomerLink} from "../../shares/routes";
 import NavLogout from "./NavLogout";
 
 
@@ -45,15 +43,15 @@ const CustomerNav = () => {
                 <NavLink href="/info">Thông tin</NavLink>
               </DropdownItem>
               <DropdownItem divider/>
-              <DropdownItem>
-                <NavLink href="/user-trans-history">Lịch sử giao dịch</NavLink>
-              </DropdownItem>
-              <DropdownItem>
-                <NavLink href="/change-password">Đổi mật khẩu</NavLink>
-              </DropdownItem>
-              <DropdownItem>
-                <NavLink href="/forgot-password">Quên mật khẩu</NavLink>
-              </DropdownItem>
+              {
+                CustomerItemLink.map((link, index) => {
+                  return (
+                      <DropdownItem key={index}>
+                        <NavLink href={link.path}>{link.title}</NavLink>
+                      </DropdownItem>
+                  )
+                })
+              }
             </DropdownMenu>
           </UncontrolledDropdown>
           <NavLogout/>

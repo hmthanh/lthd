@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Button, Card, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row} from 'reactstrap'
 import './HistoryAccount.css';
@@ -8,16 +8,24 @@ import useToggle from "../../utils/useToggle";
 
 const HistoryTrans = () => {
   const dispatch = useDispatch();
-  const showMessageBoxToggle = useToggle();
   const historyTransfer = useSelector(state => {
     return state.HistoryTransfer
   });
-  const [titleMessage, setTitleMessage] = useState("");
-  const [contentMessage, setContentMessage] = useState("");
+  const [titleMsg, setTitleMsg] = useState("");
+  const [contentMsg, setContentMsg] = useState("");
+  const msgBoxToggle = useToggle(false);
+
+  const showMsgBox = useCallback((title, content) => {
+    setTitleMsg(title);
+    setContentMsg(content);
+    msgBoxToggle.setActive();
+  }, [setTitleMsg, setContentMsg, msgBoxToggle]);
 
   useEffect(() => {
-
-  }, [dispatch]);
+    let title = "";
+    let content = "";
+    showMsgBox(title, content);
+  }, [dispatch, showMsgBox]);
 
   function findHistoryAccount() {
 
@@ -71,6 +79,8 @@ const HistoryTrans = () => {
       moneyTransaction: 999000000
     },
   ];
+
+
 
   return (
       <Container>
@@ -131,8 +141,13 @@ const HistoryTrans = () => {
             </Col>
           </Row>
         </div>
-        <MessageBox isOpen={showMessageBoxToggle.active} onClose={showMessageBoxToggle.setInActive} title={titleMessage}
-                    content={contentMessage}></MessageBox>
+        <MessageBox isOpen={msgBoxToggle.active}
+                    onClose={msgBoxToggle.setInActive}
+                    title={titleMsg}
+                    content={contentMsg}></MessageBox>
+        {
+          historyTransfer
+        }
       </Container>
   );
 };

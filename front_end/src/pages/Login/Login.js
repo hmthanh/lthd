@@ -20,16 +20,13 @@ import ReCAPTCHA from "react-google-recaptcha";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import useInputRequire from "../../utils/useInputRequire";
 import {useHistory} from 'react-router-dom';
-import {AuthAdmin, AuthCustomer, AuthEmployee, AuthFailed, DispatchRole} from "../../redux/creators/authCreator";
+import {AuthAdmin, AuthCustomer, AuthEmployee, AuthFailed} from "../../redux/creators/authCreator";
 import {required} from "../../utils/utils";
 
 const recaptchaRef = React.createRef();
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const Auth = useSelector(state => {
-    return state.Auth
-  });
   const history = useHistory();
   const LoginInfo = useSelector(state => {
     return state.LoginInfo;
@@ -44,7 +41,7 @@ const LoginPage = () => {
       username.setInValidMsg("Không được để trống");
       return;
     }
-    if (!required(password.value)){
+    if (!required(password.value)) {
       password.setInValid(true);
       password.setInValidMsg("Không được để trống");
       return;
@@ -55,7 +52,6 @@ const LoginPage = () => {
         username: username.value,
         password: password.value
       };
-      console.log(data);
       dispatch(login(data))
           .then((response) => {
             if (response.authenticated) {
@@ -68,15 +64,13 @@ const LoginPage = () => {
               localStorage.setItem('refreshToken', refreshToken);
 
               // dispatch(AuthCustomer());
-              if (user.role === 3){
+              if (user.role === 3) {
                 dispatch(AuthCustomer());
-              }
-              else if (user.role === 2){
+              } else if (user.role === 2) {
                 dispatch(AuthEmployee());
-              }
-              else if (user.role === 1){
+              } else if (user.role === 1) {
                 dispatch(AuthAdmin());
-              }else{
+              } else {
                 dispatch(AuthFailed());
               }
               history.push("/");
@@ -90,7 +84,7 @@ const LoginPage = () => {
                 password.setInValidMsg("Mật khẩu không đúng");
               } else if (errcode === -202) {
                 password.setInValidMsg("Tài khoản không hoạt động");
-              }else{
+              } else {
                 password.setInValidMsg("Đăng nhập không thành công");
               }
             }
@@ -100,8 +94,7 @@ const LoginPage = () => {
             password.setInValid(true);
             password.setInValidMsg(e);
           }, [dispatch]);
-    }
-    else{
+    } else {
       password.setInValid(true);
       password.setInValidMsg("Vui lòng chọn xác nhận không phải robot");
     }

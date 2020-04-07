@@ -19,6 +19,7 @@ import RechargeInfo from "./actions/recharge.action";
 import {HistoryTransfer} from "./actions/getHistoryTransfer.action";
 import CreateAcc from "./actions/createAcc.action";
 import {Auth} from "./actions/auth.action";
+import {ForgetPassword} from "./actions/forgetPwd.action";
 
 export const ConfigureStore = () => {
   const store = createStore(
@@ -44,6 +45,7 @@ export const ConfigureStore = () => {
         HistoryDept: HistoryDebt,
         CreateAccount: CreateAcc,
         Auth:Auth,
+        ForgetPassword: ForgetPassword,
       }),
       applyMiddleware(logger),
       applyMiddleware(thunk),

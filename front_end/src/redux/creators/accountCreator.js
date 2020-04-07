@@ -14,17 +14,8 @@ export const getAllAccount = (id, accessToken) => {
     dispatch({type: ALL_ACCOUNT_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetchFrom(UrlApi + `/api/accounts/${id}`, 'POST', {id:id}, accessToken);
-        // const response = {
-        //   val: [
-        //     {id: 1, type: 'Thanh toán', number: '12312', money: 120000},
-        //     {id: 2, type: 'Tiết kiêm', number: '123123123', money: 990000},
-        //     {id: 3, type: 'Tiết kiệm', number: '645674567', money: 10000}
-        //   ]
-        // };
-        console.log(response);
+        const response = await fetchFrom(UrlApi + `/api/accounts/id`, 'POST', {id:id}, accessToken);
         dispatch({type: ALL_ACCOUNT_SUCCESS, payload: response});
-
         resolve(response);
       } catch (e) {
         reject(e);

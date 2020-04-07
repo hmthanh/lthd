@@ -1,12 +1,13 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Table} from 'reactstrap'
-import {getAllAccount} from '../redux/creators/accountCreator'
+import {getAllAccount} from '../../redux/creators/accountCreator'
+import {formatMoney} from "../../utils/utils";
 
-const ListAccountPage = onRejected => {
+const ListAccountPage = () => {
   const dispatch = useDispatch();
-  const AccountInfo = useSelector((state) => {
-    return [state.AccountInfo.data.item]
+  const listAllAccount = useSelector((state) => {
+    return state.AccountInfo.data
   });
 
   useEffect(() => {
@@ -17,8 +18,6 @@ const ListAccountPage = onRejected => {
           console.log(response);
         });
   }, [dispatch]);
-
-  console.log("AccountInfo", AccountInfo);
 
   return (
       <div className="container" style={{marginTop: '20px'}}>
@@ -38,25 +37,13 @@ const ListAccountPage = onRejected => {
                     </tr>
                     </thead>
                     <tbody>
-                    {/*{*/}
-                    {/*  AccountInfo.item &&*/}
-                    {/*  AccountInfo.item.map((item, index) =>*/}
-                    {/*      (*/}
-                    {/*          <tr key={index}>*/}
-                    {/*            <th scope="row">{item.id}</th>*/}
-                    {/*            <td>{item.type}</td>*/}
-                    {/*            <td>{item.number}</td>*/}
-                    {/*            <td>{item.money}</td>*/}
-                    {/*          </tr>*/}
-                    {/*      ))*/}
-                    {/*}*/}
                     {
-                      AccountInfo && AccountInfo.map((item, index) => (
+                      listAllAccount.account && listAllAccount.account.map((item, index) => (
                           <tr key={index}>
                             <th scope="row">{1}</th>
-                            <td>{item.user_name}</td>
+                            <td>{(item.type === 1 ? "Thanh toán" : "Tiết kiệm")}</td>
                             <td>{item.account_num}</td>
-                            <td>{item.phone}</td>
+                            <td>{formatMoney(item.surplus, 0)} VNĐ</td>
                           </tr>
                         )
                       )
