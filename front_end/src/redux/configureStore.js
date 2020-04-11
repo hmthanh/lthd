@@ -10,6 +10,7 @@ import {HistoryDebt, UserHistoryTrans} from './actions/getHistory'
 import {GetAllAccount} from './actions/getAllAccount'
 import {GetDebtInfo} from './actions/getDebt'
 import {GetInDebtInfo} from './actions/getInDebt'
+import {GetAllCustomer} from './actions/getAllCustomer'
 import {ReminscentAcction} from './actions/reminscentAcc'
 import {GetAllReceiver} from './actions/getAllReceiver'
 import {GetRemindInfo} from './actions/getRemind'
@@ -21,6 +22,7 @@ import {HistoryTransfer} from "./actions/getHistoryTransfer.action";
 import CreateAcc from "./actions/createAcc.action";
 import {Auth} from "./actions/auth.action";
 import {ForgetPassword} from "./actions/forgetPwd.action";
+
 
 export const ConfigureStore = () => {
   const store = createStore(
@@ -48,6 +50,7 @@ export const ConfigureStore = () => {
         CreateAccount: CreateAcc,
         Auth:Auth,
         ForgetPassword: ForgetPassword,
+        AllCustomer: GetAllCustomer
       }),
       applyMiddleware(logger),
       applyMiddleware(thunk),

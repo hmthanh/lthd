@@ -5,8 +5,8 @@ const router = express.Router()
 
 // post để lấy tất cả các record trong db. do front end dùng post không dùng get
 router.post('/all', async (req, res) => {  
-  let val = await listuserModel.get()
-  res.status(200).json({val})
+  let response = await listuserModel.get()
+  res.status(200).json({response})
 
   // broadcastAll(JSON.stringify({msg: 'test broadcastAll message'}))
 })
