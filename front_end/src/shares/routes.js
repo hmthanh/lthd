@@ -8,6 +8,7 @@ const UserInfo = lazy(() => import('../pages/UserInfo/UserInfo'));
 const HistoryPage = lazy(() => import('../pages/HistoryUserTrans/HistoryUserTrans'));
 const Transfer = lazy(() => import('../pages/Transfer/Transfer'));
 const DebtPage = lazy(() => import('../pages/Dept/Debt'));
+const InDebtPage = lazy(() => import('../pages/Dept/InDebt'));
 const ChangePassword = lazy(() => import('../pages/ChangePassword/ChangePassword'));
 const ForgetPassword = lazy(() => import('../pages/ForgetPassword/ForgetPassword'));
 const CreateAccount = lazy(() => import('../pages/CreateAccount/CreateAccount'));
@@ -51,6 +52,11 @@ const routes = [
     path: "/manage-debt",
     exact: true,
     component: () => <DebtPage></DebtPage>
+  },
+  {
+    path: "/in-debt",
+    exact: true,
+    component: () => <InDebtPage></InDebtPage>
   },
   {
     path: "/change-password",
@@ -147,10 +153,10 @@ export const CustomerLink = [
     title: "Chuyển khoản",
     path: "/transfer",
   },
-  {
-    title: "Quản lý nhắc nợ",
-    path: "/manage-debt",
-  }
+  // {
+  //   title: "Quản lý nhắc nợ",
+  //   path: "/manage-debt",
+  // }
 ];
 
 export const CustomerItemLink = [

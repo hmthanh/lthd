@@ -9,6 +9,7 @@ import {GetBankingInfo} from './actions/getBankingInfo'
 import {HistoryDebt, UserHistoryTrans} from './actions/getHistory'
 import {GetAllAccount} from './actions/getAllAccount'
 import {GetDebtInfo} from './actions/getDebt'
+import {GetInDebtInfo} from './actions/getInDebt'
 import {ReminscentAcction} from './actions/reminscentAcc'
 import {GetAllReceiver} from './actions/getAllReceiver'
 import {GetRemindInfo} from './actions/getRemind'
@@ -30,6 +31,7 @@ export const ConfigureStore = () => {
         BankingInfo: GetBankingInfo,
         HistoryInfo: UserHistoryTrans,
         DebtInfo: GetDebtInfo,
+        GetInDebtInfo: GetInDebtInfo,
         AccountInfo: GetAllAccount,
         Reminscent: ReminscentAcction,
         ReceiverInfo: GetAllReceiver,
