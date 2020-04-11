@@ -1,6 +1,6 @@
 import React, {Component, useEffect} from 'react'
 import {connect, useDispatch, useSelector} from 'react-redux'
-import {Button, Collapse, Navbar, NavbarBrand, NavbarToggler} from 'reactstrap'
+import {Button, Navbar, NavbarBrand, NavbarToggler} from 'reactstrap'
 import {Link} from 'react-router-dom'
 import AdministratorNav from '../components/Nav/AdministratorNav'
 import CustomerNav from '../components/Nav/CustomerNav'
@@ -9,7 +9,7 @@ import {getAllRemind} from '../redux/creators/remindCreator'
 import useToggle from "../utils/useToggle";
 import {fetchFrom} from "../utils/fetchHelper";
 import {UrlApi} from "../shares/baseUrl";
-import {AuthFailed, DispatchRole} from "../redux/creators/authCreator";
+import {AuthAdmin, AuthCustomer, AuthEmployee, AuthFailed} from "../redux/creators/authCreator";
 import history from "../utils/history";
 
 const GetAccessTokenWorker = (uid, refresh) => {
@@ -41,7 +41,15 @@ const InfoUser = () => {
       AuthFailed();
       history.push("/login");
     } else {
-      DispatchRole(role, dispatch);
+      if (role === '3') {
+        dispatch(AuthCustomer());
+      } else if (role === '2') {
+        dispatch(AuthEmployee());
+      } else if (role === '1') {
+        dispatch(AuthAdmin());
+      } else {
+        dispatch(AuthFailed());
+      }
       GetAccessTokenWorker(uid, refreshToken);
       setInterval(() => {
         GetAccessTokenWorker(uid, refreshToken)

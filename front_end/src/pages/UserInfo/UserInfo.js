@@ -104,7 +104,7 @@ const UserInfo = () => {
                     month: 'numeric',
                     day: '2-digit',
 
-                  }).format(new Date(BankingInfo.data.account.date_of_birth))}
+                  }).format(new Date(BankingInfo.item.date_of_birth))}
                 </Col>
               </FormGroup>
 

@@ -10,13 +10,11 @@ import {
   FormGroup,
   Input,
   InputGroup,
-  InputGroupAddon,
-  InputGroupText,
   Label,
   Row
 } from "reactstrap";
 import './CreateAccount.css';
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import useInputChange from "../../utils/useInputChange";
 import {createAcc} from "../../redux/creators/accountCreator";
@@ -27,9 +25,6 @@ import useToggle from "../../utils/useToggle";
 
 const CreateAccount = () => {
   const dispatch = useDispatch();
-  const CreateAccount = useSelector((state) => {
-    return state.CreateAccount
-  });
   const messageBoxToggle = useToggle(false);
   const [contentMessage, setContentMessage] = useState("");
   const [titleMessage, setTitleMessage] = useState("");
@@ -57,7 +52,7 @@ const CreateAccount = () => {
     let accessToken = localStorage.getItem('accessToken');
     dispatch(createAcc(data, accessToken))
         .then((response) => {
-          if (response.msg == "successfully") {
+          if (response.msg === "successfully") {
             setTitleMessage("Thành công");
             setContentMessage("Đã tạo tài khoản thành công !");
             messageBoxToggle.setActive();

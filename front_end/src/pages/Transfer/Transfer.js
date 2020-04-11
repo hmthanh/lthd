@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  Badge,
   Button,
   ButtonGroup,
   Card,
@@ -25,13 +24,14 @@ import {convertObjectToArray} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ModalOTP from "../../components/Modal/ModalOTP";
+import ShowRequire from "../../components/ShowRequire/ShowRequire";
+import {getAllAccount} from "../../redux/creators/accountCreator";
 
 const Transfer = () => {
-  const listSenderAccount = [
-    {name: 'Tài khoản thanh toán 1', value: 1},
-    {name: 'Tài khoản thanh toán 2', value: 2}
-  ];
   const dispatch = useDispatch();
+  const senderInfo = useSelector(state => {
+    return state.AccountInfo.data
+  });
   const transferInfo = useSelector((state) => {
     return state.TransferInfo
   });
@@ -52,15 +52,11 @@ const Transfer = () => {
   const money = useInputChange(0);
   const message = useInputChange('');
   const isSenderPay = useToggle(true);
-  const messageBoxToggle = useToggle(false);
+  const msgBoxToggle = useToggle(false);
   const showVerifyToggle = useToggle(false);
-  const [titleMessage, setTitleMessage] = useState("");
-  const [contentMessage, setContentMessage] = useState("");
+  const [titleMsg, setTitleMsg] = useState("");
+  const [contentMsg, setContentMsg] = useState("");
   const [transId, setTransId] = useState(0);
-
-  function showFieldRequire() {
-    return <Badge color="danger" pill>Yêu cầu</Badge>
-  }
 
   function onChangeSelectSaved(e) {
     setSelectSaved(e.target.value);
@@ -111,6 +107,7 @@ const Transfer = () => {
       dispatch(getReceiverSaved(uid, accessToken))
           .then((response) => {
             let accountNum = convertObjectToArray(response)[0].account_num;
+            setSelectSaved(0);
             setAccountNum(accountNum);
           })
           .catch((err) => {
@@ -123,9 +120,9 @@ const Transfer = () => {
   }
 
   function showMessageBox(title, content) {
-    setTitleMessage(title);
-    setContentMessage(content);
-    messageBoxToggle.setActive();
+    setTitleMsg(title);
+    setContentMsg(content);
+    msgBoxToggle.setActive();
   }
 
   function onVerifySuccess() {
@@ -136,6 +133,9 @@ const Transfer = () => {
 
   function onSubmitForm(e) {
     e.preventDefault();
+    if (accountNum.value === 0){
+      return;
+    }
     let partner_code = 0;
     if (isInterbank) {
       partner_code = receiveBank;
@@ -174,6 +174,17 @@ const Transfer = () => {
         }, [dispatch]);
   }
 
+  useEffect(() => {
+    const uid = localStorage.getItem('uid');
+    const accessToken = localStorage.getItem('accessToken');
+    dispatch(getAllAccount(uid, accessToken))
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+  }, [dispatch]);
 
   return (
       <Container>
@@ -190,13 +201,17 @@ const Transfer = () => {
                         className="needs-validation" onSubmit={onSubmitForm}>
                     <h4>1. Người gửi</h4>
                     <FormGroup>
-                      <Label for="senderAccountType">Tài khoản người gửi {showFieldRequire()}</Label>
+                      <Label for="senderAccountType">Tài khoản người gửi <ShowRequire/></Label>
                       <Input type="select"
                              onChange={sender.onChange}
                              name="sender"
                              id="sender" value={sender.value}>
-                        {listSenderAccount.map((item, index) => {
-                          return <option key={index} value={item.value}>{item.name}</option>
+                        {senderInfo.account && senderInfo.account.map((item, index) => {
+                          return (
+                              <option
+                                  key={index}
+                                  value={item.account_num}>{(item.type === 1 ? ("Thanh toán " + index) : ("Tiết kiệm " + index))}
+                              </option>)
                         })}
                       </Input>
                     </FormGroup>
@@ -228,7 +243,7 @@ const Transfer = () => {
                     </FormGroup>
                     <FormGroup>
                       <Label for="receiverSavedList">Thông tin người
-                        nhận {showFieldRequire()}</Label>
+                        nhận <ShowRequire/></Label>
                       <div>
                         <ButtonGroup className="mb-2 ">
                           <Button color="primary" onClick={onChangeNotUseSaved}
@@ -260,7 +275,7 @@ const Transfer = () => {
                         <Input type="text" name="accountNum" id="accountNum"
                                onChange={onChangeAccountNum}
                                value={accountNum}
-                               placeholder="0725922171392"/>
+                               placeholder=""/>
                       </InputGroup>
                       <InputGroup>
                         <InputGroupAddon addonType="prepend">
@@ -274,7 +289,7 @@ const Transfer = () => {
                     </FormGroup>
                     <h4>3. Thông tin cần chuyển tiền</h4>
                     <FormGroup>
-                      <Label for="moneyTransfer">Số tiền {showFieldRequire()}</Label>
+                      <Label for="moneyTransfer">Số tiền <ShowRequire/></Label>
                       <Input type="number" name="money" id="money"
                              onChange={money.onChange}
                              value={money.value}
@@ -317,10 +332,10 @@ const Transfer = () => {
                   </Form>
                   <MessageBox
                       className={""}
-                      isOpen={messageBoxToggle.active}
-                      onClose={() => messageBoxToggle.setInActive()}
-                      title={titleMessage}
-                      content={contentMessage}
+                      isOpen={msgBoxToggle.active}
+                      onClose={msgBoxToggle.setInActive}
+                      title={titleMsg}
+                      content={contentMsg}
                   ></MessageBox>
                 </div>
                 <ModalOTP

@@ -60,7 +60,6 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/id', async (req, res) => {
-
   let account = await accountModel.getInfoAccount(req.body.id);
   let errorCode = 200;
   let ret = {

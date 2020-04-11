@@ -1,7 +1,5 @@
 import React from 'react'
 import {Nav, NavItem, NavLink} from 'reactstrap'
-import {useDispatch} from "react-redux";
-import {AuthLogout} from "../../redux/creators/authCreator";
 import {EmployeeLink} from "../../shares/routes";
 import NavLogout from "./NavLogout";
 

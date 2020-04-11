@@ -1,5 +1,4 @@
 import {AUTH_ADMIN, AUTH_CUSTOMER, AUTH_EMPLOYEE, AUTH_FAILED} from '../actions/actionType'
-import {useDispatch} from "react-redux";
 
 
 export const AuthFailed = () => ({
@@ -18,22 +17,14 @@ export const AuthAdmin = () => ({
   type: AUTH_ADMIN
 });
 
-export const AuthLogout = () => {
-  localStorage.clear();
-  const dispatch = useDispatch();
-  dispatch(AuthFailed());
-};
-
 export const DispatchRole = (role, dispatch) => {
-  if (role == 3){
+  if (role === 3) {
     dispatch(AuthCustomer());
-  }
-  else if (role == 2){
+  } else if (role === 2) {
     dispatch(AuthEmployee());
-  }
-  else if (role == 1){
+  } else if (role === 1) {
     dispatch(AuthAdmin());
-  }else{
+  } else {
     dispatch(AuthFailed());
   }
 };

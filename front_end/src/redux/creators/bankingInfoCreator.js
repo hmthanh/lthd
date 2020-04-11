@@ -7,7 +7,7 @@ export const getBankingInfo = (id, accessTocken) => {
     dispatch({type: BANKING_INFO_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetchFrom(UrlApi + '/api/accounts/id', 'POST', {id}, accessTocken);
+        const response = await fetchFrom(UrlApi + `/api/accounts/${id}`, 'POST', {}, accessTocken);
         console.log(response);
         dispatch({type: BANKING_INFO_SUCCESS, payload: response});
         resolve(response);

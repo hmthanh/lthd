@@ -1,8 +1,9 @@
 import React, {lazy} from 'react';
 
-const ListAccountPage = lazy(() => import('../pages/ListAccountPage'));
+const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
 const LoginPage = lazy(() => import('../pages/Login/Login'));
 const Register = lazy(() => import('../pages/Register/Register'));
+const ListAccountPage = lazy(() => import('../pages/ListAccountPage/ListAccountPage'));
 const UserInfo = lazy(() => import('../pages/UserInfo/UserInfo'));
 const HistoryPage = lazy(() => import('../pages/HistoryUserTrans/HistoryUserTrans'));
 const Transfer = lazy(() => import('../pages/Transfer/Transfer'));
@@ -10,15 +11,22 @@ const DebtPage = lazy(() => import('../pages/Dept/Debt'));
 const ChangePassword = lazy(() => import('../pages/ChangePassword/ChangePassword'));
 const ForgetPassword = lazy(() => import('../pages/ForgetPassword/ForgetPassword'));
 const CreateAccount = lazy(() => import('../pages/CreateAccount/CreateAccount'));
-const SettingPage = lazy(() => import('../pages/SettingRecieverPage'));
+const SettingPage = lazy(() => import('../pages/SettingPage'));
 const RemindPage = lazy(() => import('../pages/Remind/Remind'));
 const LogoutPage = lazy(() => import('../pages/logoutPage'));
-const Recharge = lazy(() => import('../pages/Recharge/Recharge'));
+const RechargePage = lazy(() => import('../pages/RechargePage/RechargePage'));
 const HistoryTrans = lazy(() => import('../pages/HistoryTrans/HistoryTrans'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+const ListStaffPage = lazy(() => import("../pages/ListStaffPage/ListStaffPage"));
+const ListTransferPage = lazy(() => import( "../pages/ListTransferPage/ListTransferPage"));
 
 
 const routes = [
+  {
+    path: "/",
+    exact: true,
+    component: () => <HomePage></HomePage>
+  },
   {
     path: "/login",
     exact: true,
@@ -55,7 +63,7 @@ const routes = [
     component: () => <ListAccountPage></ListAccountPage>
   },
   {
-    path: "/forget-password",
+    path: "/forgot-password",
     exact: true,
     component: () => <ForgetPassword></ForgetPassword>
   },
@@ -77,7 +85,7 @@ const routes = [
   {
     path: "/recharge",
     exact: true,
-    component: () => <Recharge></Recharge>
+    component: () => <RechargePage></RechargePage>
   },
   {
     path: "/history-account",
@@ -90,6 +98,16 @@ const routes = [
     component: () => <RemindPage></RemindPage>
   },
   {
+    path: "/list-staff",
+    exact: true,
+    component: () => <ListStaffPage></ListStaffPage>
+  },
+  {
+    path: "/list-transfer",
+    exact: true,
+    component: () => <ListTransferPage></ListTransferPage>
+  },
+  {
     path: "/logout",
     exact: true,
     component: () => <LogoutPage></LogoutPage>
@@ -99,7 +117,6 @@ const routes = [
     component: () => <NotFoundPage></NotFoundPage>
   }
 ];
-
 export default routes;
 
 export const EmployeeLink = [
@@ -135,6 +152,22 @@ export const CustomerLink = [
     path: "/manage-debt",
   }
 ];
+
+export const CustomerItemLink = [
+  {
+    title: "Lịch sử giao dịch",
+    path: "/user-trans-history",
+  },
+  {
+    title: "Đổi mật khẩu",
+    path: "/change-password",
+  },
+  {
+    title: "Quên mật khẩu",
+    path: "/forgot-password",
+  }
+];
+
 
 export const AdminLink = [
   {
