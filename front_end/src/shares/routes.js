@@ -8,6 +8,7 @@ const UserInfo = lazy(() => import('../pages/UserInfo/UserInfo'));
 const HistoryPage = lazy(() => import('../pages/HistoryUserTrans/HistoryUserTrans'));
 const Transfer = lazy(() => import('../pages/Transfer/Transfer'));
 const DebtPage = lazy(() => import('../pages/Dept/Debt'));
+const InDebtPage = lazy(() => import('../pages/Dept/InDebt'));
 const ChangePassword = lazy(() => import('../pages/ChangePassword/ChangePassword'));
 const ForgetPassword = lazy(() => import('../pages/ForgetPassword/ForgetPassword'));
 const CreateAccount = lazy(() => import('../pages/CreateAccount/CreateAccount'));
@@ -18,6 +19,7 @@ const RechargePage = lazy(() => import('../pages/RechargePage/RechargePage'));
 const HistoryTrans = lazy(() => import('../pages/HistoryTrans/HistoryTrans'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 const ListStaffPage = lazy(() => import("../pages/ListStaffPage/ListStaffPage"));
+const ListCustomerPage = lazy(() => import("../pages/ListCustomerPage/ListCustomerPage"));
 const ListTransferPage = lazy(() => import( "../pages/ListTransferPage/ListTransferPage"));
 
 
@@ -51,6 +53,11 @@ const routes = [
     path: "/manage-debt",
     exact: true,
     component: () => <DebtPage></DebtPage>
+  },
+  {
+    path: "/in-debt",
+    exact: true,
+    component: () => <InDebtPage></InDebtPage>
   },
   {
     path: "/change-password",
@@ -103,6 +110,11 @@ const routes = [
     component: () => <ListStaffPage></ListStaffPage>
   },
   {
+    path: "/list-customer",
+    exact: true,
+    component: () => <ListCustomerPage></ListCustomerPage>
+  },
+  {
     path: "/list-transfer",
     exact: true,
     component: () => <ListTransferPage></ListTransferPage>
@@ -147,10 +159,10 @@ export const CustomerLink = [
     title: "Chuyển khoản",
     path: "/transfer",
   },
-  {
-    title: "Quản lý nhắc nợ",
-    path: "/manage-debt",
-  }
+  // {
+  //   title: "Quản lý nhắc nợ",
+  //   path: "/manage-debt",
+  // }
 ];
 
 export const CustomerItemLink = [
@@ -173,6 +185,10 @@ export const AdminLink = [
   {
     title: "Danh sách nhân viên",
     path: "/list-staff",
+  },
+  {
+    title: "Danh sách khách hàng",
+    path: "/list-customer",
   },
   {
     title: "Danh sách giao dịch",

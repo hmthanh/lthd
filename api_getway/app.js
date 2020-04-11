@@ -64,6 +64,9 @@ app.use('/api/debt', verifyAccessToken, require('./routes/debt.route'));
 
 app.use('/api/remind', require('./routes/remind.route'));
 
+app.use('/api/listuser', require('./routes/listuser.route'));
+app.use('/api/liststaff', require('./routes/liststaff.route'));
+
 app.use('/api/history', verifyAccessToken, require('./routes/history.route'));
 
 app.use('/api/recharge', verifyAccessToken, require('./routes/recharge.route'));

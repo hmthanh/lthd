@@ -9,6 +9,9 @@ import {GetBankingInfo} from './actions/getBankingInfo'
 import {HistoryDebt, UserHistoryTrans} from './actions/getHistory'
 import {GetAllAccount} from './actions/getAllAccount'
 import {GetDebtInfo} from './actions/getDebt'
+import {GetInDebtInfo} from './actions/getInDebt'
+import {GetAllCustomer} from './actions/getAllCustomer'
+import {GetAllStaff} from './actions/getAllStaff'
 import {ReminscentAcction} from './actions/reminscentAcc'
 import {GetAllReceiver} from './actions/getAllReceiver'
 import {GetRemindInfo} from './actions/getRemind'
@@ -21,6 +24,7 @@ import CreateAcc from "./actions/createAcc.action";
 import {Auth} from "./actions/auth.action";
 import {ForgetPassword} from "./actions/forgetPwd.action";
 
+
 export const ConfigureStore = () => {
   const store = createStore(
       combineReducers({
@@ -30,6 +34,7 @@ export const ConfigureStore = () => {
         BankingInfo: GetBankingInfo,
         HistoryInfo: UserHistoryTrans,
         DebtInfo: GetDebtInfo,
+        GetInDebtInfo: GetInDebtInfo,
         AccountInfo: GetAllAccount,
         Reminscent: ReminscentAcction,
         ReceiverInfo: GetAllReceiver,
@@ -46,6 +51,8 @@ export const ConfigureStore = () => {
         CreateAccount: CreateAcc,
         Auth:Auth,
         ForgetPassword: ForgetPassword,
+        AllCustomer: GetAllCustomer,
+        StaffInfo: GetAllStaff
       }),
       applyMiddleware(logger),
       applyMiddleware(thunk),
