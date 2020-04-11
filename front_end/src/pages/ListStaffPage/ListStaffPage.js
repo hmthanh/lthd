@@ -2,20 +2,20 @@ import React, {useEffect} from 'react';
 // import {useDispatch, useSelector} from 'react-redux';
 import {Card, CardTitle, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from "react-redux";
-import {getAllAccount} from "../../redux/creators/accountCreator";
+import {getAllStaff} from "../../redux/creators/staffCreator";
 import {formatMoney} from "../../utils/utils";
 // import {getAllAccount} from '../../redux/creators/accountCreator'
 
 const ListStaffPage = () => {
   const dispatch = useDispatch();
-  const listAllAccount = useSelector((state) => {
-    return state.AccountInfo.data
+  const listStaff = useSelector((state) => {
+    return state.StaffInfo.data
   });
 
   useEffect(() => {
     const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
-    dispatch(getAllAccount(uid, accessToken))
+    dispatch(getAllStaff(uid, accessToken))
         .then((response) => {
           console.log(response);
         });
@@ -35,20 +35,24 @@ const ListStaffPage = () => {
                   <Table>
                     <thead>
                     <tr>
-                      <th>#</th>
-                      <th>Loại tài khoản</th>
-                      <th>Số tài khoản</th>
-                      <th>Số dư hiện tại</th>
+                        <th>#</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>Điện thoại</th>
+                        <th>Ngày sinh</th>
+                        <th>Số tài khoản</th>
                     </tr>
                     </thead>
                     <tbody>
                     {
-                      listAllAccount.account && listAllAccount.account.map((item, index) => (
+                      listStaff.response && listStaff.response.map((item, index) => (
                               <tr key={index}>
-                                <th scope="row">{1}</th>
-                                <td>{(item.type === 1 ? "Thanh toán" : "Tiết kiệm")}</td>
-                                <td>{item.account_num}</td>
-                                <td>{formatMoney(item.surplus, 0)} VNĐ</td>
+                                <th scope="row">{index + 1}</th>
+                                <td>{item.name}</td>
+                                <td>{item.email}</td>
+                                <td>{item.phone}</td>
+                                <td>{item.date_of_birth.toString()}</td>
+                                <td>{item.account_num}</td> 
                               </tr>
                           )
                       )
