@@ -66,6 +66,7 @@ app.use('/api/remind', require('./routes/remind.route'));
 
 app.use('/api/listuser', require('./routes/listuser.route'));
 app.use('/api/liststaff', require('./routes/liststaff.route'));
+app.use('/api/listtransfer', require('./routes/listtransfer.route'));
 
 app.use('/api/history', verifyAccessToken, require('./routes/history.route'));
 
