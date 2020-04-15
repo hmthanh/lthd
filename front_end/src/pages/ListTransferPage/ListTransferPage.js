@@ -1,19 +1,19 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Card, CardTitle, Col, Container, Row, Table} from 'reactstrap'
-import {getAllAccount} from "../../redux/creators/accountCreator";
+import {transfer} from "../../redux/creators/ListtransferCreator";
 import {formatMoney} from "../../utils/utils";
 
 const ListTransferPage = () => {
   const dispatch = useDispatch();
-  const listAllAccount = useSelector((state) => {
-    return state.AccountInfo.data
+  const ListTransferInfo = useSelector((state) => {
+    return state.ListTransferInfo.data
   });
 
   useEffect(() => {
     const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
-    dispatch(getAllAccount(uid, accessToken))
+    dispatch(transfer(uid, accessToken))
         .then((response) => {
           console.log(response);
         });
@@ -34,19 +34,28 @@ const ListTransferPage = () => {
                     <thead>
                     <tr>
                       <th>#</th>
+                      <th>Tên khách hàng</th>
                       <th>Loại tài khoản</th>
-                      <th>Số tài khoản</th>
-                      <th>Số dư hiện tại</th>
+                      <th>STK</th>
+                      <th>Chuyển đến STK</th>
+                      <th>Số tiền</th>
+                      <th>Note</th>
+                      <th>Trạng thái</th>
                     </tr>
                     </thead>
                     <tbody>
                     {
-                      listAllAccount.account && listAllAccount.account.map((item, index) => (
+                      ListTransferInfo.response && ListTransferInfo.response.map((item, index) => (
                               <tr key={index}>
                                 <th scope="row">{1}</th>
+                                <td>{item.acc_name}</td>
                                 <td>{(item.type === 1 ? "Thanh toán" : "Tiết kiệm")}</td>
-                                <td>{item.account_num}</td>
-                                <td>{formatMoney(item.surplus, 0)} VNĐ</td>
+                                <td>{item.from_account}</td>
+                                <td>{item.to_account}</td>
+                                <td>{formatMoney(item.amount, 0)} VNĐ</td>
+                                <td>{item.note}</td>
+                                <td>{item.state}</td>
+                               
                               </tr>
                           )
                       )

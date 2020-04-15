@@ -12,6 +12,7 @@ import {GetDebtInfo} from './actions/getDebt'
 import {GetInDebtInfo} from './actions/getInDebt'
 import {GetAllCustomer} from './actions/getAllCustomer'
 import {GetAllStaff} from './actions/getAllStaff'
+import {ListTransferInfo} from './actions/getAllTransfer'
 import {ReminscentAcction} from './actions/reminscentAcc'
 import {GetAllReceiver} from './actions/getAllReceiver'
 import {GetRemindInfo} from './actions/getRemind'
@@ -52,7 +53,8 @@ export const ConfigureStore = () => {
         Auth:Auth,
         ForgetPassword: ForgetPassword,
         AllCustomer: GetAllCustomer,
-        StaffInfo: GetAllStaff
+        StaffInfo: GetAllStaff,
+        ListTransferInfo:ListTransferInfo
       }),
       applyMiddleware(logger),
       applyMiddleware(thunk),
