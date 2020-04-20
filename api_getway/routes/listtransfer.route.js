@@ -1,11 +1,12 @@
+
 const express = require('express')
-const listuserModel = require('../models/listuser.model')
+const listtransferModel = require('../models/listtransfer.model')
 const router = express.Router()
 
 
 // post để lấy tất cả các record trong db. do front end dùng post không dùng get
 router.post('/all', async (req, res) => {  
-  let response = await listuserModel.get()
+  let response = await listtransferModel.get()
   res.status(200).json({response})
 
   // broadcastAll(JSON.stringify({msg: 'test broadcastAll message'}))

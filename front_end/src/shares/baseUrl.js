@@ -10,5 +10,6 @@ export const BaseUrl = [
   {url: '/list-receiver', name: 'Danh sách người nhận'},
   {url: '/transfer', name: 'Chuyển khoản'},
   {url: '/manage-debt', name: 'Quản lý nhắc nợ'},
+  {url: '/in-debt', name: 'Danh sách nợ'},
   {url: '/setting', name: 'Cài đặt tài khoản'},
 ];
