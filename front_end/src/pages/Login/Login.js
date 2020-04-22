@@ -75,18 +75,26 @@ const LoginPage = () => {
               }
               history.push("/");
             } else {
-              let {errcode} = response;
-              dispatch(AuthFailed());
-              username.setInValidMsg("");
-              if (errcode === -200) {
-                password.setInValidMsg("Tài khoản không tồn tại");
-              } else if (errcode === -201) {
+              console.log(response);
+
+              let {err_code} = response;
+              username.setInValid(false);
+              password.setInValid(false);
+              if (err_code === -200) {
+                username.setInValidMsg("Tài khoản không tồn tại");
+                password.setValue('');
+                username.setInValid(true);
+              } else if (err_code === -201) {
                 password.setInValidMsg("Mật khẩu không đúng");
-              } else if (errcode === -202) {
+                password.setInValid(true);
+              } else if (err_code === -202) {
                 password.setInValidMsg("Tài khoản không hoạt động");
+                password.setInValid(true);
               } else {
-                password.setInValidMsg("Đăng nhập không thành công");
+                password.setInValidMsg("Vui lòng kiểm tra lại tài khoản hoặc mật khẩu");
+                password.setInValid(true);
               }
+              dispatch(AuthFailed());
             }
           })
           .catch((e) => {
@@ -167,32 +175,7 @@ const LoginPage = () => {
                       <span>Đăng Nhập</span>
                     </Button>
                   </Form>
-                  {/*<LocalForm onSubmit={(values) => handleSubmit(values)}>*/}
-                  {/*  <div className='form-group'>*/}
-                  {/*    <label htmlFor='userName'>Your Account</label>*/}
-                  {/*    <Control.text model='.userName' id='userName' name='userName'*/}
-                  {/*                  className='form-control' autoComplete='off'*/}
-                  {/*                  validators={{required}}/>*/}
-                  {/*    <Errors className='text-danger' model='.userName' show="touched"*/}
-                  {/*            messages={{required: 'Required'}}/>*/}
-                  {/*  </div>*/}
-                  {/*  <div className='form-group'>*/}
-                  {/*    <label htmlFor='password'>Password</label>*/}
-                  {/*    <Control.password model='.password' id='password' name='password'*/}
-                  {/*                      className='form-control' rows='6' autoComplete='off'*/}
-                  {/*                      validators={{required}}/>*/}
-                  {/*    <Errors className='text-danger' model='.password' show="touched"*/}
-                  {/*            messages={{required: 'Required'}}/>*/}
-                  {/*  </div>*/}
 
-                  {/*  <Button*/}
-                  {/*      type="submit"*/}
-                  {/*      className="btn btn-primary"*/}
-                  {/*      color={"primary"}*/}
-                  {/*      style={{padding: "5px 100px", marginTop: "10px"}}>*/}
-                  {/*    <span>Login</span>*/}
-                  {/*  </Button>*/}
-                  {/*</LocalForm>*/}
                 </div>
               </Card>
             </div>

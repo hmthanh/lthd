@@ -67,18 +67,19 @@ router.post('/id', async (req, res) => {
     msg: 'invalid parameters',
   };
   if (account && account.length != 0) {
-    for (let i = 0; i < account.length; i++) {
-      const item = account[i];
-      item.account_num += `${item.type}`
-    }
+    // for (let i = 0; i < account.length; i++) {
+    //   const item = account[i];
+    //   // item.account_num += `${item.type}`;
+    // }
     ret = {
       errorCode: 0,
       msg: 'successfully',
       account: account
     }
   }
-  res.status(200).json(ret)
+  await res.status(200).json(ret)
 });
+
 
 // create receiver_info
 router.post('/ref/account', async (req, res) => {
@@ -101,10 +102,11 @@ router.post('/ref/account', async (req, res) => {
       newReceiver: entity
     }
   }
-  res.status(errorCode).json(ret)
+  await res.status(errorCode).json(ret)
 });
 // get all receiver_info by uid
 router.post('/ref/account/id', async (req, res) => {
+  console.log(req.body);
   let receivers = receiverModel.get(req.body.id);
   let errorCode = 200;
   let ret = null;

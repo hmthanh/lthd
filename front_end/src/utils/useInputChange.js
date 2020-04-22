@@ -7,7 +7,7 @@ const useInputChange = (initialState) => {
 
   const onChange = useCallback((e) => {
     let target = e.target;
-    let change = target.type === 'checkbox' ? target.checked : target.value;
+    let change = target.value;
     setValue(change);
   }, [setValue]);
 
