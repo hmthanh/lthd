@@ -30,7 +30,7 @@ const ListAccountPage = () => {
                   <Table>
                     <thead>
                     <tr>
-                      <th>#</th>
+                      <th>Mã tài khoản</th>
                       <th>Loại tài khoản</th>
                       <th>Số tài khoản</th>
                       <th>Số dư hiện tại</th>
@@ -40,7 +40,7 @@ const ListAccountPage = () => {
                     {
                       listAllAccount.account && listAllAccount.account.map((item, index) => (
                           <tr key={index}>
-                            <th scope="row">{1}</th>
+                            <th scope="row">{item.id}</th>
                             <td>{(item.type === 1 ? "Thanh toán" : "Tiết kiệm")}</td>
                             <td>{item.account_num}</td>
                             <td>{formatMoney(item.surplus, 0)} VNĐ</td>

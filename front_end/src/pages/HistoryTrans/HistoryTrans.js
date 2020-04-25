@@ -20,12 +20,12 @@ const HistoryTrans = () => {
     setContentMsg(content);
     msgBoxToggle.setActive();
   }, [setTitleMsg, setContentMsg, msgBoxToggle]);
-
-  useEffect(() => {
-    let title = "";
-    let content = "";
-    showMsgBox(title, content);
-  }, [dispatch, showMsgBox]);
+  //
+  // useEffect(() => {
+  //   let title = "";
+  //   let content = "";
+  //   showMsgBox(title, content);
+  // }, [dispatch, showMsgBox]);
 
   function findHistoryAccount() {
 
@@ -81,7 +81,6 @@ const HistoryTrans = () => {
   ];
 
 
-
   return (
       <Container>
         <div className="container-fluid py-3">
@@ -121,7 +120,6 @@ const HistoryTrans = () => {
                     <h3 className="text-center">LỊCH SỬ GIAO DỊCH TÀI KHOẢN</h3>
                   </CardTitle>
                   <hr/>
-
                   <h4>Giao dịch nhận tiền</h4>
                   <FormGroup>
                     <TableInfoTransfer tableInfo={receiveExchangeInfo}></TableInfoTransfer>
@@ -145,9 +143,9 @@ const HistoryTrans = () => {
                     onClose={msgBoxToggle.setInActive}
                     title={titleMsg}
                     content={contentMsg}></MessageBox>
-        {
-          historyTransfer
-        }
+        {/*{*/}
+        {/*  historyTransfer*/}
+        {/*}*/}
       </Container>
   );
 };

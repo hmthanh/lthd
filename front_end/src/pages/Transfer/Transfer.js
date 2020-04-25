@@ -61,6 +61,8 @@ const Transfer = () => {
   function onChangeSelectSaved(e) {
     setSelectSaved(e.target.value);
     setAccountNum(e.target.value);
+    let alias_name = e.target.options[e.target.selectedIndex].text
+    name.setValue(alias_name);
   }
 
   function onChangeAccountNum(e) {
@@ -106,9 +108,12 @@ const Transfer = () => {
 
       dispatch(getReceiverSaved(uid, accessToken))
           .then((response) => {
-            let accountNum = convertObjectToArray(response)[0].account_num;
+            let firstUser = convertObjectToArray(response)[0];
+            let accountNum = firstUser.account_num;
+            let aliasName = firstUser.alias_name;
             setSelectSaved(0);
             setAccountNum(accountNum);
+            name.setValue(aliasName);
           })
           .catch((err) => {
             let title = "Đã xảy ra lỗi";
@@ -205,7 +210,8 @@ const Transfer = () => {
                       <Input type="select"
                              onChange={sender.onChange}
                              name="sender"
-                             id="sender" value={sender.value}>
+                             id="sender"
+                             value={sender.value}>
                         {senderInfo.account && senderInfo.account.map((item, index) => {
                           return (
                               <option
