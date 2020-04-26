@@ -50,7 +50,7 @@ const ModalOTP = ({isShow, transId, onClose, onVerifySuccess}) => {
         }, [dispatch]);
   }
 
-  console.log(transId);
+  console.log("transId", transId);
 
   return (
       <div>
