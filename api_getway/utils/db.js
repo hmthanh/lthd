@@ -111,14 +111,17 @@ module.exports = {
       if (err) throw err
       connection.beginTransaction( (err) => {
         if (err) throw err
-        connection.query('SELECT surplus, b.id FROM banking_account b JOIN user_info u ON b.id = u.id WHERE u.account_num=? FOR UPDATE', account,
+        connection.query('SELECT b.surplus, b.id FROM banking_account b JOIN user_info u ON b.id = u.id WHERE u.account_num=? FOR UPDATE', account,
         (error, results, fields) => {
-          if (error) 
+          if (error) {
+            console.log(error)
             return connection.rollback(function () {
               throw error
             })
+          }
+            
           const {surplus, id} = results[0]
-          if (surplus < entity.amount)
+          if (surplus < amount)
             resolve(-1)
           else {
             let acc = surplus - amount
@@ -128,7 +131,7 @@ module.exports = {
                   throw error
                 })
               else {
-                connection.query(`UPDATE transaction_tranfer SET state=1 WHERE ?`, [{trans_id : tranId, surplus: surplus}], (error, results, fields) => {
+                connection.query('UPDATE transaction_tranfer SET state=1 WHERE ?', [{trans_id : tranId}], (error, results, fields) => {
                   if (error)
                     return connection.rollback(function() {
                       throw error

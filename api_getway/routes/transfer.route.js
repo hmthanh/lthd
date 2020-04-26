@@ -69,8 +69,16 @@ router.post('/:id', async (req, res) => {
       errorCode: -202, // mã lỗi OTP không hợp lệ
     })
   else {
-    console.log("transfer");
-    const transaction = await transferModel.get(req.body.transId);
+    let transaction = await transferModel.get(req.body.transId);
+    if (!transaction || transaction.length == 0) {
+      res.status(200).json({
+        msg: 'failure, invalid transId',
+        errorCode: -207, // mã lỗi OTP không hợp lệ
+      })
+      return
+    }
+    transaction = transaction[0]
+    
     let ts = moment().valueOf(new Date()); // get current milliseconds since the Unix Epoch
     let data = {
       from: transaction.acc_name,
@@ -80,24 +88,29 @@ router.post('/:id', async (req, res) => {
       note: transaction.note,
       ts: ts
     }
-    console.log("go here");
     // chuyển khoản nội bộ
     if(transaction.partner_code == null || transaction.partner_code == 0) {
-      
+      const err = await minusTransfer(req.body.transId, transaction.amount, transaction.from_account);
+      if (err == 0) {
+        res.status(200).json({
+          msg: 'successfully',
+          errorCode: 0,
+          transId: req.body.transId, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
+          to_account: transaction.to_account, // số tài khoản thụ hưởng
+          amount: transaction.amount // số tiền giao dịch
+        })
+      } else {
+        res.status(200).json({
+          msg: 'failure, invalid OTP',
+          errorCode: -202, // mã lỗi sOTP không hợp lệ
+        })
+      }
     } else {
-      //chuyển khoản liên ngân hàng
+      res.status(200).json({
+        msg: 'tranfer another backing not suport yet!!',
+        errorCode: -203, // mã lỗi sOTP không hợp lệ
+      })
     }
-
-
-
-
-    await res.status(200).json({
-      msg: 'successfully',
-      errorCode: 0,
-      transId: 2717,
-      to_account: '213214214',
-      amount: 831882193
-    })
 
 
     // let hashVal = hash(JSON.stringify(data));

@@ -9,6 +9,7 @@ const router = express.Router()
 router.post('/', async (req, res) => {
   const refreshToken = req.body.refreshToken
   const uid = req.body.id
+  console.log(uid)
   const rows = await refeshTokenModel.get(uid, refreshToken)
   if(rows.length === 0) {
     res.json({
