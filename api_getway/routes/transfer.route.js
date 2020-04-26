@@ -1,3 +1,4 @@
+
 const express = require('express')
 const moment = require('moment')
 const { hash, verifyHash, verify, sign } = require('../utils/rsa.signature')
@@ -5,7 +6,7 @@ const { SECRET_TOKEN, OTP } = require('../config')
 const mailController = require('../mailer/mail.controller')
 // const userModel = require('../models/user.model');
 const transferModel = require('../models/transfer.model')
-const { getInfoAccount } = require('../models/account.model')
+const { getSenderById } = require('../models/account.model')
 const { htmlMsgTemplate, msgTemplate } = require('../utils/common')
 const { minusTransfer } = require('../utils/db')
 const router = express.Router()
@@ -23,8 +24,9 @@ const validateData = (data) => {
 
 router.post('/', async (req, res) => {
   console.log(req.body)
-  const rows = await getInfoAccount(req.body.uid);
+  const rows = await getSenderById(req.body.uid);
   const sender = rows[0]
+
   const entity = {
     acc_name: sender.name,
     from_account: sender.account_num,

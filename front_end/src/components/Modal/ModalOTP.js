@@ -34,6 +34,7 @@ const ModalOTP = ({isShow, transId, onClose, onVerifySuccess}) => {
     let accessToken = localStorage.getItem('accessToken');
     dispatch(verifyOTP(transId, data, accessToken))
         .then((response) => {
+          console.log("response Verify OTP", response)
           if (response.errorCode === 0) {
             console.log('success');
             onClose();
