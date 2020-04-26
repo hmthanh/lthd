@@ -29,11 +29,10 @@ import {ForgetPassword} from "./actions/forgetPwd.action";
 export const ConfigureStore = () => {
   const store = createStore(
       combineReducers({
-            LoginInfo: LoginInfo,
+        LoginInfo: LoginInfo,
         Register: Register,
         ChangePassword: ChangePassword,
         BankingInfo: GetBankingInfo,
-        HistoryInfo: UserHistoryTrans,
         DebtInfo: GetDebtInfo,
         GetInDebtInfo: GetInDebtInfo,
         AccountInfo: GetAllAccount,
@@ -47,14 +46,15 @@ export const ConfigureStore = () => {
         VerifyResult: VerifyResult,
         AccountNum: AccountNum,
         RechargeInfo: RechargeInfo,
+        UserHistoryTrans: UserHistoryTrans,
         HistoryTransfer: HistoryTransfer,
         HistoryDept: HistoryDebt,
         CreateAccount: CreateAcc,
-        Auth:Auth,
+        Auth: Auth,
         ForgetPassword: ForgetPassword,
         AllCustomer: GetAllCustomer,
         StaffInfo: GetAllStaff,
-        ListTransferInfo:ListTransferInfo
+        ListTransferInfo: ListTransferInfo
       }),
       applyMiddleware(logger),
       applyMiddleware(thunk),

@@ -9,6 +9,9 @@ const HistoryUserTrans = () => {
   const historyDebt = useSelector(state => {
     return state.HistoryDept.data
   });
+  const userHistoryTrans = useSelector(state => {
+    return state.UserHistoryTrans.data
+  });
 
   useEffect(() => {
     const uid = localStorage.getItem('uid');
@@ -19,7 +22,7 @@ const HistoryUserTrans = () => {
         });
     dispatch(getHistoryUserDept({id: uid}, accessToken))
         .then((response) => {
-          // console.log(response.item);
+          console.log(response.item);
         });
   }, [dispatch]);
 
@@ -34,7 +37,9 @@ const HistoryUserTrans = () => {
                 <div className="card-block" style={{padding: "20px 40px"}}>
                   <h1 className="col-centered table-heading">Lịch sử giao dịch</h1>
                   <h4>Giao dịch nhận tiền</h4>
-                  <TableInfoTransfer></TableInfoTransfer>
+                  <TableInfoTransfer
+                      data={userHistoryTrans}
+                      ></TableInfoTransfer>
 
                   <h4>Giao dịch nhắc nợ</h4>
                   <TableInfoDept data={historyDebt}></TableInfoDept>

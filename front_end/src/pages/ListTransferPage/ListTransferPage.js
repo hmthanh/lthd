@@ -34,12 +34,12 @@ const ListTransferPage = () => {
                     <thead>
                     <tr>
                       <th>#</th>
-                      <th>Tên khách hàng</th>
-                      <th>Loại tài khoản</th>
-                      <th>STK</th>
-                      <th>Chuyển đến STK</th>
+                      <th>Ho tên</th>
+                      <th>Loại</th>
+                      <th>Người chuyển</th>
+                      <th>Người nhận</th>
                       <th>Số tiền</th>
-                      <th>Note</th>
+                      <th>Ghi chú</th>
                       <th>Trạng thái</th>
                     </tr>
                     </thead>
@@ -47,14 +47,14 @@ const ListTransferPage = () => {
                     {
                       ListTransferInfo.response && ListTransferInfo.response.map((item, index) => (
                               <tr key={index}>
-                                <th scope="row">{1}</th>
+                                <th scope="row">{item.trans_id}</th>
                                 <td>{item.acc_name}</td>
-                                <td>{(item.type === 1 ? "Thanh toán" : "Tiết kiệm")}</td>
+                                <td>{(item.type === 1 ? "Chuyển tiền" : "Nhận tiền")}</td>
                                 <td>{item.from_account}</td>
                                 <td>{item.to_account}</td>
                                 <td>{formatMoney(item.amount, 0)} VNĐ</td>
                                 <td>{item.note}</td>
-                                <td>{item.state}</td>
+                                <td>{item.state === 0 ? "Thành công" : "Thất bại"}</td>
                                
                               </tr>
                           )

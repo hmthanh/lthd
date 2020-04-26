@@ -15,6 +15,7 @@ module.exports = {
     updateAccount: (id, entity) => db.patch(entity, {id: id}, 'user_info'),
     getInfoBanking: (id) =>  db.load(`Select * from banking_account where owner_id=${id}`),
     getInfoAccount: (uId) => db.load(`select u.account_num, b.id, b.surplus, b.type from user_info u join banking_account b on u.id = b.owner_id where u.id = '${uId}'`),
+    getReceiverById: (uId) => db.load(`select u.account_num, b.id, b.surplus, b.type, u.name, b.surplus, u.email from user_info u join banking_account b on u.id = b.owner_id where u.id = '${uId}'`),
     getAccount: (uId) => db.load(`select * from user_info where id='${uId}'`),
     setDefaultAccount: (id) => {
       let entity = {

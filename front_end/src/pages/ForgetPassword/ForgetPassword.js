@@ -46,8 +46,8 @@ const FogetPassword = () => {
           let content = "Vui lòng kiểm tra email để đăng nhập bằng mật khẩu mới";
           showMsgBox(title, content);
         })
-        .catch((e) => {
-          console.log(e);
+        .catch((error) => {
+          console.log(error);
         });
   }
 
