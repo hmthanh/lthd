@@ -15,20 +15,19 @@ router.post('/', async (req, res) => {
   console.log(req.body);
   const rows = await userModel.singleByUserName(req.body.username);
   if (rows.length !== 0) {
-    console.log("if");
     const user = rows[0];
     const hashPwd = user.password;
     if (!bcrypt.compareSync(req.body.password, hashPwd)) {
-      res.json({
-        errcode: -201,
+      await res.json({
+        err_code: -201,
         msg: 'password incorrectly',
         authenticated: false,
       })
     } else {
       console.log("user.status", user.status);
       if (user.status === 0) {
-        res.json({
-          errcode: -202,
+        await res.json({
+          err_code: -202,
           msg: 'account not acctive',
           authenticated: false,
         })
@@ -39,7 +38,7 @@ router.post('/', async (req, res) => {
         const accessToken = jwt.sign({userId: user.id}, SECRET_KEY_TOKEN, {
           expiresIn: TIME_OUT_TOKEN
         });
-        res.json({
+        await res.json({
           authenticated: true,
           user,
           accessToken,
@@ -49,8 +48,8 @@ router.post('/', async (req, res) => {
     }
   } else {
     console.log("Else")
-    res.json({
-      errcode: -200,
+    await res.json({
+      err_code: -200,
       msg: 'account not exits',
       authenticated: false,
     })
@@ -67,7 +66,7 @@ router.post('/relogin', async (req, res) => {
     expiresIn: TIME_OUT_TOKEN
   });
   const rfToken = await refeshTokenModel.get(ret.id);
-  res.json({
+  await res.json({
     authenticated: true,
     user: ret,
     accessToken: token,
@@ -107,14 +106,14 @@ router.patch('/', async (req, res) => {
     delete ret.password;
     const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
     refeshTokenModel.add({user_id: req.body.uId, refresh_token: rfToken});
-    res.status(200).json({
+    await res.status(200).json({
       error: 0,
       authenticated: true,
       user: ret,
       refreshToken: rfToken
     })
   } else {
-    res.status(200).json({
+    await res.status(200).json({
       error: 401,
       msg: 'invalid OTP'
     })

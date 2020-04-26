@@ -2,12 +2,10 @@ import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {getHistoryUserDept, getHistoryUserTrans} from "../../redux/creators/historyTransCreator";
 import TableInfoTransfer from "./TableInfoTransfer";
+import TableInfoDept from "./TableInfoDept";
 
 const HistoryUserTrans = () => {
   const dispatch = useDispatch();
-  const historyTransfer = useSelector(state => {
-    return state.HistoryInfo.data
-  });
   const historyDebt = useSelector(state => {
     return state.HistoryDept.data
   });
@@ -36,10 +34,10 @@ const HistoryUserTrans = () => {
                 <div className="card-block" style={{padding: "20px 40px"}}>
                   <h1 className="col-centered table-heading">Lịch sử giao dịch</h1>
                   <h4>Giao dịch nhận tiền</h4>
-                  <TableInfoTransfer data={historyTransfer}></TableInfoTransfer>
+                  <TableInfoTransfer></TableInfoTransfer>
 
                   <h4>Giao dịch nhắc nợ</h4>
-                  <TableInfoTransfer data={historyDebt}></TableInfoTransfer>
+                  <TableInfoDept data={historyDebt}></TableInfoDept>
                 </div>
               </div>
             </div>

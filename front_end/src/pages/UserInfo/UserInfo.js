@@ -8,7 +8,7 @@ import CurrencyFormat from 'react-currency-format';
 const UserInfo = () => {
   const dispatch = useDispatch();
   const BankingInfo = useSelector((state) => {
-    return state.BankingInfo
+    return state.BankingInfo.data
   });
 
   useEffect(() => {
@@ -28,87 +28,87 @@ const UserInfo = () => {
         <Card>
           <CardBody>
             <CardTitle>Thông tin tài khoản</CardTitle>
-            <Form>
-              <FormGroup row>
-                <Col sm={4}>
-                  <Label>Số tài khoản</Label>
-                </Col>
-                <Col sm={8}>
-                  {BankingInfo.data.account && BankingInfo.data.account.account_num}
-                </Col>
-              </FormGroup>
+            {/*<Form>*/}
+            {/*  <FormGroup row>*/}
+            {/*    <Col sm={4}>*/}
+            {/*      <Label>Số tài khoản</Label>*/}
+            {/*    </Col>*/}
+            {/*    <Col sm={8}>*/}
+            {/*      {BankingInfo.item && BankingInfo.item.account_num}*/}
+            {/*    </Col>*/}
+            {/*  </FormGroup>*/}
 
-              <FormGroup row>
-                <Col sm={2}>
-                  <Label>Số dư</Label>
-                </Col>
-                <Col sm={2}>
-                  <Label>tài khoản chính: </Label>
-                </Col>
-                <Col sm={3}>
-                  <CurrencyFormat value={BankingInfo.data.main} displayType={'text'}
-                                  thousandSeparator={true} prefix={'VND '}/>
-                </Col>
-                <Col sm={2}>
-                  <Label>tài khoản tiết kiệm: </Label>
-                </Col>
-                <Col sm={3}>
-                  <CurrencyFormat value={BankingInfo.data.saving_money}
-                                  displayType={'text'} thousandSeparator={true} prefix={'VND '}/>
-                </Col>
-              </FormGroup>
+            {/*  <FormGroup row>*/}
+            {/*    <Col sm={2}>*/}
+            {/*      <Label>Số dư</Label>*/}
+            {/*    </Col>*/}
+            {/*    <Col sm={2}>*/}
+            {/*      <Label>tài khoản chính: </Label>*/}
+            {/*    </Col>*/}
+            {/*    <Col sm={3}>*/}
+            {/*      <CurrencyFormat value={BankingInfo.item.main} displayType={'text'}*/}
+            {/*                      thousandSeparator={true} prefix={'VND '}/>*/}
+            {/*    </Col>*/}
+            {/*    <Col sm={2}>*/}
+            {/*      <Label>tài khoản tiết kiệm: </Label>*/}
+            {/*    </Col>*/}
+            {/*    <Col sm={3}>*/}
+            {/*      <CurrencyFormat value={BankingInfo.item.saving_money}*/}
+            {/*                      displayType={'text'} thousandSeparator={true} prefix={'VND '}/>*/}
+            {/*    </Col>*/}
+            {/*  </FormGroup>*/}
 
-              <FormGroup row>
-                <Col sm={4}>
-                  <Label>user name</Label>
-                </Col>
-                <Col sm={8}>
-                  {BankingInfo.data.account && BankingInfo.data.account.user_name}
-                </Col>
-              </FormGroup>
+            {/*  <FormGroup row>*/}
+            {/*    <Col sm={4}>*/}
+            {/*      <Label>user name</Label>*/}
+            {/*    </Col>*/}
+            {/*    <Col sm={8}>*/}
+            {/*      {BankingInfo.item.account && BankingInfo.item.account.user_name}*/}
+            {/*    </Col>*/}
+            {/*  </FormGroup>*/}
 
-              <FormGroup row>
-                <Col sm={4}>
-                  <Label>Họ Tên</Label>
-                </Col>
-                <Col sm={8}>
-                  {BankingInfo.data.account && BankingInfo.data.account.name}
-                </Col>
-              </FormGroup>
+            {/*  <FormGroup row>*/}
+            {/*    <Col sm={4}>*/}
+            {/*      <Label>Họ Tên</Label>*/}
+            {/*    </Col>*/}
+            {/*    <Col sm={8}>*/}
+            {/*      {BankingInfo.item.account && BankingInfo.item.account.name}*/}
+            {/*    </Col>*/}
+            {/*  </FormGroup>*/}
 
-              <FormGroup row>
-                <Col sm={4}>
-                  <Label>Email</Label>
-                </Col>
-                <Col sm={8}>
-                  {BankingInfo.data.account && BankingInfo.data.account.email}
-                </Col>
-              </FormGroup>
+            {/*  <FormGroup row>*/}
+            {/*    <Col sm={4}>*/}
+            {/*      <Label>Email</Label>*/}
+            {/*    </Col>*/}
+            {/*    <Col sm={8}>*/}
+            {/*      {BankingInfo.item.account && BankingInfo.item.account.email}*/}
+            {/*    </Col>*/}
+            {/*  </FormGroup>*/}
 
-              <FormGroup row>
-                <Col sm={4}>
-                  <Label>Số Điện Thoại</Label>
-                </Col>
-                <Col sm={8}>
-                  +{BankingInfo.data.account && BankingInfo.data.account.phone}
-                </Col>
-              </FormGroup>
+            {/*  <FormGroup row>*/}
+            {/*    <Col sm={4}>*/}
+            {/*      <Label>Số Điện Thoại</Label>*/}
+            {/*    </Col>*/}
+            {/*    <Col sm={8}>*/}
+            {/*      +{BankingInfo.item.account && BankingInfo.item.account.phone}*/}
+            {/*    </Col>*/}
+            {/*  </FormGroup>*/}
 
-              <FormGroup row>
-                <Col sm={4}>
-                  <Label>Ngày Tháng Năm Sinh</Label>
-                </Col>
-                <Col sm={8}>
-                  {BankingInfo.data.account && new Intl.DateTimeFormat('vi-US', {
-                    year: 'numeric',
-                    month: 'numeric',
-                    day: '2-digit',
+            {/*  <FormGroup row>*/}
+            {/*    <Col sm={4}>*/}
+            {/*      <Label>Ngày Tháng Năm Sinh</Label>*/}
+            {/*    </Col>*/}
+            {/*    <Col sm={8}>*/}
+            {/*      {BankingInfo.item.account && new Intl.DateTimeFormat('vi-US', {*/}
+            {/*        year: 'numeric',*/}
+            {/*        month: 'numeric',*/}
+            {/*        day: '2-digit',*/}
 
-                  }).format(new Date(BankingInfo.item.date_of_birth))}
-                </Col>
-              </FormGroup>
+            {/*      }).format(new Date(BankingInfo.item.date_of_birth))}*/}
+            {/*    </Col>*/}
+            {/*  </FormGroup>*/}
 
-            </Form>
+            {/*</Form>*/}
             <Link to="/changepwd">Đổi mật khẩu</Link>
           </CardBody>
         </Card>

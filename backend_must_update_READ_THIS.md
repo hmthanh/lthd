@@ -13,4 +13,9 @@ Front_end sử lý event websocket khi bị nhắc nợ ở file Main
   onMessage={this.handleData.bind(this)} onOpen={this.handleOpen.bind(this)}
   onClose={this.handleClose.bind(this)}/>
   
-* 
+* Cần sửa lại API back end của trang /info
+Thông tin lấy ra còn thiếu số dư của tài khoản chính và tài khoản tiết kiệm
+
+* Còn thiếu thông API reset mật khẩu và gửi về email
+
+* Chưa làm trang danh sách nhân viên và trang danh sách giao dịch của nhân viên

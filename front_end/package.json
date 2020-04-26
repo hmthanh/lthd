@@ -5,6 +5,9 @@
     "dependencies": {
         "@coreui/coreui": "^2.1.16",
         "@coreui/react": "^2.5.7",
+        "@fortawesome/fontawesome-svg-core": "^1.2.28",
+        "@fortawesome/free-solid-svg-icons": "^5.13.0",
+        "@fortawesome/react-fontawesome": "^0.1.9",
         "axios": "^0.19.2",
         "bootstrap": "^4.4.1",
         "history": "^4.10.1",
