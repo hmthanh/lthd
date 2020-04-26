@@ -39,7 +39,7 @@ const Transfer = () => {
     return state.InterBank
   });
   const listSaved = useSelector((state) => {
-    return state.ReceiverSaved
+    return state.ReceiverSaved.data
   });
 
   const sender = useInputChange(1);
@@ -59,10 +59,12 @@ const Transfer = () => {
   const [transId, setTransId] = useState(0);
 
   function onChangeSelectSaved(e) {
-    setSelectSaved(e.target.value);
-    setAccountNum(e.target.value);
-    let alias_name = e.target.options[e.target.selectedIndex].text
-    name.setValue(alias_name);
+    if (listSaved){
+      setSelectSaved(e.target.value);
+      setAccountNum(e.target.value);
+      let change_name = listSaved[e.target.selectedIndex].name
+      name.setValue(change_name);
+    }
   }
 
   function onChangeAccountNum(e) {
@@ -109,11 +111,10 @@ const Transfer = () => {
       dispatch(getReceiverSaved(uid, accessToken))
           .then((response) => {
             let firstUser = convertObjectToArray(response)[0];
-            let accountNum = firstUser.account_num;
-            let aliasName = firstUser.alias_name;
             setSelectSaved(0);
-            setAccountNum(accountNum);
-            name.setValue(aliasName);
+            console.log(firstUser)
+            setAccountNum(firstUser.account_num);
+            name.setValue(firstUser.name);
           })
           .catch((err) => {
             let title = "Đã xảy ra lỗi";
@@ -264,8 +265,8 @@ const Transfer = () => {
                                onChange={onChangeSelectSaved}
                                name="selectSaved" id="selectSaved">
                           {
-                            listSaved.data != null &&
-                            convertObjectToArray(listSaved.data).map((item, index) => {
+                            listSaved != null &&
+                            convertObjectToArray(listSaved).map((item, index) => {
                               return <option key={index}
                                              value={item.account_num}>{item.alias_name}</option>
                             })

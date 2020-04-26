@@ -5,12 +5,19 @@ import './HistoryAccount.css';
 import TableInfoTransfer from "./TableInfoTransfer";
 import MessageBox from "../../components/Modal/MessageBox";
 import useToggle from "../../utils/useToggle";
+import useInputChange from "../../utils/useInputChange";
+import {getHistoryUserDept, getHistoryUserTrans} from "../../redux/creators/historyTransCreator";
+import TableInfoDept from "./TableInfoDept";
 
 const HistoryTrans = () => {
   const dispatch = useDispatch();
-  const historyTransfer = useSelector(state => {
-    return state.HistoryTransfer
+  const historyDebt = useSelector(state => {
+    return state.HistoryDept.data
   });
+  const userHistoryTrans = useSelector(state => {
+    return state.UserHistoryTrans.data
+  });
+  const search = useInputChange();
   const [titleMsg, setTitleMsg] = useState("");
   const [contentMsg, setContentMsg] = useState("");
   const msgBoxToggle = useToggle(false);
@@ -20,66 +27,26 @@ const HistoryTrans = () => {
     setContentMsg(content);
     msgBoxToggle.setActive();
   }, [setTitleMsg, setContentMsg, msgBoxToggle]);
-  //
-  // useEffect(() => {
-  //   let title = "";
-  //   let content = "";
-  //   showMsgBox(title, content);
-  // }, [dispatch, showMsgBox]);
-
-  function findHistoryAccount() {
-
-  }
-
-  const receiveExchangeInfo = [
-    {
-      id: 1,
-      dayTransaction: '12/03/2010',
-      typeTransaction: 'Giao dịch tiền mặt',
-      accountNumber: 234234234,
-      moneyTransaction: 212000000
-    },
-    {
-      id: 2,
-      dayTransaction: '12/03/2010',
-      typeTransaction: 'Giao dịch thẻ',
-      accountNumber: 3429587485,
-      moneyTransaction: 999000000
-    }
-  ];
-  const transferExchangeInfo = [
-    {
-      id: 1,
-      dayTransaction: '12/03/2010',
-      typeTransaction: 'Giao dịch thẻ',
-      accountNumber: 3429587485,
-      moneyTransaction: 999000000
-    },
-    {
-      id: 2,
-      dayTransaction: '12/03/2010',
-      typeTransaction: 'Giao dịch thẻ',
-      accountNumber: 3429587485,
-      moneyTransaction: 999000000
-    },
-  ];
-  const debtExchangeInfo = [
-    {
-      id: 1,
-      dayTransaction: '12/03/2010',
-      typeTransaction: 'Giao dịch thẻ',
-      accountNumber: 3429587485,
-      moneyTransaction: 999000000
-    },
-    {
-      id: 2,
-      dayTransaction: '12/03/2010',
-      typeTransaction: 'Giao dịch thẻ',
-      accountNumber: 3429587485,
-      moneyTransaction: 999000000
-    },
-  ];
-
+  const findHistoryAccount = useCallback((e) =>{
+    e.preventDefault();
+    // console.log("search value", search.value);
+    const uid = search.value;
+    const accessToken = localStorage.getItem('accessToken');
+    dispatch(getHistoryUserTrans(uid, accessToken))
+        .then((response) => {
+          console.log("getHistoryUserTrans", response.item);
+        })
+        .catch((error) =>{
+          showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n${error}`);
+        });
+    dispatch(getHistoryUserDept({id: uid}, accessToken))
+        .then((response) => {
+          console.log("getHistoryUserDept", response.item);
+        })
+        .catch((error) =>{
+          showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
+        });
+  }, [dispatch, search]);
 
   return (
       <Container>
@@ -96,7 +63,12 @@ const HistoryTrans = () => {
                       <Label>Mã tài khoản</Label>
                       <Row>
                         <Col xs={6}>
-                          <Input id="txtSearch" type="text" placeholder="2323-2334-2342"></Input>
+                          <Input id="txtSearch"
+                                 type="text"
+                                 placeholder="2323-2334-2342"
+                                 onChange={search.onChange}
+                                 value={search.value}
+                          ></Input>
                         </Col>
                         <Col xs={6}>
                           <Button id="btnSearch" type="submit" color={"success"}
@@ -120,19 +92,14 @@ const HistoryTrans = () => {
                     <h3 className="text-center">LỊCH SỬ GIAO DỊCH TÀI KHOẢN</h3>
                   </CardTitle>
                   <hr/>
-                  <h4>Giao dịch nhận tiền</h4>
+                  <h4>Lịch sử giao dịch</h4>
                   <FormGroup>
-                    <TableInfoTransfer tableInfo={receiveExchangeInfo}></TableInfoTransfer>
-                  </FormGroup>
-                  <hr/>
-                  <h4>Giao dịch chuyển khoản</h4>
-                  <FormGroup>
-                    <TableInfoTransfer tableInfo={transferExchangeInfo}></TableInfoTransfer>
+                    <TableInfoTransfer data={userHistoryTrans} receiving={userHistoryTrans}></TableInfoTransfer>
                   </FormGroup>
                   <hr/>
                   <h4>Giao dịch thanh toán mắc nợ</h4>
                   <FormGroup>
-                    <TableInfoTransfer tableInfo={debtExchangeInfo}></TableInfoTransfer>
+                    <TableInfoDept data={historyDebt}></TableInfoDept>
                   </FormGroup>
                 </div>
               </Card>
@@ -143,9 +110,6 @@ const HistoryTrans = () => {
                     onClose={msgBoxToggle.setInActive}
                     title={titleMsg}
                     content={contentMsg}></MessageBox>
-        {/*{*/}
-        {/*  historyTransfer*/}
-        {/*}*/}
       </Container>
   );
 };
