@@ -1,6 +1,6 @@
 import React, {lazy} from 'react';
 
-const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
+// const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
 const LoginPage = lazy(() => import('../pages/Login/Login'));
 const Register = lazy(() => import('../pages/Register/Register'));
 const ListAccountPage = lazy(() => import('../pages/ListAccountPage/ListAccountPage'));
@@ -27,7 +27,7 @@ const routes = [
   {
     path: "/",
     exact: true,
-    component: () => <HomePage></HomePage>
+    component: () => <UserInfo></UserInfo>
   },
   {
     path: "/login",
