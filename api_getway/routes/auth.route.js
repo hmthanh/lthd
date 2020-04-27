@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
         const accessToken = jwt.sign({userId: user.id}, SECRET_KEY_TOKEN, {
           expiresIn: TIME_OUT_TOKEN
         });
-        await res.json({
+        res.json({
           authenticated: true,
           user,
           accessToken,
@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
     }
   } else {
     console.log("Else")
-    await res.json({
+    res.json({
       err_code: -200,
       msg: 'account not exits',
       authenticated: false,

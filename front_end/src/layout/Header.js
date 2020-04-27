@@ -17,6 +17,7 @@ const GetAccessTokenWorker = (uid, refresh) => {
     try {
       let data = {id: uid, refreshToken: refresh};
       const response = await fetchFrom(UrlApi + '/api/refresh', 'POST', data);
+      console.log('=====================response', response)
       localStorage.setItem('accessToken', response.accessToken);
       resolve(response);
     } catch (e) {
