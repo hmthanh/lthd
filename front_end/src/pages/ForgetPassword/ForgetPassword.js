@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
   Button,
   Card,
+  CardGroup,
   CardTitle,
   Col,
   Container,
@@ -61,13 +62,13 @@ const FogetPassword = () => {
       <Container>
         <Row className="justify-content-center">
           <Col md={6}>
-            <div className="card-group mb-0">
+            <CardGroup className=" mb-0">
               <Card className="card p-4">
                 <div className="card-block">
                   <CardTitle>
                     <h3 className="text-center">QUÊN MẬT KHẨU</h3>
                   </CardTitle>
-
+                  <hr/>
                   <Form method="post" noValidate="validated"
                         className="needs-validation" onSubmit={handleSubmit}>
                     <h4>Email hoặc số tài khoản</h4>
@@ -105,7 +106,7 @@ const FogetPassword = () => {
                   </Form>
                 </div>
               </Card>
-            </div>
+            </CardGroup>
           </Col>
         </Row>
         <MessageBox

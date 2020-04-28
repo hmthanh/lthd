@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getHistoryUserDept, getHistoryUserTrans} from "../../redux/creators/historyTransCreator";
 import TableInfoTransfer from "./TableInfoTransfer";
 import TableInfoDept from "./TableInfoDept";
+import {Card, CardGroup, Col, Container, Row} from "reactstrap";
 
 const HistoryUserTrans = () => {
   const dispatch = useDispatch();
@@ -29,26 +30,32 @@ const HistoryUserTrans = () => {
   console.log("historyDebt", historyDebt);
 
   return (
-      <div className="container" style={{marginTop: '20px'}}>
-        <div className="row justify-content-center">
-          <div className="col-md-12">
-            <div className="card-group mb-0">
-              <div className="card p-6">
+      <Container className="container" style={{marginTop: '20px'}}>
+        <Row className="justify-content-center">
+          <Col md={12}>
+            <CardGroup className=" mb-0">
+              <Card className="p-6">
                 <div className="card-block" style={{padding: "20px 40px"}}>
-                  <h1 className="col-centered table-heading">Lịch sử giao dịch</h1>
-                  <h4>Giao dịch nhận tiền</h4>
+                  <h3 className="col-centered table-heading">LỊCH SỬ GIAO DỊCH</h3>
+                  <hr/>
+                  <h4>Giao dịch chuyển tiền</h4>
                   <TableInfoTransfer
                       data={userHistoryTrans}
                       ></TableInfoTransfer>
 
+                  <h4>Giao dịch nhận tiền</h4>
+                  <TableInfoTransfer
+                      data={userHistoryTrans}
+                  ></TableInfoTransfer>
+
                   <h4>Giao dịch nhắc nợ</h4>
                   <TableInfoDept data={historyDebt}></TableInfoDept>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+              </Card>
+            </CardGroup>
+          </Col>
+        </Row>
+      </Container>
   )
 };
 

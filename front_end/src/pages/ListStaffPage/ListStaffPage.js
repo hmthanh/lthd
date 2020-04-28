@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 // import {useDispatch, useSelector} from 'react-redux';
-import {Card, CardTitle, Col, Container, Row, Table} from 'reactstrap'
+import {Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from "react-redux";
 import {getAllStaff} from "../../redux/creators/staffCreator";
 // import {formatMoney} from "../../utils/utils";
@@ -22,25 +22,23 @@ const ListStaffPage = () => {
   }, [dispatch]);
 
   return (
-      <Container style={{marginTop: '20px'}}>
-        <Row className=" justify-content-center">
-          <Col className="col-md-12">
-            <div className="card-group mb-0">
-              <Card className="card p-6">
-                <div className="card-block">
-                  <CardTitle>
-                    <h3 className="col-centered table-heading">DANH SÁCH NHÂN VIÊN</h3>
-                  </CardTitle>
-
+      <Container className="container" style={{marginTop: '20px'}}>
+        <Row className="justify-content-center">
+          <Col md={12}>
+            <CardGroup className=" mb-0">
+              <Card className="p-6">
+                <div className="card-block" style={{padding: "20px 40px"}}>
+                  <h3 className="col-centered table-heading">DANH SÁCH NHÂN VIÊN</h3>
+                  <hr/>
                   <Table>
                     <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Tên</th>
-                        <th>Email</th>
-                        <th>Điện thoại</th>
-                        <th>Ngày sinh</th>
-                        <th>Số tài khoản</th>
+                      <th>#</th>
+                      <th>Tên</th>
+                      <th>Email</th>
+                      <th>Điện thoại</th>
+                      <th>Ngày sinh</th>
+                      <th>Số tài khoản</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -52,7 +50,7 @@ const ListStaffPage = () => {
                                 <td>{item.email}</td>
                                 <td>{item.phone}</td>
                                 <td>{item.date_of_birth.toString()}</td>
-                                <td>{item.account_num}</td> 
+                                <td>{item.account_num}</td>
                               </tr>
                           )
                       )
@@ -61,7 +59,7 @@ const ListStaffPage = () => {
                   </Table>
                 </div>
               </Card>
-            </div>
+            </CardGroup>
           </Col>
         </Row>
       </Container>

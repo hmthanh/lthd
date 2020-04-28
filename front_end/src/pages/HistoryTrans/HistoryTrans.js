@@ -1,6 +1,19 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Button, Card, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row} from 'reactstrap'
+import {
+  Button,
+  Card,
+  CardGroup,
+  Col,
+  Container,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon, InputGroupText,
+  Label,
+  Row
+} from 'reactstrap'
 import './HistoryAccount.css';
 import TableInfoTransfer from "./TableInfoTransfer";
 import MessageBox from "../../components/Modal/MessageBox";
@@ -27,7 +40,7 @@ const HistoryTrans = () => {
     setContentMsg(content);
     msgBoxToggle.setActive();
   }, [setTitleMsg, setContentMsg, msgBoxToggle]);
-  const findHistoryAccount = useCallback((e) =>{
+  const findHistoryAccount = useCallback((e) => {
     e.preventDefault();
     // console.log("search value", search.value);
     const uid = search.value;
@@ -36,39 +49,43 @@ const HistoryTrans = () => {
         .then((response) => {
           console.log("getHistoryUserTrans", response.item);
         })
-        .catch((error) =>{
+        .catch((error) => {
           showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n${error}`);
         });
     dispatch(getHistoryUserDept({id: uid}, accessToken))
         .then((response) => {
           console.log("getHistoryUserDept", response.item);
         })
-        .catch((error) =>{
+        .catch((error) => {
           showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
         });
   }, [dispatch, search]);
 
   return (
-      <Container>
-        <div className="container-fluid py-3">
-          <Row style={{marginBottom: "10px"}}>
-            <Col xs={12} className={"mx-auto"}>
-              <Card id="localBank">
-                <Col xs={12} className={"mx-auto"}>
-                  <div style={{marginTop: "30px"}}></div>
+      <Container className="container" style={{marginTop: '20px'}}>
+        <Row className="justify-content-center">
+          <Col md={12}>
+            <CardGroup className=" mb-0">
+              <Card className="p-6">
+                <div className="card-block" style={{padding: "20px 40px"}}>
+                  <h3 className="col-centered table-heading">TÌM KIẾM LỊCH SỬ GIAO DỊCH</h3>
+                  <hr/>
                   <Form method="post" noValidate="novalidate"
                         className="needs-validation" onSubmit={findHistoryAccount}>
-                    <h4>Tìm kiềm tài khoản</h4>
                     <FormGroup>
-                      <Label>Mã tài khoản</Label>
                       <Row>
                         <Col xs={6}>
-                          <Input id="txtSearch"
-                                 type="text"
-                                 placeholder="2323-2334-2342"
-                                 onChange={search.onChange}
-                                 value={search.value}
-                          ></Input>
+                          <InputGroup>
+                            <InputGroupAddon addonType="prepend">
+                              <InputGroupText>Mã tài khoản</InputGroupText>
+                            </InputGroupAddon>
+                            <Input id="txtSearch"
+                                   type="text"
+                                   placeholder="2323-2334-2342"
+                                   onChange={search.onChange}
+                                   value={search.value}
+                            ></Input>
+                          </InputGroup>
                         </Col>
                         <Col xs={6}>
                           <Button id="btnSearch" type="submit" color={"success"}
@@ -80,18 +97,17 @@ const HistoryTrans = () => {
                       </Row>
                     </FormGroup>
                   </Form>
-                </Col>
+                </div>
               </Card>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={12} className={"mx-auto"}>
+            </CardGroup>
+          </Col>
+        </Row>
+        <div style={{marginTop:  "10px"}}></div>
+        <Row>
+          <Col md={12}>
+            <CardGroup>
               <Card id="localBank">
                 <div className="card-body">
-                  <CardTitle>
-                    <h3 className="text-center">LỊCH SỬ GIAO DỊCH TÀI KHOẢN</h3>
-                  </CardTitle>
-                  <hr/>
                   <h4>Lịch sử giao dịch</h4>
                   <FormGroup>
                     <TableInfoTransfer data={userHistoryTrans} receiving={userHistoryTrans}></TableInfoTransfer>
@@ -103,15 +119,16 @@ const HistoryTrans = () => {
                   </FormGroup>
                 </div>
               </Card>
-            </Col>
-          </Row>
-        </div>
+            </CardGroup>
+          </Col>
+        </Row>
         <MessageBox isOpen={msgBoxToggle.active}
                     onClose={msgBoxToggle.setInActive}
                     title={titleMsg}
                     content={contentMsg}></MessageBox>
       </Container>
-  );
+  )
+
 };
 
 

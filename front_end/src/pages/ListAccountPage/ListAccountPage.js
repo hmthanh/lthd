@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Table} from 'reactstrap'
+import {Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {getAllAccount} from '../../redux/creators/accountCreator'
 import {formatMoney} from "../../utils/utils";
 
@@ -20,13 +20,13 @@ const ListAccountPage = () => {
   }, [dispatch]);
 
   return (
-      <div className="container" style={{marginTop: '20px'}}>
-        <div className="row justify-content-center">
-          <div className="col-md-12">
-            <div className="card-group mb-0">
-              <div className="card p-6">
-                <div className="card-block">
-                  <h1 className="col-centered table-heading">Danh sách tài khoản</h1>
+      <Container className="container" style={{marginTop: '20px'}}>
+        <Row className="justify-content-center">
+          <Col md={12}>
+            <CardGroup className=" mb-0">
+              <Card className="p-6">
+                <div className="card-block" style={{padding: "20px 40px"}}>
+                  <h3 className="col-centered table-heading">DANH SÁCH TÀI KHOẢN</h3>
                   <Table>
                     <thead>
                     <tr>
@@ -51,11 +51,11 @@ const ListAccountPage = () => {
                     </tbody>
                   </Table>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+              </Card>
+            </CardGroup>
+          </Col>
+        </Row>
+      </Container>
   );
 };
 
