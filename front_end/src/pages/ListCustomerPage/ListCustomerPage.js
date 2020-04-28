@@ -3,7 +3,7 @@ import React, {useEffect} from 'react';
 import {Card, CardTitle, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from "react-redux";
 import {getAllCustomer} from "../../redux/creators/ListCustomerCreator";
-import {formatMoney} from "../../utils/utils";
+// import {formatMoney} from "../../utils/utils";
 // import {getAllAccount} from '../../redux/creators/accountCreator'
 
 const ListCustomerPage = () => {

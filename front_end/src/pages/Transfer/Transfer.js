@@ -214,11 +214,11 @@ const Transfer = () => {
                              id="sender"
                              value={sender.value}>
                         {senderInfo.account && senderInfo.account.map((item, index) => {
-                          return (
+                          return (item.type === 1 ? (
                               <option
                                   key={index}
                                   value={item.account_num}>{(item.type === 1 ? ("Thanh toán " + index) : ("Tiết kiệm " + index))}
-                              </option>)
+                              </option>) : "")
                         })}
                       </Input>
                     </FormGroup>

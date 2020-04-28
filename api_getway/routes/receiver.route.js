@@ -32,6 +32,7 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/:id', async (req, res) => {
+  console.log("abc");
   let rows = await receiverModel.get(req.params.id);
   console.log(req.body)
   // let rows = await receiverModel.getByPartner(req.params.id, req.body.partnerCode);

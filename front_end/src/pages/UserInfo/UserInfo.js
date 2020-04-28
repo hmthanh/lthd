@@ -1,14 +1,18 @@
 import React, {useEffect} from 'react'
+import './UserInfo.css'
 import {useDispatch, useSelector} from 'react-redux'
-import {Card, CardBody, CardTitle, Col, Form, FormGroup, Label} from 'reactstrap'
+import {Badge, Card, CardBody, CardTitle, Col, Form, FormGroup, Label, ListGroup, ListGroupItem} from 'reactstrap'
 import {getBankingInfo} from '../../redux/creators/bankingInfoCreator'
-import {Link} from 'react-router-dom'
-import CurrencyFormat from 'react-currency-format';
+import {getAllAccount} from "../../redux/creators/accountCreator";
+import {formatMoney} from "../../utils/utils";
 
 const UserInfo = () => {
   const dispatch = useDispatch();
-  const BankingInfo = useSelector((state) => {
+  const user = useSelector((state) => {
     return state.BankingInfo.data
+  });
+  const banking = useSelector(state => {
+    return state.AccountInfo.data.account
   });
 
   useEffect(() => {
@@ -19,100 +23,93 @@ const UserInfo = () => {
           console.log("response", response);
         });
 
+    dispatch(getAllAccount(uid, accessToken))
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
   }, [dispatch]);
 
-  console.log(BankingInfo);
+  console.log("user", user);
+  console.log("sdf", banking);
+
 
   return (
-      <div>
-        <Card>
-          <CardBody>
-            <CardTitle>Thông tin tài khoản</CardTitle>
-            {/*<Form>*/}
-            {/*  <FormGroup row>*/}
-            {/*    <Col sm={4}>*/}
-            {/*      <Label>Số tài khoản</Label>*/}
-            {/*    </Col>*/}
-            {/*    <Col sm={8}>*/}
-            {/*      {BankingInfo.item && BankingInfo.item.account_num}*/}
-            {/*    </Col>*/}
-            {/*  </FormGroup>*/}
+      user != 'undefined' ?
+          (<div>
+            <Card>
+              <CardBody>
+                <CardTitle>
+                  <h3 className="text-center">THÔNG TIN TÀI KHOẢN</h3>
+                </CardTitle>
+                <hr/>
 
-            {/*  <FormGroup row>*/}
-            {/*    <Col sm={2}>*/}
-            {/*      <Label>Số dư</Label>*/}
-            {/*    </Col>*/}
-            {/*    <Col sm={2}>*/}
-            {/*      <Label>tài khoản chính: </Label>*/}
-            {/*    </Col>*/}
-            {/*    <Col sm={3}>*/}
-            {/*      <CurrencyFormat value={BankingInfo.item.main} displayType={'text'}*/}
-            {/*                      thousandSeparator={true} prefix={'VND '}/>*/}
-            {/*    </Col>*/}
-            {/*    <Col sm={2}>*/}
-            {/*      <Label>tài khoản tiết kiệm: </Label>*/}
-            {/*    </Col>*/}
-            {/*    <Col sm={3}>*/}
-            {/*      <CurrencyFormat value={BankingInfo.item.saving_money}*/}
-            {/*                      displayType={'text'} thousandSeparator={true} prefix={'VND '}/>*/}
-            {/*    </Col>*/}
-            {/*  </FormGroup>*/}
+                <Form>
+                  <FormGroup row>
+                    <Label sm={3} className="float-sm-right text-right">Số tài khoản</Label>
+                    <Col sm={9} className="algin-self">
+                      {user.account_num}
+                    </Col>
+                  </FormGroup>
 
-            {/*  <FormGroup row>*/}
-            {/*    <Col sm={4}>*/}
-            {/*      <Label>user name</Label>*/}
-            {/*    </Col>*/}
-            {/*    <Col sm={8}>*/}
-            {/*      {BankingInfo.item.account && BankingInfo.item.account.user_name}*/}
-            {/*    </Col>*/}
-            {/*  </FormGroup>*/}
+                  <FormGroup row>
+                    <Label sm={3} className="float-sm-right text-right">Tài khoản ngân hàng</Label>
+                    <Col sm={9} className="algin-self">
+                      <ListGroup>
+                        {
+                          banking && banking.map((acc, index) => {
+                            return <ListGroupItem key={index}>
+                              {(acc.type === 1 ? "Thanh toán" : `Tiết kiệm ${index}`)}
+                              {':  '}<Badge color="success">{`${formatMoney(acc.surplus)} VNĐ`}</Badge>
+                            </ListGroupItem>
+                        })
+                        }
+                      </ListGroup>
+                    </Col>
+                  </FormGroup>
 
-            {/*  <FormGroup row>*/}
-            {/*    <Col sm={4}>*/}
-            {/*      <Label>Họ Tên</Label>*/}
-            {/*    </Col>*/}
-            {/*    <Col sm={8}>*/}
-            {/*      {BankingInfo.item.account && BankingInfo.item.account.name}*/}
-            {/*    </Col>*/}
-            {/*  </FormGroup>*/}
+                  <FormGroup row>
+                    <Label sm={3} className="float-sm-right text-right">Họ và tên</Label>
+                    <Col sm={9} className="algin-self">
+                      {user.name}
+                    </Col>
+                  </FormGroup>
 
-            {/*  <FormGroup row>*/}
-            {/*    <Col sm={4}>*/}
-            {/*      <Label>Email</Label>*/}
-            {/*    </Col>*/}
-            {/*    <Col sm={8}>*/}
-            {/*      {BankingInfo.item.account && BankingInfo.item.account.email}*/}
-            {/*    </Col>*/}
-            {/*  </FormGroup>*/}
+                  <FormGroup row>
+                    <Label sm={3} className="float-sm-right text-right">Username</Label>
+                    <Col sm={9} className="algin-self">
+                      {user.user_name}
+                    </Col>
+                  </FormGroup>
 
-            {/*  <FormGroup row>*/}
-            {/*    <Col sm={4}>*/}
-            {/*      <Label>Số Điện Thoại</Label>*/}
-            {/*    </Col>*/}
-            {/*    <Col sm={8}>*/}
-            {/*      +{BankingInfo.item.account && BankingInfo.item.account.phone}*/}
-            {/*    </Col>*/}
-            {/*  </FormGroup>*/}
+                  <FormGroup row>
+                    <Label sm={3} className="float-sm-right text-right">Ngày sinh</Label>
+                    <Col sm={9} className="algin-self">
+                      {user.date_of_birth && new Intl.DateTimeFormat('en-GB').format(new Date(user.date_of_birth))}
+                    </Col>
+                  </FormGroup>
 
-            {/*  <FormGroup row>*/}
-            {/*    <Col sm={4}>*/}
-            {/*      <Label>Ngày Tháng Năm Sinh</Label>*/}
-            {/*    </Col>*/}
-            {/*    <Col sm={8}>*/}
-            {/*      {BankingInfo.item.account && new Intl.DateTimeFormat('vi-US', {*/}
-            {/*        year: 'numeric',*/}
-            {/*        month: 'numeric',*/}
-            {/*        day: '2-digit',*/}
+                  <FormGroup row>
+                    <Label sm={3} className="float-sm-right text-right">Email</Label>
+                    <Col sm={9} className="algin-self">
+                      {user.email}
+                    </Col>
+                  </FormGroup>
 
-            {/*      }).format(new Date(BankingInfo.item.date_of_birth))}*/}
-            {/*    </Col>*/}
-            {/*  </FormGroup>*/}
-
-            {/*</Form>*/}
-            <Link to="/changepwd">Đổi mật khẩu</Link>
-          </CardBody>
-        </Card>
-      </div>
+                  <FormGroup row>
+                    <Label sm={3} className="float-sm-right text-right">Số điện thoại</Label>
+                    <Col sm={9} className="algin-self">
+                      {`+${user.phone}`}
+                    </Col>
+                  </FormGroup>
+                </Form>
+              </CardBody>
+            </Card>
+          </div>)
+          :
+          (<div>Không có thông tin người dùng</div>)
   )
 };
 

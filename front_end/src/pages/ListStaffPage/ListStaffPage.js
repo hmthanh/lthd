@@ -3,7 +3,7 @@ import React, {useEffect} from 'react';
 import {Card, CardTitle, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from "react-redux";
 import {getAllStaff} from "../../redux/creators/staffCreator";
-import {formatMoney} from "../../utils/utils";
+// import {formatMoney} from "../../utils/utils";
 // import {getAllAccount} from '../../redux/creators/accountCreator'
 
 const ListStaffPage = () => {
