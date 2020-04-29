@@ -37,7 +37,7 @@ const UserInfo = () => {
 
 
   return (
-      user != 'undefined' ?
+      user !== 'undefined' ?
           (<Container className="container" style={{marginTop: '20px'}}>
                 <Row className="justify-content-center">
                   <Col md={12}>

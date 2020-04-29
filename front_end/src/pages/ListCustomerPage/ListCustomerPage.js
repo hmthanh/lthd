@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 // import {useDispatch, useSelector} from 'react-redux';
-import {Card, CardGroup, CardTitle, Col, Container, Row, Table} from 'reactstrap'
+import {Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from "react-redux";
 import {getAllCustomer} from "../../redux/creators/ListCustomerCreator";
 // import {formatMoney} from "../../utils/utils";

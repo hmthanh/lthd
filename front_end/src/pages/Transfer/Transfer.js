@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Button,
   ButtonGroup,
@@ -7,7 +7,7 @@ import {
   Col,
   Collapse,
   Container,
-  Form,
+  Form, FormFeedback,
   FormGroup,
   Input,
   InputGroup,
@@ -17,7 +17,7 @@ import {
   Row,
   Spinner
 } from "reactstrap";
-import {getInterbank, getReceiverSaved, transfer} from "../../redux/creators/transferCreator";
+import {getAccName, getInterbank, getReceiverSaved, transfer} from "../../redux/creators/transferCreator";
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import {convertObjectToArray} from "../../utils/utils";
@@ -36,7 +36,7 @@ const Transfer = () => {
     return state.TransferInfo
   });
   const interBankInfo = useSelector((state) => {
-    return state.InterBank
+    return state.InterBank.data
   });
   const listSaved = useSelector((state) => {
     return state.ReceiverSaved.data
@@ -47,7 +47,10 @@ const Transfer = () => {
   const [isInterbank, setIsInterbank] = useState(false);
   const [selectSaved, setSelectSaved] = useState(0);
   const [isUseSaved, setIsUseSaved] = useState(false);
-  const [accountNum, setAccountNum] = useState(0);
+  const [accountNum, setAccountNum] = useState("");
+  const [accValid, setAccValid] = useState(true);
+  const [accInValid, setAccInValid] = useState(false);
+  const [accInValidMsg, setAccInValidMsg] = useState("");
   const name = useInputChange('');
   const money = useInputChange(0);
   const message = useInputChange('');
@@ -59,7 +62,7 @@ const Transfer = () => {
   const [transId, setTransId] = useState(0);
 
   function onChangeSelectSaved(e) {
-    if (listSaved){
+    if (listSaved) {
       setSelectSaved(e.target.value);
       setAccountNum(e.target.value);
       let change_name = listSaved[e.target.selectedIndex].name
@@ -78,6 +81,39 @@ const Transfer = () => {
   function onChangeReceiveBank(e) {
     setReceiveBank(e.target.value);
   }
+
+  const onBlurAccountNum = useCallback(() => {
+    let accessToken = localStorage.getItem('accessToken');
+    let data = {
+      query: accountNum
+    }
+    dispatch(getAccName(data, accessToken))
+        .then((response) => {
+          console.log(response)
+          name.setValue(response.account.name)
+          setAccValid(true)
+        })
+        .catch((err) => {
+          console.log(err)
+          setAccInValid(true)
+          setAccInValidMsg("Không tìm thấy số tài khoản trên")
+          setAccountNum("")
+        })
+
+    // let val = e.target.value;
+    // if (!required(val)) {
+    //   setInValid(true);
+    //   setInValidMsg("Không được để trống");
+    // }else{
+    //   setValid(true);
+    //   setInValid(false);
+    //   setTimeout(() =>{
+    //     setValid(false);
+    //   }, 2500);
+    // }
+
+    //, setInValid, setInValidMsg
+  }, [accountNum, dispatch]);
 
   function onChangeInterbank(e) {
     if (!e.target.value) {
@@ -139,7 +175,9 @@ const Transfer = () => {
 
   function onSubmitForm(e) {
     e.preventDefault();
-    if (accountNum.value === 0){
+    if (accountNum == 0 || accountNum === "") {
+      setAccInValid(true)
+      setAccInValidMsg("Vui lòng nhập lại số tài khoản")
       return;
     }
     let partner_code = 0;
@@ -239,8 +277,8 @@ const Transfer = () => {
                                onChange={onChangeReceiveBank}
                                name="receiveBank" id="receiveBank">
                           {
-                            interBankInfo.data.item &&
-                            interBankInfo.data.item.map((item, index) => {
+                            interBankInfo.item &&
+                            interBankInfo.item.map((item, index) => {
                               return <option key={index}
                                              value={item.partner_code}>{item.name}</option>
                             })
@@ -277,21 +315,26 @@ const Transfer = () => {
                     <FormGroup>
                       <InputGroup className="mb-2">
                         <InputGroupAddon addonType="prepend">
-                          <InputGroupText>Số tài khoản</InputGroupText>
+                          <InputGroupText>ID</InputGroupText>
                         </InputGroupAddon>
-                        <Input type="text" name="accountNum" id="accountNum"
+                        <Input type="number"
+                               name="accountNum"
+                               id="accountNum"
                                onChange={onChangeAccountNum}
                                value={accountNum}
-                               placeholder=""/>
+                               onBlur={onBlurAccountNum}
+                               invalid={accInValid}
+                               valid={accValid}
+                               placeholder="Nhập số tài khoản hoặc username"/>
+                        <FormFeedback>{accInValidMsg}</FormFeedback>
                       </InputGroup>
                       <InputGroup>
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>Họ và tên</InputGroupText>
                         </InputGroupAddon>
-                        <Input type="text" name="name" id="receiverName"
-                               onChange={name.onChange}
-                               value={name.value}
-                               placeholder="Nguyễn Văn A"/>
+                        <Input type="text" name="name"
+                               disabled={true}
+                               value={name.value}/>
                       </InputGroup>
                     </FormGroup>
                     <h4>3. Thông tin cần chuyển tiền</h4>

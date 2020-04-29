@@ -40,3 +40,13 @@ export const formatMoney = (amount, decimalCount = 0, decimal = ".", thousands =
     console.log(e)
   }
 };
+
+export const checkValue = (obj) => {
+  if (obj.value === ""){
+    obj.setInValid(true)
+    obj.setInValidMsg("Không được để trống");
+    return true
+  }else{
+    return false;
+  }
+}

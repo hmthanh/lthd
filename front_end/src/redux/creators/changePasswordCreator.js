@@ -2,38 +2,46 @@ import {CHANGE_PASSWORD_FAILED, CHANGE_PASSWORD_LOADING, CHANGE_PASSWORD_SUCCESS
 import {UrlApi} from '../../shares/baseUrl';
 import {fetchFrom} from '../../utils/fetchHelper'
 
-export const changepwd = (uId, newPwd, OTP) => (dispatch) => {
-  dispatch(ChangePasswordLoading());
+export const changepwd = (uId, newPwd, OTP) => {
+  return (dispatch) => {
+    dispatch({type: CHANGE_PASSWORD_LOADING});
 
-  return fetchFrom(UrlApi + '/api/auth', 'PATCH', {uId, newPwd, OTP}).then(response => {
-    console.log(response);
-    if (response.error !== 0)
-      dispatch(ChangePasswordFailed('sai otp'));
-    else
-      dispatch(ChangePasswordSuccess(response))
-  }).catch(err => {
-    console.log(err);
-    dispatch(ChangePasswordFailed());
-  })
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/auth', 'PATCH', {uId, newPwd, OTP});
+        console.log(response)
+        if (response.error !== 0)
+          dispatch({type: CHANGE_PASSWORD_FAILED, payload: "Sai mã OTP"});
+        else
+          dispatch({type: CHANGE_PASSWORD_SUCCESS, payload: response})
 
-};
-
-
-export const verifyPassword = (uId, oldPwd, newPw1, newPw2) => (dispatch) => {
-  dispatch(ChangePasswordLoading());
-  if (newPw1.localeCompare(newPw2) !== 0) {
-    return new Promise((resolve, reject) => {
-      resolve(dispatch(ChangePasswordFailed('Mật Khẩu 2 lần không giống nhau')))
-    })
-  } else {
-    return fetchFrom(UrlApi + '/api/auth/verify', 'POST', {oldPwd, uId}).then(response => {
-      dispatch(ChangePasswordSuccess(response))
-    }).catch(err => {
-      console.log(err);
-      dispatch(ChangePasswordFailed());
-    })
+        resolve(response);
+      } catch (e) {
+        console.log(e);
+        dispatch({type: CHANGE_PASSWORD_FAILED, payload: e});
+        reject(e);
+      }
+    });
   }
+}
 
+
+export const verifyPassword = (uId, oldPwd, newPw1, newPw2) => {
+  return (dispatch) => {
+    dispatch({type: CHANGE_PASSWORD_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/auth/verify', 'POST', {oldPwd, uId})
+        console.log(response)
+        dispatch({type: CHANGE_PASSWORD_SUCCESS, payload: response})
+        resolve(response)
+      } catch (e) {
+        console.log(e);
+        dispatch({type: CHANGE_PASSWORD_FAILED, payload: e});
+        reject(e);
+      }
+    });
+  };
 };
 
 export const ChangePasswordLoading = () => ({

@@ -16,7 +16,6 @@ const useInputRequire = (initialState = {
   const onChange = useCallback((e) => {
     setValid(false);
     setInValid(false);
-    setInValidMsg("");
     setValue(e.target.value);
   }, [setValue]);
 
@@ -28,7 +27,6 @@ const useInputRequire = (initialState = {
     }else{
       setValid(true);
       setInValid(false);
-      setInValidMsg("");
       setTimeout(() =>{
         setValid(false);
       }, 2500);

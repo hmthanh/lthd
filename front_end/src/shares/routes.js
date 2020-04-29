@@ -70,7 +70,7 @@ const routes = [
     component: () => <ListAccountPage></ListAccountPage>
   },
   {
-    path: "/forgot-password",
+    path: "/forget-password",
     exact: true,
     component: () => <ForgetPassword></ForgetPassword>
   },
@@ -182,6 +182,10 @@ export const CustomerItemLink = [
 
 
 export const AdminLink = [
+  {
+    title: "Tạo tài khoản",
+    path: "/create-account",
+  },
   {
     title: "Danh sách nhân viên",
     path: "/list-staff",

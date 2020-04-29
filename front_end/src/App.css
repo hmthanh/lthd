@@ -1,3 +1,6 @@
 .hide {
     display: none;
 }
+.react-datepicker-wrapper{
+    width: 100%
+}

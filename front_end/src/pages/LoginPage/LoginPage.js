@@ -2,7 +2,7 @@ import React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {
   Button,
-  Card,
+  Card, CardGroup,
   CardTitle,
   Col,
   Container,
@@ -19,9 +19,9 @@ import {login} from '../../redux/creators/loginCreator'
 import ReCAPTCHA from "react-google-recaptcha";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import useInputRequire from "../../utils/useInputRequire";
-import {useHistory} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {AuthAdmin, AuthCustomer, AuthEmployee, AuthFailed} from "../../redux/creators/authCreator";
-import {required} from "../../utils/utils";
+import {checkValue} from "../../utils/utils";
 
 const recaptchaRef = React.createRef();
 
@@ -31,21 +31,15 @@ const LoginPage = () => {
   const LoginInfo = useSelector(state => {
     return state.LoginInfo;
   });
-  const username = useInputRequire({value: "", valid: false, invalid: false});
+  const username = useInputRequire({value: "", valid: false, invalid: false, inValidMsg: ""});
   const password = useInputRequire({value: "", valid: false, invalid: false, inValidMsg: ""});
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (!required(username.value)) {
-      username.setInValid(true);
-      username.setInValidMsg("Không được để trống");
-      return;
+    if (checkValue(username) || checkValue(password)){
+      return false;
     }
-    if (!required(password.value)) {
-      password.setInValid(true);
-      password.setInValidMsg("Không được để trống");
-      return;
-    }
+
     let recaptcha = recaptchaRef.current.getValue();
     if (recaptcha) {
       let data = {
@@ -112,13 +106,13 @@ const LoginPage = () => {
       <Container>
         <Row className="justify-content-center">
           <Col md={6}>
-            <div className="card-group mb-0">
+            <CardGroup className=" mb-0">
               <Card className="card p-4">
                 <div className="card-block">
                   <CardTitle>
                     <h3 className="text-center">ĐĂNG NHẬP</h3>
                   </CardTitle>
-
+                  <hr/>
                   <Form method="post" noValidate="validated"
                         className="needs-validation" onSubmit={handleSubmit}>
                     <h4>Thông tin đăng nhập</h4>
@@ -158,7 +152,7 @@ const LoginPage = () => {
                           sitekey="6LcPtdwUAAAAAGb2pehug_-EHNmV5Ywj7d_9gsWn"
                       />
                     </FormGroup>
-
+                    <hr/>
                     <Button id="btnTransferLocal"
                             type="submit"
                             color={"success"}
@@ -174,11 +168,12 @@ const LoginPage = () => {
                         </span>
                       <span>Đăng Nhập</span>
                     </Button>
+                    <Link style={{float:"right", marginTop: "10px"}} to={"/forget-password"}>Quên mật khẩu</Link>
                   </Form>
 
                 </div>
               </Card>
-            </div>
+            </CardGroup>
           </Col>
         </Row>
       </Container>

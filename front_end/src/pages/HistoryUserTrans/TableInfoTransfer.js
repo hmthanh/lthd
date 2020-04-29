@@ -97,7 +97,7 @@ const TableInfoTransfer = (props) => {
           items &&
           items.map((item, index) => (
               <tr key={index}>
-                <th scope="row">{item.trans_id}</th>
+                <th scope="row">{index + 1}</th>
                 <td>{formatFormalDate(item.timestamp)}</td>
                 <td>{item.acc_name}</td>
                 <td>{item.from_account}</td>
