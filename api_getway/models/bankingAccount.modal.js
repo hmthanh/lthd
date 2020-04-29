@@ -5,12 +5,16 @@ module.exports = {
         return db.add(entity, 'banking_account')
     },
     update: (id, entity) => {
-        return db.patch(entity, {id: id}, 'banking_account')
+        return db.patch(entity, {owner_id: id}, 'banking_account')
     },
     get: (id) => {
         return db.load(`Select * from banking_account where owner_id=${id}`)
     },
     delete: (id) => {
         return db.del({id: id}, 'banking_account')
-    }
+    },
+    updateByCondition: (condition, entity) => {
+      return db.patch(entity, condition, 'banking_account')
+    },
+    
 };

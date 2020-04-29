@@ -31,8 +31,8 @@ app.use('/openapi/plus', require('./routes/plus.route'));
 app.use('/openapi/minus', require('./routes/minus.route'));
 
 const verifyAccessToken = (req, res, next) => {
-  console.log(req.body);
-  console.log("headers", req.headers['x-access-token']);
+  // console.log(req.body);
+  // console.log("headers", req.headers['x-access-token']);
   const token = req.headers['x-access-token'];
   if (token) {
     jwt.verify(token, SECRET_KEY_TOKEN, function (err, payload) {
