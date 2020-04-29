@@ -61,16 +61,15 @@ router.post('/', async (req, res) => {
 
 router.post('/id', async (req, res) => {
   let account = await accountModel.getInfoAccount(req.body.id);
-  let errorCode = 200;
   let ret = {
     errorCode: -201,
     msg: 'invalid parameters',
   };
   if (account && account.length != 0) {
-    // for (let i = 0; i < account.length; i++) {
-    //   const item = account[i];
-    //   // item.account_num += `${item.type}`;
-    // }
+    for (let i = 0; i < account.length; i++) {
+      const item = account[i];
+      item.account_num += `${item.type}`;
+    }
     ret = {
       errorCode: 0,
       msg: 'successfully',
@@ -80,6 +79,28 @@ router.post('/id', async (req, res) => {
   await res.status(200).json(ret)
 });
 
+router.post('/acc', async (req, res) => {
+
+  let account = await accountModel.getInfoByAccount(req.body.query)
+  if (account.length === 0) {
+    // try account
+    let q = req.body.query.slice(0, -1)
+    account = await accountModel.getInfoByAccount(q)
+  }
+  let ret = {
+    errorCode: -201,
+    msg: 'invalid parameters',
+  };
+  if (account && account.length !== 0) {
+    const item = account[0];
+    ret = {
+      errorCode: 0,
+      msg: 'successfully',
+      account: item
+    }
+  }
+  await res.status(200).json(ret)
+});
 
 // create receiver_info
 router.post('/ref/account', async (req, res) => {
