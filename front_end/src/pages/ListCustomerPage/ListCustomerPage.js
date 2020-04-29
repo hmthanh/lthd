@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
 // import {useDispatch, useSelector} from 'react-redux';
-import {Card, CardTitle, Col, Container, Row, Table} from 'reactstrap'
+import {Card, CardGroup, CardTitle, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from "react-redux";
 import {getAllCustomer} from "../../redux/creators/ListCustomerCreator";
-import {formatMoney} from "../../utils/utils";
+// import {formatMoney} from "../../utils/utils";
 // import {getAllAccount} from '../../redux/creators/accountCreator'
 
 const ListCustomerPage = () => {
@@ -22,16 +22,14 @@ const ListCustomerPage = () => {
   }, [dispatch]);
 
   return (
-      <Container style={{marginTop: '20px'}}>
-        <Row className=" justify-content-center">
-          <Col className="col-md-12">
-            <div className="card-group mb-0">
-              <Card className="card p-6">
-                <div className="card-block">
-                  <CardTitle>
-                    <h3 className="col-centered table-heading">DANH SÁCH KHÁCH HÀNG</h3>
-                  </CardTitle>
-
+      <Container className="container" style={{marginTop: '20px'}}>
+        <Row className="justify-content-center">
+          <Col md={12}>
+            <CardGroup className=" mb-0">
+              <Card className="p-6">
+                <div className="card-block" style={{padding: "20px 40px"}}>
+                  <h3 className="col-centered table-heading">DANH SÁCH KHÁCH HÀNG</h3>
+                  <hr/>
                   <Table>
                     <thead>
                     <tr>
@@ -61,7 +59,7 @@ const ListCustomerPage = () => {
                   </Table>
                 </div>
               </Card>
-            </div>
+            </CardGroup>
           </Col>
         </Row>
       </Container>

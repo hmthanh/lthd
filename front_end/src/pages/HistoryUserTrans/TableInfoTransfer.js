@@ -1,8 +1,13 @@
 import React from 'react';
-import {Table} from 'reactstrap';
+import {Badge, Table} from 'reactstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSort} from '@fortawesome/free-solid-svg-icons'
 import useSortableData from "../../utils/useSortableData";
+import {formatFormalDate} from "../../utils/utils";
+
+const sortItem = {
+ cursor: "pointer"
+}
 
 const TableInfoTransfer = (props) => {
   const {items, requestSort, sortConfig} = useSortableData(props.data.item);
@@ -18,13 +23,16 @@ const TableInfoTransfer = (props) => {
         <thead>
         <tr>
           <th>
-            <div onClick={() => requestSort("trans_id")}
+            <div
+                style={sortItem}
+                onClick={() => requestSort("trans_id")}
                  className={getClassNamesFor('trans_id')}>
               #
             </div>
           </th>
           <th>
             <div
+                style={sortItem}
                 onClick={() => requestSort("timestamp")}
                 className={getClassNamesFor('timestamp')}
             >
@@ -33,30 +41,32 @@ const TableInfoTransfer = (props) => {
           </th>
           <th>
             <div
-                onClick={() => requestSort("type")}
-                className={getClassNamesFor('type')}
+                style={sortItem}
+                onClick={() => requestSort("acc_name")}
+                className={getClassNamesFor('acc_name')}
             >
-              <FontAwesomeIcon icon={faSort}/>{' '}Loại giao dịch
+              <FontAwesomeIcon icon={faSort}/>{' '}Họ & tên
             </div>
           </th>
           <th>
             <div
+                style={sortItem}
                 onClick={() => requestSort("from_account")}
                 className={getClassNamesFor('from_account')}
             >
-              <FontAwesomeIcon icon={faSort}/>{' '}Tài khoản giao dịch
+              <FontAwesomeIcon icon={faSort}/>{' '}TK Nguồn
             </div>
           </th>
           <th>
-            <div
+            <div style={sortItem}
                 onClick={() => requestSort("to_account")}
                 className={getClassNamesFor('to_account')}
             >
-              <FontAwesomeIcon icon={faSort}/>{' '}Tài khoản thụ hưởng
+              <FontAwesomeIcon icon={faSort}/>{' '}TK Đích
             </div>
           </th>
           <th>
-            <div
+            <div style={sortItem}
                 onClick={() => requestSort("amount")}
                 className={getClassNamesFor('amount')}
             >
@@ -64,11 +74,20 @@ const TableInfoTransfer = (props) => {
             </div>
           </th>
           <th>
-            <div
+            <div style={sortItem}
                 onClick={() => requestSort("surplus")}
                 className={getClassNamesFor('surplus')}
             >
               <FontAwesomeIcon icon={faSort}/>{' '}Số dư
+            </div>
+          </th>
+
+          <th>
+            <div style={sortItem}
+                onClick={() => requestSort("state")}
+                className={getClassNamesFor('state')}
+            >
+              <FontAwesomeIcon icon={faSort}/>{' '}Trạng thái
             </div>
           </th>
         </tr>
@@ -78,21 +97,16 @@ const TableInfoTransfer = (props) => {
           items &&
           items.map((item, index) => (
               <tr key={index}>
-
                 <th scope="row">{item.trans_id}</th>
-                <td>{new Intl.DateTimeFormat('vi-US', {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  year: 'numeric',
-                  month: 'numeric',
-                  day: '2-digit',
-
-                }).format(new Date(item.timestamp))}</td>
-                <td>{(item.type === 1 ? 'Chuyển tiền' : (item.type === 2 ? 'Nhận tiền' : "Nhắc nợ"))}</td>
+                <td>{formatFormalDate(item.timestamp)}</td>
+                <td>{item.acc_name}</td>
                 <td>{item.from_account}</td>
                 <td>{item.to_account}</td>
                 <td>{item.amount}</td>
                 <td>{item.surplus}</td>
+                <td>{(item.state === 1 ?
+                    <Badge color="success">Thành công</Badge> :
+                    <Badge color="danger">Thất bại</Badge>)}</td>
               </tr>
           ))
         }

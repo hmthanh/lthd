@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Table } from 'reactstrap'
+import {Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import { getInDebt } from '../../redux/creators/InDebtCreator'
 
 class ListInDebtPage extends Component {
@@ -17,13 +17,13 @@ class ListInDebtPage extends Component {
 
   render() {
     return (
-      <div className="container" style={{ marginTop: '20px' }}>
-        <div className="row justify-content-center">
-          <div className="col-md-12">
-            <div className="card-group mb-0">
-              <div className="card p-6">
-                <div className="card-block">
-                  <h1 className="col-centered table-heading">Danh sách nợ</h1>
+        <Container className="container" style={{marginTop: '20px'}}>
+          <Row className="justify-content-center">
+            <Col md={12}>
+              <CardGroup className=" mb-0">
+                <Card className="p-6">
+                  <div className="card-block" style={{padding: "20px 40px"}}>
+                    <h3 className="col-centered table-heading">DANH SÁCH NỢ</h3>
                   <Table>
                     <thead>
                       <tr>
@@ -33,8 +33,6 @@ class ListInDebtPage extends Component {
                         <th>Số Tiền</th>
                         <th>Ngày giao dịch</th>
                         <th>Trạng thái</th>
-                       
-                              
                       </tr>
                     </thead>
                     <tbody>
@@ -57,11 +55,11 @@ class ListInDebtPage extends Component {
                     </tbody>
                   </Table>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+              </Card>
+            </CardGroup>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }

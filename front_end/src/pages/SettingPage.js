@@ -1,8 +1,19 @@
 import React, {Component, useState} from 'react'
 import {Control, Errors, LocalForm} from 'react-redux-form'
 import {
-  Breadcrumb, BreadcrumbItem, Button, ButtonGroup, ButtonToolbar, Modal, ModalBody,
-  ModalFooter, ModalHeader, Table
+  Button,
+  ButtonGroup,
+  ButtonToolbar,
+  Card,
+  CardGroup,
+  Col,
+  Container,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Row,
+  Table
 } from 'reactstrap'
 import {connect} from 'react-redux'
 import {Create, Delete, Edit, Fetch} from '../redux/creators/nameReminscentCreator'
@@ -204,47 +215,63 @@ class SettingReceiver extends Component {
       )
     } else
       return (
-          <div>
-            <Breadcrumb>
-              <BreadcrumbItem active>Thiết Lập Danh Sách Người Nhận</BreadcrumbItem>
-            </Breadcrumb>
-            <ModalAddNew buttonLabel={'Thêm Mới'} handleCreate={this.handleCreate}/>
-            <Table striped>
-              <thead>
-              <tr>
-                <th>#</th>
-                <th>Số Tài Khoản</th>
-                <th>Tên Gợi Nhớ</th>
-                <th></th>
-              </tr>
-              </thead>
-              <tbody>
-              {
-                this.props.Reminscent.data.item &&
-                this.props.Reminscent.data.item.map((item, index) => {
-                  console.log(this.props.Reminscent);
-                  return (
-                      <tr key={index}>
-                        <th scope="row">{index + 1}</th>
-                        <td>{item.account_num}</td>
-                        <td>{item.alias_name}</td>
-                        <td>
-                          <ButtonToolbar>
-                            <ButtonGroup>
-                              <ModalEdit buttonLabel={'Sửa'} accountId={item.id} accountNum={item.account_num}
-                                         aliasName={item.alias_name} handleEdit={this.handleEdit}/>
-                              {' '}
-                              <ConfirmDelete buttonLabel={'xóa'} accountId={item.id} handleDelete={this.handleDelete}/>
-                            </ButtonGroup>
-                          </ButtonToolbar>
-                        </td>
-                      </tr>
-                  )
-                })
-              }
-              </tbody>
-            </Table>
-          </div>
+          <Container className="container" style={{marginTop: '20px'}}>
+            <Row className="justify-content-center">
+              <Col md={12}>
+                <CardGroup className=" mb-0">
+                  <Card className="p-6">
+                    <div className="card-block" style={{padding: "20px 40px"}}>
+                      <h3 className="col-centered table-heading">DANH SÁCH NGƯỜI NHẬN</h3>
+                      <ModalAddNew buttonLabel={'Thêm Mới'} handleCreate={this.handleCreate}/>
+                      <Table striped>
+                        <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Số Tài Khoản</th>
+                          <th>Tên Gợi Nhớ</th>
+                          <th></th>
+                          <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {
+                          this.props.Reminscent.data.item &&
+                          this.props.Reminscent.data.item.map((item, index) => {
+                            console.log(this.props.Reminscent);
+                            return (
+                                <tr key={index}>
+                                  <th scope="row">{index + 1}</th>
+                                  <td>{item.account_num}</td>
+                                  <td>{item.alias_name}</td>
+                                  <td>
+                                    <ButtonToolbar>
+                                      <ButtonGroup>
+                                        <ModalEdit buttonLabel={'Sửa'} accountId={item.id} accountNum={item.account_num}
+                                                   aliasName={item.alias_name} handleEdit={this.handleEdit}/>
+
+                                      </ButtonGroup>
+                                    </ButtonToolbar>
+                                  </td>
+                                  <td>
+                                    <ButtonToolbar>
+                                      <ButtonGroup>
+                                        <ConfirmDelete buttonLabel={'Xóa'} accountId={item.id}
+                                                       handleDelete={this.handleDelete}/>
+                                      </ButtonGroup>
+                                    </ButtonToolbar>
+                                  </td>
+                                </tr>
+                            )
+                          })
+                        }
+                        </tbody>
+                      </Table>
+                    </div>
+                  </Card>
+                </CardGroup>
+              </Col>
+            </Row>
+          </Container>
       )
   }
 }

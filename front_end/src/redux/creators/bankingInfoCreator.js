@@ -9,7 +9,7 @@ export const getBankingInfo = (id, accessTocken) => {
       try {
         const response = await fetchFrom(UrlApi + `/api/accounts/${id}`, 'POST', {}, accessTocken);
         console.log(response);
-        dispatch({type: BANKING_INFO_SUCCESS, payload: response});
+        dispatch({type: BANKING_INFO_SUCCESS, payload: response.item});
         resolve(response);
       } catch (e) {
         console.log(e);

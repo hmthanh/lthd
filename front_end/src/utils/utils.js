@@ -25,7 +25,7 @@ export const formatFormalDate = (date) => {
   return [day, month, year].join('-');
 };
 
-export const formatMoney = (amount, decimalCount = 2, decimal = ".", thousands = ",") => {
+export const formatMoney = (amount, decimalCount = 0, decimal = ".", thousands = ",") => {
   try {
     decimalCount = Math.abs(decimalCount);
     decimalCount = isNaN(decimalCount) ? 2 : decimalCount;

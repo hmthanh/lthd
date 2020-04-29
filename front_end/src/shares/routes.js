@@ -1,7 +1,7 @@
 import React, {lazy} from 'react';
 
-const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
-const LoginPage = lazy(() => import('../pages/Login/Login'));
+// const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
+const LoginPage = lazy(() => import('../pages/LoginPage/LoginPage'));
 const Register = lazy(() => import('../pages/Register/Register'));
 const ListAccountPage = lazy(() => import('../pages/ListAccountPage/ListAccountPage'));
 const UserInfo = lazy(() => import('../pages/UserInfo/UserInfo'));
@@ -27,7 +27,7 @@ const routes = [
   {
     path: "/",
     exact: true,
-    component: () => <HomePage></HomePage>
+    component: () => <UserInfo></UserInfo>
   },
   {
     path: "/login",

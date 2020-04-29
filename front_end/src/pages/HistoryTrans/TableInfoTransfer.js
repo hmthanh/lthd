@@ -45,7 +45,7 @@ const TableInfoTransfer = (props) => {
                 onClick={() => requestSort("from_account")}
                 className={getClassNamesFor('from_account')}
             >
-              <FontAwesomeIcon icon={faSort}/>{' '}Tài khoản giao dịch
+              <FontAwesomeIcon icon={faSort}/>{' '}Tài khoản nguồn
             </div>
           </th>
           <th>
@@ -53,7 +53,7 @@ const TableInfoTransfer = (props) => {
                 onClick={() => requestSort("to_account")}
                 className={getClassNamesFor('to_account')}
             >
-              <FontAwesomeIcon icon={faSort}/>{' '}Tài khoản thụ hưởng
+              <FontAwesomeIcon icon={faSort}/>{' '}Tài khoản đích
             </div>
           </th>
           <th>
@@ -62,6 +62,14 @@ const TableInfoTransfer = (props) => {
                 className={getClassNamesFor('amount')}
             >
               <FontAwesomeIcon icon={faSort}/>{' '}Số tiền
+            </div>
+          </th>
+          <th>
+            <div
+                onClick={() => requestSort("surplus")}
+                className={getClassNamesFor('surplus')}
+            >
+              <FontAwesomeIcon icon={faSort}/>{' '}Số dư
             </div>
           </th>
           <th>
@@ -94,6 +102,7 @@ const TableInfoTransfer = (props) => {
                 <td>{item.to_account}</td>
                 <td>{item.amount}</td>
                 <td>{item.surplus}</td>
+                <td>{item.state}</td>
               </tr>
           ))
         }
