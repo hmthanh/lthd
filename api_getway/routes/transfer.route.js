@@ -9,6 +9,8 @@ const transferModel = require('../models/transfer.model')
 const { getReceiverById } = require('../models/account.model')
 const { htmlMsgTemplate, msgTemplate } = require('../utils/common')
 const { minusTransfer } = require('../utils/db')
+const db = require('../utils/db')
+const bankingAccountModel = require('../models/bankingAccount.modal')
 const router = express.Router()
 
 const axios = require("axios")
@@ -90,7 +92,25 @@ router.post('/:id', async (req, res) => {
     }
     // chuyển khoản nội bộ
     if(transaction.partner_code == null || transaction.partner_code == 0) {
-      const err = await minusTransfer(req.body.transId, transaction.amount, transaction.from_account);
+      const err = await minusTransfer(req.body.transId, transaction.amount, transaction.from_account)
+      let acc_rev = await db.load(`SELECT u.account_num, u.id, b.surplus FROM user_info u join banking_account b on u.id = b.owner_id WHERE u.account_num = '${transaction.to_account}' AND type=1`)
+      if (acc_rev.length == 0) {
+        let q = transaction.to_account.slice(0, -1)
+        acc_rev = await db.load(`SELECT u.account_num, u.id, b.surplus FROM user_info u join banking_account b on u.id = b.owner_id WHERE u.account_num = '${q}'AND type=1`)
+      }
+      if (acc_rev.length == 0) {
+        res.status(200).json({
+          msg: 'failure, to_account invalid ',
+          errorCode: -209, // mã lỗi sOTP không hợp lệ
+        })
+        return
+      }
+
+      acc_rev = acc_rev[0]
+      console.log(acc_rev)
+      let surplus_rev = parseInt(acc_rev.surplus) + parseInt(transaction.amount)
+      
+      await db.load(`UPDATE banking_account SET surplus=${surplus_rev} WHERE owner_id=${acc_rev.id} AND type=1`)
       if (err == 0) {
         res.status(200).json({
           msg: 'successfully',

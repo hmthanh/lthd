@@ -1,20 +1,20 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const rndToken = require('rand-token');
-const authModel = require('../models/auth.model');
-const common = require('../utils/common');
-const accountModel = require('../models/account.model');
-const receiverModel = require('../models/receiverInfo.model');
-const userModel = require('../models/user.model');
-const {SECRET_TOKEN, OTP} = require('../config');
-const mailController = require('../mailer/mail.controller');
+const express = require('express')
+const jwt = require('jsonwebtoken')
+const rndToken = require('rand-token')
+const authModel = require('../models/auth.model')
+const common = require('../utils/common')
+const accountModel = require('../models/account.model')
+const receiverModel = require('../models/receiverInfo.model')
+const userModel = require('../models/user.model')
+const {SECRET_TOKEN, OTP} = require('../config')
+const mailController = require('../mailer/mail.controller')
 
-const router = express.Router();
+const router = express.Router()
 
 function validateReceiverData(data) {
-  if (!common.required(data['id'])) return false;
-  if (!common.required(data['accountNum'])) return false;
-  if (!common.isNumber(data['accountNum'])) return false;
+  if (!common.required(data['id'])) return false
+  if (!common.required(data['accountNum'])) return false
+  if (!common.isNumber(data['accountNum'])) return false
 
   return true
 }
