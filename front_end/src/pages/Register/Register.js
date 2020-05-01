@@ -1,148 +1,179 @@
-import React, {Component, useState} from 'react'
-import {connect} from 'react-redux'
-import {Control, Errors, LocalForm} from 'react-redux-form'
-import {isNumber, isNumberText, required, requiredText, validEmail, validEmailText} from '../../utils/utils'
+import React, {useCallback, useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import {checkValue} from '../../utils/utils'
 import DatePicker from 'react-datepicker'
-import {backRegister, register} from '../../redux/creators/registerCreator'
-import {Alert, Button} from 'reactstrap'
+import {register} from '../../redux/creators/registerCreator'
+import {
+  Alert,
+  Button,
+  Card,
+  CardGroup,
+  CardTitle,
+  Col,
+  Container,
+  Form,
+  FormFeedback,
+  FormGroup,
+  Input,
+  InputGroup,
+  Label,
+  Row,
+  Spinner
+} from 'reactstrap'
 
 import 'react-datepicker/dist/react-datepicker.css'
-import Loading from '../../components/Loading'
+import ShowRequire from "../../components/ShowRequire/ShowRequire";
+import {useHistory} from "react-router-dom";
+import useInputRequire from "../../utils/useInputRequire";
+import useToggle from "../../utils/useToggle";
 
-const DateInput = (props) => {
-  let maxDate = new Date();
-  maxDate.setFullYear(2002);
-  const [startDate, setStartDate] = useState(maxDate);
-  return (
-      <DatePicker className='form-control'
-                  selected={startDate}
-                  dateFormat='dd/MM/yyyy'
-                  autoComplete='off'
-                  onChange={
-                    date => {
-                      props.onChange(date);
-                      return setStartDate(date)
-                    }
-                  }/>
-  );
-};
 
-class Register extends Component {
+const Register = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const registerInfo = useSelector(state => {
+    return state.Register;
+  });
+  const name = useInputRequire({value: "", valid: false, invalid: false, inValidMsg: ""});
+  const email = useInputRequire({value: "", valid: false, invalid: false, inValidMsg: ""});
+  const phone = useInputRequire({value: "", valid: false, invalid: false, inValidMsg: ""});
+  const [dob, setDOB] = useState(new Date(2000, 0, 1));
+  const alertToggle = useToggle(false);
+  const [timeCounter, setTimeCounter] = useState(4);
 
-  constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleBack = this.handleBack.bind(this);
+
+  function onChangeDOB(date) {
+    setDOB(date);
+    return setDOB(date);
   }
 
-  handleSubmit(values) {
-    // console.log(values)
-    let info = {...values};
-    delete info.dob;
-    let dob = values.dob;
-    if (!dob) {
-      dob = new Date();
-      dob.setFullYear(2002)
+  const countDown = useCallback((i) => {
+    let int = setInterval(function () {
+      setTimeCounter(i)
+      i-- || clearInterval(int);  //if i is 0, then stop the interval
+    }, 1000);
+  }, [setTimeCounter, timeCounter])
+
+  const handleSubmit = useCallback((e) => {
+    e.preventDefault()
+    if (checkValue(name) || checkValue(email) || checkValue(phone)) {
+      return false
     }
     let date_of_birth = dob.getDate() + '-' + (dob.getMonth() + 1) + '-' + dob.getFullYear();
-    info['date_of_birth'] = date_of_birth;
-    this.props.register(info)
-  }
+    let data = {
+      name: name.value,
+      email: email.value,
+      phone: phone.value,
+      date_of_birth: date_of_birth
+    }
+    console.log("data", data)
+    dispatch(register(data))
+        .then((response) => {
+          console.log(response)
+          alertToggle.setActive()
+          countDown(3)
+          setTimeout(() => {
+            history.push("/login")
+          }, 3000)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+  }, [dispatch, alertToggle, setTimeCounter, name, email, phone, dob])
 
-  handleBack() {
-    this.props.backRegister()
-  }
+  return (
+      <Container>
+        <Row className="justify-content-center">
+          <Col md={6}>
+            <CardGroup className="mb-0">
+              <Card className="card p-4">
+                <div className="card-block">
+                  <CardTitle>
+                    <h3 className="text-center">ĐĂNG KÝ</h3>
+                  </CardTitle>
 
-  render() {
-    if (this.props.Register.isLoading) {
-      return (
-          <div className="container" style={{marginTop: '10px'}}>
-            <div className="row justify-content-center">
-              <Loading/>
-            </div>
-          </div>
-      )
-    } else if (this.props.Register.errMess) {
-      return (
-          <div className="container" style={{marginTop: '10px'}}>
-            <div className="row justify-content-center">
-              <div className="card-group mb-0">
-                <div className="card p-4">
-                  <Alert color="danger">
-                    {this.props.Register.errMess}
-                  </Alert>
-                  <Button color="primary" size="sm" onClick={this.handleBack}>Quay Lại</Button>{' '}
+                  <Form method="post" noValidate="validated"
+                        className="needs-validation" onSubmit={handleSubmit}>
+                    <h4>Thông tin đăng nhập</h4>
+                    <FormGroup>
+                      <Label for="name">Họ và tên <ShowRequire/></Label>
+                      <InputGroup className="mb-2">
+                        <Input type="text"
+                               name="name"
+                               id="name"
+                               onChange={name.onChange}
+                               value={name.value}
+                               valid={name.valid}
+                               invalid={name.invalid}
+                               onBlur={name.onBlur}
+                        />
+                        <FormFeedback>{name.inValidMsg}</FormFeedback>
+                      </InputGroup>
+                      <Label for="email">Email <ShowRequire/></Label>
+                      <InputGroup className="mb-2">
+                        <Input type="email"
+                               name="email"
+                               id="email"
+                               onChange={email.onChange}
+                               value={email.value}
+                               valid={email.valid}
+                               invalid={email.invalid}
+                               onBlur={email.onBlur}
+                        />
+                        <FormFeedback>{email.inValidMsg}</FormFeedback>
+                      </InputGroup>
+                      <Label for="phone">Số điện thoại <ShowRequire/></Label>
+                      <InputGroup className="mb-2">
+                        <Input type="text"
+                               name="phone"
+                               id="phone"
+                               onChange={phone.onChange}
+                               value={phone.value}
+                               valid={phone.valid}
+                               invalid={phone.invalid}
+                               onBlur={phone.onBlur}
+                        />
+                        <FormFeedback>{phone.inValidMsg}</FormFeedback>
+                      </InputGroup>
+                      <Label for="dob">Ngày sinh <ShowRequire/></Label>
+                      <InputGroup className="mb-2">
+                        <DatePicker className='form-control'
+                                    style={{width: "100%", color: "red"}}
+                                    selected={dob}
+                                    dateFormat='dd/MM/yyyy'
+                                    onChange={onChangeDOB}/>
+                      </InputGroup>
+                    </FormGroup>
+                    <hr/>
+                    <Alert color="success"
+                           isOpen={alertToggle.active}
+                    >
+                      Đã tạo tài khoản thành công<br/>
+                      Sẽ chuyển đến trang đăng nhập trong <strong>{timeCounter}s</strong> nữa
+                    </Alert>
+                    <Button id="btnTransferLocal"
+                            type="submit"
+                            color={"success"}
+                            size={"md"}
+                            block={true}
+                            className="d-flex align-items-center justify-content-center"
+                            disabled={registerInfo.isLoading}
+                    >
+                        <span style={{marginRight: "10px"}}>
+                          {(registerInfo.isLoading ? <Spinner color="light"
+                                                              size={"sm"} role="status"
+                                                              aria-hidden="true"/> : "")}
+                        </span>
+                      <span>Đăng Ký</span>
+                    </Button>
+                  </Form>
+
                 </div>
-              </div>
-            </div>
-          </div>
-      )
-    } else
-      return (
-          <div className="container" style={{marginTop: '10px'}}>
-            <div className="row justify-content-center">
-              <div className="col-md-8">
-                <div className="card-group mb-0">
-                  <div className="card p-4">
-                    <div className="card-block">
-                      <h1>Đăng ký</h1>
-                      <p className="text-muted">Đăng ký tài khoản</p>
-                      <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
-                        <div className='form-group'>
-                          <label htmlFor='.name'>Họ Tên:</label>
-                          <Control.text model='.name' id='name' name='name'
-                                        className='form-control' autoComplete='off'
-                                        validators={{required}}/>
-                          <Errors className='text-danger' model='.name' show="touched"
-                                  messages={{required: requiredText}}/>
-                        </div>
-                        <div className='form-group'>
-                          <label htmlFor='.email'>Email:</label>
-                          <Control.text model='.email' id='email' name='email'
-                                        className='form-control' autoComplete='off'
-                                        validators={{required, validEmail}}/>
-                          <Errors className='text-danger' model='.email' show="touched"
-                                  messages={{
-                                    required: requiredText,
-                                    validEmail: validEmailText
-                                  }}/>
-                        </div>
-                        <div className='form-group'>
-                          <label htmlFor='.phone'>Số Điện Thoại:</label>
-                          <Control.text model='.phone' id='phone' name='phone'
-                                        className='form-control' autoComplete='off'
-                                        validators={{required, isNumber}}/>
-                          <Errors className='text-danger' model='.phone' show="touched"
-                                  messages={{required: requiredText, isNumber: isNumberText}}/>
-                        </div>
-                        <div className='form-group'>
-                          <label htmlFor='.dob'>Ngày sinh:</label> {'  '}
-                          <Control.text className='form-control'
-                                        model=".dob"
-                                        component={DateInput}
-                          />
-                        </div>
-                        <button type="submit" className="btn btn-primary">Đăng ký</button>
-                      </LocalForm>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-      )
-  }
+              </Card>
+            </CardGroup>
+          </Col>
+        </Row>
+      </Container>
+  )
 }
-
-const mapDispatchToProps = dispatch => ({
-  register: (formVal) => dispatch(register(formVal)),
-  backRegister: () => dispatch(backRegister())
-});
-
-const mapStateToProps = (state) => {
-  return {
-    Register: state.Register,
-  }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Register)
+export default Register

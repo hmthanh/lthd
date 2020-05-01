@@ -24,6 +24,7 @@ import {HistoryTransfer} from "./actions/getHistoryTransfer.action";
 import CreateAcc from "./actions/createAcc.action";
 import {Auth} from "./actions/auth.action";
 import {ForgetPassword} from "./actions/forgetPwd.action";
+import {AccName} from "./actions/getAccName";
 
 
 export const ConfigureStore = () => {
@@ -54,7 +55,8 @@ export const ConfigureStore = () => {
         ForgetPassword: ForgetPassword,
         AllCustomer: GetAllCustomer,
         StaffInfo: GetAllStaff,
-        ListTransferInfo: ListTransferInfo
+        ListTransferInfo: ListTransferInfo,
+        AccName: AccName
       }),
       applyMiddleware(logger),
       applyMiddleware(thunk),

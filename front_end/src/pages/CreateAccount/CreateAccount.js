@@ -79,25 +79,7 @@ const CreateAccount = () => {
                   <hr/>
                   <Form method="post" noValidate="novalidate"
                         className="needs-validation" onSubmit={onCreateAccount}>
-                    {/*<h4>1. Thông tin tài khoản</h4>*/}
-                    {/*<FormGroup>*/}
-                    {/*  <Label for="username">Tên tài khoản {showFieldRequire()}</Label>*/}
-                    {/*  <InputGroup className="mb-2">*/}
-                    {/*    <Input type="text" name="username" id="username"*/}
-                    {/*           onChange={username.onChange}*/}
-                    {/*           value={username.value}*/}
-                    {/*           placeholder=""/>*/}
-                    {/*  </InputGroup>*/}
-                    {/*</FormGroup>*/}
-                    {/*<FormGroup>*/}
-                    {/*  <Label for="password">Mật khẩu {showFieldRequire()}</Label>*/}
-                    {/*  <InputGroup className="mb-2">*/}
-                    {/*    <Input type="password" name="password" id="password"*/}
-                    {/*           onChange={password.onChange}*/}
-                    {/*           value={password.value}*/}
-                    {/*           placeholder=""/>*/}
-                    {/*  </InputGroup>*/}
-                    {/*</FormGroup>*/}
+
                     <h4>Thông tin cá nhân</h4>
                     <FormGroup>
                       <Label for="fullName">Họ và tên {showFieldRequire()}</Label>
@@ -137,15 +119,14 @@ const CreateAccount = () => {
                         />
                       </InputGroup>
                     </FormGroup>
-                    <div>
-                      <Button id="btnRecharge" type="submit" color={"success"}
-                              size={"lg"}
-                              block={true}
-                              className="d-flex align-items-center justify-content-center"
-                              disabled={false}>
-                        <span>Tạo tài khoản</span>
-                      </Button>
-                    </div>
+                    <hr/>
+                    <Button id="btnRecharge" type="submit" color={"success"}
+                            size={"lg"}
+                            block={true}
+                            className="d-flex align-items-center justify-content-center"
+                            disabled={false}>
+                      <span>Tạo tài khoản</span>
+                    </Button>
                   </Form>
                   <MessageBox
                       isOpen={messageBoxToggle.active}

@@ -11,7 +11,6 @@ import {
   Input,
   InputGroup,
   InputGroupAddon, InputGroupText,
-  Label,
   Row
 } from 'reactstrap'
 import './HistoryAccount.css';
@@ -59,7 +58,7 @@ const HistoryTrans = () => {
         .catch((error) => {
           showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
         });
-  }, [dispatch, search]);
+  }, [dispatch, search, showMsgBox]);
 
   return (
       <Container className="container" style={{marginTop: '20px'}}>

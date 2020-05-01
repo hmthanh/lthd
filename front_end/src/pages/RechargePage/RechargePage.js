@@ -101,23 +101,22 @@ const RechargePage = () => {
                              value={moneyTransfer}
                              required/>
                     </FormGroup>
-                    <div>
-                      <Button id="btnRecharge" type="submit" color={"success"}
-                              size={"lg"}
-                              block={true}
-                              className="d-flex align-items-center justify-content-center"
-                              disabled={rechargeSelector.isLoading}
-                              onClick={() => onRecharge(numberAccount, moneyTransfer)}
-                      >
-                        {
-                          (rechargeSelector.isLoading ? <Spinner color="light"
-                                                                 size={"sm"} role="status"
-                                                                 aria-hidden="true"/> : "")
-                        }
-                        {' '}
-                        <span style={{marginLeft: "5px"}}>Nạp tiền</span>
-                      </Button>
-                    </div>
+                    <hr/>
+                    <Button id="btnRecharge" type="submit" color={"success"}
+                            size={"lg"}
+                            block={true}
+                            className="d-flex align-items-center justify-content-center"
+                            disabled={rechargeSelector.isLoading}
+                            onClick={() => onRecharge(numberAccount, moneyTransfer)}
+                    >
+                      {
+                        (rechargeSelector.isLoading ? <Spinner color="light"
+                                                               size={"sm"} role="status"
+                                                               aria-hidden="true"/> : "")
+                      }
+                      {' '}
+                      <span style={{marginLeft: "5px"}}>Nạp tiền</span>
+                    </Button>
                   </Form>
                   <MessageBox
                       className={""}

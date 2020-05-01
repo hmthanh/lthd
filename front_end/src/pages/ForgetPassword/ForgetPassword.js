@@ -88,7 +88,7 @@ const FogetPassword = () => {
                         <FormFeedback>{email.inValidMsg}</FormFeedback>
                       </InputGroup>
                     </FormGroup>
-
+                    <hr/>
                     <Button type="submit"
                             color={"success"}
                             size={"md"}

@@ -83,7 +83,7 @@ const InfoUser = () => {
             <Link to="/login">Đăng nhập</Link>
           </Button>
           <Button color="info" outline className="mr-4">
-            <Link to="/register">Đăng ký</Link>
+            <Link to="/forget-password">Quên mật khẩu</Link>
           </Button>
         </>
     )

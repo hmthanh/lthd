@@ -1,4 +1,6 @@
 import {
+  GET_ACC_NAME_FAILED,
+  GET_ACC_NAME_LOADING, GET_ACC_NAME_SUCCESS,
   INTERBANK_ASSOCIATE_FAILED,
   INTERBANK_ASSOCIATE_LOADING,
   INTERBANK_ASSOCIATE_SUCCESS,
@@ -95,3 +97,22 @@ export const verifyOTP = (transID, data, accessToken) => {
     });
   }
 };
+
+export const getAccName = (data, accessToken) => {
+  return dispatch => {
+    dispatch({type: GET_ACC_NAME_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + `/api/accounts/acc`, 'POST', data, accessToken);
+        dispatch({type: GET_ACC_NAME_SUCCESS, payload: response});
+        console.log(response);
+        resolve(response);
+      } catch (e) {
+        console.log(e);
+        reject(e);
+        dispatch({type: GET_ACC_NAME_FAILED, payload: e});
+      }
+    });
+  }
+};
+

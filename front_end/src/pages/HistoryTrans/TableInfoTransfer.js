@@ -88,7 +88,7 @@ const TableInfoTransfer = (props) => {
           items.map((item, index) => (
               <tr key={index}>
 
-                <th scope="row">{item.trans_id}</th>
+                <th scope="row">{index + 1}</th>
                 <td>{new Intl.DateTimeFormat('vi-US', {
                   hour: 'numeric',
                   minute: 'numeric',
