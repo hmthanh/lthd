@@ -17,7 +17,11 @@ router.post('/', async (req, res) => {
     })
   } else {
     const employee = rows[0]
-    const userInfo = await userModel.singleByAccountNum(req.body.account_num)
+    let userInfo = await userModel.singleByAccountNum(req.body.account_num)
+    if(userInfo.length === 0) {
+      let q = req.body.account_num.slice(0, -1)
+      userInfo = await userModel.singleByAccountNum(q)
+    }
     let uid = userInfo[0].id
     console.log("uid", uid)
     const bankingInfos = await bankingAccountModel.get(uid)

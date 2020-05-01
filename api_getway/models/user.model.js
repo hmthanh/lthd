@@ -18,6 +18,7 @@ module.exports = {
   // },
 
   singleByUserName: username => db.load(`select * from user_info where user_name = '${username}'`),
+  singleByEmail: email => db.load(`select * from user_info where email = '${email}'`),
   singleByUserId: uId => db.load(`select * from user_info where id = '${uId}'`),
   singleByAccountNum: accountNumber => db.load(`select * from user_info where account_num = '${accountNumber}'`),
   singleByUser: (userName, accountNumber) => db.load(`select * from user_info where user_name = '${userName}' or account_num = '${accountNumber}'`),

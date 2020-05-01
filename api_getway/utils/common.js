@@ -65,8 +65,7 @@ const msgTemplate = (name, requestName, OTP) => {
   The New Vimo Team`
 };
 
-const htmlMsgTemplate = (name, requestName, OTP) => {
-  return `Dear ${name}! <br/></br>
+const htmlMsgTemplate = (name, requestName, OTP) => `Dear ${name}! <br/></br>
 
   A request requires verification OTP. To complete the sign in, enter the OTP code on the request device. </br>
   
@@ -79,10 +78,8 @@ const htmlMsgTemplate = (name, requestName, OTP) => {
   
   Thanks,</br>
   The New Vimo Team`
-};
 
-const msgLogingTemplate = (name, username, password) => {
-  return `Dear ${name}!
+const msgLogingTemplate = (name, username, password) => `Dear ${name}!
 
   Account of you ready to use. Now, you can loging and change password to use
   
@@ -90,10 +87,8 @@ const msgLogingTemplate = (name, username, password) => {
   Password: ${password}
   Thanks,
   The New Vimo Team`
-};
 
-const htmlMsgLogingTemplate = (name, username, password) => {
-  return `Dear ${name}! <br/></br>
+const htmlMsgLogingTemplate = (name, username, password) => `Dear ${name}! <br/></br>
 
   Account of you ready to use. Now, you can loging and change password to use </br>
   
@@ -101,7 +96,29 @@ const htmlMsgLogingTemplate = (name, username, password) => {
   Password: <h1>${password}</h1></br>
   Thanks,</br>
   The New Vimo Team`
-};
+
+const msgForgetTemplate = (name, password) => `Dear ${name}!
+
+You have request forget password, please use new password to loging
+
+Password: ${password}
+
+after you login must be change password to use
+
+Thanks,
+The New Vimo Team`
+
+
+const htmlForgetTemplate = (name, password) => `Dear ${name}! <br/>
+
+You have request forget password, please use new password to loging <br/>
+
+Password: <h1>${password}</h1> <br/>
+
+after you login must be change password to use <br/>
+
+Thanks,<br/>
+The New Vimo Team`
 
 const validate = (data) => {
   if (!validEmail(data['email'])) return false;
@@ -128,5 +145,7 @@ module.exports = {
   htmlMsgTemplate,
   validate,
   msgLogingTemplate,
-  htmlMsgLogingTemplate
+  htmlMsgLogingTemplate,
+  msgForgetTemplate,
+  htmlForgetTemplate
 };

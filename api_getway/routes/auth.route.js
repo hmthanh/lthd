@@ -1,15 +1,17 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const rndToken = require('rand-token');
-const authModel = require('../models/auth.model');
-const {TIME_OUT_TOKEN, SECRET_KEY_TOKEN, LENGTH_REFREST_TOKEN, SECRET_TOKEN, OTP} = require('../config');
-const mailController = require('../mailer/mail.controller');
-const {htmlMsgTemplate, msgTemplate} = require('../utils/common');
-const userModel = require('../models/user.model');
-const refeshTokenModel = require('../models/refeshToken.model');
-const bcrypt = require('bcryptjs');
+const express = require('express')
+const jwt = require('jsonwebtoken')
+const rndToken = require('rand-token')
+const authModel = require('../models/auth.model')
+const {TIME_OUT_TOKEN, SECRET_KEY_TOKEN, LENGTH_REFREST_TOKEN, SECRET_TOKEN, OTP} = require('../config')
+const mailController = require('../mailer/mail.controller')
+const {htmlMsgTemplate, msgTemplate} = require('../utils/common')
+const { updatePwd } = require('../models/account.model')
+const userModel = require('../models/user.model')
+const refeshTokenModel = require('../models/refeshToken.model')
+const bcrypt = require('bcryptjs')
+const common = require('../utils/common')
 
-const router = express.Router();
+const router = express.Router()
 
 router.post('/', async (req, res) => {
   console.log(req.body);
@@ -74,6 +76,29 @@ router.post('/relogin', async (req, res) => {
   })
 });
 
+router.post('/forget', async (req, res) => {
+  const rows = await userModel.singleByEmail(req.body.email)
+  if (rows.length === 0) {
+    res.status(200).json({
+      err_code: -200,
+      msg: `not found email ${req.body.email}`
+    })
+  } else {
+    const item = rows[0]
+    const pass = OTP.generate(SECRET_TOKEN)
+    console.log(`item: ${item} default password: ${pass}`)
+    let msg = common.msgForgetTemplate(item.name, pass)
+    // console.log(sender.email, sender);
+    const htmlmsg = common.htmlForgetTemplate(item.name, pass)
+    mailController.sentMail(item.email, '[New Vimo][important !!!] Account Vimo', msg, htmlmsg)
+    updatePwd(pass, item.id)
+    res.status(200).json({
+      err_code: 0,
+      msg: `new password sent to ${item.email}`
+    })
+  }
+});
+
 router.post('/verify', async (req, res) => {
   console.log("req.body", req.body)
   const user = await authModel.comparePwd(req.body);
@@ -87,7 +112,7 @@ router.post('/verify', async (req, res) => {
 
     mailController.sentMail(user.email, '[New Vimo] Please verify OTP for change password', msg, htmlmsg)
   }
-  return res.json({
+  res.status(200).json({
     authenticated
   })
 });
@@ -107,14 +132,14 @@ router.patch('/', async (req, res) => {
     delete ret.password;
     const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
     refeshTokenModel.add({user_id: req.body.uId, refresh_token: rfToken});
-    await res.status(200).json({
+    res.status(200).json({
       error: 0,
       authenticated: true,
       user: ret,
       refreshToken: rfToken
     })
   } else {
-    await res.status(200).json({
+    res.status(200).json({
       error: 401,
       msg: 'invalid OTP'
     })
