@@ -20,7 +20,7 @@ import {
 import {getAccName, getInterbank, getReceiverSaved, transfer} from "../../redux/creators/transferCreator";
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
-import {convertObjectToArray} from "../../utils/utils";
+import {checkValue, convertObjectToArray} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ModalOTP from "../../components/Modal/ModalOTP";
@@ -41,6 +41,9 @@ const Transfer = () => {
   const listSaved = useSelector((state) => {
     return state.ReceiverSaved.data
   });
+  const AccName = useSelector((state) => {
+    return state.AccName
+  });
 
   const sender = useInputChange(1);
   const [receiveBank, setReceiveBank] = useState(0);
@@ -48,7 +51,7 @@ const Transfer = () => {
   const [selectSaved, setSelectSaved] = useState(0);
   const [isUseSaved, setIsUseSaved] = useState(false);
   const [accountNum, setAccountNum] = useState("");
-  const [accValid, setAccValid] = useState(true);
+  const [accValid, setAccValid] = useState(false);
   const [accInValid, setAccInValid] = useState(false);
   const [accInValidMsg, setAccInValidMsg] = useState("");
   const name = useInputChange('');
@@ -61,10 +64,12 @@ const Transfer = () => {
   const [contentMsg, setContentMsg] = useState("");
   const [transId, setTransId] = useState(0);
 
-  function onChangeSelectSaved(e) {
+  const onChangeSelectSaved = (e) => {
     if (listSaved) {
       setSelectSaved(e.target.value);
       setAccountNum(e.target.value);
+      setAccInValid(false)
+      setAccValid(true)
       let change_name = listSaved[e.target.selectedIndex].name
       name.setValue(change_name);
     }
@@ -83,36 +88,32 @@ const Transfer = () => {
   }
 
   const onBlurAccountNum = useCallback(() => {
+    if (accountNum.value === "" || accountNum == 0){
+      setAccInValid(true)
+      setAccInValidMsg("Không được để trống")
+      return false;
+    }
     let accessToken = localStorage.getItem('accessToken');
     let data = {
       query: accountNum
     }
+    console.log("acc num", accountNum)
     dispatch(getAccName(data, accessToken))
         .then((response) => {
-          console.log(response)
+          console.log("success response", response)
           name.setValue(response.account.name)
+          setAccountNum(response.account.account_num)
           setAccValid(true)
+          setAccInValid(false)
+          setAccInValidMsg("")
         })
         .catch((err) => {
           console.log(err)
           setAccInValid(true)
-          setAccInValidMsg("Không tìm thấy số tài khoản trên")
+          setAccInValidMsg("Không tìm thấy số tài khoản hoặc username trên")
           setAccountNum("")
         })
 
-    // let val = e.target.value;
-    // if (!required(val)) {
-    //   setInValid(true);
-    //   setInValidMsg("Không được để trống");
-    // }else{
-    //   setValid(true);
-    //   setInValid(false);
-    //   setTimeout(() =>{
-    //     setValid(false);
-    //   }, 2500);
-    // }
-
-    //, setInValid, setInValidMsg
   }, [accountNum, dispatch]);
 
   function onChangeInterbank(e) {
@@ -317,7 +318,7 @@ const Transfer = () => {
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>ID</InputGroupText>
                         </InputGroupAddon>
-                        <Input type="number"
+                        <Input type="text"
                                name="accountNum"
                                id="accountNum"
                                onChange={onChangeAccountNum}
@@ -326,6 +327,13 @@ const Transfer = () => {
                                invalid={accInValid}
                                valid={accValid}
                                placeholder="Nhập số tài khoản hoặc username"/>
+                        {
+                          AccName.isLoading ? (<InputGroupAddon addonType="prepend">
+                            <InputGroupText><Spinner color="primary"
+                                                     size={"sm"} role="status"
+                                                     aria-hidden="true"/></InputGroupText>
+                          </InputGroupAddon>) : ""
+                        }
                         <FormFeedback>{accInValidMsg}</FormFeedback>
                       </InputGroup>
                       <InputGroup>

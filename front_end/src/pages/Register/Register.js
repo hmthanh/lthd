@@ -1,9 +1,8 @@
-import React, {Component, useCallback, useState} from 'react'
-import {connect, useDispatch, useSelector} from 'react-redux'
-import {Control, Errors, LocalForm} from 'react-redux-form'
-import {checkValue, isNumber, isNumberText, required, requiredText, validEmail, validEmailText} from '../../utils/utils'
+import React, {useCallback, useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import {checkValue} from '../../utils/utils'
 import DatePicker from 'react-datepicker'
-import {backRegister, register} from '../../redux/creators/registerCreator'
+import {register} from '../../redux/creators/registerCreator'
 import {
   Alert,
   Button,

@@ -56,7 +56,7 @@ export const ConfigureStore = () => {
         AllCustomer: GetAllCustomer,
         StaffInfo: GetAllStaff,
         ListTransferInfo: ListTransferInfo,
-            AccName: AccName
+        AccName: AccName
       }),
       applyMiddleware(logger),
       applyMiddleware(thunk),

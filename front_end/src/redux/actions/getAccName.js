@@ -5,7 +5,7 @@ import {
 } from './actionType'
 
 export const AccName = (state = {
-    isLoading: true,
+    isLoading: false,
     errMess: null,
     data: []
 }, action) => {
