@@ -20,7 +20,7 @@ import {
 import {getAccName, getInterbank, getReceiverSaved, transfer} from "../../redux/creators/transferCreator";
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
-import {checkValue, convertObjectToArray} from "../../utils/utils";
+import {convertObjectToArray} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ModalOTP from "../../components/Modal/ModalOTP";
@@ -88,7 +88,7 @@ const Transfer = () => {
   }
 
   const onBlurAccountNum = useCallback(() => {
-    if (accountNum.value === "" || accountNum == 0){
+    if (accountNum.value === ""){
       setAccInValid(true)
       setAccInValidMsg("Không được để trống")
       return false;
@@ -114,7 +114,7 @@ const Transfer = () => {
           setAccountNum("")
         })
 
-  }, [accountNum, dispatch]);
+  }, [accountNum, dispatch, name]);
 
   function onChangeInterbank(e) {
     if (!e.target.value) {
@@ -176,7 +176,7 @@ const Transfer = () => {
 
   function onSubmitForm(e) {
     e.preventDefault();
-    if (accountNum == 0 || accountNum === "") {
+    if (accountNum === "") {
       setAccInValid(true)
       setAccInValidMsg("Vui lòng nhập lại số tài khoản")
       return;

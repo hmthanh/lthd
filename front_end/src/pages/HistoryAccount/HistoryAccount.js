@@ -1,33 +1,24 @@
 import React, {useCallback, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  Button,
-  Card,
-  CardGroup,
-  Col,
-  Container,
-  Form,
-  FormGroup,
-  Input,
-  InputGroup,
-  InputGroupAddon, InputGroupText,
-  Row
-} from 'reactstrap'
+import {Button, Card, CardGroup, Col, Container, Form, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Row} from 'reactstrap'
 import './HistoryAccount.css';
-import TableInfoTransfer from "./TableInfoTransfer";
-import MessageBox from "../../components/Modal/MessageBox";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
-import {getHistoryUserDept, getHistoryUserTrans} from "../../redux/creators/historyTransCreator";
-import TableInfoDept from "./TableInfoDept";
+import {getUserDeptHistory, getUserReceiveHistory, getUserTransHistory} from "../../redux/creators/historyTransCreator";
+import TableInfoTransfer from "../../components/Table/TableInfoTransfer";
+import TableInfoDept from "../../components/Table/TableInfoDept";
+import MessageBox from "../../components/Modal/MessageBox";
 
-const HistoryTrans = () => {
+const HistoryAccount = () => {
   const dispatch = useDispatch();
   const historyDebt = useSelector(state => {
     return state.HistoryDept.data
   });
-  const userHistoryTrans = useSelector(state => {
-    return state.UserHistoryTrans.data
+  const transHistory = useSelector(state => {
+    return state.TransHistory.data
+  });
+  const receiveHistory = useSelector(state => {
+    return state.ReceiveHistory.data
   });
   const search = useInputChange();
   const [titleMsg, setTitleMsg] = useState("");
@@ -42,22 +33,35 @@ const HistoryTrans = () => {
   const findHistoryAccount = useCallback((e) => {
     e.preventDefault();
     // console.log("search value", search.value);
-    const uid = search.value;
+    const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
-    dispatch(getHistoryUserTrans(uid, accessToken))
+    dispatch(getUserTransHistory(uid, accessToken))
         .then((response) => {
-          console.log("getHistoryUserTrans", response.item);
-        })
-        .catch((error) => {
-          showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n${error}`);
+          console.log(response.item);
         });
-    dispatch(getHistoryUserDept({id: uid}, accessToken))
+    dispatch(getUserReceiveHistory(uid, accessToken))
         .then((response) => {
-          console.log("getHistoryUserDept", response.item);
-        })
-        .catch((error) => {
-          showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
+          console.log(response.item);
         });
+    dispatch(getUserDeptHistory({id: uid}, accessToken))
+        .then((response) => {
+          console.log(response.item);
+        });
+
+    // dispatch(getUserTransHistory(uid, accessToken))
+    //     .then((response) => {
+    //       console.log("getHistoryUserTrans", response.item);
+    //     })
+    //     .catch((error) => {
+    //       showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n${error}`);
+    //     });
+    // dispatch(getUserDeptHistory({id: uid}, accessToken))
+    //     .then((response) => {
+    //       console.log("getHistoryUserDept", response.item);
+    //     })
+    //     .catch((error) => {
+    //       showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
+    //     });
   }, [dispatch, search, showMsgBox]);
 
   return (
@@ -101,21 +105,24 @@ const HistoryTrans = () => {
             </CardGroup>
           </Col>
         </Row>
-        <div style={{marginTop:  "10px"}}></div>
+        <div style={{marginTop: "10px"}}></div>
         <Row>
           <Col md={12}>
             <CardGroup>
               <Card id="localBank">
                 <div className="card-body">
-                  <h4>Lịch sử giao dịch</h4>
-                  <FormGroup>
-                    <TableInfoTransfer data={userHistoryTrans} receiving={userHistoryTrans}></TableInfoTransfer>
-                  </FormGroup>
-                  <hr/>
-                  <h4>Giao dịch thanh toán mắc nợ</h4>
-                  <FormGroup>
-                    <TableInfoDept data={historyDebt}></TableInfoDept>
-                  </FormGroup>
+                  <h4>Giao dịch chuyển tiền</h4>
+                  <TableInfoTransfer
+                      data={transHistory}
+                  ></TableInfoTransfer>
+
+                  <h4>Giao dịch nhận tiền</h4>
+                  <TableInfoTransfer
+                      data={receiveHistory}
+                  ></TableInfoTransfer>
+
+                  <h4>Giao dịch nhắc nợ</h4>
+                  <TableInfoDept data={historyDebt}></TableInfoDept>
                 </div>
               </Card>
             </CardGroup>
@@ -131,4 +138,4 @@ const HistoryTrans = () => {
 };
 
 
-export default HistoryTrans;
+export default HistoryAccount;

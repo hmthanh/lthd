@@ -26,12 +26,12 @@ export const changepwd = (uId, newPwd, OTP) => {
 }
 
 
-export const verifyPassword = (uId, oldPwd, newPw1, newPw2) => {
+export const verifyPassword = (data, accessTocken) => {
   return (dispatch) => {
     dispatch({type: CHANGE_PASSWORD_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetchFrom(UrlApi + '/api/auth/verify', 'POST', {oldPwd, uId})
+        const response = await fetchFrom(UrlApi + '/api/auth/verify', 'POST', data, accessTocken)
         console.log(response)
         dispatch({type: CHANGE_PASSWORD_SUCCESS, payload: response})
         resolve(response)

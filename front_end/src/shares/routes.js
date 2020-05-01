@@ -3,9 +3,8 @@ import React, {lazy} from 'react';
 // const HomePage = lazy(() => import('../pages/HomePage/HomePage'));
 const LoginPage = lazy(() => import('../pages/LoginPage/LoginPage'));
 const Register = lazy(() => import('../pages/Register/Register'));
-const ListAccountPage = lazy(() => import('../pages/ListAccountPage/ListAccountPage'));
 const UserInfo = lazy(() => import('../pages/UserInfo/UserInfo'));
-const HistoryPage = lazy(() => import('../pages/HistoryUserTrans/HistoryUserTrans'));
+
 const Transfer = lazy(() => import('../pages/Transfer/Transfer'));
 const DebtPage = lazy(() => import('../pages/Dept/Debt'));
 const InDebtPage = lazy(() => import('../pages/Dept/InDebt'));
@@ -16,8 +15,10 @@ const SettingPage = lazy(() => import('../pages/SettingPage'));
 const RemindPage = lazy(() => import('../pages/Remind/Remind'));
 const LogoutPage = lazy(() => import('../pages/logoutPage'));
 const RechargePage = lazy(() => import('../pages/RechargePage/RechargePage'));
-const HistoryTrans = lazy(() => import('../pages/HistoryTrans/HistoryTrans'));
+const HistoryPage = lazy(() => import('../pages/HistoryUserTrans/HistoryUserTrans'));
+const HistoryAccount = lazy(() => import('../pages/HistoryAccount/HistoryAccount'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+const ListAccountPage = lazy(() => import('../pages/ListAccountPage/ListAccountPage'));
 const ListStaffPage = lazy(() => import("../pages/ListStaffPage/ListStaffPage"));
 const ListCustomerPage = lazy(() => import("../pages/ListCustomerPage/ListCustomerPage"));
 const ListTransferPage = lazy(() => import( "../pages/ListTransferPage/ListTransferPage"));
@@ -97,7 +98,7 @@ const routes = [
   {
     path: "/history-account",
     exact: true,
-    component: () => <HistoryTrans></HistoryTrans>
+    component: () => <HistoryAccount></HistoryAccount>
   },
   {
     path: "/remind",

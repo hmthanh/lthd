@@ -3,6 +3,7 @@ import {Table} from 'reactstrap';
 import useSortableData from "../../utils/useSortableData";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSort} from "@fortawesome/free-solid-svg-icons";
+import {formatFormalDate, formatMoney} from "../../utils/utils";
 
 const TableInfoDept = (props) => {
   const {items, requestSort, sortConfig} = useSortableData(props.data.item);
@@ -58,16 +59,9 @@ const TableInfoDept = (props) => {
           items.map((item, index) => (
               <tr key={index}>
                 <th scope="row">{index + 1}</th>
-                <td>{new Intl.DateTimeFormat('vi-US', {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  year: 'numeric',
-                  month: 'numeric',
-                  day: '2-digit',
-
-                }).format(new Date(item.date_time))}</td>
+                <td>{formatFormalDate(item.date_time)}</td>
                 <td>{item.name}</td>
-                <td>{item.debt_val}</td>
+                <td>{formatMoney(item.debt_val)}</td>
                 <td>{item.note}</td>
               </tr>
           ))

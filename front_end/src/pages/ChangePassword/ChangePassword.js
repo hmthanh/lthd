@@ -1,29 +1,47 @@
 import React, {useCallback, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Button, Card, CardGroup, CardTitle, Col, Container, Form, FormFeedback, FormGroup, Input, InputGroup, Label, Row, Spinner} from 'reactstrap'
+import {
+  Alert,
+  Button,
+  Card,
+  CardGroup,
+  CardTitle,
+  Col,
+  Container,
+  Form,
+  FormFeedback,
+  FormGroup,
+  Input,
+  InputGroup,
+  Label,
+  Row,
+  Spinner
+} from 'reactstrap'
 import {verifyPassword} from '../../redux/creators/changePasswordCreator'
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import useToggle from "../../utils/useToggle";
 import useInputRequire from "../../utils/useInputRequire";
-import MessageBox from "../../components/Modal/MessageBox";
+import {useHistory} from "react-router";
+import {logout} from "../../redux/creators/loginCreator";
 
 const ChangePassword = () => {
   const dispatch = useDispatch();
+  const history = useHistory()
   const changePassword = useSelector(state => {
     return state.ChangePassword
   });
-  const msgBoxToggle = useToggle(false);
-  const [titleMsg, setTitleMsg] = useState("");
-  const [contentMsg, setContentMsg] = useState("");
+  const alertToggle = useToggle(false)
+  const [timeCounter, setTimeCounter] = useState(4);
   const pwdOld = useInputRequire({value: "", invalidMsg: "Không được để trống"});
   const pwdNew = useInputRequire({value: "", invalidMsg: "Không được để trống"});
   const pwdRepeat = useInputRequire({value: "", invalidMsg: "Không được để trống"});
 
-  const showMsgBox = useCallback((title, content) => {
-    setTitleMsg(title);
-    setContentMsg(content);
-    msgBoxToggle.setActive();
-  }, [setTitleMsg, setContentMsg, msgBoxToggle]);
+  const countDown = useCallback((i) => {
+    let int = setInterval(function () {
+      setTimeCounter(i)
+      i-- || clearInterval(int);
+    }, 1000);
+  }, [])
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -48,12 +66,21 @@ const ChangePassword = () => {
       return;
     }
     let uid = localStorage.getItem('uid')
-    dispatch(verifyPassword(uid, pwdOld.value, pwdNew.value, pwdRepeat.value))
+    let accessToken = localStorage.getItem('accessToken');
+    let data = {
+      uId: uid,
+      oldPwd: pwdOld.value,
+      newPw1: pwdNew.value,
+      newPw2: pwdRepeat.value
+    }
+    dispatch(verifyPassword(data, accessToken))
         .then((response) => {
           console.log(response);
-          let title = "Thành công";
-          let content = "Đã đổi mật khâu thành công";
-          showMsgBox(title, content);
+          alertToggle.setActive()
+          countDown(3)
+          setTimeout(() => {
+            history.push("/logout")
+          }, 3000)
         })
         .catch((err) => {
           console.log(err);
@@ -140,6 +167,12 @@ const ChangePassword = () => {
                       </InputGroup>
                     </FormGroup>
                     <hr/>
+                    <Alert color="success"
+                           isOpen={alertToggle.active}
+                    >
+                      Đã đổi mật khẩu thành công<br/>
+                      Sẽ chuyển đến trang đăng nhập trong <strong>{timeCounter}s</strong> nữa
+                    </Alert>
                     <Button type="submit"
                             color={"success"}
                             size={"md"}
@@ -196,12 +229,6 @@ const ChangePassword = () => {
             </CardGroup>
           </Col>
         </Row>
-        <MessageBox
-            isOpen={msgBoxToggle.active}
-            onClose={msgBoxToggle.setInActive}
-            title={titleMsg}
-            content={contentMsg}
-        ></MessageBox>
         {/*<Modal isOpen={this.state.modal} fade={false} toggle={this.toggle}>*/}
         {/*  <ModalHeader toggle={this.toggle}>Mã OTP</ModalHeader>*/}
         {/*  <LocalForm id='confirm-otp' onSubmit={(values) => this.handleSubmitOTP(values)} autoComplete="off">*/}
