@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import { getInDebt } from '../../redux/creators/InDebtCreator'
+import {
+  Link,
+  useParams
+} from "react-router-dom";
+
 
 class ListInDebtPage extends Component {
 
@@ -11,8 +16,13 @@ class ListInDebtPage extends Component {
   }
 
   componentDidMount() {
-    //const uid = localStorage.getItem('uid')
-    this.props.getInDebt()
+    let accessToken = localStorage.getItem('accessToken');
+    let id = localStorage.getItem('id');
+    console.log('ListInDebtPage componentDidMount')
+    this.props.getInDebt(id, accessToken)
+    .then(() => {
+      console.log('componentDidMount', this.props)
+    })
   }
 
   render() {
@@ -29,28 +39,28 @@ class ListInDebtPage extends Component {
                       <tr>
                         <th>#</th>
                         <th>Tên Tài Khoản</th>
-                        <th>Số Tài Khoản</th>
                         <th>Số Tiền</th>
                         <th>Ngày giao dịch</th>
-                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                        <th>Thanh toán</th>
+                        
                       </tr>
                     </thead>
                     <tbody>
                       {
-                        this.props.GetInDebtInfo.data.val &&
-                        this.props.GetInDebtInfo.data.val.map((item, index)  => (
-                          <tr key={item.id}>
+                        this.props.GetInDebtInfo.data.response &&
+                        this.props.GetInDebtInfo.data.response.map((item, index)  => (
+                          <tr >
                             <th scope="row">{index + 1}</th>
                             <td>{item.name}</td>
-                            <td>{item.account_num}</td>
                             <td>{item.debt_val}</td>
                             <td>{item.date_time.toString()}</td>
-                            <td>{item.note}</td>
-                           
-                           
-                    
+                            <td>{item.note}</td>    
+                            <td><Link to={`/transfer?name=${item.name}`} className="alert-link"  >Thanh toán</Link>
+                            </td>                   
                           </tr>
                         ))
+                        
                       }
                     </tbody>
                   </Table>
@@ -64,8 +74,9 @@ class ListInDebtPage extends Component {
   }
 }
 
+
 const mapDispatchToProps = dispatch => ({
-  getInDebt: () => dispatch(getInDebt())
+  getInDebt: (id, accessToken) => dispatch(getInDebt(id, accessToken))
 });
 
 const mapStateToProps = (state) => {

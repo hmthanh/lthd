@@ -15,6 +15,8 @@ class Main extends Component {
   }
 
   handleData(data) {
+    console.log('saassaasas');
+    console.log(data);
     // let result = JSON.parse(data)
   }
 
