@@ -44,10 +44,10 @@ router.post('/', async (req, res) => {
 router.patch('/', async (req, res) => {  
   console.log(req.body) // cái nào cần update thì lấy cái đó thôi
   let entity = {
-    note: req.body.note,
-    is_remind: 1
+    name: req.body.name,
+    phone:  req.body.phone
   }
-  const item = await debtModel.update(req.body.id, entity)
+  const item = await liststaffModel.update(req.body.id, entity)
 
   let ret, errorCode = 200
   msg = 'successfully'
@@ -61,7 +61,7 @@ router.patch('/', async (req, res) => {
 router.delete('/', async (req, res) => {  
   console.log('router.delete', req.body)
   let ret, errorCode = 200, item = null
-  item = debtModel.delete(req.body.id)
+  item = liststaffModel.delete(req.body.id)
   msg = 'successfully'
   ret = {
       item,
