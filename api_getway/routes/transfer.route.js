@@ -126,10 +126,13 @@ router.post('/:id', async (req, res) => {
         })
       }
     } else {
-      res.status(200).json({
-        msg: 'tranfer another backing not suport yet!!',
-        errorCode: -203, // mã lỗi sOTP không hợp lệ
-      })
+      
+
+
+      // res.status(200).json({
+      //   msg: 'tranfer another backing not suport yet!!',
+      //   errorCode: -203, // mã lỗi sOTP không hợp lệ
+      // })
     }
 
 

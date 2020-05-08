@@ -50,7 +50,11 @@ module.exports = {
                         throw err
                       })
                     connection.release()
-                    resolve(0)
+                    resolve({
+                      tranId: results.insertId,
+                      accountNum: entity.to_account,
+                      amount:  entity.amount, // đơn vị VND
+                    })
                   })
                 }
               })

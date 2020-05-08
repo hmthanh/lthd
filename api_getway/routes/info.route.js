@@ -16,9 +16,9 @@ router.post('/', async (req, res) => {
   const partnerCode = req.body.partnerCode
   const data = req.body.data
   let msg = 'successfully'
-  const signature = Buffer.from(req.body.signature)
-  const rsaVerify =  verify('nhom', signature)
-  console.log('rsaVerify ', rsaVerify)
+  // const signature = Buffer.from(req.body.signature)
+  // const rsaVerify =  verify('nhom', signature)
+  // console.log('rsaVerify ', rsaVerify)
   let errorCode = 0
   let info = {}
   if (!data) {
@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
     if (partnerCode !== '5412') {
       msg = 'invalid partner code'
       errorCode = 1000
-    } else if (timestemp - data.ts > (30000 * 30)) {
+    } else if (timestemp - data.ts > (30000 * 5)) {
       msg = 'request timeout'
       errorCode = 1001
     } else if (!verifyHash) {
@@ -59,7 +59,7 @@ router.post('/', async (req, res) => {
         }
     }
   }
-  let ret = { msg, errorCode, data: info, rsaVerify }
+  let ret = { msg, errorCode, data: info }
   res.status(200).json(ret)
 })
 
