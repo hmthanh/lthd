@@ -37,7 +37,8 @@ module.exports = {
                 throw error
               })
             else {
-              entity.surplus = surplus
+              entity.state = 0
+              entity.surplus = acc
               connection.query(`INSERT INTO transaction_tranfer SET ?`, entity, (error, results, fields) => {
                 if (error)
                   return connection.rollback(function() {
@@ -50,7 +51,11 @@ module.exports = {
                         throw err
                       })
                     connection.release()
-                    resolve(0)
+                    resolve({
+                      tranId: results.insertId,
+                      accountNum: entity.to_account,
+                      amount:  entity.amount, // đơn vị VND
+                    })
                   })
                 }
               })
@@ -131,7 +136,7 @@ module.exports = {
                   throw error
                 })
               else {
-                connection.query('UPDATE transaction_tranfer SET state=1 WHERE ?', [{trans_id : tranId}], (error, results, fields) => {
+                connection.query('UPDATE transaction_tranfer SET ? WHERE ?', [{surplus: acc, state: 0, type: 2},{trans_id : tranId}], (error, results, fields) => {
                   if (error)
                     return connection.rollback(function() {
                       throw error
@@ -150,6 +155,51 @@ module.exports = {
               }
             })
           }
+        })
+      })
+    })
+  }),
+
+  plusTransfer: (tranId, amount, account) => new Promise((resolve, reject) => {
+    pool.getConnection((err, connection) => {
+      if (err) throw err
+      connection.beginTransaction( (err) => {
+        if (err) throw err
+        connection.query('SELECT b.surplus, b.id FROM banking_account b JOIN user_info u ON b.id = u.id WHERE u.account_num=? FOR UPDATE', account,
+        (error, results, fields) => {
+          if (error) {
+            console.log(error)
+            return connection.rollback(function () {
+              throw error
+            })
+          }
+            
+          const {surplus, id} = results[0]
+          let acc = surplus + amount
+          connection.query('UPDATE banking_account SET ? WHERE ?', [{surplus: acc}, {id: id}], (error, results, fields) => {
+            if (error) 
+              return connection.rollback(function () {
+                throw error
+              })
+            else {
+              connection.query('UPDATE transaction_tranfer SET state=1 WHERE ?', [{trans_id : tranId}], (error, results, fields) => {
+                if (error)
+                  return connection.rollback(function() {
+                    throw error
+                  })
+                else {
+                  connection.commit(function(err) {
+                    if (err)
+                      return connection.rollback(function() {
+                        throw err
+                      })
+                    connection.release()
+                    resolve(0)
+                  })
+                }
+              })
+            }
+          })
         })
       })
     })

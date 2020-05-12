@@ -64,30 +64,30 @@ const testApiGetInfoInvalidParnerCode = () => {
   }
 
   let hashString =  `${data.STTTH}${data.Time}${data.PartnerCode}`
-  // console.log(hashString)
+  console.log(hashString)
 
   let hashVal = bcrypt.hashSync(hashString, 123214)
   data.Hash = hashVal
-  // const UrlApi = '192.168.43.99:3100/AnotherInternetbanking/InfoAccount'
-  const UrlApi = 'https://bethu4.azurewebsites.net/AnotherInternetbanking/InfoAccount'
-  return fetch('bethu4.azurewebsites.net/AnotherInternetbanking/test', {
-    method: 'POST'
-  }).catch(err => {
-    console.log(err)
-  })
-  // return axios({
-  //   method: 'POST',
-  //   headers: { 
-  //     'content-type': 'application/problem+json; charset=utf-8',
-  //     'Transfer-Encoding': 'chunked',
-  //     'Server':'Kestrel'
-  //   },
-  //   url: UrlApi,
+  const UrlApi = 'http://192.168.31.192:3100/AnotherInternetbanking/testacc'
+  
+  // const UrlApi = 'http://192.168.31.192:3100/AnotherInternetbanking/InfoAccount'
 
-  //   data: data
-  // })
-  // .then (respose => { console.log(respose);respose.data })
-  // .catch( error => console.log(error))
+  return axios({
+    method: 'POST',
+    headers: { 
+      'content-type': 'application/problem+json; charset=utf-8',
+      'Transfer-Encoding': 'chunked',
+      'Server':'Kestrel'
+    },
+    url: UrlApi,
+
+    data: data
+  })
+  .then (respose => { 
+    console.log(respose);
+    return respose;
+  })
+  .catch( error => console.log(error))
 }
 
 const { writeFileSync, existsSync, unlinkSync, readFileSync } = require('fs')
@@ -104,55 +104,55 @@ function main() {
   // console.log('isValid = ', isValid)
 }
 
-// main()
+main()
 
 
-const request = require('request')
+// const request = require('request')
 
-let ts = moment().valueOf(new Date()) // get current milliseconds since the Unix Epoch
-let data = {
-    STTTH:'100001',
-    Time: `${ts / 1000}`,
-    PartnerCode: `${partnerCode}`
-}
+// let ts = moment().valueOf(new Date()) // get current milliseconds since the Unix Epoch
+// let data = {
+//     STTTH:'100001',
+//     Time: `${ts / 1000}`,
+//     PartnerCode: `${partnerCode}`
+// }
 
-let hashString =  `${data.STTTH}${data.Time}${data.PartnerCode}`
-console.log(hashString)
+// let hashString =  `${data.STTTH}${data.Time}${data.PartnerCode}`
+// console.log(hashString)
 
-let hashVal = bcrypt.hashSync(hashString, 123214)
-data.Hash = hashVal
+// let hashVal = bcrypt.hashSync(hashString, 123214)
+// data.Hash = hashVal
 
-// request.post('http://service.com/upload').form(data)
+// // request.post('http://service.com/upload').form(data)
 
 
-// request.post({url:'https://bethu4.azurewebsites.net/AnotherInternetbanking/InfoAccount', formData: data}, function optionalCallback(err, httpResponse, body) {
-//   if (err) {
-//     return console.error('upload failed:', err);
+// // request.post({url:'https://bethu4.azurewebsites.net/AnotherInternetbanking/InfoAccount', formData: data}, function optionalCallback(err, httpResponse, body) {
+// //   if (err) {
+// //     return console.error('upload failed:', err);
+// //   }
+
+// //   console.log('httpResponse ', httpResponse)
+// //   console.log('Upload successful!  Server responded with:', body);
+// // });
+
+
+// var options = {
+//   url: 'https://bethu4.azurewebsites.net/AnotherInternetbanking/test',
+//   method : 'POST',
+//   json : true,
+//   headers: {}
+// };
+
+// function callback(error, response, body) {
+//   // console.log(response)
+
+//   // console.log(response.statusCode)
+//   if (!error && response.statusCode == 200) {
+//     // var info = JSON.parse(body);
+//     console.log(body)
 //   }
+//   else {
+//     console.log(error)
+//   }
+// }
 
-//   console.log('httpResponse ', httpResponse)
-//   console.log('Upload successful!  Server responded with:', body);
-// });
-
-
-var options = {
-  url: 'https://bethu4.azurewebsites.net/AnotherInternetbanking/test',
-  method : 'POST',
-  json : true,
-  headers: {}
-};
-
-function callback(error, response, body) {
-  // console.log(response)
-
-  // console.log(response.statusCode)
-  if (!error && response.statusCode == 200) {
-    // var info = JSON.parse(body);
-    console.log(body)
-  }
-  else {
-    console.log(error)
-  }
-}
-
-request(options, callback);
+// request(options, callback);

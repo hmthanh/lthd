@@ -27,4 +27,6 @@ module.exports = {
   SECRET_PGP: process.env.SECRET_PGP,
   OTP: totp,
   MAILER_PORT: process.env.MAILER_PORT,
+  PGP_URL_INFO: `${process.env.URL_PGP_API}/${process.env.PGP_INFO_PATH}`,
+  PGP_URL_TRANFER: `${process.env.URL_PGP_API}/${process.env.PGP_TRANFER_PATH}`
 };
