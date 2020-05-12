@@ -18,8 +18,8 @@ router.post('/', async (req, res) => {
     account_num: req.body.accountNum,
     owner_id: req.body.ownerId,
     date_time: new Date(req.body.datetime),
-    debt_val: req.body.debtval,
-    note: req.body.note
+    debt_val: req.body.money,
+    note: req.body.message
   }
   // console.log('entity',entity)
   let ret, errorCode, item = null

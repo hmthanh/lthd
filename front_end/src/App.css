@@ -4,3 +4,9 @@
 .react-datepicker-wrapper{
     width: 100%
 }
+.padding-body{
+    padding: 20px 40px !important;
+}
+.padding-header{
+    padding: 20px 40px 10px 40px !important;
+}

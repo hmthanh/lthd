@@ -17,7 +17,7 @@ import {
   Row,
   Spinner
 } from "reactstrap";
-import {getAccName, getInterbank, getReceiverSaved, transfer, verifyOTP} from "../../redux/creators/transferCreator";
+import {getAccName, getInterbank, getReceiverSaved, transfer} from "../../redux/creators/transferCreator";
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import {convertObjectToArray} from "../../utils/utils";
@@ -348,7 +348,7 @@ const Transfer = () => {
                     </FormGroup>
                     <h4>3. Thông tin cần chuyển tiền</h4>
                     <FormGroup>
-                      <Label for="moneyTransfer">Số tiền <ShowRequire/></Label>
+                      <Label for="money">Số tiền <ShowRequire/></Label>
                       <Input type="number" name="money" id="money"
                              onChange={money.onChange}
                              value={money.value}

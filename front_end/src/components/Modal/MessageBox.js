@@ -7,8 +7,8 @@ const MessageBox = ({isOpen, onClose, title, content}) => {
   return (
       <>
         <Modal isOpen={isOpen}>
-          <ModalHeader>{title}</ModalHeader>
-          <ModalBody>
+          <ModalHeader className="padding-header">{title}</ModalHeader>
+          <ModalBody className="padding-body">
             {content}
           </ModalBody>
           <ModalFooter>

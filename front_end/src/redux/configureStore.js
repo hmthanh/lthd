@@ -8,7 +8,7 @@ import {ChangePassword} from './actions/changepassword'
 import {GetBankingInfo} from './actions/getBankingInfo'
 import {HistoryDebt, ReceiveHistory, TransHistory} from './actions/getHistory'
 import {GetAllAccount} from './actions/getAllAccount'
-import {GetDebtInfo} from './actions/getDebt'
+import {CreateDebt, GetDebtInfo} from './actions/getDebt'
 import {GetInDebtInfo} from './actions/getInDebt'
 import {GetAllCustomer} from './actions/getAllCustomer'
 import {GetAllStaff} from './actions/getAllStaff'
@@ -35,6 +35,7 @@ export const ConfigureStore = () => {
         ChangePassword: ChangePassword,
         BankingInfo: GetBankingInfo,
         DebtInfo: GetDebtInfo,
+            CreateDebt: CreateDebt,
         GetInDebtInfo: GetInDebtInfo,
         AccountInfo: GetAllAccount,
         Reminscent: ReminscentAcction,
@@ -58,6 +59,7 @@ export const ConfigureStore = () => {
         StaffInfo: GetAllStaff,
         ListTransferInfo: ListTransferInfo,
         AccName: AccName
+
       }),
       applyMiddleware(logger),
       applyMiddleware(thunk),

@@ -1,18 +1,9 @@
-import React, {Component,useState} from 'react';
+import React, {Component, useState} from 'react';
 import {connect} from 'react-redux';
-import {  Button,
-  Card,
-  CardGroup,
-  Col,
-  Container,
-  Modal,
-  ModalBody,
-  ModalFooter, 
-  ModalHeader,
-  Row,
-  Table} from 'reactstrap'
-  import {Control, Errors, LocalForm} from 'react-redux-form'
-import {Delete, Edit,getAllStaff} from "../../redux/creators/staffCreator";
+import {Button, Card, CardGroup, Col, Container, Modal, ModalBody, ModalFooter, ModalHeader, Row, Table} from 'reactstrap'
+import {Control, Errors, LocalForm} from 'react-redux-form'
+import {Delete, Edit, getAllStaff} from "../../redux/creators/staffCreator";
+import {formatFormalDate} from "../../utils/utils";
 
 
 const required = (val) => val && val.length;
@@ -31,8 +22,7 @@ const required = (val) => val && val.length;
 //         });
 //   }, [dispatch]);
 
-  
-  
+
 const ModalEdit = (props) => {
   const {
     buttonLabel,
@@ -55,8 +45,6 @@ const ModalEdit = (props) => {
     setModal(!modal)
   };
 
- 
-
   return (
       <div>
         <Button color="primary" onClick={toggle}>{buttonLabel}</Button>
@@ -64,15 +52,14 @@ const ModalEdit = (props) => {
           <ModalHeader toggle={toggle}>Nhắc nợ</ModalHeader>
           <LocalForm id='edit-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
             <ModalBody>
-            <div className='form-group'>
+              <div className='form-group'>
                 <label htmlFor='name'>Tên</label>
                 <Control.text model='.name' id='name' name='name'
                               className='form-control' autoComplete='off'
-                              validators={{required}} defaultValue={name} />
+                              validators={{required}} defaultValue={name}/>
                 <Errors className='text-danger' model='.name' show="touched"
                         messages={{required: 'Required'}}/>
               </div>
-
 
               <div className='form-group'>
                 <label htmlFor='accountNum'>Số tài Khoản</label>
@@ -86,7 +73,7 @@ const ModalEdit = (props) => {
                 <label htmlFor='phone'>Phone</label>
                 <Control.text model='.phone' id='phone' name='phone'
                               className='form-control' rows='6' autoComplete='off'
-                              defaultValue={phone} />
+                              defaultValue={phone}/>
                 <Errors className='text-danger' model='.phone' show="touched"
                 />
               </div>
@@ -182,65 +169,61 @@ class ListStaffPage extends Component {
 
   render() {
 
-  return (
-    
-      <Container className="container" style={{marginTop: '20px'}}>
-        <Row className="justify-content-center">
-          <Col md={12}>
-            <CardGroup className=" mb-0">
-              <Card className="p-6">
-                <div className="card-block" style={{padding: "20px 40px"}}>
-                  <h3 className="col-centered table-heading">DANH SÁCH NHÂN VIÊN</h3>
-                  <hr/>
-                  <Table>
-                    <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Tên</th>
-                      <th>Email</th>
-                      <th>Điện thoại</th>
-                      <th>Ngày sinh</th>
-                      <th>Số tài khoản</th>
-                      <th>Sửa</th>
-                      <th>Xóa</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    { 
-                      this.props.StaffInfo.data.response && this.props.StaffInfo.data.response.map((item, index) => (
-                              <tr key={index}>
-                                <th scope="row">{index + 1}</th>
-                                <td>{item.name}</td>
-                                <td>{item.email}</td>
-                                <td>{item.phone}</td>
-                                <td>{item.date_of_birth.toString()}</td>
-                                <td>{item.account_num}</td>
-                                <td><ModalEdit buttonLabel={'Sửa'} accountId={item.id} name={item.name}
-                                             accountNum={item.account_num} email={item.email} phone={item.phone}
-                                             date_of_birth={item.date_of_birth}
-                                             handleEdit={this.handleEdit}/>
-                                </td>
-                              <td><ConfirmDelete buttonLabel={'xóa'} accountId={item.id}
-                                                 handleDelete={this.handleDelete}/>
-                              </td>
-                              </tr>
-                          )
-                      )
-                    }
-                    </tbody>
-                  </Table>
-                </div>
-              </Card>
-            </CardGroup>
-          </Col>
-        </Row>
-      </Container>
-  );
-};
-};
-
-
-
+    return (
+        <Container className="container" style={{marginTop: '20px'}}>
+          <Row className="justify-content-center">
+            <Col md={12}>
+              <CardGroup className=" mb-0">
+                <Card className="p-6">
+                  <div className="card-block" style={{padding: "20px 40px"}}>
+                    <h3 className="col-centered table-heading">DANH SÁCH NHÂN VIÊN</h3>
+                    <hr/>
+                    <Table>
+                      <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>Điện thoại</th>
+                        <th>Ngày sinh</th>
+                        <th>Số tài khoản</th>
+                        <th>Sửa</th>
+                        <th>Xóa</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {
+                        this.props.StaffInfo.data.response && this.props.StaffInfo.data.response.map((item, index) => (
+                                <tr key={index}>
+                                  <th scope="row">{index + 1}</th>
+                                  <td>{item.name}</td>
+                                  <td>{item.email}</td>
+                                  <td>{item.phone}</td>
+                                  <td>{formatFormalDate(item.date_of_birth)}</td>
+                                  <td>{item.account_num}</td>
+                                  <td><ModalEdit buttonLabel={'Sửa'} accountId={item.id} name={item.name}
+                                                 accountNum={item.account_num} email={item.email} phone={item.phone}
+                                                 date_of_birth={item.date_of_birth}
+                                                 handleEdit={this.handleEdit}/>
+                                  </td>
+                                  <td><ConfirmDelete buttonLabel={'xóa'} accountId={item.id}
+                                                     handleDelete={this.handleDelete}/>
+                                  </td>
+                                </tr>
+                            )
+                        )
+                      }
+                      </tbody>
+                    </Table>
+                  </div>
+                </Card>
+              </CardGroup>
+            </Col>
+          </Row>
+        </Container>
+    );
+  };
+}
 
 const mapDispatchToProps = dispatch => ({
   getAllStaff: (id, accessToken) => dispatch(getAllStaff(id, accessToken)),
@@ -253,8 +236,5 @@ const mapStateToProps = (state) => {
     StaffInfo: state.StaffInfo,
   }
 };
-
-
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListStaffPage);

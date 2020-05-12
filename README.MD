@@ -1,3 +1,4 @@
+Home page : https://hackmd.io/@nndkhoa9/cnm-ibproj
 # Important
 please run CMD `git checkout -b [name_branch]` example `git checkout -b tampm` ... Nerver push when you in master
 # Important Rule

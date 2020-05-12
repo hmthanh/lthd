@@ -44,8 +44,8 @@ const ModalVerifyPwd = ({isShow, verifyPwdData, onClose, onVerifySuccess}) => {
   return (
       <div>
         <Modal isOpen={isShow} toggle={onClose}>
-          <ModalHeader>Vui lòng nhập mã OTP để xác nhận</ModalHeader>
-          <ModalBody>
+          <ModalHeader className="padding-header">Vui lòng nhập mã OTP để xác nhận</ModalHeader>
+          <ModalBody className="padding-body">
             <Form>
               <FormGroup>
                 <Label for="OTP">Nhập mã OTP</Label>

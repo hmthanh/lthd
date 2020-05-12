@@ -32,7 +32,7 @@ const HistoryAccount = () => {
   }, [setTitleMsg, setContentMsg, msgBoxToggle]);
   const findHistoryAccount = useCallback((e) => {
     e.preventDefault();
-    // console.log("search value", search.value);
+    console.log("search value", search.value);
     const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
     dispatch(getUserTransHistory(uid, accessToken))
@@ -46,8 +46,10 @@ const HistoryAccount = () => {
     dispatch(getUserDeptHistory({id: uid}, accessToken))
         .then((response) => {
           console.log(response.item);
+        })
+        .catch((error) => {
+          showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
         });
-
     // dispatch(getUserTransHistory(uid, accessToken))
     //     .then((response) => {
     //       console.log("getHistoryUserTrans", response.item);

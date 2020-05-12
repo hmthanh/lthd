@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {transfer} from "../../redux/creators/ListtransferCreator";
@@ -28,7 +28,6 @@ const ListTransferPage = () => {
                 <div className="card-block" style={{padding: "20px 40px"}}>
                   <h3 className="col-centered table-heading">LỊCH SỬ GIAO DỊCH</h3>
                   <hr/>
-
                   <Table>
                     <thead>
                     <tr>
@@ -54,7 +53,6 @@ const ListTransferPage = () => {
                                 <td>{formatMoney(item.amount, 0)} VNĐ</td>
                                 <td>{item.note}</td>
                                 <td>{item.state === 0 ? "Thành công" : "Thất bại"}</td>
-
                               </tr>
                           )
                       )

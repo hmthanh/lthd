@@ -6,8 +6,8 @@ const Register = lazy(() => import('../pages/Register/Register'));
 const UserInfo = lazy(() => import('../pages/UserInfo/UserInfo'));
 
 const Transfer = lazy(() => import('../pages/Transfer/Transfer'));
-const DebtPage = lazy(() => import('../pages/Dept/Debt'));
-const InDebtPage = lazy(() => import('../pages/Dept/InDebt'));
+const DebtPage = lazy(() => import('../pages/DeptPage/DebtPage'));
+const InDebtPage = lazy(() => import('../pages/DeptPage/InDebt'));
 const ChangePassword = lazy(() => import('../pages/ChangePassword/ChangePassword'));
 const ForgotPassword = lazy(() => import('../pages/ForgotPassword/ForgotPassword'));
 const CreateAccount = lazy(() => import('../pages/CreateAccount/CreateAccount'));
@@ -65,11 +65,7 @@ const routes = [
     exact: true,
     component: () => <ChangePassword></ChangePassword>
   },
-  {
-    path: "/list-account",
-    exact: true,
-    component: () => <ListAccountPage></ListAccountPage>
-  },
+
   {
     path: "/forgot-password",
     exact: true,
@@ -104,6 +100,11 @@ const routes = [
     path: "/remind",
     exact: true,
     component: () => <RemindPage></RemindPage>
+  },
+  {
+    path: "/list-account",
+    exact: true,
+    component: () => <ListAccountPage></ListAccountPage>
   },
   {
     path: "/list-staff",

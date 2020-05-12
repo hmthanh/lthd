@@ -3,6 +3,7 @@ import React, {useEffect} from 'react';
 import {Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from "react-redux";
 import {getAllCustomer} from "../../redux/creators/ListCustomerCreator";
+import {formatFormalDate} from "../../utils/utils";
 // import {formatMoney} from "../../utils/utils";
 // import {getAllAccount} from '../../redux/creators/accountCreator'
 
@@ -49,7 +50,7 @@ const ListCustomerPage = () => {
                                 <td>{item.name}</td>
                                 <td>{item.email}</td>
                                 <td>{item.phone}</td>
-                                <td>{item.date_of_birth.toString()}</td>
+                                <td>{formatFormalDate(item.date_of_birth)}</td>
                                 <td>{item.account_num}</td> 
                               </tr>
                           )
