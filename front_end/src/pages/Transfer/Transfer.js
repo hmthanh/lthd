@@ -17,13 +17,13 @@ import {
   Row,
   Spinner
 } from "reactstrap";
-import {getAccName, getInterbank, getReceiverSaved, transfer} from "../../redux/creators/transferCreator";
+import {getAccName, getInterbank, getReceiverSaved, transfer, verifyOTP} from "../../redux/creators/transferCreator";
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import {convertObjectToArray} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
-import ModalOTP from "../../components/Modal/ModalOTP";
+import ModalVerifyTrans from "../../components/Modal/ModalVerifyTrans";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import {getAllAccount} from "../../redux/creators/accountCreator";
 
@@ -231,6 +231,7 @@ const Transfer = () => {
         });
   }, [dispatch]);
 
+
   return (
       <Container>
         <div className="container-fluid py-3">
@@ -396,12 +397,12 @@ const Transfer = () => {
                       content={contentMsg}
                   ></MessageBox>
                 </div>
-                <ModalOTP
+                <ModalVerifyTrans
                     isShow={showVerifyToggle.active}
                     transId={transId}
                     onClose={showVerifyToggle.setInActive}
                     onVerifySuccess={onVerifySuccess}
-                ></ModalOTP>
+                ></ModalVerifyTrans>
               </Card>
             </Col>
           </Row>

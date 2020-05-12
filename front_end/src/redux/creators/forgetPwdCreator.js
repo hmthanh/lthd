@@ -7,7 +7,7 @@ export const forgetPwd = () => {
     dispatch({type: FORGET_PASSWORD_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetchFrom(UrlApi + `/api/forget-pwd/`, 'POST', {});
+        const response = await fetchFrom(UrlApi + `/api/forget-pwd/`, 'PATCH', {});
         console.log(response);
         dispatch({type: FORGET_PASSWORD_SUCCESS, payload: response});
         resolve(response);

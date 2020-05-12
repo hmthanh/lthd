@@ -18,7 +18,7 @@ import {verifyOTP} from "../../redux/creators/transferCreator";
 import {useDispatch, useSelector} from "react-redux";
 import useToggle from "../../utils/useToggle";
 
-const ModalOTP = ({isShow, transId, onClose, onVerifySuccess}) => {
+const ModalVerifyTrans = ({isShow, transId, onClose, onVerifySuccess}) => {
   const dispatch = useDispatch();
   const verifyInfo = useSelector((state) => {
     return state.VerifyResult
@@ -89,4 +89,4 @@ const ModalOTP = ({isShow, transId, onClose, onVerifySuccess}) => {
   );
 };
 
-export default ModalOTP;
+export default ModalVerifyTrans;

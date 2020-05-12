@@ -9,7 +9,7 @@ const Transfer = lazy(() => import('../pages/Transfer/Transfer'));
 const DebtPage = lazy(() => import('../pages/Dept/Debt'));
 const InDebtPage = lazy(() => import('../pages/Dept/InDebt'));
 const ChangePassword = lazy(() => import('../pages/ChangePassword/ChangePassword'));
-const ForgetPassword = lazy(() => import('../pages/ForgetPassword/ForgetPassword'));
+const ForgotPassword = lazy(() => import('../pages/ForgotPassword/ForgotPassword'));
 const CreateAccount = lazy(() => import('../pages/CreateAccount/CreateAccount'));
 const SettingPage = lazy(() => import('../pages/SettingPage'));
 const RemindPage = lazy(() => import('../pages/Remind/Remind'));
@@ -71,9 +71,9 @@ const routes = [
     component: () => <ListAccountPage></ListAccountPage>
   },
   {
-    path: "/forget-password",
+    path: "/forgot-password",
     exact: true,
-    component: () => <ForgetPassword></ForgetPassword>
+    component: () => <ForgotPassword></ForgotPassword>
   },
   {
     path: "/list-receiver",

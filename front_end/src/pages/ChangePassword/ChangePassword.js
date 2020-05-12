@@ -22,7 +22,7 @@ import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import useToggle from "../../utils/useToggle";
 import useInputRequire from "../../utils/useInputRequire";
 import {useHistory} from "react-router";
-import {logout} from "../../redux/creators/loginCreator";
+import ModalVerifyPwd from "../../components/Modal/ModalVerifyPwd";
 
 const ChangePassword = () => {
   const dispatch = useDispatch();
@@ -30,6 +30,8 @@ const ChangePassword = () => {
   const changePassword = useSelector(state => {
     return state.ChangePassword
   });
+  const [verifyPwdData, setVerifyPwdData] = useState({});
+  const showVerifyToggle = useToggle(false);
   const alertToggle = useToggle(false)
   const [timeCounter, setTimeCounter] = useState(4);
   const pwdOld = useInputRequire({value: "", invalidMsg: "Không được để trống"});
@@ -69,44 +71,36 @@ const ChangePassword = () => {
     let accessToken = localStorage.getItem('accessToken');
     let data = {
       uId: uid,
-      oldPwd: pwdOld.value,
-      newPw1: pwdNew.value,
-      newPw2: pwdRepeat.value
+      oldPwd: pwdOld.value
     }
     dispatch(verifyPassword(data, accessToken))
         .then((response) => {
           console.log(response);
-          alertToggle.setActive()
-          countDown(3)
-          setTimeout(() => {
-            history.push("/logout")
-          }, 3000)
+          if (response.authenticated) {
+            setVerifyPwdData({
+              uId: uid,
+              newPwd: pwdNew.value,
+            });
+            showVerifyToggle.setActive();
+          } else {
+            pwdOld.setValue("");
+            pwdOld.setInValid(true);
+            pwdOld.setInValidMsg("Mật khẩu cũ không đúng !");
+          }
         })
         .catch((err) => {
           console.log(err);
         });
-    // this.props.verifyPassword(uid, values.oldpassword, v
-    // alues.password1, values.password2).then(() => {
-    //   if (this.props.ChangePassword.data.authenticated) {
-    //     console.log("authen OTP and submit .... ")
-    //     this.setState({
-    //       modal: !this.state.modal,
-    //       pwd: values.password1
-    //     })
-    //   }
-    //   })
-    // }
   }
 
-  // toggle() {
-  //   this.setState({modal: !this.state.modal})
-  // }
 
-  // handleSubmitOTP(values) {
-  //   console.log(values)
-  //   let uid = localStorage.getItem('uid')
-  //   this.props.changepwd(uid, this.state.pwd, values.otp)
-  // };
+  function onVerifySuccess() {
+    alertToggle.setActive()
+    countDown(3)
+    setTimeout(() => {
+      history.push("/logout")
+    }, 3000)
+  }
 
   return (
       <Container>
@@ -188,86 +182,21 @@ const ChangePassword = () => {
                       <span>Đổi mật khẩu</span>
                     </Button>
                   </Form>
-
-
-                  {/*<LocalForm onSubmit={(values) => this.handleSubmit(values)}>*/}
-                  {/*  <div className='form-group'>*/}
-                  {/*    <label htmlFor='password1'>Mật Khẩu Mới</label>*/}
-                  {/*    <Control.password model='.password1' id='password1' name='password1'*/}
-                  {/*                      className='form-control' rows='6' autoComplete='off'*/}
-                  {/*                      validators={{required}}/>*/}
-                  {/*    <Errors className='text-danger' model='.password1' show="touched"*/}
-                  {/*            messages={{required: 'Required'}}/>*/}
-                  {/*  </div>*/}
-                  {/*  <div className='form-group'>*/}
-                  {/*    <label htmlFor='password2'>Nhập Lại Mật Khẩu Mới</label>*/}
-                  {/*    <Control.password model='.password2' id='password2' name='password1'*/}
-                  {/*                      className='form-control' rows='6' autoComplete='off'*/}
-                  {/*                      validators={{required}}/>*/}
-                  {/*    <Errors className='text-danger' model='.password2' show="touched"*/}
-                  {/*            messages={{required: 'Required'}}/>*/}
-                  {/*  </div>*/}
-                  {/*  <div className='form-group'>*/}
-                  {/*    <label htmlFor='oldpassword'>Mật Khẩu Cũ</label>*/}
-                  {/*    <Control.password model='.oldpassword' id='oldpassword' name='oldpassword'*/}
-                  {/*                      className='form-control' rows='6' autoComplete='off'*/}
-                  {/*                      validators={{required}}/>*/}
-                  {/*    <Errors className='text-danger' model='.oldpassword' show="touched"*/}
-                  {/*            messages={{required: 'Required'}}/>*/}
-                  {/*  </div>*/}
-                  {/*  {*/}
-                  {/*    this.props.ChangePassword.errMess &&*/}
-                  {/*    <Alert color="danger">*/}
-                  {/*      {this.props.ChangePassword.errMess}*/}
-                  {/*    </Alert>*/}
-                  {/*  }*/}
-                  {/*  <button type="submit" className="btn btn-primary">Đổi mật khẩu</button>*/}
-
-                  {/*</LocalForm>*/}
                 </div>
               </Card>
             </CardGroup>
           </Col>
         </Row>
-        {/*<Modal isOpen={this.state.modal} fade={false} toggle={this.toggle}>*/}
-        {/*  <ModalHeader toggle={this.toggle}>Mã OTP</ModalHeader>*/}
-        {/*  <LocalForm id='confirm-otp' onSubmit={(values) => this.handleSubmitOTP(values)} autoComplete="off">*/}
-        {/*    <ModalBody>*/}
-        {/*      <div className='form-group'>*/}
-        {/*        <label htmlFor='otp'>Số tài Khoản</label>*/}
-        {/*        <Control.text model='.otp' id='otp' name='otp' className='form-control' autoComplete='off'*/}
-        {/*                      validators={{required}}/>*/}
-        {/*        <Errors className='text-danger' model='.otp' show="touched"*/}
-        {/*                messages={{required: 'Required'}}/>*/}
-        {/*      </div>*/}
-        {/*      {*/}
-        {/*        this.props.ChangePassword.errMess &&*/}
-        {/*        <Alert color="danger">*/}
-        {/*          {'Sai OTP'}*/}
-        {/*        </Alert>*/}
-        {/*      }*/}
-        {/*    </ModalBody>*/}
-        {/*    <ModalFooter>*/}
-        {/*      <button type="submit" className="btn btn-primary">Đồng ý</button>*/}
-        {/*    </ModalFooter>*/}
-        {/*  </LocalForm>*/}
-        {/*</Modal>*/}
+
+        <ModalVerifyPwd
+            isShow={showVerifyToggle.active}
+            verifyPwdData={verifyPwdData}
+            onClose={showVerifyToggle.setInActive}
+            onVerifySuccess={onVerifySuccess}
+        ></ModalVerifyPwd>
+
       </Container>
   );
 }
-
-// const mapDispatchToProps = dispatch => ({
-//   changepwd: (uId, newPw1, OTP) => dispatch(changepwd(uId, newPw1, OTP)),
-//   verifyPassword: (uId, oldPwd, newPw1, newPw2) => dispatch(verifyPassword(uId, oldPwd, newPw1, newPw2))
-//   // login: (userName, password) => dispatch(login({userName, password})),
-// });
-//
-// const mapStateToProps = (state) => {
-//   return {
-//     ChangePassword: state.ChangePassword,
-//   }
-// };
-//
-// export default connect(mapStateToProps, mapDispatchToProps)(ChangePassword);
 
 export default ChangePassword;
