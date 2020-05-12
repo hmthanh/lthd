@@ -1,12 +1,12 @@
 import React, {useCallback, useState} from 'react';
 import {
-  Badge,
   Button,
   Card,
   CardTitle,
   Col,
   Container,
-  Form, FormFeedback,
+  Form,
+  FormFeedback,
   FormGroup,
   Input,
   InputGroup,
@@ -21,9 +21,9 @@ import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import {recharge} from "../../redux/creators/rechargeCreator";
 import useToggle from "../../utils/useToggle";
-import useInputRequire from "../../utils/useInputRequire";
 import useInputChange from "../../utils/useInputChange";
 import {getAccName} from "../../redux/creators/transferCreator";
+import ShowRequire from "../../components/ShowRequire/ShowRequire";
 
 const RechargePage = () => {
   const dispatch = useDispatch();
@@ -34,8 +34,9 @@ const RechargePage = () => {
   const AccName = useSelector((state) => {
     return state.AccName
   });
-  const [numberAccount, setNumberAccount] = useState(0);
+  // const [numberAccount, setNumberAccount] = useState(0);
   const [moneyTransfer, setMoneyTransfer] = useState(0);
+
   const [accountNum, setAccountNum] = useState("");
   const [accValid, setAccValid] = useState(false);
   const [accInValid, setAccInValid] = useState(false);
@@ -45,18 +46,21 @@ const RechargePage = () => {
   const titleMessage = ["", "Nạp tiền thất bại", "Nạp tiền thành công"];
   const contentMessage = ["", "Đã xảy ra lỗi\nVui lòng kiểm tra lại", "Đã nạp tiền vào tài khoản thành công"];
 
-  function changeNumberAccount(e) {
-    setNumberAccount(e.target.value);
+  // function changeNumberAccount(e) {
+  //   setNumberAccount(e.target.value);
+  // }
+  function onChangeAccountNum(e) {
+    setAccountNum(e.target.value);
   }
 
   function changeMoneyTransfer(e) {
     setMoneyTransfer(e.target.value);
   }
 
-  const onRecharge = useCallback((numberAccount, moneyTransfer) => {
+  const onRecharge = useCallback(() => {
     let data = {
-      "account_num": numberAccount,
-      "money": moneyTransfer
+      account_num: accountNum,
+      money: moneyTransfer
     };
     let accessToken = localStorage.getItem('accessToken');
     dispatch(recharge(data, accessToken))
@@ -66,18 +70,14 @@ const RechargePage = () => {
         .catch(() => {
           successModalToggle.setActive();
         });
-  }, [dispatch, successModalToggle]);
+  }, [dispatch, accountNum, moneyTransfer, successModalToggle]);
 
   function submitRecharge(e) {
     e.preventDefault();
   }
 
-  function showFieldRequire() {
-    return <Badge color="danger" pill>Yêu cầu</Badge>
-  }
-
   const onBlurAccountNum = useCallback(() => {
-    if (accountNum.value === ""){
+    if (accountNum.value === "") {
       setAccInValid(true)
       setAccInValidMsg("Không được để trống")
       return false;
@@ -86,7 +86,6 @@ const RechargePage = () => {
     let data = {
       query: accountNum
     }
-    console.log("acc num", accountNum)
     dispatch(getAccName(data, accessToken))
         .then((response) => {
           console.log("success response", response)
@@ -105,10 +104,6 @@ const RechargePage = () => {
 
   }, [accountNum, dispatch, name]);
 
-  function onChangeAccountNum(e) {
-    setAccountNum(e.target.value);
-  }
-
 
   return (
       <Container>
@@ -124,41 +119,41 @@ const RechargePage = () => {
                   <Form method="post" noValidate="novalidate"
                         className="needs-validation" onSubmit={submitRecharge}>
                     <h4>1. Thông tin tài khoản</h4>
-
-                    <InputGroup className="mb-2">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>ID</InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text"
-                             name="accountNum"
-                             id="accountNum"
-                             onChange={onChangeAccountNum}
-                             value={accountNum}
-                             onBlur={onBlurAccountNum}
-                             invalid={accInValid}
-                             valid={accValid}
-                             placeholder="Nhập số tài khoản hoặc username"/>
-                      {
-                        AccName.isLoading ? (<InputGroupAddon addonType="prepend">
-                          <InputGroupText><Spinner color="primary"
-                                                   size={"sm"} role="status"
-                                                   aria-hidden="true"/></InputGroupText>
-                        </InputGroupAddon>) : ""
-                      }
-                      <FormFeedback>{accInValidMsg}</FormFeedback>
-                    </InputGroup>
-                    <InputGroup>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>Họ và tên</InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text" name="name"
-                             disabled={true}
-                             value={name.value}/>
-                    </InputGroup>
-
+                    <FormGroup>
+                      <InputGroup className="mb-2">
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText>ID</InputGroupText>
+                        </InputGroupAddon>
+                        <Input type="text"
+                               name="accountNum"
+                               id="accountNum"
+                               onChange={onChangeAccountNum}
+                               value={accountNum}
+                               onBlur={onBlurAccountNum}
+                               invalid={accInValid}
+                               valid={accValid}
+                               placeholder="Nhập số tài khoản hoặc username"/>
+                        {
+                          AccName.isLoading ? (<InputGroupAddon addonType="prepend">
+                            <InputGroupText><Spinner color="primary"
+                                                     size={"sm"} role="status"
+                                                     aria-hidden="true"/></InputGroupText>
+                          </InputGroupAddon>) : ""
+                        }
+                        <FormFeedback>{accInValidMsg}</FormFeedback>
+                      </InputGroup>
+                      <InputGroup>
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText>Họ và tên</InputGroupText>
+                        </InputGroupAddon>
+                        <Input type="text" name="name"
+                               disabled={true}
+                               value={name.value}/>
+                      </InputGroup>
+                    </FormGroup>
                     <h4>3. Thông tin cần chuyển tiền</h4>
                     <FormGroup>
-                      <Label for="moneyTransfer">Số tiền {showFieldRequire()}</Label>
+                      <Label for="moneyTransfer">Số tiền <ShowRequire/></Label>
                       <Input type="number" name="moneyTransfer" id="moneyTransfer"
                              onChange={changeMoneyTransfer}
                              value={moneyTransfer}
@@ -170,7 +165,7 @@ const RechargePage = () => {
                             block={true}
                             className="d-flex align-items-center justify-content-center"
                             disabled={rechargeSelector.isLoading}
-                            onClick={() => onRecharge(numberAccount, moneyTransfer)}
+                            onClick={onRecharge}
                     >
                       {
                         (rechargeSelector.isLoading ? <Spinner color="light"
