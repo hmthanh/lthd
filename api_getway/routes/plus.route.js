@@ -3,6 +3,7 @@ const moment = require('moment')
 const {hash, verifyHash, verify, sign} = require('../utils/rsa.signature')
 const { plus } = require('../utils/db')
 const bcrypt = require('bcryptjs')
+const encoding = 'base64'
 
 const router = express.Router()
 
@@ -16,12 +17,12 @@ const validateData = (data) => {
 }
 
 router.post('/', async (req, res) => {
-  console.log(req.body)
-  console.log(req.body.data)
+  // console.log(req.body)
+  // console.log(req.body.data)
   const timestemp = moment().valueOf(new Date()) 
   const hashRev = req.body.hash
   const partnerCode = req.body.partnerCode
-  const signature = Buffer.from(req.body.signature, 'base64')
+  const signature = Buffer.from(req.body.signature, encoding)
   console.log('signature', signature)
   const data = req.body.data
   // const hashVal = hash(JSON.stringify(data))
@@ -29,12 +30,8 @@ router.post('/', async (req, res) => {
 
   console.log('JSON.stringify(data)', JSON.stringify(data))
   const isValid = true
-  try {
-    isValid = verify(JSON.stringify(data), signature)
-  } catch {
-
-  }
-  console.log('isValid',  hashVal,  hashRev)
+  isValid = verify(JSON.stringify(data), signature)
+  // console.log('isValid',  hashVal,  hashRev)
   let msg = 'successfully'
   let errorCode = 0
   let info = {}
@@ -45,10 +42,10 @@ router.post('/', async (req, res) => {
     msg = 'request timeout'
     errorCode = 1001
   } else 
-  // if (!verifyHash(hashRev, hashVal)) {
-  //   msg = 'invalid hash'
-  //   errorCode = 1002
-  // } 
+  if (!isValid) {
+    msg = 'invalid hash'
+    errorCode = 1002
+  } 
   if (!bcrypt.compareSync(hashVal, hashRev)){
     msg = 'invalid hash'
     errorCode = 1002
@@ -70,17 +67,16 @@ router.post('/', async (req, res) => {
      }
     }
   } else {
-    
     const enyity = {
       acc_name: data.from,
       from_account: data.from_account,
       to_account: data.to_account,
       amount: data.amount,
       timestamp: data.ts ,
-      signature: signature.toString('base64'),
-      type: 0,
+      signature: signature.toString(encoding),
+      type: 1,
       partner_code: partnerCode,
-      state: 1
+      state: 0
     }
     let result = await plus(enyity)
     if(result) {
@@ -93,9 +89,7 @@ router.post('/', async (req, res) => {
     }
   }
   const dataString = JSON.stringify(info)
-  console.log(dataString)
-  let ret = {msg, errorCode, data: info, hash: hash(JSON.stringify(dataString)), signature: sign(dataString).toString('base64')}
-  console.log(ret)
+  let ret = {msg, errorCode, data: info, hash: hash(JSON.stringify(dataString)), signature: sign(dataString).toString(encoding)}
   res.status(200).json(ret)
 })
 module.exports = router

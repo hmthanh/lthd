@@ -5,7 +5,7 @@ const {SECRET_RSA} = require('../config');
 
 const privateKeyFileName = './thirt_app/private.pem', publicKeyFileName = './thirt_app/public.pem'
 const encoding = 'utf8'
-const algorithm = 'SHA256'
+const algorithm = 'SHA512'
 
 const publicKeyOption = {
   type: 'pkcs1',
