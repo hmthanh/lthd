@@ -10,8 +10,8 @@ router.post('/', async (req, res) => {
     msg: 'successfully',
     errorCode: 0,
     item: [
-        {name:'ngan hang a', partner_code: '0923'},
-        {name:'ngan hang b', partner_code: '7261'}
+        {name:'ngan hang pgp', partner_code: '7261'},
+        {name:'ngan hang rsa', partner_code: '0923'}
     ]
   })
 })

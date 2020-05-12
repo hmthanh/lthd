@@ -104,7 +104,7 @@ const TableInfoTransfer = (props) => {
                 <td>{item.to_account}</td>
                 <td>{formatMoney(item.amount)}</td>
                 <td>{item.surplus}</td>
-                <td>{(item.state === 1 ?
+                <td>{(item.state === 0 ?
                     <Badge color="success">Thành công</Badge> :
                     <Badge color="danger">Thất bại</Badge>)}</td>
               </tr>

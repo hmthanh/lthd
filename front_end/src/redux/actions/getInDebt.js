@@ -1,4 +1,4 @@
-import {DEBT_FAILED, DEBT_LOADING, DEBT_SUCCESS} from './actionType'
+import {INDEBT_FAILED, INDEBT_LOADING, INDEBT_SUCCESS} from './actionType'
 
 export const GetInDebtInfo = (state = {
     isLoading: true,
@@ -6,11 +6,11 @@ export const GetInDebtInfo = (state = {
     data: []
 }, action) => {
     switch (action.type) {
-        case DEBT_FAILED:
+        case INDEBT_FAILED:
             return {isLoading: true, errMess: null, data: []};
-        case DEBT_LOADING:
+        case INDEBT_LOADING:
             return {...state, isLoading: false, errMess: action.payload, data: []};
-        case DEBT_SUCCESS:
+        case INDEBT_SUCCESS:
             return {...state, isLoading: false, errMess: null, next: 0, data: {...action.payload}};
         default:
             return state;

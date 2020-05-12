@@ -5,7 +5,7 @@ const {SECRET_RSA} = require('../config');
 
 const privateKeyFileName = './thirt_app/private.pem', publicKeyFileName = './thirt_app/public.pem'
 const encoding = 'utf8'
-const algorithm = 'SHA256'
+const algorithm = 'SHA512'
 
 const publicKeyOption = {
   type: 'pkcs1',
@@ -61,8 +61,10 @@ module.exports = {
   },
   verify: (data, signature) => {
     let buffer = data
+    console.log(buffer)
     if(!Buffer.isBuffer(data)) {
-      buffer = Buffer.from(data, encoding)
+      buffer = Buffer.from(data)
+      console.log(buffer)
     }
     return crypto.verify(algorithm, buffer, publicKey, signature)
   },
@@ -74,11 +76,11 @@ module.exports = {
   verifyHash: (hashVal, hashData) => {
     let buffer1 = hashVal
     if(!Buffer.isBuffer(hashVal)) {
-      buffer1 = Buffer.from(hashVal, encoding)
+      buffer1 = Buffer.from(hashVal)
     }
     let buffer2 = hashData
     if(!Buffer.isBuffer(hashData)) {
-      buffer2 = Buffer.from(hashData, encoding)
+      buffer2 = Buffer.from(hashData)
     }
     return crypto.timingSafeEqual(buffer1, buffer2)
   }
