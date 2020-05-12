@@ -37,8 +37,8 @@ const verifyAccessToken = (req, res, next) => {
   if (token) {
     jwt.verify(token, SECRET_KEY_TOKEN, function (err, payload) {
       if (err) throw createError(403, err);
-      console.log(payload);
-      res.payload = payload
+      // console.log(payload);
+      req.payload = payload
       next();
     });
   } else {

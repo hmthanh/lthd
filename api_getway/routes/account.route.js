@@ -68,7 +68,7 @@ router.post('/id', async (req, res) => {
   if (account && account.length != 0) {
     for (let i = 0; i < account.length; i++) {
       const item = account[i];
-      item.account_num = item.account_num * 10  + item.type;
+      item.account_num = item.account_num  + item.type;
     }
     ret = {
       errorCode: 0,

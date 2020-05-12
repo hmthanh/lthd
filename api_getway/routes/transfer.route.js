@@ -17,11 +17,8 @@ const encoding = 'base64'
 const axios = require("axios")
 
 const validateData = (data) => {
-  if (!data.from) return false;
-  if (!data.from_account) return false;
   if (!data.to_account) return false;
   if (!data.amount) return false;
-  if (!data.ts) return false;
   return true
 }
 
@@ -109,8 +106,9 @@ router.post('/:id', async (req, res) => {
       note: transaction.note,
       ts: ts
     }
+    // console.log('=======================transaction',transaction)
     // chuyển khoản nội bộ
-    if(transaction.partner_code === null || transaction.partner_code === 0) {
+    if(transaction.partner_code === null || transaction.partner_code === '0' || transaction.partner_code === 0) {
       const err = await minusTransfer(req.body.transId, transaction.amount, transaction.from_account)
       const entityPlus = {
         acc_name: transaction.acc_name,
@@ -123,14 +121,14 @@ router.post('/:id', async (req, res) => {
         type: 0,
         timestamp: moment().valueOf(new Date())
       };
-      await plus(entityPlus)
+      let result = await plus(entityPlus, transaction.to_account)
       if (err == 0) {
         res.status(200).json({
           msg: 'successfully',
           errorCode: 0,
-          transId: req.body.transId, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
-          to_account: transaction.to_account, // số tài khoản thụ hưởng
-          amount: transaction.amount // số tiền giao dịch
+          transId: result.transId, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
+          to_account: result.to_account, // số tài khoản thụ hưởng
+          amount: result.amount // số tiền giao dịch
         })
       } else {
         res.status(200).json({
@@ -175,7 +173,7 @@ router.post('/:id', async (req, res) => {
           console.log(error)
           res.status(200).json({
             msg: 'another backing error!!',
-            errorCode: -203, // mã lỗi sOTP không hợp lệ
+            errorCode: -205, // mã lỗi sOTP không hợp lệ
           })
         })
       }

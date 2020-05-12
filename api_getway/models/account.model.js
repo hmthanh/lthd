@@ -22,7 +22,7 @@ module.exports = {
 
     getInfoAccount: (uId) => db.load(`select u.account_num, b.id, b.surplus, b.type from user_info u join banking_account b on u.id = b.owner_id where u.id = '${uId}'`),
 
-    getReceiverById: (uId) => db.load(`select u.account_num, b.id, b.surplus, b.type, u.name, u.email from user_info u join banking_account b on u.id = b.owner_id where u.id = '${uId}'`),
+    getReceiverById: (uId) => db.load(`select u.account_num, b.id, b.surplus, b.type, u.name, u.email from user_info u join banking_account b on u.id = b.owner_id where u.id = '${uId}' AND b.type=1`),
 
     getAccount: (uId) => db.load(`select * from user_info where id='${uId}'`),
     

@@ -18,17 +18,18 @@ module.exports = {
   add: (entity, tableName) => pool_query(`insert into ${tableName} set ?`, entity),
   del: (condition, tableName) => pool_query(`delete from ${tableName} where ?`, condition),
   patch: (entity, condition, tableName) => pool_query(`update ${tableName} set ? where ?`, [entity, condition]),
-  plus: (entity) => new Promise((resolve, reject) => {
+  plus: (entity, accNum) => new Promise((resolve, reject) => {
     pool.getConnection((err, connection) => {
       if (err) throw err
       connection.beginTransaction( (err) => {
         if (err) throw err
-        connection.query('SELECT surplus, b.id FROM banking_account b JOIN user_info u ON b.id = u.id WHERE u.account_num=? FOR UPDATE', entity.to_account,
+        connection.query('SELECT b.surplus, b.id FROM banking_account b JOIN user_info u ON b.owner_id = u.id WHERE u.account_num=? AND type=1 FOR UPDATE', accNum,
         (error, results, fields) => {
           if (error) 
             return connection.rollback(function () {
               throw error
             })
+          console.log('=========================', results)
           const {surplus, id} = results[0]
           let acc = surplus + entity.amount
           connection.query('UPDATE banking_account SET ? WHERE ?', [{surplus: acc}, {id: id}], (error, results, fields) => {
