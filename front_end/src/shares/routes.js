@@ -4,9 +4,9 @@ import React, {lazy} from 'react';
 const LoginPage = lazy(() => import('../pages/LoginPage/LoginPage'));
 const Register = lazy(() => import('../pages/Register/Register'));
 const UserInfo = lazy(() => import('../pages/UserInfo/UserInfo'));
-
 const Transfer = lazy(() => import('../pages/Transfer/Transfer'));
 const DebtPage = lazy(() => import('../pages/DeptPage/DebtPage'));
+const CreateDebt = lazy(() => import('../pages/DeptPage/CreateDebt'));
 const InDebtPage = lazy(() => import('../pages/DeptPage/InDebt'));
 const ChangePassword = lazy(() => import('../pages/ChangePassword/ChangePassword'));
 const ForgotPassword = lazy(() => import('../pages/ForgotPassword/ForgotPassword'));
@@ -51,7 +51,12 @@ const routes = [
     component: () => <HistoryPage></HistoryPage>
   },
   {
-    path: "/manage-debt",
+    path: "/create-debt",
+    exact: true,
+    component: () => <CreateDebt></CreateDebt>
+  },
+  {
+    path: "/debt",
     exact: true,
     component: () => <DebtPage></DebtPage>
   },
