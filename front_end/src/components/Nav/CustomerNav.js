@@ -41,10 +41,10 @@ const CustomerNav = () => {
             <DropdownMenu right>
               {/* onClick={this.props.infoUser} */}
               <DropdownItem>
-                <NavLink href="/manage-debt">Danh sách nhắc nợ</NavLink>
+                <NavLink href="/manage-debt">Nhắc nợ</NavLink>
               </DropdownItem>
               <DropdownItem>
-              <NavLink href="/in-debt">Danh sách nợ</NavLink>
+              <NavLink href="/reminder">Danh sách nợ</NavLink>
               </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>

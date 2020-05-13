@@ -26,9 +26,12 @@ import useInputChange from "../../utils/useInputChange";
 import ModalVerifyTrans from "../../components/Modal/ModalVerifyTrans";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import {getAllAccount} from "../../redux/creators/accountCreator";
+import {useLocation} from "react-router";
 
 const Transfer = () => {
   const dispatch = useDispatch();
+  const query = new URLSearchParams(useLocation().search);
+
   const senderInfo = useSelector(state => {
     return state.AccountInfo.data
   });
@@ -88,7 +91,7 @@ const Transfer = () => {
   }
 
   const onBlurAccountNum = useCallback(() => {
-    if (accountNum.value === ""){
+    if (accountNum.value === "") {
       setAccInValid(true)
       setAccInValidMsg("Không được để trống")
       return false;
@@ -114,7 +117,7 @@ const Transfer = () => {
           setAccountNum("")
         })
 
-  }, [accountNum, dispatch, name]);
+  }, [accountNum, setAccountNum, dispatch, name]);
 
   function onChangeInterbank(e) {
     if (!e.target.value) {
@@ -220,6 +223,23 @@ const Transfer = () => {
   }
 
   useEffect(() => {
+    const qAccNum = query.get("account");
+    const qName = query.get("name");
+    const qMoney = query.get("money");
+    const qNote = query.get("note");
+    if (qAccNum) {
+      setAccountNum(qAccNum);
+    }
+    if (qName) {
+      name.setValue(qName);
+    }
+    if (qMoney) {
+      money.setValue(qMoney);
+    }
+    if (qNote) {
+      message.setValue(qNote);
+    }
+
     const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
     dispatch(getAllAccount(uid, accessToken))

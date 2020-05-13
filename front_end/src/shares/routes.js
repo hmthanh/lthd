@@ -56,7 +56,7 @@ const routes = [
     component: () => <DebtPage></DebtPage>
   },
   {
-    path: "/in-debt",
+    path: "/reminder",
     exact: true,
     component: () => <InDebtPage></InDebtPage>
   },

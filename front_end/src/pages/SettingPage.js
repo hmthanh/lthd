@@ -18,41 +18,43 @@ import {
 import {connect} from 'react-redux'
 import {Create, Delete, Edit, Fetch} from '../redux/creators/nameReminscentCreator'
 import Loading from '../components/Loading'
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import useToggle from "../utils/useToggle";
 
 const required = (val) => val && val.length;
 
 const ModalAddNew = (props) => {
   const {
-    buttonLabel,
     className,
     handleCreate
   } = props;
-
-  const [modal, setModal] = useState(false);
-
-  const toggle = () => setModal(!modal);
+  const modalToggle = useToggle(false);
 
   const handleSubmit = (values) => {
     values = {...values, banking: 0};
     console.log(values);
     handleCreate(values);
-    setModal(!modal)
+    modalToggle.toggle();
   };
 
   return (
-      <div>
-        <Button color="success" onClick={toggle}>{buttonLabel}</Button>
-        <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
-          <ModalHeader toggle={toggle}>Thêm mới tài khoản</ModalHeader>
-          <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
-            <ModalBody>
+      <>
+        <Button color="success" onClick={modalToggle.setActive}>
+          <span style={{marginRight: "10px", paddingLeft: "10px"}}>Thêm mới</span>
+          <FontAwesomeIcon style={{marginRight: "10px"}} icon={faPlus}></FontAwesomeIcon>
+        </Button>
+        <hr/>
+        <Modal isOpen={modalToggle.active} toggle={modalToggle.toggle} className={className}>
+          <ModalHeader toggle={modalToggle.toggle}>Thêm mới tài khoản</ModalHeader>
+          <ModalBody>
+            <LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
               <div className='form-group'>
                 <label htmlFor='banking'>Ngân Hàng</label>
                 <Control.select className='form-control' model=".banking" id='banking' name='banking'>
                   <option value='0' defaultValue={true}>New Vimo</option>
                 </Control.select>
               </div>
-
               <div className='form-group'>
                 <label htmlFor='accountNum'>Số tài Khoản</label>
                 <Control.text model='.accountNum' id='accountNum' name='accountNum'
@@ -69,13 +71,13 @@ const ModalAddNew = (props) => {
                 <Errors className='text-danger' model='.aliasName' show="touched"
                         messages={{required: 'Required'}}/>
               </div>
-            </ModalBody>
-            <ModalFooter>
-              <button type="submit" className="btn btn-primary">Đồng ý</button>
-            </ModalFooter>
-          </LocalForm>
+            </LocalForm>
+          </ModalBody>
+          <ModalFooter>
+            <button type="submit" className="btn btn-primary">Đồng ý</button>
+          </ModalFooter>
         </Modal>
-      </div>
+      </>
   );
 };
 
@@ -222,7 +224,7 @@ class SettingReceiver extends Component {
                   <Card className="p-6">
                     <div className="card-block" style={{padding: "20px 40px"}}>
                       <h3 className="col-centered table-heading">DANH SÁCH NGƯỜI NHẬN</h3>
-                      <ModalAddNew buttonLabel={'Thêm Mới'} handleCreate={this.handleCreate}/>
+                      <ModalAddNew handleCreate={this.handleCreate}/>
                       <Table striped>
                         <thead>
                         <tr>

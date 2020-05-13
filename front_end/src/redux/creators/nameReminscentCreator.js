@@ -31,7 +31,7 @@ export const Create = (data, accessToken) => {
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetchFrom(UrlApi + '/api/receiver', 'POST', data, accessToken);
-        if (response.err == 200) {
+        if (response.err === 200) {
           dispatch({type: CREATE_DEBT_SUCCESS, payload: response});
         } else {
           dispatch({type: CREATE_DEBT_FAILED, payload: response});
