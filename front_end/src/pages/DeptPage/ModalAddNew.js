@@ -6,7 +6,8 @@ import {
   FormGroup,
   Input,
   InputGroup,
-  InputGroupAddon, InputGroupText,
+  InputGroupAddon,
+  InputGroupText,
   Label,
   Modal,
   ModalBody,
@@ -22,7 +23,6 @@ import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import {Create, getAllDebt} from "../../redux/creators/debtCreator";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from '@fortawesome/free-solid-svg-icons'
-
 
 const ModalAddNew = () => {
   const dispatch = useDispatch();
@@ -167,34 +167,6 @@ const ModalAddNew = () => {
                        id="message"/>
               </FormGroup>
             </Form>
-
-            {/*<LocalForm id='create-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">*/}
-            {/*  <div className='form-group'>*/}
-            {/*    <label htmlFor='accountNum'>Số tài Khoản</label>*/}
-            {/*    <Control.text model='.accountNum' id='accountNum' name='accountNum'*/}
-            {/*                  className='form-control' autoComplete='off'*/}
-            {/*                  validators={{required}}/>*/}
-            {/*    <Errors className='text-danger' model='.accountNum' show="touched"*/}
-            {/*            messages={{required: 'Required'}}/>*/}
-            {/*  </div>*/}
-            {/*  <div className='form-group'>*/}
-            {/*    <label htmlFor='debtval'>Số tiền</label>*/}
-            {/*    <Control.text model='.debtval' id='debtval' name='debtval'*/}
-            {/*                  className='form-control' rows='6' autoComplete='off'*/}
-            {/*                  validators={{required}}/>*/}
-            {/*    <Errors className='text-danger' model='.debtval' show="touched"*/}
-            {/*            messages={{required: 'Required'}}/>*/}
-            {/*  </div>*/}
-
-            {/*  <div className='form-group'>*/}
-            {/*    <label htmlFor='note'>Ghi chú</label>*/}
-            {/*    <Control.text model='.note' id='note' name='note'*/}
-            {/*                  className='form-control' rows='6' autoComplete='off'*/}
-            {/*                  validators={{required}}/>*/}
-            {/*    <Errors className='text-danger' model='.note' show="touched"*/}
-            {/*            messages={{required: 'Required'}}/>*/}
-            {/*  </div>*/}
-            {/*</LocalForm>*/}
           </ModalBody>
           <ModalFooter>
             <Button color="primary"
@@ -207,7 +179,7 @@ const ModalAddNew = () => {
                                                   size={"sm"} role="status"
                                                   aria-hidden="true"/> : "")}
               </span>
-              <span style={{marginLeft: "5px", paddingRight: "40px"}}>Gửi nhắc nợ</span></Button>
+              <span style={{marginLeft: "5px", paddingRight: "40px"}}>Tạo nhắc nợ</span></Button>
           </ModalFooter>
         </Modal>
       </>

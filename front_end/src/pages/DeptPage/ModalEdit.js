@@ -1,69 +1,119 @@
-import React, {useState} from 'react';
+import React, {useCallback} from 'react';
+import {
+  Button,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader
+} from "reactstrap";
+import {useDispatch} from "react-redux";
+import useToggle from "../../utils/useToggle";
+import useInputChange from "../../utils/useInputChange";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBell} from "@fortawesome/free-solid-svg-icons";
+import ShowRequire from "../../components/ShowRequire/ShowRequire";
+import {Edit, getAllDebt} from "../../redux/creators/debtCreator";
 
-import {Button, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
-import {Control, Errors, LocalForm} from "react-redux-form";
-const required = (val) => val && val.length;
+const ModalEdit = ({accountId, accountNum, note, money, name}) => {
+  const dispatch = useDispatch();
+  const modalToggle = useToggle(false);
+  const message = useInputChange(note);
 
-const ModalEdit = (props) => {
-  const {
-    buttonLabel,
-    className,
-    handleEdit,
-    accountNum,
-    debtval,
-    note,
-    accountId
-  } = props;
+  const reminderDept = useCallback((e) => {
+    e.preventDefault();
+    let data = {
+      uid: accountId,
+      note: message.value
+    };
+    console.log(data);
+    let accessToken = localStorage.getItem('accessToken');
+    dispatch(Edit(data, accessToken))
+        .then((response) => {
+          console.log(response);
+          const uid = localStorage.getItem('uid');
+          dispatch(getAllDebt(uid, accessToken))
+              .then((response) => {
+                console.log(response);
+                modalToggle.setInActive();
+              })
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+  }, [dispatch, accountId, message, modalToggle]);
 
-  const [modal, setModal] = useState(false);
-
-  const toggle = () => setModal(!modal);
-
-  const handleSubmit = (values) => {
-    values = {...values, id: accountId};
-    handleEdit(values);
-    setModal(!modal)
-  };
 
   return (
-      <div>
-        <Button color="primary" onClick={toggle}>{buttonLabel}</Button>
-        <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
-          <ModalHeader toggle={toggle}>Nhắc nợ</ModalHeader>
-          <LocalForm id='edit-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
-            <ModalBody>
-              <div className='form-group'>
-                <label htmlFor='accountNum'>Số tài Khoản</label>
-                <Control.text model='.accountNum' id='accountNum' name='accountNum'
-                              className='form-control' autoComplete='off'
-                              validators={{required}} defaultValue={accountNum} disabled={true}/>
-                <Errors className='text-danger' model='.accountNum' show="touched"
-                        messages={{required: 'Required'}}/>
-              </div>
-              <div className='form-group'>
-                <label htmlFor='debtval'>Số tiền</label>
-                <Control.text model='.debtval' id='debtval' name='debtval'
-                              className='form-control' rows='6' autoComplete='off'
-                              defaultValue={debtval} disabled={true}/>
-                <Errors className='text-danger' model='.debtval' show="touched"
-                />
-              </div>
+      <>
+        <Button color="success" onClick={modalToggle.setActive}>
+          <span style={{marginRight: "10px", paddingLeft: "10px"}}>Nhắc nợ</span>
+          <FontAwesomeIcon style={{marginRight: "10px"}} icon={faBell}></FontAwesomeIcon>
+        </Button>
 
-              <div className='form-group'>
-                <label htmlFor='note'>Ghi chú</label>
-                <Control.text model='.note' id='note' name='note'
-                              className='form-control' rows='6' autoComplete='off'
-                              validators={{required}} defaultValue={note}/>
-                <Errors className='text-danger' model='.note' show="touched"
-                        messages={{required: 'Required'}}/>
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <button type="submit" className="btn btn-primary">Đồng ý</button>
-            </ModalFooter>
-          </LocalForm>
+        <Modal isOpen={modalToggle.active} toggle={modalToggle.toggle}>
+          <ModalHeader className="padding-header" toggle={modalToggle.toggle}>Sửa nhắc nợ</ModalHeader>
+          <ModalBody className="padding-body">
+            <Form method="post" noValidate="novalidate"
+                  className="needs-validation" onSubmit={reminderDept}>
+              <Label for="accountNum">Thông tin tài khoản <ShowRequire/></Label>
+              <FormGroup>
+                <InputGroup className="mb-2">
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>Số tài khoản</InputGroupText>
+                  </InputGroupAddon>
+                  <Input type="text"
+                         name="accountNum"
+                         id="accountNum"
+                         value={accountNum}
+                         disabled={true}/>
+                </InputGroup>
+                <InputGroup>
+                  <InputGroupAddon addonType="prepend">
+                    <InputGroupText>Họ và tên</InputGroupText>
+                  </InputGroupAddon>
+                  <Input type="text"
+                         name="name"
+                         id="name"
+                         disabled={true}
+                         value={name}/>
+                </InputGroup>
+              </FormGroup>
+              <hr/>
+              <FormGroup>
+                <Label for="money">Số tiền <ShowRequire/></Label>
+                <Input type="number"
+                       name="money"
+                       id="money"
+                       disabled={true}
+                       value={money}/>
+              </FormGroup>
+
+              <FormGroup>
+                <Label for="message">Ghi chú</Label>
+                <Input type="textarea"
+                       name="message"
+                       id="message"
+                       value={message.value}
+                       onChange={message.onChange}
+                />
+              </FormGroup>
+            </Form>
+          </ModalBody>
+          <ModalFooter className="padding-footer">
+            <Button color="primary"
+                    className="d-flex align-items-center justify-content-center"
+                    onClick={reminderDept}>
+              <span style={{padding: "0px 40px"}}>Gửi nhắc nợ</span></Button>
+          </ModalFooter>
         </Modal>
-      </div>
+      </>
   );
 };
 

@@ -1,37 +1,58 @@
-import React, {useState, Component} from 'react';
+import React, {useCallback} from 'react';
 import {Button, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import useToggle from "../../utils/useToggle";
+import {useDispatch} from "react-redux";
+import {Delete, getAllDebt} from "../../redux/creators/debtCreator";
 
-const ConfirmDelete = (props) => {
-  const {
-    buttonLabel,
-    className,
-    handleDelete,
-    accountId
-  } = props;
+const ConfirmDelete = ({accountId}) => {
+  const dispatch = useDispatch();
+  const modalToggle = useToggle(false);
 
-  const [modal, setModal] = useState(false);
-
-  const toggle = () => setModal(!modal);
-  const deleteAccount = () => {
-    handleDelete(accountId);
-    setModal(!modal)
-  };
+  const deleteReminder = useCallback((e) => {
+    let accessToken = localStorage.getItem('accessToken');
+    dispatch(Delete(accountId, accessToken))
+        .then((response) => {
+          console.log(response);
+          const uid = localStorage.getItem('uid');
+          dispatch(getAllDebt(uid, accessToken))
+              .then((response) => {
+                console.log(response);
+                modalToggle.setInActive();
+              })
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+  }, [dispatch, modalToggle, accountId])
 
   return (
       <>
-        <Button color="danger" onClick={toggle}>{buttonLabel}</Button>
-        <Modal isOpen={modal} toggle={toggle} className={className}>
-          <ModalHeader toggle={toggle}>xóa</ModalHeader>
-          <ModalBody>
-            bạn có chăc muốn xóa không
+        <Button color="danger" onClick={modalToggle.setActive}>
+          <span style={{marginRight: "10px", paddingLeft: "10px"}}>Xóa</span>
+          <FontAwesomeIcon style={{marginRight: "10px"}} icon={faTrash}></FontAwesomeIcon>
+        </Button>
+
+        <Modal isOpen={modalToggle.active} toggle={modalToggle.toggle}>
+          <ModalHeader className="padding-header" toggle={modalToggle.toggle}>Xóa nhắc nợ</ModalHeader>
+          <ModalBody className="padding-body">
+            Bạn có chăc muốn xóa không
           </ModalBody>
-          <ModalFooter>
-            <Button color="primary" onClick={deleteAccount}>đồng ý</Button>{' '}
-            <Button color="secondary" onClick={toggle}>bỏ qua</Button>
+          <ModalFooter className="padding-footer">
+            <Button color="primary"
+                    className="d-flex align-items-center justify-content-center"
+                    onClick={deleteReminder}>
+              <span style={{padding: "0px 40px"}}>Xóa nhắc nợ</span></Button>
+            <Button color="light"
+                    className="d-flex align-items-center justify-content-center"
+                    onClick={modalToggle.setInActive}>
+              <span style={{padding: "0px 40px"}}>Bỏ qua</span></Button>
           </ModalFooter>
         </Modal>
       </>
   );
-};
+}
+
 
 export default ConfirmDelete;

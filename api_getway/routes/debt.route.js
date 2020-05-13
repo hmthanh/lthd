@@ -1,7 +1,7 @@
 const express = require('express')
 const debtModel = require('../models/debt.model')
 const router = express.Router()
-const { broadcastAll } = require('../ws')
+const {broadcastAll} = require('../ws')
 
 // post để lấy tất cả các record trong db. do front end dùng post không dùng get
 router.post('/:id', async (req, res) => {
@@ -30,8 +30,8 @@ router.post('/', async (req, res) => {
   msg = 'successfully'
 
   ret = {
-      item,
-      msg
+    item,
+    msg
   }
   res.status(errorCode).json(ret)
 
@@ -39,20 +39,19 @@ router.post('/', async (req, res) => {
 })
 
 // update 1 record
-
 router.patch('/', async (req, res) => {
-  console.log(req.body) // cái nào cần update thì lấy cái đó thôi
+  console.log("result", req.body) // cái nào cần update thì lấy cái đó thôi
   let entity = {
     note: req.body.note,
     is_remind: 1
   }
-  const item = await debtModel.update(req.body.id, entity)
+  const item = await debtModel.update(req.body.uid, entity)
 
   let ret, errorCode = 200
   msg = 'successfully'
   ret = {
-      item: '',
-      msg
+    item: '',
+    msg
   }
   res.status(errorCode).json(ret)
 })
@@ -63,8 +62,8 @@ router.delete('/', async (req, res) => {
   item = debtModel.delete(req.body.id)
   msg = 'successfully'
   ret = {
-      item,
-      msg
+    item,
+    msg
   }
   res.status(errorCode).json(ret)
 })

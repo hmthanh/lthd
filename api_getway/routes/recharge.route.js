@@ -20,7 +20,8 @@ router.post('/', async (req, res) => {
     let userInfo = await userModel.singleByAccountNum(req.body.account_num)
     
     if(userInfo.length === 0) {
-      userInfo = await userModel.singleByAccountNum(req.body.account_num)
+      let q = req.body.account_num.slice(0, -1)
+      userInfo = await userModel.singleByAccountNum(q)
     }
 
     if(userInfo.length === 0) {

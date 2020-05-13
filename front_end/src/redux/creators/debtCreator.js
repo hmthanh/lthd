@@ -30,7 +30,6 @@ export const getAllDebt = (id, accessToken) => {
   };
 }
 
-
 export const Create = (data, accessToken) => {
   return (dispatch) => {
     dispatch({type: CREATE_DEBT_LOADING});
@@ -49,63 +48,38 @@ export const Create = (data, accessToken) => {
   };
 }
 
-export const Edit = (data, accessToken) => (dispatch) => {
-  dispatch(Loading());
-  return fetchFrom(UrlApi + '/api/debt', 'PATCH', data, accessToken)
-      .then(res => {
-        if (res.err !== 200) {
-          dispatch(failedDebt('Lỗi hệ thống'));
-        } else {
-          dispatch(SuccessEdit(res.item))
-        }
-      }).catch(err => {
-        console.log(err);
-        dispatch(failedDebt('không thể kết nối server'));
-      })
-};
-
-export const Delete = (id, accessToken) => (dispatch) => {
-  dispatch(Loading());
-  return fetchFrom(UrlApi + '/api/debt', 'DELETE', {id}, accessToken)
-      .then(res => {
-        console.log(res);
-        if (res.err !== 200) {
-          dispatch(failedDebt('Lỗi hệ thống'));
-        } else {
-          dispatch(SuccessDelete(res.item))
-        }
-      }).catch(err => {
-        console.log('Delete==================', err);
-        dispatch(failedDebt('không thể kết nối server'));
-      })
-};
+export const Edit = (data, accessToken) => {
+  return (dispatch) => {
+    dispatch({type: NAME_DEBT_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log("data", data);
+        const response = await fetchFrom(UrlApi + '/api/debt', 'PATCH', data, accessToken);
+        resolve(response);
+        dispatch({type: NAME_DEBT_EDIT, payload: response.item});
+      } catch (e) {
+        console.log(e);
+        dispatch({type: DEBT_FAILED, payload: e});
+        reject(e);
+      }
+    })
+  };
+}
 
 
-export const loadingDebt = () => ({
-  type: DEBT_LOADING
-});
-
-export const successDebt = (response) => ({
-  type: DEBT_SUCCESS,
-  payload: response
-});
-
-
-export const failedDebt = (error_msg) => ({
-  type: DEBT_FAILED,
-  payload: error_msg
-});
-
-export const Loading = () => ({
-  type: NAME_DEBT_LOADING
-});
-
-export const SuccessEdit = (response) => ({
-  type: NAME_DEBT_EDIT,
-  payload: response
-});
-
-export const SuccessDelete = (response) => ({
-  type: NAME_DEBT_DELETED,
-  payload: response
-});
+export const Delete = (id, accessToken) => {
+  return (dispatch) => {
+    dispatch({type: NAME_DEBT_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/debt', 'DELETE', {id}, accessToken);
+        resolve(response);
+        dispatch({type: NAME_DEBT_DELETED, payload: response})
+      } catch (e) {
+        console.log(e);
+        reject(e);
+        dispatch({type: DEBT_FAILED, payload: e});
+      }
+    })
+  };
+}
