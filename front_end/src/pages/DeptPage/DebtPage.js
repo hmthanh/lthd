@@ -1,11 +1,13 @@
 import React, {useEffect} from 'react';
-import {Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
+import {Button, Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from 'react-redux';
 import {getAllDebt} from '../../redux/creators/debtCreator';
 import {formatFormalDate} from "../../utils/utils";
-import ModalAddNew from "./ModalAddNew";
 import ModalEdit from "./ModalEdit";
 import ConfirmDelete from "./ConfirmDelete";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {Link} from "react-router-dom";
 
 const DebtPage = () => {
   const dispatch = useDispatch();
@@ -31,7 +33,12 @@ const DebtPage = () => {
               <Card className="p-6">
                 <div className="card-block" style={{padding: "20px 40px"}}>
                   <h3 className="col-centered table-heading">DANH SÁCH NHẮC NỢ</h3>
-                  <ModalAddNew/>
+                  <Link to="/create-debt">
+                    <Button color="success">
+                      <FontAwesomeIcon style={{marginLeft: "40px"}} icon={faPlus}></FontAwesomeIcon>
+                      <span style={{marginLeft: "5px", paddingRight: "40px"}}>Tạo nhắc nợ</span>
+                    </Button>
+                  </Link>
                   <hr/>
                   <Table>
                     <thead>
@@ -41,7 +48,7 @@ const DebtPage = () => {
                       <th>Số Tài Khoản</th>
                       <th>Số Tiền</th>
                       <th>Ngày giao dịch</th>
-                      <th>Ghi chú</th>
+                      <th>Nội dung</th>
                       <th>Nhắc nhở</th>
                       <th>Xóa</th>
                     </tr>

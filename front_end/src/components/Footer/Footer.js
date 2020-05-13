@@ -1,15 +1,14 @@
-import React, {Component} from 'react';
-import styles from './Footer.css';
+import React from 'react';
+import {Container, Row} from "reactstrap";
 
-class Footer extends Component {
-    render() {
-        return (
-            <div style={{background: `#FFF`}} className={styles.footer}>
-                <p>&copy; 2016 &middot; Hashnode &middot; LinearBytes Inc.</p>
-                <p><a href="https://twitter.com/@mern_io" target="_Blank">@mern_io</a></p>
-            </div>
-        );
-    }
+const Footer = () => {
+  return (
+      <footer className="footer themed-container">
+        <Container style={{textAlign:'center'}}>
+          <p>&copy; 2020 &middot; Hoàng Minh Thanh &middot; Phan Minh Tâm &middot; Nguyễn Thắng &middot; 18HCB. &#8482;</p>
+        </Container>
+      </footer>
+  );
 }
 
 export default Footer;

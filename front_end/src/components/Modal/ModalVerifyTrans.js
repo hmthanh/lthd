@@ -1,5 +1,4 @@
 import React from 'react';
-import './MessageBox.css';
 import {
   Button,
   Form,

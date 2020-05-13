@@ -16,11 +16,11 @@ import {
   Table
 } from 'reactstrap'
 import {connect} from 'react-redux'
-import {Create, Delete, Edit, Fetch} from '../redux/creators/nameReminscentCreator'
-import Loading from '../components/Loading'
+import {Create, Delete, Edit, Fetch} from '../../redux/creators/nameReminscentCreator'
+import Loading from '../../components/Loading'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import useToggle from "../utils/useToggle";
+import useToggle from "../../utils/useToggle";
 
 const required = (val) => val && val.length;
 
@@ -167,7 +167,7 @@ const ConfirmDelete = (props) => {
   );
 };
 
-class SettingReceiver extends Component {
+class ListReceiver extends Component {
 
   constructor(props) {
     super(props);
@@ -291,5 +291,4 @@ const mapStateToProps = (state) => {
   }
 };
 
-// export default SettingReceiver
-export default connect(mapStateToProps, mapDispatchToProps)(SettingReceiver)
+export default connect(mapStateToProps, mapDispatchToProps)(ListReceiver)

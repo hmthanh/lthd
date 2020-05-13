@@ -11,7 +11,7 @@ const InDebtPage = lazy(() => import('../pages/DeptPage/InDebt'));
 const ChangePassword = lazy(() => import('../pages/ChangePassword/ChangePassword'));
 const ForgotPassword = lazy(() => import('../pages/ForgotPassword/ForgotPassword'));
 const CreateAccount = lazy(() => import('../pages/CreateAccount/CreateAccount'));
-const SettingPage = lazy(() => import('../pages/SettingPage'));
+const SettingPage = lazy(() => import('../pages/ListReceiver/ListReceiver'));
 const RemindPage = lazy(() => import('../pages/Remind/Remind'));
 const LogoutPage = lazy(() => import('../pages/logoutPage'));
 const RechargePage = lazy(() => import('../pages/RechargePage/RechargePage'));

@@ -4,6 +4,7 @@ import {Container, Spinner} from 'reactstrap'
 import Header from '../layout/Header'
 import Websocket from 'react-websocket'
 import routes from '../shares/routes';
+import Footer from "../components/Footer/Footer";
 
 class Main extends Component {
   handleOpen() {
@@ -26,9 +27,9 @@ class Main extends Component {
           <Websocket url='ws://localhost:6500'
                      onMessage={this.handleData.bind(this)} onOpen={this.handleOpen.bind(this)}
                      onClose={this.handleClose.bind(this)}/>
+          <Header></Header>
           <Container className="themed-container">
-            <Header></Header>
-            <main className="main">
+            <main className="main" style={{minHeight:"600px"}}>
               <Suspense fallback={<div>
                 <Spinner type="grow" color="primary"/>
                 <Spinner type="grow" color="secondary"/>
@@ -51,6 +52,7 @@ class Main extends Component {
               </Suspense>
             </main>
           </Container>
+          <Footer></Footer>
         </>
     )
   }

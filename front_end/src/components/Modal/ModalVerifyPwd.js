@@ -1,8 +1,6 @@
 import React from 'react';
-import './MessageBox.css';
 import {Button, Form, FormFeedback, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Spinner} from "reactstrap";
 import useInputChange from "../../utils/useInputChange";
-
 import {useDispatch, useSelector} from "react-redux";
 import useToggle from "../../utils/useToggle";
 import {changePwd} from "../../redux/creators/changePasswordCreator";

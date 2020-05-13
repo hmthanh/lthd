@@ -43,7 +43,7 @@ const CreateDebt = () => {
   const money = useInputChange(0);
   const message = useInputChange("");
   const alertToggle = useToggle(false)
-  const [timeCounter, setTimeCounter] = useState(4);
+  const [timeCounter, setTimeCounter] = useState(2);
 
   const countDown = useCallback((i) => {
     let int = setInterval(function () {
@@ -172,7 +172,7 @@ const CreateDebt = () => {
                     </FormGroup>
 
                     <FormGroup>
-                      <Label for="message">Ghi chú</Label>
+                      <Label for="message">Nội dung nhắc nợ</Label>
                       <Input type="textarea" name="message"
                              value={message.value}
                              onChange={message.onChange}

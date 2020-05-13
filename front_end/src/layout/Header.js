@@ -1,6 +1,6 @@
 import React, {Component, useEffect} from 'react'
 import {connect, useDispatch, useSelector} from 'react-redux'
-import {Button, Navbar, NavbarBrand, NavbarToggler} from 'reactstrap'
+import {Button, Container, Navbar, NavbarBrand, NavbarToggler} from 'reactstrap'
 import {Link} from 'react-router-dom'
 import AdministratorNav from '../components/Nav/AdministratorNav'
 import CustomerNav from '../components/Nav/CustomerNav'
@@ -99,10 +99,12 @@ class Header extends Component {
 
   render() {
     return (
+        <Container>
         <Navbar color="light" light expand="md" style={{marginBottom: "15px"}}>
           <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
           <InfoUser/>
         </Navbar>
+        </Container>
     );
   }
 }
