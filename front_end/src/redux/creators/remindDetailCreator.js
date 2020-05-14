@@ -2,7 +2,7 @@ import { REMIND_DETAIL_SUCCESS, REMIND_DETAIL_LOADING, REMIND_DETAIL_FAILED } fr
 import { fetchFrom } from '../../utils/fetchHelper'
 import { UrlApi } from '../../shares/baseUrl'
 
-export const getAllRemindDetaill = (id, accessToken) => (dispatch) => {
+export const getAllRemindDetail = (id, accessToken) => (dispatch) => {
   dispatch(loadingRemindDetail());
   return fetchFrom(UrlApi + `/api/remind`, 'POST', { id }, accessToken)
     .then(res => {

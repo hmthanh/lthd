@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  Badge,
+  Badge, Button,
   Card,
   CardImg,
   DropdownItem,
@@ -14,6 +14,8 @@ import {
 import {useSelector} from "react-redux";
 import {CustomerItemLink, CustomerLink} from "../../shares/routes";
 import NavLogout from "./NavLogout";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBell} from "@fortawesome/free-solid-svg-icons";
 
 
 const CustomerNav = () => {
@@ -74,10 +76,14 @@ const CustomerNav = () => {
           <NavItem>
             <NavLink href="/remind">
               <Card style={{position: "relative"}}>
-                <Badge style={{position: "absolute", top: '0px', right: '0px', fontSize: '8px'}}
-                       color="secondary">{RemindInfo.data.num}
-                </Badge>
-                <CardImg src="/image/notifi.png" style={{width: '20px'}}/>
+                <div color="light" alt="Thông báo">
+                  <span style={{marginRight: "10px", paddingLeft: "10px"}}>1</span>
+                  <FontAwesomeIcon style={{marginRight: "10px"}} icon={faBell}></FontAwesomeIcon>
+                </div>
+                {/*<Badge style={{position: "absolute", top: '0px', right: '0px', fontSize: '8px'}}*/}
+                {/*       color="secondary">100{RemindInfo.data.num}*/}
+                {/*</Badge>*/}
+                {/*<CardImg src="/image/notifi.png" style={{width: '20px'}}/>*/}
               </Card>
             </NavLink>
           </NavItem>

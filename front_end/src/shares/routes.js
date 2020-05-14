@@ -7,7 +7,7 @@ const UserInfo = lazy(() => import('../pages/UserInfo/UserInfo'));
 const Transfer = lazy(() => import('../pages/Transfer/Transfer'));
 const DebtPage = lazy(() => import('../pages/DeptPage/DebtPage'));
 const CreateDebt = lazy(() => import('../pages/DeptPage/CreateDebt'));
-const InDebtPage = lazy(() => import('../pages/DeptPage/InDebt'));
+const InDebtPage = lazy(() => import('../pages/Remind/InDebt'));
 const ChangePassword = lazy(() => import('../pages/ChangePassword/ChangePassword'));
 const ForgotPassword = lazy(() => import('../pages/ForgotPassword/ForgotPassword'));
 const CreateAccount = lazy(() => import('../pages/CreateAccount/CreateAccount'));

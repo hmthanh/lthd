@@ -1,7 +1,7 @@
 import React, {Component, useState} from 'react';
 import {Alert, Card, CardBody, CardTitle} from 'reactstrap'
 import {connect} from 'react-redux';
-// import {getAllRemindDetaill} from '../../redux/creators/remindDetailCreator';
+import {getAllRemindDetail} from "../../redux/creators/remindDetailCreator";
 
 
 const AlertExample = ({data}) => {
@@ -24,8 +24,10 @@ class RemindPage extends Component {
   }
 
   componentDidMount() {
-    // const uid = localStorage.getItem('uid');
-    // this.props.getAllRemindDetaill(uid)
+    const uid = localStorage.getItem('uid');
+    const accessToken = localStorage.getItem('accessToken');
+
+    this.props.getAllRemindDetaill(uid, accessToken);
   }
 
 
@@ -59,12 +61,12 @@ class RemindPage extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  // getAllRemindDetaill: (id) => dispatch(getAllRemindDetaill(id))
+  getAllRemindDetaill: (id, accessToken) => dispatch(getAllRemindDetail(id, accessToken))
 });
 
 const mapStateToProps = (state) => {
   return {
-    // RemindDetail: state.RemindDetail,
+    RemindDetail: state.RemindDetail,
   }
 };
 
