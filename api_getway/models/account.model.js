@@ -37,4 +37,6 @@ module.exports = {
       db.add(entity, 'banking_account')
     },
     getInfoByAccount: (acc) => db.load(`SELECT u.account_num, u.name, u.email FROM user_info u WHERE u.account_num='${acc}' OR u.user_name='${acc}'`),
+
+    getInfoByAccountFull: (acc) => db.load(`SELECT * FROM user_info u WHERE u.account_num='${acc}' OR u.user_name='${acc}'`),
 };
