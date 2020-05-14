@@ -32,6 +32,7 @@ const tranferPgp = async data => {
 }
 
 router.post('/', async (req, res) => {
+  const type = req.body.type ? req.body.type : 1
   // console.log(req.body)
   const isValid = validateData(req.body)
   if (!isValid) {
@@ -118,7 +119,7 @@ router.post('/:id', async (req, res) => {
         amount: transaction.amount,
         partner_code: 0,
         state: 0,
-        type: 0,
+        type: 0, // type = 0 nhận tiền
         timestamp: moment().valueOf(new Date())
       };
       let result = await plus(entityPlus, transaction.to_account)
