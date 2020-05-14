@@ -1,18 +1,22 @@
-import React, {Component} from 'react'
+import React, {useEffect} from 'react'
+import {useHistory} from "react-router";
+import {useDispatch} from "react-redux";
+import {AuthFailed} from "../redux/creators/authCreator";
 
-class logoutPage extends Component {
-  componentDidMount() {
-    // localStorage.clear();
-    // // this.props.logout()
-    // this.props.history.push("/login");
-  }
+const LogoutPage = () => {
+  const dispatch = useDispatch()
+  localStorage.clear()
+  const history = useHistory()
+  useEffect(() => {
+    history.push("/login")
+    dispatch(AuthFailed());
+  }, [dispatch, history])
 
-  render() {
-    return (
-        <div className="container" style={{marginTop: '20px'}}>
-        </div>
-    )
-  }
+
+  return (
+      <div className="container" style={{marginTop: '20px'}}>
+      </div>
+  )
 }
 
-export default logoutPage;
+export default LogoutPage;

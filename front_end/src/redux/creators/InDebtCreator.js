@@ -1,40 +1,25 @@
 import {
-    INDEBT_FAILED,
-    INDEBT_LOADING,
-    INDEBT_SUCCESS,
-
+  INDEBT_FAILED,
+  INDEBT_LOADING,
+  INDEBT_SUCCESS,
 } from '../actions/actionType'
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'
 
-export const getInDebt = (id, accessToken) => (dispatch) => {
-    dispatch(loadinginDebt());
-    return fetchFrom(UrlApi + `/api/remind/`, 'POST', {id}, accessToken)
-        .then(response => {
-            dispatch(successinDebt(response));
-        })
-        .catch(err => {
-            console.log(err);
-            dispatch(failedinDebt(err));
-        })
-};
-
-
-
-
-export const loadinginDebt = () => ({
-    type: INDEBT_LOADING
-});
-
-export const successinDebt = (response) => ({
-    type: INDEBT_SUCCESS,
-    payload: response
-});
-
-
-export const failedinDebt = (error_msg) => ({
-    type: INDEBT_FAILED,
-    payload: error_msg
-});
-
-
+export const getInDebt = (id, accessToken) => {
+  return (dispatch) => {
+    dispatch({type: INDEBT_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + `/api/remind/`, 'POST', {id}, accessToken);
+        dispatch({type: INDEBT_SUCCESS, payload: response});
+        console.log(response);
+        resolve(response);
+      } catch (e) {
+        dispatch({type: INDEBT_FAILED, payload: e});
+        console.log(e);
+        reject(e);
+      }
+    })
+  };
+}

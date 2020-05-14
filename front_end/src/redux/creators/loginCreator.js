@@ -67,8 +67,8 @@ export const relogin = (uId) => {
 // };
 
 
-export const logout = () => (dispatch) => {
-  dispatch(LoginSuccess({}));
+export const logout = () => () => {
+  localStorage.clear()
 };
 
 export const LoginSuccess = (data) => ({

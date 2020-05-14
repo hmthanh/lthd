@@ -3,7 +3,7 @@ import {Badge, Table} from 'reactstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSort} from '@fortawesome/free-solid-svg-icons'
 import useSortableData from "../../utils/useSortableData";
-import {formatFormalDate} from "../../utils/utils";
+import {formatFormalDate, formatMoney} from "../../utils/utils";
 
 const sortItem = {
  cursor: "pointer"
@@ -102,7 +102,7 @@ const TableInfoTransfer = (props) => {
                 <td>{item.acc_name}</td>
                 <td>{item.from_account}</td>
                 <td>{item.to_account}</td>
-                <td>{item.amount}</td>
+                <td>{formatMoney(item.amount)}</td>
                 <td>{item.surplus}</td>
                 <td>{(item.state === 0 ?
                     <Badge color="success">Thành công</Badge> :

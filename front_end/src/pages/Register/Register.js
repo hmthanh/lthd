@@ -52,7 +52,7 @@ const Register = () => {
       setTimeCounter(i)
       i-- || clearInterval(int);  //if i is 0, then stop the interval
     }, 1000);
-  }, [setTimeCounter, timeCounter])
+  }, [])
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault()
@@ -79,7 +79,7 @@ const Register = () => {
         .catch((err) => {
           console.log(err)
         })
-  }, [dispatch, alertToggle, setTimeCounter, name, email, phone, dob])
+  }, [dispatch, alertToggle, countDown, history, name, email, phone, dob])
 
   return (
       <Container>

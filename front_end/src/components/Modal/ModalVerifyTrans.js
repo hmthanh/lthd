@@ -1,5 +1,4 @@
 import React from 'react';
-import './MessageBox.css';
 import {
   Button,
   Form,
@@ -18,7 +17,7 @@ import {verifyOTP} from "../../redux/creators/transferCreator";
 import {useDispatch, useSelector} from "react-redux";
 import useToggle from "../../utils/useToggle";
 
-const ModalOTP = ({isShow, transId, onClose, onVerifySuccess}) => {
+const ModalVerifyTrans = ({isShow, transId, onClose, onVerifySuccess}) => {
   const dispatch = useDispatch();
   const verifyInfo = useSelector((state) => {
     return state.VerifyResult
@@ -55,8 +54,8 @@ const ModalOTP = ({isShow, transId, onClose, onVerifySuccess}) => {
   return (
       <div>
         <Modal isOpen={isShow} toggle={onClose}>
-          <ModalHeader>Vui lòng nhập mã OTP để xác nhận</ModalHeader>
-          <ModalBody>
+          <ModalHeader className="padding-header">Vui lòng nhập mã OTP để xác nhận</ModalHeader>
+          <ModalBody className="padding-body">
             <Form>
               <FormGroup>
                 <Label for="OTP">Nhập mã OTP</Label>
@@ -69,7 +68,6 @@ const ModalOTP = ({isShow, transId, onClose, onVerifySuccess}) => {
                 <FormFeedback>Mã OTP không chính xác, vui lòng kiểm tra lại</FormFeedback>
               </FormGroup>
             </Form>
-
           </ModalBody>
           <ModalFooter>
             <Button color="success"
@@ -89,4 +87,4 @@ const ModalOTP = ({isShow, transId, onClose, onVerifySuccess}) => {
   );
 };
 
-export default ModalOTP;
+export default ModalVerifyTrans;

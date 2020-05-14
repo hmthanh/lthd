@@ -35,16 +35,17 @@ const CustomerNav = () => {
           }
           <UncontrolledDropdown nav inNavbar>
             <DropdownToggle nav caret>
-              {/* <NavLink href="/manage-debt">Nhắc nợ</NavLink> */}
-              Quản lý nợ
+              Quản lý nhắc nợ
             </DropdownToggle>
             <DropdownMenu right>
-              {/* onClick={this.props.infoUser} */}
               <DropdownItem>
-                <NavLink href="/manage-debt">Danh sách nhắc nợ</NavLink>
+                <NavLink href="/create-debt">Tạo nhắc nợ</NavLink>
               </DropdownItem>
               <DropdownItem>
-              <NavLink href="/in-debt">Danh sách nợ</NavLink>
+                <NavLink href="/debt">Xem danh sách</NavLink>
+              </DropdownItem>
+              <DropdownItem>
+              <NavLink href="/reminder">Thanh toán</NavLink>
               </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>

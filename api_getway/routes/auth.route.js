@@ -100,6 +100,7 @@ router.post('/forget', async (req, res) => {
 });
 
 router.post('/verify', async (req, res) => {
+  console.log("req.body", req.body)
   const user = await authModel.comparePwd(req.body);
   let authenticated = false;
   if (user !== null) {

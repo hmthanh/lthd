@@ -20,15 +20,18 @@ import {
 import {getAccName, getInterbank, getReceiverSaved, transfer} from "../../redux/creators/transferCreator";
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
-import {checkValue, convertObjectToArray} from "../../utils/utils";
+import {convertObjectToArray} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
-import ModalOTP from "../../components/Modal/ModalOTP";
+import ModalVerifyTrans from "../../components/Modal/ModalVerifyTrans";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import {getAllAccount} from "../../redux/creators/accountCreator";
+import {useLocation} from "react-router";
 
 const Transfer = () => {
   const dispatch = useDispatch();
+  const query = new URLSearchParams(useLocation().search);
+
   const senderInfo = useSelector(state => {
     return state.AccountInfo.data
   });
@@ -88,7 +91,7 @@ const Transfer = () => {
   }
 
   const onBlurAccountNum = useCallback(() => {
-    if (accountNum.value === "" || accountNum == 0){
+    if (accountNum.value === "") {
       setAccInValid(true)
       setAccInValidMsg("Không được để trống")
       return false;
@@ -114,7 +117,7 @@ const Transfer = () => {
           setAccountNum("")
         })
 
-  }, [accountNum, dispatch]);
+  }, [accountNum, setAccountNum, dispatch, name]);
 
   function onChangeInterbank(e) {
     if (!e.target.value) {
@@ -176,7 +179,7 @@ const Transfer = () => {
 
   function onSubmitForm(e) {
     e.preventDefault();
-    if (accountNum == 0 || accountNum === "") {
+    if (accountNum === "") {
       setAccInValid(true)
       setAccInValidMsg("Vui lòng nhập lại số tài khoản")
       return;
@@ -220,6 +223,23 @@ const Transfer = () => {
   }
 
   useEffect(() => {
+    const qAccNum = query.get("account");
+    const qName = query.get("name");
+    const qMoney = query.get("money");
+    const qNote = query.get("note");
+    if (qAccNum) {
+      setAccountNum(qAccNum);
+    }
+    if (qName) {
+      name.setValue(qName);
+    }
+    if (qMoney) {
+      money.setValue(qMoney);
+    }
+    if (qNote) {
+      message.setValue(qNote);
+    }
+
     const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
     dispatch(getAllAccount(uid, accessToken))
@@ -230,6 +250,7 @@ const Transfer = () => {
           console.log(e);
         });
   }, [dispatch]);
+
 
   return (
       <Container>
@@ -347,7 +368,7 @@ const Transfer = () => {
                     </FormGroup>
                     <h4>3. Thông tin cần chuyển tiền</h4>
                     <FormGroup>
-                      <Label for="moneyTransfer">Số tiền <ShowRequire/></Label>
+                      <Label for="money">Số tiền <ShowRequire/></Label>
                       <Input type="number" name="money" id="money"
                              onChange={money.onChange}
                              value={money.value}
@@ -396,12 +417,12 @@ const Transfer = () => {
                       content={contentMsg}
                   ></MessageBox>
                 </div>
-                <ModalOTP
+                <ModalVerifyTrans
                     isShow={showVerifyToggle.active}
                     transId={transId}
                     onClose={showVerifyToggle.setInActive}
                     onVerifySuccess={onVerifySuccess}
-                ></ModalOTP>
+                ></ModalVerifyTrans>
               </Card>
             </Col>
           </Row>

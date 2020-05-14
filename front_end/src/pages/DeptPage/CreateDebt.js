@@ -1,5 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import {
+  Alert,
   Button,
   Card,
   CardTitle,
@@ -16,65 +17,44 @@ import {
   Row,
   Spinner
 } from "reactstrap";
-
+import {getAccName} from "../../redux/creators/transferCreator";
 import {useDispatch, useSelector} from "react-redux";
-import MessageBox from "../../components/Modal/MessageBox";
-import {recharge} from "../../redux/creators/rechargeCreator";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
-import {getAccName} from "../../redux/creators/transferCreator";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
+import {Create, getAllDebt} from "../../redux/creators/debtCreator";
+import {useHistory} from "react-router";
 
-const RechargePage = () => {
+const CreateDebt = () => {
   const dispatch = useDispatch();
-  const successModalToggle = useToggle();
-  const rechargeSelector = useSelector((state) => {
-    return state.RechargeInfo;
-  });
+  const history = useHistory();
   const AccName = useSelector((state) => {
     return state.AccName
   });
-  // const [numberAccount, setNumberAccount] = useState(0);
-  const [moneyTransfer, setMoneyTransfer] = useState(0);
-
+  const CreateDebt = useSelector((state) => {
+    return state.CreateDebt
+  });
+  const modalToggle = useToggle(false);
   const [accountNum, setAccountNum] = useState("");
   const [accValid, setAccValid] = useState(false);
   const [accInValid, setAccInValid] = useState(false);
   const [accInValidMsg, setAccInValidMsg] = useState("");
   const name = useInputChange("");
+  const money = useInputChange(0);
+  const message = useInputChange("");
+  const alertToggle = useToggle(false)
+  const [timeCounter, setTimeCounter] = useState(2);
 
-  const titleMessage = ["", "Nạp tiền thất bại", "Nạp tiền thành công"];
-  const contentMessage = ["", "Đã xảy ra lỗi\nVui lòng kiểm tra lại", "Đã nạp tiền vào tài khoản thành công"];
+  const countDown = useCallback((i) => {
+    let int = setInterval(function () {
+      setTimeCounter(i)
+      i-- || clearInterval(int);
+    }, 1000);
+  }, [])
 
-  // function changeNumberAccount(e) {
-  //   setNumberAccount(e.target.value);
-  // }
-  function onChangeAccountNum(e) {
+  const onChangeAccountNum = useCallback((e) => {
     setAccountNum(e.target.value);
-  }
-
-  function changeMoneyTransfer(e) {
-    setMoneyTransfer(e.target.value);
-  }
-
-  const onRecharge = useCallback(() => {
-    let data = {
-      account_num: accountNum,
-      money: moneyTransfer
-    };
-    let accessToken = localStorage.getItem('accessToken');
-    dispatch(recharge(data, accessToken))
-        .then(() => {
-          successModalToggle.setActive();
-        })
-        .catch(() => {
-          successModalToggle.setActive();
-        });
-  }, [dispatch, accountNum, moneyTransfer, successModalToggle]);
-
-  function submitRecharge(e) {
-    e.preventDefault();
-  }
+  }, [setAccountNum])
 
   const onBlurAccountNum = useCallback(() => {
     if (accountNum.value === "") {
@@ -104,6 +84,37 @@ const RechargePage = () => {
 
   }, [accountNum, dispatch, name]);
 
+  const createDept = useCallback((e) => {
+    e.preventDefault();
+    if (accountNum === "") {
+      setAccInValid(true)
+      setAccInValidMsg("Vui lòng nhập lại số tài khoản")
+      return;
+    }
+    const uid = localStorage.getItem('uid');
+    let accessToken = localStorage.getItem('accessToken');
+    let data = {
+      ownerId: uid,
+      accountNum: accountNum,
+      money: money.value,
+      message: message.value,
+      datetime: new Date(),
+    }
+    console.log(data);
+    dispatch(Create(data, accessToken))
+        .then((response) => {
+          console.log(response);
+          alertToggle.setActive()
+          countDown(2)
+          setTimeout(() => {
+            history.push("/debt")
+          }, 2000)
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+  }, [dispatch, accountNum, money, message, modalToggle]);
+
 
   return (
       <Container>
@@ -113,12 +124,12 @@ const RechargePage = () => {
               <Card id="localBank">
                 <div className="card-body">
                   <CardTitle>
-                    <h3 className="text-center">NẠP TIỀN TÀI KHOẢN</h3>
+                    <h3 className="text-center">TẠO NHẮC NỢ</h3>
                   </CardTitle>
                   <hr/>
                   <Form method="post" noValidate="novalidate"
-                        className="needs-validation" onSubmit={submitRecharge}>
-                    <h4>1. Thông tin tài khoản</h4>
+                        className="needs-validation" onSubmit={createDept}>
+                    <Label for="accountNum">Thông tin tài khoản <ShowRequire/></Label>
                     <FormGroup>
                       <InputGroup className="mb-2">
                         <InputGroupAddon addonType="prepend">
@@ -151,38 +162,46 @@ const RechargePage = () => {
                                value={name.value}/>
                       </InputGroup>
                     </FormGroup>
-                    <h4>3. Thông tin cần chuyển tiền</h4>
+                    <hr/>
                     <FormGroup>
-                      <Label for="moneyTransfer">Số tiền <ShowRequire/></Label>
-                      <Input type="number" name="moneyTransfer" id="moneyTransfer"
-                             onChange={changeMoneyTransfer}
-                             value={moneyTransfer}
+                      <Label for="money">Số tiền <ShowRequire/></Label>
+                      <Input type="number" name="money" id="money"
+                             onChange={money.onChange}
+                             value={money.value}
                              required/>
                     </FormGroup>
-                    <hr/>
-                    <Button id="btnRecharge" type="submit" color={"success"}
-                            size={"lg"}
-                            block={true}
-                            className="d-flex align-items-center justify-content-center"
-                            disabled={rechargeSelector.isLoading}
-                            onClick={onRecharge}
-                    >
-                      {
-                        (rechargeSelector.isLoading ? <Spinner color="light"
-                                                               size={"sm"} role="status"
-                                                               aria-hidden="true"/> : "")
-                      }
-                      {' '}
-                      <span style={{marginLeft: "5px"}}>Nạp tiền</span>
-                    </Button>
+
+                    <FormGroup>
+                      <Label for="message">Nội dung nhắc nợ</Label>
+                      <Input type="textarea" name="message"
+                             value={message.value}
+                             onChange={message.onChange}
+                             id="message"/>
+                    </FormGroup>
                   </Form>
-                  <MessageBox
-                      className={""}
-                      isOpen={successModalToggle.active}
-                      onClose={() => successModalToggle.setInActive()}
-                      title={titleMessage[rechargeSelector.statusId]}
-                      content={contentMessage[rechargeSelector.statusId]}
-                  ></MessageBox>
+                  <hr/>
+                  <Alert color="success"
+                         isOpen={alertToggle.active}
+                  >
+                    Đã tạo nhắc nhở thành công<br/>
+                    Sẽ chuyển đến trang quản lý nhắc nợ trong <strong>{timeCounter}s</strong> nữa
+                  </Alert>
+                  <Button id="btnTransferLocal"
+                          type="submit"
+                          color={"success"}
+                          size={"lg"}
+                          block={true}
+                          className="d-flex align-items-center justify-content-center"
+                          onClick={createDept}
+                          disabled={CreateDebt.isLoading}
+                  >
+                        <span style={{marginLeft: "40px"}}>
+                    {(CreateDebt.isLoading ? <Spinner color="light"
+                                                      size={"sm"} role="status"
+                                                      aria-hidden="true"/> : "")}
+                  </span>
+                    <span>Tạo nhắc nợ</span>
+                  </Button>
                 </div>
               </Card>
             </Col>
@@ -192,5 +211,4 @@ const RechargePage = () => {
   );
 };
 
-
-export default RechargePage;
+export default CreateDebt;
