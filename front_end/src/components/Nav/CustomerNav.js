@@ -1,8 +1,6 @@
 import React from 'react'
 import {
-  Badge, Button,
   Card,
-  CardImg,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
@@ -11,7 +9,7 @@ import {
   NavLink,
   UncontrolledDropdown
 } from 'reactstrap'
-import {useSelector} from "react-redux";
+// import {useSelector} from "react-redux";
 import {CustomerItemLink, CustomerLink} from "../../shares/routes";
 import NavLogout from "./NavLogout";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -19,9 +17,9 @@ import {faBell} from "@fortawesome/free-solid-svg-icons";
 
 
 const CustomerNav = () => {
-  const RemindInfo = useSelector(state => {
-    return state.RemindInfo
-  });
+  // const RemindInfo = useSelector(state => {
+  //   return state.RemindInfo
+  // });
 
   return (
       <>

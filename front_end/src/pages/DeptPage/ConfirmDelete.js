@@ -30,8 +30,8 @@ const ConfirmDelete = ({accountId}) => {
   return (
       <>
         <Button color="danger" onClick={modalToggle.setActive}>
-          <span style={{marginRight: "10px", paddingLeft: "10px"}}>Xóa</span>
-          <FontAwesomeIcon style={{marginRight: "10px"}} icon={faTrash}></FontAwesomeIcon>
+          <span style={{marginRight: "10px"}}>Xóa</span>
+          <FontAwesomeIcon  icon={faTrash}></FontAwesomeIcon>
         </Button>
 
         <Modal isOpen={modalToggle.active} toggle={modalToggle.toggle}>

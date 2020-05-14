@@ -1,8 +1,9 @@
 const express = require('express')
 const debtModel = require('../models/debt.model')
-const { getInfoByAccount } = require('../models/account.model')
+const userModel = require( "../models/user.model");
+const {getInfoByAccountFull} = require('../models/account.model')
 const router = express.Router()
-const {getInfoByAccountFull} = require('../ws')
+const {broadcastAll} = require("../ws");
 
 // post để lấy tất cả các record trong db. do front end dùng post không dùng get
 router.post('/:id', async (req, res) => {
@@ -22,26 +23,39 @@ router.post('/', async (req, res) => {
     debt_val: req.body.money,
     note: req.body.message
   }
-  // console.log('entity',entity)
   let ret, errorCode, item = null
   let rows = await debtModel.add(entity)
   if (rows) item = entity
   console.log('await', rows)
   errorCode = 200
-  msg = 'successfully'
+  let msg = 'successfully'
 
   ret = {
     item,
     msg
   }
-  res.status(errorCode).json(ret)
-  let userInfo =  await getInfoByAccountFull(req.body.accountNum)
-  if(userInfo.length === 0) {
+  await res.status(errorCode).json(ret)
+
+  const owner = await userModel.singleByUserId(req.body.ownerId);
+  const ownerInfo = owner[0];
+
+  let debtor = await getInfoByAccountFull(req.body.accountNum);
+  if (debtor.length === 0) {
     let q = req.body.account_num.slice(0, -1)
-    userInfo = await userModel.getInfoByAccountFull(q)
+    debtor = await getInfoByAccountFull(q);
   }
-  
-  broadcastAll(JSON.stringify({...item, userInfo:userInfo}))
+  let debtorInfo = debtor[0];
+
+  let alertData = {
+    ownerId: ownerInfo.id,
+    ownerAccNum:ownerInfo.account_num,
+    ownerName: ownerInfo.name,
+    debtorId: debtorInfo.id,
+    money: req.body.money,
+    message: req.body.message
+  }
+  console.log(alertData);
+  broadcastAll(JSON.stringify(alertData))
 })
 
 // update 1 record
@@ -54,24 +68,24 @@ router.patch('/', async (req, res) => {
   const item = await debtModel.update(req.body.uid, entity)
 
   let ret, errorCode = 200
-  msg = 'successfully'
+  let msg = 'successfully'
   ret = {
     item: '',
     msg
   }
-  res.status(errorCode).json(ret)
+  await res.status(errorCode).json(ret);
 })
 // xóa 1 record
 router.delete('/', async (req, res) => {
   console.log('router.delete', req.body)
   let ret, errorCode = 200, item = null
   item = debtModel.delete(req.body.id)
-  msg = 'successfully'
+  let msg = 'successfully'
   ret = {
     item,
     msg
   }
-  res.status(errorCode).json(ret)
+  await res.status(errorCode).json(ret);
 })
 
 

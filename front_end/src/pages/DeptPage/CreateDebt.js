@@ -22,7 +22,7 @@ import {useDispatch, useSelector} from "react-redux";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {Create, getAllDebt} from "../../redux/creators/debtCreator";
+import {Create} from "../../redux/creators/debtCreator";
 import {useHistory} from "react-router";
 
 const CreateDebt = () => {
@@ -34,7 +34,6 @@ const CreateDebt = () => {
   const CreateDebt = useSelector((state) => {
     return state.CreateDebt
   });
-  const modalToggle = useToggle(false);
   const [accountNum, setAccountNum] = useState("");
   const [accValid, setAccValid] = useState(false);
   const [accInValid, setAccInValid] = useState(false);
@@ -113,7 +112,7 @@ const CreateDebt = () => {
         .catch((err) => {
           console.log(err);
         })
-  }, [dispatch, accountNum, money, message, modalToggle]);
+  }, [dispatch, accountNum, money, message, alertToggle, countDown, history]);
 
 
   return (

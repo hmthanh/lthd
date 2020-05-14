@@ -1,15 +1,16 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Alert, Button, Container} from "reactstrap";
 import Websocket from "react-websocket";
 import useToggle from "../../utils/useToggle";
 import {Link} from "react-router-dom";
 import {faCreditCard} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {formatMoney} from "../../utils/utils";
 
 const Notification = () => {
   const alertToggle = useToggle(true);
-  const [accountNum, setAccountNum] = useState(0);
-  const [name, setName] = useState("");
+  const [ownerAccNum, setOwnerAccNum] = useState(0);
+  const [ownerName, setOwnerName] = useState("");
   const [money, setMoney] = useState(0);
   const [message, setMessage] = useState("");
 
@@ -21,11 +22,18 @@ const Notification = () => {
     console.log('disconnected:(')
   }
 
-  function handleData(data) {
-    console.log('saassaasas');
-    console.log(data);
-    // let result = JSON.parse(data)
-  }
+  const handleData = useCallback((result) => {
+    let data = JSON.parse(result);
+    const uid = localStorage.getItem("uid");
+    if (parseInt(uid) === parseInt(data.debtorId)) {
+      setOwnerAccNum(data.ownerAccNum);
+      setOwnerName(data.ownerName);
+      setMoney(data.money);
+      setMessage(data.message);
+      alertToggle.setActive();
+    }
+    // let result =
+  }, [alertToggle, setOwnerAccNum, setOwnerName, setMoney, setMessage]);
 
   return (
       <>
@@ -35,12 +43,14 @@ const Notification = () => {
         <Container>
           <Alert isOpen={alertToggle.active} fade={true} style={{textAlign: "left"}} color="warning" className="notification">
             <Button onClick={alertToggle.setInActive} className="close" data-dismiss="alert" aria-label="close" title="close">×</Button>
-            <strong>[Nhắc nợ]</strong> Bạn nợ tài khoản A số tiền 1000.000 VNĐ.
+            <strong>[Nhắc nợ]</strong> Bạn nợ tài khoản {ownerAccNum} ({ownerName}) số tiền {formatMoney(money)} VNĐ.
             Nhấn vào đây để{" "}
-            <Link to={`/transfer?account=${accountNum}&name=${name}&money=${money}&note=${message}`}>
+            <Link to={`/transfer?account=${ownerAccNum}&name=${ownerName}&money=${money}&note=${message}`}>
               Thanh toán{" "}
               <FontAwesomeIcon style={{marginRight: "10px"}} icon={faCreditCard}/>
-            </Link>
+            </Link>.
+            <br/>
+            Xem <Link to="/reminder">danh sách nợ chưa thanh toán</Link>
           </Alert>
         </Container>
       </>

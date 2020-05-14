@@ -53,8 +53,8 @@ const ModalEdit = ({accountId, accountNum, note, money, name}) => {
   return (
       <>
         <Button color="success" onClick={modalToggle.setActive}>
-          <span style={{marginRight: "10px", paddingLeft: "10px"}}>Nhắc nợ</span>
-          <FontAwesomeIcon style={{marginRight: "10px"}} icon={faBell}></FontAwesomeIcon>
+          <span style={{marginRight: "10px"}}>Nhắc nợ</span>
+          <FontAwesomeIcon  icon={faBell}></FontAwesomeIcon>
         </Button>
 
         <Modal isOpen={modalToggle.active} toggle={modalToggle.toggle}>
