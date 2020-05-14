@@ -1,11 +1,10 @@
-import React, {Component, useEffect} from 'react'
-import {connect, useDispatch, useSelector} from 'react-redux'
+import React, {useEffect} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
 import {Button, Container, Navbar, NavbarBrand, NavbarToggler} from 'reactstrap'
 import {Link} from 'react-router-dom'
 import AdministratorNav from '../components/Nav/AdministratorNav'
 import CustomerNav from '../components/Nav/CustomerNav'
 import EmployeeNav from '../components/Nav/EmployeeNav'
-import {getAllRemind} from '../redux/creators/remindCreator'
 import useToggle from "../utils/useToggle";
 import {fetchFrom} from "../utils/fetchHelper";
 import {UrlApi} from "../shares/baseUrl";
@@ -91,35 +90,16 @@ const InfoUser = () => {
 };
 
 
-class Header extends Component {
-  componentDidMount() {
-    const uid = localStorage.getItem('uid');
-    this.props.getAllRemind(uid)
-  }
-
-  render() {
-    return (
-        <Container>
+const Header = () => {
+  return (
+      <Container>
         <Navbar color="light" light expand="md" style={{marginBottom: "15px"}}>
           <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
           <InfoUser/>
         </Navbar>
-        </Container>
-    );
-  }
+      </Container>
+  );
 }
 
-const mapDispatchToProps = dispatch => ({
-  // relogin: (uid) => dispatch(relogin(uid)),
-  // logout: (uid) => dispatch(logout()),
-  getAllRemind: (account_num) => dispatch(getAllRemind(account_num))
-});
 
-const mapStateToProps = (state) => {
-  return {
-    Auth: state.Auth,
-    RemindInfo: state.RemindInfo,
-  }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header)
+export default Header;

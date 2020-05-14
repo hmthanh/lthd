@@ -64,12 +64,12 @@ export const Edit = (data, accessToken) => {
 }
 
 
-export const Delete = (id, accessToken) => {
+export const Delete = (data, accessToken) => {
   return (dispatch) => {
     dispatch({type: NAME_DEBT_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetchFrom(UrlApi + '/api/debt', 'DELETE', {id}, accessToken);
+        const response = await fetchFrom(UrlApi + '/api/debt', 'DELETE', data, accessToken);
         resolve(response);
         dispatch({type: NAME_DEBT_DELETED, payload: response})
       } catch (e) {
@@ -80,3 +80,4 @@ export const Delete = (id, accessToken) => {
     })
   };
 }
+

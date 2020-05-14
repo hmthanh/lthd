@@ -7,7 +7,12 @@ module.exports = {
   },
 
   get: (account_num) => {
-    return db.load(`SELECT u.name, d.debt_val, d.date_time, d.note, u.account_num FROM debt_info as d JOIN user_info as u on d.account_num = u.account_num WHERE u.account_num=${account_num} order by d.id DESC`)
+    return db.load(`SELECT d.id, u.name, d.debt_val, d.date_time, d.note, u.account_num FROM debt_info as d JOIN user_info as u on d.owner_id = u.id WHERE d.account_num=${account_num} order by d.id DESC`)
   },
-
+  delete: (id) => {
+    return db.del({id: id}, 'debt_info')
+  },
+  getOwnerId: (id) => {
+    return db.load(`Select d.owner_id FROM debt_info as d JOIN user_info as u on d.account_num = u.account_num WHERE d.id=${id}`)
+  },
 };

@@ -1,7 +1,8 @@
 import {
+  DEBT_FAILED, INDEBT_DELETED,
   INDEBT_FAILED,
   INDEBT_LOADING,
-  INDEBT_SUCCESS,
+  INDEBT_SUCCESS, NAME_DEBT_DELETED, NAME_DEBT_LOADING,
 } from '../actions/actionType'
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'
@@ -19,6 +20,23 @@ export const getInDebt = (id, accessToken) => {
         dispatch({type: INDEBT_FAILED, payload: e});
         console.log(e);
         reject(e);
+      }
+    })
+  };
+}
+
+export const DeleteInDebt = (data, accessToken) => {
+  return (dispatch) => {
+    dispatch({type: INDEBT_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/remind/', 'DELETE', data, accessToken);
+        resolve(response);
+        dispatch({type: INDEBT_DELETED, payload: response})
+      } catch (e) {
+        console.log(e);
+        reject(e);
+        dispatch({type: INDEBT_FAILED, payload: e});
       }
     })
   };
