@@ -1,5 +1,6 @@
 const express = require('express')
 const debtModel = require('../models/debt.model')
+const { getInfoByAccount } = require('../models/account.model')
 const router = express.Router()
 const {broadcastAll} = require('../ws')
 
@@ -34,8 +35,13 @@ router.post('/', async (req, res) => {
     msg
   }
   res.status(errorCode).json(ret)
-
-  broadcastAll(JSON.stringify(item))
+  let userInfo =  await getInfoByAccount(req.body.accountNum)
+  if(userInfo.length === 0) {
+    let q = req.body.account_num.slice(0, -1)
+    userInfo = await userModel.singleByAccountNum(q)
+  }
+  
+  broadcastAll(JSON.stringify({...item, userInfo:userInfo}))
 })
 
 // update 1 record

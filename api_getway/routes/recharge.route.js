@@ -8,7 +8,7 @@ const transferModel = require('../models/transfer.model')
 const router = express.Router()
 
 router.post('/', async (req, res) => {
-  console.log(req.body)
+  // console.log(req.body)
   const rows = await getAccount(req.payload.userId)
   if (!rows || rows.length == 0) {
     res.status(200).json({
