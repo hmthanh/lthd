@@ -10,9 +10,20 @@ module.exports = {
   get: (from, count) => {
     return db.load(`Select * from transaction_tranfer order by timestamp desc LIMIT ${from} , ${count}`)
   },
-  searching: (val) => {
-    return db.load(`Select * from transaction_tranfer u where u.acc_name like '%${val}%'  `)
+
+  getByAssociate: (from, count) => {
+    return db.load(`SELECT * FROM transaction_tranfer WHERE partner_code > 10 ORDER BY timestamp DESC LIMIT ${from} , ${count}`)
   },
+
+  getByInternal: (from, count) => {
+    return db.load(`SELECT * FROM transaction_tranfer WHERE partner_code < 10 ORDER BY timestamp DESC LIMIT ${from} , ${count}`)
+  },
+
+  searching: acc => {
+    return db.load(`SELECT * FROM transaction_tranfer u WHERE u.acc_name LIKE '%${val}%'`)
+  },
+  searchByAcc: (accNum, from, count) => db.load(`SELECT * FROM transaction_tranfer u WHERE from_account='${accNum}' OR to_account='${accNum} ORDER BY timestamp DESC LIMIT ${from} , ${count}`),
+
   delete: (id) => {
     return db.del({id: id}, 'transaction_tranfer')
   },

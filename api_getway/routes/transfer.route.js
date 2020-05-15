@@ -56,7 +56,7 @@ router.post('/', async (req, res) => {
     partner_code: req.body.partner_code,
     timestamp: moment().valueOf(new Date()),
     state: 1, // chưa thành công
-    type: 1 // type trừ tiền
+    type: type// type trừ tiền
   };
   if (sender.surplus < req.body.amount) {
     res.status(200).json({
@@ -79,9 +79,9 @@ router.post('/', async (req, res) => {
 
     if (type === 4){
       const creditor = await getIdByAccountNum(req.body.to_account);
-      console.log("creditor", creditor);
+      // console.log("creditor", creditor);
       const creditorInfo = creditor[0];
-      console.log(creditorInfo);
+      // console.log(creditorInfo);
       let alertData = {
         alertType: 4,
         recipient: creditorInfo.id,
@@ -90,7 +90,7 @@ router.post('/', async (req, res) => {
         message: req.body.note,
       }
 
-      console.log(alertData);
+      // console.log(alertData);
       broadcastAll(JSON.stringify(alertData));
     }
   }
@@ -129,6 +129,7 @@ router.post('/:id', async (req, res) => {
     // console.log('=======================transaction',transaction)
     // chuyển khoản nội bộ
     if(transaction.partner_code === null || transaction.partner_code === '0' || transaction.partner_code === 0) {
+      // console.log('===========================', transaction)
       const err = await minusTransfer(req.body.transId, transaction.amount, transaction.from_account)
       const entityPlus = {
         acc_name: transaction.acc_name,
