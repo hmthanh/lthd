@@ -19,7 +19,6 @@ export const getAllDebt = (id, accessToken) => {
       try {
         const response = await fetchFrom(UrlApi + `/api/debt/${id}`, 'POST', {id}, accessToken);
         dispatch({type: DEBT_SUCCESS, payload: response});
-        console.log(response);
         resolve(response);
       } catch (e) {
         console.log(e);
@@ -37,7 +36,6 @@ export const Create = (data, accessToken) => {
       try {
         const response = await fetchFrom(UrlApi + '/api/debt', 'POST', data, accessToken)
         dispatch({type: CREATE_DEBT_SUCCESS, payload: response});
-        console.log(response);
         resolve(response);
       } catch (e) {
         console.log(e);
@@ -53,7 +51,6 @@ export const Edit = (data, accessToken) => {
     dispatch({type: NAME_DEBT_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
-        console.log("data", data);
         const response = await fetchFrom(UrlApi + '/api/debt', 'PATCH', data, accessToken);
         resolve(response);
         dispatch({type: NAME_DEBT_EDIT, payload: response.item});
@@ -67,12 +64,12 @@ export const Edit = (data, accessToken) => {
 }
 
 
-export const Delete = (id, accessToken) => {
+export const Delete = (data, accessToken) => {
   return (dispatch) => {
     dispatch({type: NAME_DEBT_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetchFrom(UrlApi + '/api/debt', 'DELETE', {id}, accessToken);
+        const response = await fetchFrom(UrlApi + '/api/debt', 'DELETE', data, accessToken);
         resolve(response);
         dispatch({type: NAME_DEBT_DELETED, payload: response})
       } catch (e) {
@@ -83,3 +80,4 @@ export const Delete = (id, accessToken) => {
     })
   };
 }
+

@@ -3,8 +3,8 @@ import {Button, Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from 'react-redux';
 import {getAllDebt} from '../../redux/creators/debtCreator';
 import {formatFormalDate} from "../../utils/utils";
-import ModalEdit from "./ModalEdit";
-import ConfirmDelete from "./ConfirmDelete";
+// import ModalEdit from "./ModalEdit";
+import CancelDebt from "./CancelDebt";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
@@ -17,11 +17,10 @@ const DebtPage = () => {
 
   useEffect(() => {
     let accessToken = localStorage.getItem('accessToken');
-    console.log('DebtPage ' + accessToken);
     let uid = localStorage.getItem('uid');
     dispatch(getAllDebt(uid, accessToken))
         .then((response) => {
-          console.log(response);
+          // console.log(response);
         })
   }, [dispatch])
 
@@ -49,8 +48,8 @@ const DebtPage = () => {
                       <th>Số Tiền</th>
                       <th>Ngày giao dịch</th>
                       <th>Nội dung</th>
-                      <th>Nhắc nhở</th>
-                      <th>Xóa</th>
+                      {/*<th width="140">Nhắc nợ</th>*/}
+                      <th width="170">Xóa</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -64,13 +63,15 @@ const DebtPage = () => {
                             <td>{it.debt_val}</td>
                             <td>{formatFormalDate(it.date_time)}</td>
                             <td>{it.note}</td>
-                            <td><ModalEdit accountId={it.id}
-                                           accountNum={it.account_num}
-                                           money={it.debt_val}
-                                           note={it.note}
-                                           name={it.name}/>
-                              {' '}</td>
-                            <td><ConfirmDelete accountId={it.id}/>
+                            {/*<td>*/}
+                            {/*  <ModalEdit accountId={it.id}*/}
+                            {/*             accountNum={it.account_num}*/}
+                            {/*             money={it.debt_val}*/}
+                            {/*             note={it.note}*/}
+                            {/*             name={it.name}/>*/}
+                            {/*  {' '}</td>*/}
+                            <td>
+                              <CancelDebt debtId={it.id}/>
                             </td>
                           </tr>
                       ))

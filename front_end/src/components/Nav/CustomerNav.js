@@ -1,8 +1,6 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {
-  Badge,
   Card,
-  CardImg,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
@@ -11,15 +9,28 @@ import {
   NavLink,
   UncontrolledDropdown
 } from 'reactstrap'
-import {useSelector} from "react-redux";
 import {CustomerItemLink, CustomerLink} from "../../shares/routes";
 import NavLogout from "./NavLogout";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faBell} from "@fortawesome/free-solid-svg-icons";
+// import {useDispatch, useSelector} from "react-redux";
+// import {getCountReminder} from "../../redux/creators/remindCreator";
 
 
 const CustomerNav = () => {
-  const RemindInfo = useSelector(state => {
-    return state.RemindInfo
-  });
+  // const dispatch = useDispatch();
+  // const RemindInfo = useSelector(state => {
+  //   return state.RemindInfo.data
+  // });
+
+  // useEffect(() => {
+  //   let accessToken = localStorage.getItem('accessToken');
+  //   const uid = localStorage.getItem('uid');
+  //   dispatch(getCountReminder(uid, accessToken))
+  //       .then((response) => {
+  //
+  //       });
+  // }, [dispatch])
 
   return (
       <>
@@ -42,10 +53,10 @@ const CustomerNav = () => {
                 <NavLink href="/create-debt">Tạo nhắc nợ</NavLink>
               </DropdownItem>
               <DropdownItem>
-                <NavLink href="/debt">Xem danh sách</NavLink>
+                <NavLink href="/debt">Danh sách nhắc nợ</NavLink>
               </DropdownItem>
               <DropdownItem>
-              <NavLink href="/reminder">Thanh toán</NavLink>
+              <NavLink href="/reminder">Danh sách nợ</NavLink>
               </DropdownItem>
             </DropdownMenu>
           </UncontrolledDropdown>
@@ -72,12 +83,14 @@ const CustomerNav = () => {
           </UncontrolledDropdown>
           <NavLogout/>
           <NavItem>
-            <NavLink href="/remind">
+            <NavLink href="/reminder">
               <Card style={{position: "relative"}}>
-                <Badge style={{position: "absolute", top: '0px', right: '0px', fontSize: '8px'}}
-                       color="secondary">{RemindInfo.data.num}
-                </Badge>
-                <CardImg src="/image/notifi.png" style={{width: '20px'}}/>
+                <div color="light" title="Thông báo">
+                  {/*{*/}
+                  {/*  RemindInfo.num ? (<span style={{marginRight: "10px", paddingLeft: "10px"}}>{RemindInfo.num}</span>) : ""*/}
+                  {/*}*/}
+                  <FontAwesomeIcon style={{marginRight: "10px", marginLeft: "10px"}} icon={faBell}></FontAwesomeIcon>
+                </div>
               </Card>
             </NavLink>
           </NavItem>

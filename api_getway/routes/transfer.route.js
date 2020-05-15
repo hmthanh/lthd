@@ -1,4 +1,5 @@
 
+
 const express = require('express')
 const moment = require('moment')
 const { hash, verifyHash, verify, sign } = require('../utils/rsa.signature')
@@ -6,10 +7,11 @@ const pgp = require('../utils/pgp.signature')
 const { SECRET_TOKEN, OTP, PGP_URL_TRANFER } = require('../config')
 const mailController = require('../mailer/mail.controller')
 const transferModel = require('../models/transfer.model')
-const { getReceiverById } = require('../models/account.model')
+const { getReceiverById, getIdByAccountNum } = require('../models/account.model')
 const { htmlMsgTemplate, msgTemplate } = require('../utils/common')
 const { minusTransfer, plus, patch } = require('../utils/db')
 const bankingAccountModel = require('../models/bankingAccount.modal')
+const {broadcastAll} = require('../ws');
 const router = express.Router()
 const partnerCode = 5412
 const encoding = 'base64'
@@ -74,6 +76,23 @@ router.post('/', async (req, res) => {
       errorCode: 0,
       transId: insertVal.insertId
     })
+
+    if (type === 4){
+      const creditor = await getIdByAccountNum(req.body.to_account);
+      console.log("creditor", creditor);
+      const creditorInfo = creditor[0];
+      console.log(creditorInfo);
+      let alertData = {
+        alertType: 4,
+        recipient: creditorInfo.id,
+        ownerAccNum: sender.account_num,
+        ownerName: sender.name,
+        message: req.body.note,
+      }
+
+      console.log(alertData);
+      broadcastAll(JSON.stringify(alertData));
+    }
   }
 })
 

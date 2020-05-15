@@ -6,11 +6,12 @@ import {Link} from "react-router-dom";
 import {formatFormalDate} from "../../utils/utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCreditCard} from "@fortawesome/free-solid-svg-icons";
+import CancelRemind from "./CancelRemind";
 
-const ListInDebtPage = () => {
+const ListInDebt = () => {
   const dispatch = useDispatch();
   const GetInDebtInfo = useSelector((state) => {
-    return state.GetInDebtInfo
+    return state.GetInDebtInfo.data
   });
 
   useEffect(() => {
@@ -38,13 +39,14 @@ const ListInDebtPage = () => {
                       <th>Số Tiền</th>
                       <th>Ngày giao dịch</th>
                       <th>Ghi chú</th>
-                      <th>Thanh toán</th>
+                      <th width="160">Thanh toán</th>
+                      <th width="165">Huỷ nhắc nợ</th>
                     </tr>
                     </thead>
                     <tbody>
                     {
-                      GetInDebtInfo.data.response &&
-                      GetInDebtInfo.data.response.map((item, index) => (
+                      GetInDebtInfo.response &&
+                      GetInDebtInfo.response.map((item, index) => (
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
                             <td>{item.name}</td>
@@ -54,10 +56,13 @@ const ListInDebtPage = () => {
                             <td>
                               <Link to={`/transfer?account=${item.account_num}&name=${item.name}&money=${item.debt_val}&note=${item.note}`}>
                                 <Button color="success">
-                                  <span style={{marginRight: "10px", paddingLeft: "10px"}}>Thanh toán</span>
-                                  <FontAwesomeIcon style={{marginRight: "10px"}} icon={faCreditCard}></FontAwesomeIcon>
+                                  <span style={{marginRight: "10px"}}>Thanh toán</span>
+                                  <FontAwesomeIcon  icon={faCreditCard}></FontAwesomeIcon>
                                 </Button>
                               </Link>
+                            </td>
+                            <td>
+                              <CancelRemind debtId={item.id}></CancelRemind>
                             </td>
                           </tr>
                       ))
@@ -73,4 +78,4 @@ const ListInDebtPage = () => {
   );
 }
 
-export default ListInDebtPage;
+export default ListInDebt;

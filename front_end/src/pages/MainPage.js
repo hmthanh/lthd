@@ -2,34 +2,18 @@ import React, {Component, Suspense} from 'react'
 import {Route, Switch} from 'react-router-dom'
 import {Container, Spinner} from 'reactstrap'
 import Header from '../layout/Header'
-import Websocket from 'react-websocket'
 import routes from '../shares/routes';
 import Footer from "../components/Footer/Footer";
+import Notification from "../components/Notification/Notification";
 
 class Main extends Component {
-  handleOpen() {
-    console.log('connected:)')
-  }
-
-  handleClose() {
-    console.log('disconnected:(')
-  }
-
-  handleData(data) {
-    console.log('saassaasas');
-    console.log(data);
-    // let result = JSON.parse(data)
-  }
-
   render() {
     return (
         <>
-          <Websocket url='ws://localhost:6500'
-                     onMessage={this.handleData.bind(this)} onOpen={this.handleOpen.bind(this)}
-                     onClose={this.handleClose.bind(this)}/>
           <Header></Header>
+          <Notification></Notification>
           <Container className="themed-container">
-            <main className="main" style={{minHeight:"600px"}}>
+            <main className="main" style={{minHeight: "600px"}}>
               <Suspense fallback={<div>
                 <Spinner type="grow" color="primary"/>
                 <Spinner type="grow" color="secondary"/>
@@ -57,4 +41,5 @@ class Main extends Component {
     )
   }
 }
+
 export default Main;

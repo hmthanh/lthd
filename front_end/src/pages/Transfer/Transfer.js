@@ -66,6 +66,7 @@ const Transfer = () => {
   const [titleMsg, setTitleMsg] = useState("");
   const [contentMsg, setContentMsg] = useState("");
   const [transId, setTransId] = useState(0);
+  const [transType, setTransType] = useState(1);
 
   const onChangeSelectSaved = (e) => {
     if (listSaved) {
@@ -199,8 +200,9 @@ const Transfer = () => {
       note: note,
       amount: amount,
       cost_type: cost_type,
+      type: transType
     };
-    console.log(data);
+    console.log("data", data);
     let accessToken = localStorage.getItem('accessToken');
 
     dispatch(transfer(data, accessToken))
@@ -223,34 +225,30 @@ const Transfer = () => {
   }
 
   useEffect(() => {
-    const qAccNum = query.get("account");
-    const qName = query.get("name");
-    const qMoney = query.get("money");
-    const qNote = query.get("note");
-    if (qAccNum) {
-      setAccountNum(qAccNum);
-    }
-    if (qName) {
-      name.setValue(qName);
-    }
-    if (qMoney) {
-      money.setValue(qMoney);
-    }
-    if (qNote) {
-      message.setValue(qNote);
-    }
-
     const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
     dispatch(getAllAccount(uid, accessToken))
         .then((response) => {
           console.log(response);
+          const qAccNum = query.get("account");
+          const qName = query.get("name");
+          const qMoney = query.get("money");
+          const qNote = query.get("note");
+          if (qAccNum && qName && qMoney && qNote){
+            setTransType(4);
+            setAccountNum(qAccNum);
+            name.setValue(qName);
+            money.setValue(qMoney);
+            message.setValue(qNote);
+          }
         })
         .catch((e) => {
           console.log(e);
         });
-  }, [dispatch]);
+    return () => {
 
+    };
+  }, [dispatch]);
 
   return (
       <Container>
