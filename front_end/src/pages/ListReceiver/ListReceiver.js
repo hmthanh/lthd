@@ -178,8 +178,9 @@ class ListReceiver extends Component {
 
   componentDidMount() {
     const accessToken = localStorage.getItem('accessToken');
+    const uid = localStorage.getItem('uid');
     console.log(accessToken);
-    this.props.Fetch(localStorage.getItem('uid'), accessToken);
+    this.props.Fetch(uid, accessToken);
   }
 
   handleCreate(data) {

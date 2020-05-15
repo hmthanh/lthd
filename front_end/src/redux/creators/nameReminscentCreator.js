@@ -11,19 +11,22 @@ import {
 import {UrlApi} from '../../shares/baseUrl'
 import {fetchFrom} from '../../utils/fetchHelper'
 
-export const Fetch = (id, accessToken) => (dispatch) => {
-  dispatch(Loading());
-  console.log(`=====/api/receiver/${id}`)
-  return fetchFrom(UrlApi + `/api/receiver/${id}`, 'POST', {}, accessToken)
-      .then(res => {
-        console.log(res);
-        dispatch(Success({item: res}))
-      })
-      .catch(err => {
-        console.log(err);
-        dispatch(ErrorAccount('không thể kết nối server'));
-      })
-};
+export const Fetch = (id, accessToken) => {
+  return (dispatch) => {
+    dispatch({type: NAME_REMINISCENT_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + `/api/receiver/${id}`, 'POST', {}, accessToken);
+        console.log(response);
+        dispatch({type: NAME_REMINISCENT_SUCCESS, payload: response})
+        resolve(response);
+      } catch (e) {
+        reject(e);
+        dispatch({type: NAME_REMINISCENT_FAILED, payload: e});
+      }
+    });
+  };
+}
 
 export const Create = (data, accessToken) => {
   return (dispatch) => {
@@ -46,58 +49,35 @@ export const Create = (data, accessToken) => {
   };
 }
 
-export const Edit = (data, accessToken) => (dispatch) => {
-  dispatch(Loading());
-  return fetchFrom(UrlApi + '/api/receiver', 'PATCH', data, accessToken)
-      .then(res => {
-        if (res.err !== 200) {
-          dispatch(ErrorAccount('Lỗi hệ thống'));
-        } else {
-          dispatch(SuccessEdit(res.item))
-        }
-      }).catch(err => {
-        console.log(err);
-        dispatch(ErrorAccount('không thể kết nối server'));
-      })
-};
-
-export const Delete = (id, accessToken) => (dispatch) => {
-  dispatch(Loading());
-  return fetchFrom(UrlApi + '/api/receiver', 'DELETE', {id}, accessToken)
-      .then(res => {
-        console.log(res)
-        if (res.err !== 200) {
-          dispatch(ErrorAccount('Lỗi hệ thống'));
-        } else {
-          dispatch(SuccessDelete(res.item))
-        }
-      }).catch(err => {
-        console.log('Delete==================', err);
-        dispatch(ErrorAccount('không thể kết nối server'));
-      })
-};
-
-export const ErrorAccount = (msg) => ({
-  type: NAME_REMINISCENT_FAILED,
-  payload: msg
-});
-
-export const Loading = () => ({
-  type: NAME_REMINISCENT_LOADING
-});
+export const Edit = (data, accessToken) => {
+  return dispatch => {
+    dispatch({type: NAME_REMINISCENT_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/receiver', 'PATCH', data, accessToken);
+        resolve(response);
+        dispatch({type: NAME_REMINISCENT_EDIT, payload: response});
+      } catch (e) {
+        reject(e);
+        dispatch({type: NAME_REMINISCENT_FAILED, payload: e})
+      }
+    });
+  }
+}
 
 
-export const Success = (data) => ({
-  type: NAME_REMINISCENT_SUCCESS,
-  payload: data
-});
-
-export const SuccessEdit = (data) => ({
-  type: NAME_REMINISCENT_EDIT,
-  payload: data
-});
-
-export const SuccessDelete = (data) => ({
-  type: NAME_REMINISCENT_DELETED,
-  payload: data
-});
+export const Delete = (id, accessToken) => {
+  return dispatch => {
+    dispatch({type: NAME_REMINISCENT_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/receiver', 'DELETE', {id}, accessToken);
+        dispatch({type: NAME_REMINISCENT_DELETED, payload: response});
+        resolve(response);
+      } catch (e) {
+        reject(e);
+        dispatch({type: NAME_REMINISCENT_FAILED, payload: e});
+      }
+    })
+  };
+}

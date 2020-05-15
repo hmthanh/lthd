@@ -6,9 +6,11 @@ import useToggle from "../../utils/useToggle";
 import {useDispatch} from "react-redux";
 import useInputChange from "../../utils/useInputChange";
 import {DeleteInDebt, getInDebt} from "../../redux/creators/InDebtCreator";
+import {useHistory} from "react-router";
 
 const CancelRemind = ({debtId}) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const modalToggle = useToggle(false);
   const message = useInputChange("");
   console.log("debtId", debtId);
@@ -28,13 +30,14 @@ const CancelRemind = ({debtId}) => {
           const uid = localStorage.getItem('uid');
           dispatch(getInDebt(uid, accessToken))
               .then((response) => {
+                history.go(0);
                 console.log(response)
               })
         })
         .catch((err) => {
           console.log(err);
         })
-  }, [dispatch, message, modalToggle, debtId])
+  }, [dispatch, message, debtId])
 
   return (
       <>
