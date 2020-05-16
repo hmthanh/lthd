@@ -1,5 +1,3 @@
-
-
 const express = require('express')
 const moment = require('moment')
 const { hash, verifyHash, verify, sign } = require('../utils/rsa.signature')
@@ -7,6 +5,8 @@ const pgp = require('../utils/pgp.signature')
 const { SECRET_TOKEN, OTP, PGP_URL_TRANFER } = require('../config')
 const mailController = require('../mailer/mail.controller')
 const transferModel = require('../models/transfer.model')
+const notifyModel = require('../models/notify.model')
+const debtModel = require('../models/debt.model')
 const { getReceiverById, getIdByAccountNum } = require('../models/account.model')
 const { htmlMsgTemplate, msgTemplate } = require('../utils/common')
 const { minusTransfer, plus, patch } = require('../utils/db')
@@ -68,8 +68,8 @@ router.post('/', async (req, res) => {
     const otp = OTP.generate(SECRET_TOKEN);
     console.log('OTP tranfer', otp);
     let msg = msgTemplate(sender.name, 'transfer', otp)
-    let htmlmsg = htmlMsgTemplate(sender.name, 'transfer', otp)
-    mailController.sentMail(sender.email, '[New Vimo] Please verify OTP for transaction', msg, htmlmsg)
+    let html_msg = htmlMsgTemplate(sender.name, 'transfer', otp)
+    mailController.sentMail(sender.email, '[New Vimo] Please verify OTP for transaction', msg, html_msg)
 
     res.status(200).json({
       msg: 'successfully',
@@ -79,19 +79,21 @@ router.post('/', async (req, res) => {
 
     if (type === 4){
       const creditor = await getIdByAccountNum(req.body.to_account);
-      // console.log("creditor", creditor);
       const creditorInfo = creditor[0];
-      // console.log(creditorInfo);
-      let alertData = {
-        alertType: 4,
+      let notify = {
+        type: 4,
         recipient: creditorInfo.id,
-        ownerAccNum: sender.account_num,
-        ownerName: sender.name,
+        account_id: sender.account_num,
+        name: sender.name,
+        money: req.body.amount,
         message: req.body.note,
+        debt_id: req.body.debt
       }
+      const delNotify = await notifyModel.deleteByDebtId(req.body.debt);
+      let delDebt = await debtModel.delete(req.body.debt)
+      let update = await notifyModel.add(notify);
 
-      // console.log(alertData);
-      broadcastAll(JSON.stringify(alertData));
+      broadcastAll(JSON.stringify(notify));
     }
   }
 })
@@ -116,7 +118,7 @@ router.post('/:id', async (req, res) => {
       return
     }
     transaction = transaction[0]
-    
+
     let ts = moment().valueOf(new Date()); // get current milliseconds since the Unix Epoch
     let data = {
       from: transaction.acc_name,
@@ -159,7 +161,7 @@ router.post('/:id', async (req, res) => {
       }
     } else {
       // chuyển khoản pgp
-      if(transaction.partner_code === 7261) { 
+      if(transaction.partner_code === 7261) {
         let ts = moment().valueOf(new Date()) // get current milliseconds since the Unix Epoch
         let dataPgp = {
             STTTH:`${transaction.to_account}`,
@@ -188,7 +190,7 @@ router.post('/:id', async (req, res) => {
             transId: req.body.transId, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
             to_account: transaction.to_account, // số tài khoản thụ hưởng
             amount: transaction.amount // số tiền giao dịch
-          }) 
+          })
         })
         .catch( error => {
           console.log(error)
@@ -201,7 +203,7 @@ router.post('/:id', async (req, res) => {
       res.status(200).json({
         msg: 'tranfer another backing not suport yet!!',
         errorCode: -203, // mã lỗi sOTP không hợp lệ
-      })     
+      })
     }
   }
 });

@@ -1,8 +1,8 @@
 import {
-  DEBT_FAILED, INDEBT_DELETED,
+  INDEBT_DELETED,
   INDEBT_FAILED,
   INDEBT_LOADING,
-  INDEBT_SUCCESS, NAME_DEBT_DELETED, NAME_DEBT_LOADING,
+  INDEBT_SUCCESS,
 } from '../actions/actionType'
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'

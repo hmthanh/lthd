@@ -60,6 +60,7 @@ const Transfer = () => {
   const name = useInputChange('');
   const money = useInputChange(0);
   const message = useInputChange('');
+  const [debt, setDebt] = useState(0);
   const isSenderPay = useToggle(true);
   const msgBoxToggle = useToggle(false);
   const showVerifyToggle = useToggle(false);
@@ -200,6 +201,7 @@ const Transfer = () => {
       note: note,
       amount: amount,
       cost_type: cost_type,
+      debt: debt,
       type: transType
     };
     console.log("data", data);
@@ -234,12 +236,14 @@ const Transfer = () => {
           const qName = query.get("name");
           const qMoney = query.get("money");
           const qNote = query.get("note");
+          const qDebt = query.get("debt");
           if (qAccNum && qName && qMoney && qNote){
             setTransType(4);
             setAccountNum(qAccNum);
             name.setValue(qName);
             money.setValue(qMoney);
             message.setValue(qNote);
+            setDebt(qDebt);
           }
         })
         .catch((e) => {

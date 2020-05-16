@@ -37,3 +37,6 @@
 .btn-secondary:hover {
     background-color: inherit !important;
 }
+div.close{
+    cursor: pointer;
+}

@@ -54,7 +54,7 @@ const ListInDebt = () => {
                             <td>{formatFormalDate(item.date_time)}</td>
                             <td>{item.note}</td>
                             <td>
-                              <Link to={`/transfer?account=${item.account_num}&name=${item.name}&money=${item.debt_val}&note=${item.note}`}>
+                              <Link to={`/transfer?account=${item.account_num}&name=${item.name}&money=${item.debt_val}&note=${item.note}&debt=${item.id}`}>
                                 <Button color="success">
                                   <span style={{marginRight: "10px"}}>Thanh toán</span>
                                   <FontAwesomeIcon  icon={faCreditCard}></FontAwesomeIcon>

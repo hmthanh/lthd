@@ -1,6 +1,6 @@
-
 const express = require('express');
 const remindModel = require('../models/remind.model');
+const notifyModel = require('../models/notify.model')
 const router = express.Router();
 const userModel = require('../models/user.model');
 const {broadcastAll} = require('../ws');
@@ -16,6 +16,7 @@ router.post('/', async (req, res) => {
 
 // post để lấy tất cả các record trong db. do front end dùng post không dùng get
 router.post('/count', async (req, res) => {
+  console.log(req.body);
   let rows = await remindModel.count(req.body.id);
   await res.status(200).json({error: 0, ...rows[0]});
 });
@@ -28,26 +29,33 @@ router.delete('/', async (req, res) => {
   const owner = await remindModel.getOwnerId(req.body.debtId);
   const ownerInfo = owner[0];
 
-  let alertData = {
-    alertType: 3,
+  let notify = {
+    type: 3,
     recipient: ownerInfo.owner_id,
-    ownerAccNum: userDebtInfo.account_num,
-    ownerName: userDebtInfo.name,
+    account_id: userDebtInfo.account_num,
+    name: userDebtInfo.name,
+    money: 0,
     message: req.body.message,
+    debt_id: req.body.debtId
   }
+  const delDebt = await notifyModel.deleteByDebtId(req.body.debtId);
+  let update = await notifyModel.add(notify);
+  console.log("notify update", update);
 
   let item = await remindModel.delete(req.body.debtId)
-  let ret = {
+  await res.status(200).json({
     item,
     msg: 'successfully'
-  }
-  let errorCode = 200;
-  await res.status(errorCode).json(ret);
-
-
-  console.log(alertData);
-  broadcastAll(JSON.stringify(alertData));
+  });
+  broadcastAll(JSON.stringify(notify));
 })
 
+router.post('/notify', async (req, res) => {
+  const user = await userModel.singleByUserId(req.body.id);
+  const userInfo = user[0];
+  let response = await remindModel.getRemind(req.body.id);
+  console.log(response);
+  await res.status(200).json(response);
+});
 
 module.exports = router;
