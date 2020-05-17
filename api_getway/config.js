@@ -28,5 +28,11 @@ module.exports = {
   OTP: totp,
   MAILER_PORT: process.env.MAILER_PORT,
   PGP_URL_INFO: `${process.env.URL_PGP_API}/${process.env.PGP_INFO_PATH}`,
-  PGP_URL_TRANFER: `${process.env.URL_PGP_API}/${process.env.PGP_TRANFER_PATH}`
+  PGP_URL_TRANFER: `${process.env.URL_PGP_API}/${process.env.PGP_TRANFER_PATH}`,
+  PGP_PARTNERCODE: 5412,
+  RSA_URL_INFO: `${process.env.URL_RSA_API}/${process.env.RSA_INFO_PATH}`,
+  RSA_URL_TRANFER: `${process.env.URL_RSA_API}/${process.env.RSA_TRANFER_PATH}`,
+
+  RSA_PARTNERCODE: 176991,
+  RSA_PARTNER_SCRE: process.env.SECRET_RSA_PARTNER
 };

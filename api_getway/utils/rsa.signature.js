@@ -3,9 +3,9 @@ const crypto = require('crypto')
 const {resolve} = require('path')
 const {SECRET_RSA} = require('../config');
 
-const privateKeyFileName = './thirt_app/private.pem', publicKeyFileName = './thirt_app/public.pem'
+const privateKeyFileName = './private.pem', publicKeyFileName = './thirt_app/public.pem'
 const encoding = 'utf8'
-const algorithm = 'SHA512'
+const algorithm = 'SHA256'
 
 const publicKeyOption = {
   type: 'pkcs1',
@@ -47,9 +47,15 @@ const privateKeyString = readFileSync(privateKeyPath, encoding)
 // create KeyObject for private key
 const privateKey = crypto.createPrivateKey({...privateKeyOption, key: privateKeyString})
 
-const publicKeyPath = resolve(publicKeyFileName)
-const publicKeyString = readFileSync(publicKeyPath, encoding)
-const publicKey = crypto.createPublicKey({...publicKeyOption, key: publicKeyString})
+let publicKeyPath = resolve(publicKeyFileName)
+let publicKeyString = readFileSync(publicKeyPath, encoding)
+let publicKey = crypto.createPublicKey({...publicKeyOption, key: publicKeyString})
+
+const setPubkeyRSA = (fileName) => {
+  publicKeyPath = resolve(fileName)
+  publicKeyString = readFileSync(publicKeyPath, encoding)
+  publicKey = crypto.createPublicKey({...publicKeyOption, key: publicKeyString})
+}
 
 module.exports = {
   sign: (data) => {
@@ -61,15 +67,15 @@ module.exports = {
   },
   verify: (data, signature) => {
     let buffer = data
-    console.log(buffer)
+    // console.log(buffer)
     if(!Buffer.isBuffer(data)) {
       buffer = Buffer.from(data)
       console.log(buffer)
     }
     return crypto.verify(algorithm, buffer, publicKey, signature)
   },
-  hash: stringifyData => {
-    const hmac = crypto.createHmac(algorithm, SECRET_RSA)
+  hash: (stringifyData, secret) => {
+    const hmac = crypto.createHmac(algorithm, secret)
     hmac.update(stringifyData)
     return hmac.digest('hex')
   },
@@ -83,5 +89,6 @@ module.exports = {
       buffer2 = Buffer.from(hashData)
     }
     return crypto.timingSafeEqual(buffer1, buffer2)
-  }
+  },
+  setPubkeyRSA
 }

@@ -83,8 +83,8 @@ const fetchFrom = async (url = '', method = 'POST', data = {}, accessToken = '')
 };
 
 function main() {
-  // testApiGetInfoInvalidParnerCode()
-  testTranfer()
+  testApiGetInfoInvalidParnerCode()
+  // testTranfer()
 }
 
 main()
