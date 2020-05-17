@@ -3,9 +3,9 @@ const crypto = require('crypto')
 const {resolve} = require('path')
 const {SECRET_RSA} = require('../config');
 
-const privateKeyFileName = './thirt_app/private.pem', publicKeyFileName = './thirt_app/public.pem'
+const privateKeyFileName = './private.pem', publicKeyFileName = './thirt_app/public.pem'
 const encoding = 'utf8'
-const algorithm = 'SHA512'
+const algorithm = 'SHA256'
 
 const publicKeyOption = {
   type: 'pkcs1',
@@ -61,15 +61,15 @@ module.exports = {
   },
   verify: (data, signature) => {
     let buffer = data
-    console.log(buffer)
+    // console.log(buffer)
     if(!Buffer.isBuffer(data)) {
       buffer = Buffer.from(data)
       console.log(buffer)
     }
     return crypto.verify(algorithm, buffer, publicKey, signature)
   },
-  hash: stringifyData => {
-    const hmac = crypto.createHmac(algorithm, SECRET_RSA)
+  hash: (stringifyData, secret) => {
+    const hmac = crypto.createHmac(algorithm, secret)
     hmac.update(stringifyData)
     return hmac.digest('hex')
   },

@@ -97,9 +97,14 @@ const Transfer = () => {
       setAccInValidMsg("Không được để trống")
       return false;
     }
-    let accessToken = localStorage.getItem('accessToken');
+    let accessToken = localStorage.getItem('accessToken')
+    let partner_code = '0'
+    if (isInterbank) {
+      partner_code = receiveBank
+    }
     let data = {
-      query: accountNum
+      query: accountNum,
+      partner: partner_code
     }
     console.log("acc num", accountNum)
     dispatch(getAccName(data, accessToken))

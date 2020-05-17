@@ -6,8 +6,17 @@ const common = require('../utils/common')
 const accountModel = require('../models/account.model')
 const receiverModel = require('../models/receiverInfo.model')
 const userModel = require('../models/user.model')
-const {SECRET_TOKEN, OTP} = require('../config')
+const {SECRET_TOKEN, OTP, PGP_URL_INFO, PGP_PARTNERCODE, RSA_PARTNERCODE,
+  RSA_URL_INFO, SECRET_RSA} = require('../config')
+
+const bcrypt = require('bcryptjs')
+
+const moment = require('moment')
+
+  // const {SECRET_RSA} = require('../config')
 const mailController = require('../mailer/mail.controller')
+const { hash } = require('../utils/rsa.signature')
+const axios = require('axios')
 
 const router = express.Router()
 
@@ -79,20 +88,134 @@ router.post('/id', async (req, res) => {
   await res.status(200).json(ret)
 });
 
+// const getInfoParnerBankPGP = async (accNum) => {
+//   let ts = moment().valueOf(new Date()) // get current milliseconds since the Unix Epoch
+//   let data = {
+//       STTTH:`${accNum}`,
+//       Time: `${parseInt(ts / 1000)}`,
+//       PartnerCode: `${PGP_PARTNERCODE}`
+//   }
+
+//   let hashString =  `${data.STTTH}${data.PartnerCode}${data.Time}Nhom6`
+//   // console.log(hashString)
+
+//   let hashVal = bcrypt.hashSync(hashString)
+//   data.Hash = hashVal
+//   console.log(data)
+
+//   const UrlApi = PGP_URL_INFO
+
+//   return axios.post(UrlApi, data)
+//   .then (respose => {
+//     console.log(respose.data);
+//     return respose;
+//   })
+//   .catch( error => console.error(error))
+// }
+
+
+const getInfoParnerBankRSA = async (accNum) => {
+  const data = {
+    userName: '', // 1 trong 2 field userName hoặc accountNumber
+    accountNumber: accNum, // 1 trong 2 field userName hoặc accountNumber
+    ts: Date.now(),
+    recvWindow: 5000,
+  }
+  const body = {
+    data: data, // Request data
+    hash: hash(JSON.stringify(data), SECRET_RSA), // Chuỗi hash lại của request data (đã chuyển thành JSON string) bằng secret key của quý đối tác, 
+    partnerId: `${RSA_PARTNERCODE}` // Partner Id của đối tác, được cung cấp khi 2 bên liên kết với nhau
+  }
+  // console.log('getInfoParnerBankRSA', body)
+
+  const UrlApi = RSA_URL_INFO
+
+  // console.log(UrlApi)
+
+  return axios.post(UrlApi, body)
+  .then (respose => {
+    console.log(respose.data);
+    return respose;
+  })
+  .catch( error => console.error(error))
+}
+
+const getInfoParnerBankPGP = async (accNum) => {
+  let ts = moment().valueOf(new Date()) // get current milliseconds since the Unix Epoch
+  let data = {
+      STTTH:`${accNum}`,
+      Time: `${parseInt(ts / 1000)}`,
+      PartnerCode: `0725`
+  }
+
+  let hashString =  `${data.STTTH}${data.PartnerCode}${data.Time}Nhom6`
+  // console.log(hashString)
+
+  let hashVal = bcrypt.hashSync(hashString)
+  data.Hash = hashVal
+  console.log(data)
+
+  const UrlApi = PGP_URL_INFO
+
+  return await axios.post(UrlApi, data)
+  // .then (respose => {
+  //   console.log(respose.data);
+  //   return respose.data;
+  // })
+  // .catch( error => console.error(error))
+}
+
 router.post('/acc', async (req, res) => {
 
-  let account = await accountModel.getInfoByAccount(req.body.query)
-  if (account.length === 0) {
-    // try account
-    let q = req.body.query.slice(0, -1)
-    account = await accountModel.getInfoByAccount(q)
+  console.log(req.body)
+  let item = {}
+  if(req.body.partner && req.body.partner !== 0) {
+    let info = {}
+    if (req.body.partner === '0923' ) {
+      info = await getInfoParnerBankRSA(req.body.query)
+      info = info.data
+      // console.log('===========================', info)
+      account = info.data
+      info = {...info.data}
+      /*
+      userName: String,
+        name: String,
+        phone: String,
+        accountNumber: String,
+      */
+
+      item = {
+        account_num: info.accountNumber,
+        name: info.name,
+        email: info.phone,
+      }
+    }
+    else {
+      info = await getInfoParnerBankPGP(req.body.query)
+      
+      account = info.data
+      info = {...info.data}
+      item = {
+        account_num: info.accountNumber,
+        name: info.account.fullName,
+        email: info.account.email,
+      }
+    }   
+  } else {
+    account = await accountModel.getInfoByAccount(req.body.query)
+    if (account.length === 0) {
+      // try account
+      let q = req.body.query.slice(0, -1)
+      account = await accountModel.getInfoByAccount(q)
+    }
+    item = account[0]
   }
   let ret = {
     errorCode: -201,
     msg: 'invalid parameters',
   };
   if (account && account.length !== 0) {
-    const item = account[0];
+    // item = account[0];
     ret = {
       errorCode: 0,
       msg: 'successfully',

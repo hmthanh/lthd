@@ -2,6 +2,7 @@ const express = require('express')
 const moment = require('moment')
 const { hash, verifyHash, verify } = require('../utils/rsa.signature')
 const userModel = require('../models/user.model')
+const {RSA_PARTNER_SCRE} = require('../config')
 const bcrypt = require('bcryptjs')
 // nghia 5412 partner
 const router = express.Router()
@@ -27,20 +28,28 @@ router.post('/', async (req, res) => {
   } else {
     const userName = data.userName
     const accountNum = data.accountNum
-    console.log(JSON.stringify(data))
+    console.log(data)
     // const hashVal = bcrypt.verifyHash(JSON.stringify(data), 5412)
     //JSON.stringify(data)
-    const verifyHash = bcrypt.compareSync(JSON.stringify(data), hashRev)
-    // hash(JSON.stringify(data))
-    console.log(verifyHash)
+    let verifyHashVal = false
 
-    if (partnerCode !== '5412') {
+    if (partnerCode === '6572') {
+      const hashVal = hash(JSON.stringify(data), RSA_PARTNER_SCRE)
+      console.log('hashVal', hashVal)
+      verifyHashVal = verifyHash(hashVal, hashRev)  
+    }
+    if (partnerCode === '5412') {
+      verifyHashVal = bcrypt.compareSync(JSON.stringify(data), hashRev)
+      // hash(JSON.stringify(data))
+      // console.log(verifyHash)
+    }
+    if (partnerCode !== '5412' && partnerCode !== '6572') {
       msg = 'invalid partner code'
       errorCode = 1000
-    } else if (timestemp - data.ts > (30000 * 5)) {
+    } else if (timestemp - data.ts > (30000 * 15)) {
       msg = 'request timeout'
       errorCode = 1001
-    } else if (!verifyHash) {
+    } else if (!verifyHashVal) {
       msg = 'invalid hash'
       errorCode = 1002
     } else if (!userName && !accountNum) {

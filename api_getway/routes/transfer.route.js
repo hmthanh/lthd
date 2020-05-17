@@ -4,7 +4,9 @@ const express = require('express')
 const moment = require('moment')
 const { hash, verifyHash, verify, sign } = require('../utils/rsa.signature')
 const pgp = require('../utils/pgp.signature')
-const { SECRET_TOKEN, OTP, PGP_URL_TRANFER } = require('../config')
+const rsa = require('../utils/rsa.signature')
+const { SECRET_TOKEN, OTP, PGP_URL_TRANFER, 
+  RSA_URL_TRANFER,PGP_PARTNERCODE, RSA_PARTNERCODE, SECRET_RSA } = require('../config')
 const mailController = require('../mailer/mail.controller')
 const transferModel = require('../models/transfer.model')
 const { getReceiverById, getIdByAccountNum } = require('../models/account.model')
@@ -15,6 +17,7 @@ const {broadcastAll} = require('../ws');
 const router = express.Router()
 const partnerCode = 5412
 const encoding = 'base64'
+const bcrypt = require('bcryptjs')
 
 const axios = require("axios")
 
@@ -24,18 +27,77 @@ const validateData = (data) => {
   return true
 }
 
-const tranferPgp = async data => {
+const tranferPgp = async transaction => {
+
+  let ts = moment().valueOf(new Date()) // get current milliseconds since the Unix Epoch
+  let data = {
+      STTTH:`${transaction.to_account}`,
+      Time: `${parseInt(ts / 1000)}`,
+      STTTHAnother: `${transaction.from_account}`,
+      Money: `${transaction.amount}`,
+      PartnerCode: `0725`
+  }
+
   const UrlApi = PGP_URL_TRANFER
-  let signature  =  await pgp.signUtf8('nhom6') //JSON.stringify(data)
+  let signature  =  await pgp.signUtf8(JSON.stringify(data))
   data.Signature = Buffer.from(signature).toString(encoding)
   data.Hash = bcrypt.hashSync(`${data.STTTH}${data.STTTHAnother}${data.PartnerCode}${data.Time}${data.Money}Nhom6`)
   // console.log(data)
-  return axios.post(UrlApi, data)
+  return await axios.post(UrlApi, data)
+}
+
+
+// const tranferRSA = async transaction => {
+//   const data = {
+//     from: `${transaction.acc_name}`,
+//     fromAccountNumber: `${transaction.from_account}`,
+//     toAccountNumber: `${transaction.to_account}`,
+//     amount: to_account.amount,
+//     description: 'Chuyển liên ngân hàng',
+//     ts: Date.now(),
+//     recvWindow: 5000,
+// }
+//   const UrlApi = RSA_URL_TRANFER
+//   let signature  =  await rsa.sign(JSON.stringify(data)) //JSON.stringify(data)
+//   data.sign = Buffer.from(signature).toString('base64')
+//   let hash = await rsa.hash(JSON.stringify(data))
+//   data.hash = hash
+//   // console.log(data)
+//   return axios.post(UrlApi, data)
+// }
+
+
+const tranferRSA = async transaction => {
+  const data = {
+    from: `${transaction.acc_name}`,
+    fromAccountNumber: `${transaction.from_account}`,
+    toAccountNumber: `${transaction.to_account}`,
+    amount: transaction.amount,
+    description: 'Chuyển liên ngân hàng',
+    ts: Date.now(),
+    recvWindow: 5000,
+}
+  const UrlApi = RSA_URL_TRANFER
+  const body = {
+    data: data, // Request data
+    // hash: hash(JSON.stringify(data), SECRET_RSA), // Chuỗi hash lại của request data (đã chuyển thành JSON string) bằng secret key của quý đối tác, 
+    partnerId: `${RSA_PARTNERCODE}` // Partner Id của đối tác, được cung cấp khi 2 bên liên kết với nhau
+  }
+
+  let signature  =  await sign(JSON.stringify(data)) //JSON.stringify(data)
+  body.sign = Buffer.from(signature).toString('base64')
+  let hashval = await hash(JSON.stringify(data), SECRET_RSA )
+  body.hash = hashval
+  // console.log(data)
+  return await axios.post(UrlApi, body)
 }
 
 router.post('/', async (req, res) => {
   const type = req.body.type ? req.body.type : 1
-  // console.log(req.body)
+  if (!req.body.to_account) {
+    req.body.to_account = 100001
+  }
+  console.log(req.body)
   const isValid = validateData(req.body)
   if (!isValid) {
     res.status(200).json({
@@ -58,6 +120,8 @@ router.post('/', async (req, res) => {
     state: 1, // chưa thành công
     type: type// type trừ tiền
   };
+
+  // console.log('-------------', sender.surplus)
   if (sender.surplus < req.body.amount) {
     res.status(200).json({
       msg: 'failure',
@@ -159,28 +223,21 @@ router.post('/:id', async (req, res) => {
       }
     } else {
       // chuyển khoản pgp
-      if(transaction.partner_code === 7261) { 
-        let ts = moment().valueOf(new Date()) // get current milliseconds since the Unix Epoch
-        let dataPgp = {
-            STTTH:`${transaction.to_account}`,
-            PartnerCode:`${partnerCode}`,
-            Time: `${parseInt(ts / 1000)}`,
-            STTTHAnother: `${transaction.from_account}`,
-            Money: `${transaction.amount}`,
-            PartnerCode: `${partnerCode}`
+      if(transaction.partner_code === '7261' || transaction.partner_code === 7261) { 
+        let respose = await tranferPgp(transaction)
+        console.log(respose.data)
+       
+        let signature = respose.data.sign
+        
+        if (!signature) signature = `don't respone signature`
+        const tran = {
+          type: 2,
+          state: 0,
+          signature: signature
         }
-        tranferPgp(dataPgp)
-        .then ( async respose => {
-          // trừ tiền - lưu chữ kí
+        let isVerify = await pgp.verifyUtf8(signature)
+        if (isVerify) {
           await minusTransfer(req.body.transId, transaction.amount, transaction.from_account)
-          let signature = respose.signature
-          if (!signature) signature = `don't respone signature`
-          const tran = {
-            type: 2,
-            state: 0,
-            signature: signature
-          }
-
           patch(tran, {trans_id: req.body.transId}, 'transaction_tranfer')
           res.status(200).json({
             msg: 'successfully',
@@ -189,14 +246,32 @@ router.post('/:id', async (req, res) => {
             to_account: transaction.to_account, // số tài khoản thụ hưởng
             amount: transaction.amount // số tiền giao dịch
           }) 
-        })
-        .catch( error => {
-          console.log(error)
+        } else {
           res.status(200).json({
-            msg: 'another backing error!!',
-            errorCode: -205, // mã lỗi sOTP không hợp lệ
-          })
-        })
+            msg: 'invalid',
+            errorCode: 101,
+          }) 
+        }
+      } else {
+        let respose = await tranferRSA(transaction)
+        // console.log(respose)
+        await minusTransfer(req.body.transId, transaction.amount, transaction.from_account)
+        let signature = respose.data.sign
+        if (!signature) signature = `don't respone signature`
+        const tran = {
+          type: 2,
+          state: 0,
+          signature: signature
+        }
+        patch(tran, {trans_id: req.body.transId}, 'transaction_tranfer')
+        res.status(200).json({
+          msg: 'successfully',
+          errorCode: 0,
+          transId: req.body.transId, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
+          to_account: transaction.to_account, // số tài khoản thụ hưởng
+          amount: transaction.amount // số tiền giao dịch
+        }) 
+        
       }
       res.status(200).json({
         msg: 'tranfer another backing not suport yet!!',

@@ -30,7 +30,7 @@ module.exports = {
               throw error
             })
           const {surplus, id} = results[0]
-          let acc = surplus + entity.amount
+          let acc = parseInt(surplus) + parseInt(entity.amount)
           connection.query('UPDATE banking_account SET ? WHERE ?', [{surplus: acc}, {id: id}], (error, results, fields) => {
             if (error) 
               return connection.rollback(function () {

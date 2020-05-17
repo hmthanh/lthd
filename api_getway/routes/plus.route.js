@@ -2,7 +2,9 @@ const express = require('express')
 const moment = require('moment')
 const {hash, verifyHash, verify, sign} = require('../utils/rsa.signature')
 const { plus } = require('../utils/db')
+const {RSA_PARTNER_SCRE, SECRET_RSA, RSA_PARTNERCODE} = require('../config')
 const bcrypt = require('bcryptjs')
+
 const encoding = 'base64'
 
 const router = express.Router()
@@ -21,32 +23,40 @@ router.post('/', async (req, res) => {
   // console.log(req.body.data)
   const timestemp = moment().valueOf(new Date()) 
   const hashRev = req.body.hash
-  const partnerCode = req.body.partnerCode
-  const signature = Buffer.from(req.body.signature, encoding)
-  console.log('signature', signature)
-  const data = req.body.data
-  // const hashVal = hash(JSON.stringify(data))
-  const hashVal = JSON.stringify(data)
 
-  console.log('JSON.stringify(data)', JSON.stringify(data))
-  const isValid = true
+  const partnerCode = req.body.partnerCode
+  let isValid = false
+  let hashValid = false
+  let hashVal = null
+  let signature = null
+  let data = req.body.data
+  if (partnerCode === '6572') {
+    let sigRSA = Buffer.from(req.body.sign, 'base64')
+    signature = Buffer.from(sigRSA, 'utf8')
+    hashVal = hash(JSON.stringify(data), RSA_PARTNER_SCRE)
+    // console.log(hashVal)
+    hashValid = verifyHash(hashVal, hashRev)
+  }
+  if (partnerCode == '5412') {
+    signature = Buffer.from(req.body.sign, 'base64')
+    // hashVal = bcrypt.hashSync(data)
+    hashValid = bcrypt.compareSync(JSON.stringify(data), hashRev)
+  }
   isValid = verify(JSON.stringify(data), signature)
-  // console.log('isValid',  hashVal,  hashRev)
   let msg = 'successfully'
   let errorCode = 0
   let info = {}
-  if(partnerCode !== '5412') {
+  if(partnerCode !== '5412' && partnerCode !== '6572') {
     msg = 'invalid partner code'
     errorCode = 1000
   } else if( timestemp - data.ts > (30000 * 20)) {
     msg = 'request timeout'
     errorCode = 1001
-  } else 
-  if (!isValid) {
-    msg = 'invalid hash'
+  }
+  else if (!isValid) {
+    msg = 'invalid signature'
     errorCode = 1002
-  } 
-  if (!bcrypt.compareSync(hashVal, hashRev)){
+  } else if (!hashValid){
     msg = 'invalid hash'
     errorCode = 1002
   }
@@ -78,7 +88,7 @@ router.post('/', async (req, res) => {
       partner_code: partnerCode,
       state: 0
     }
-    let result = await plus(enyity)
+    let result = await plus(enyity, data.to_account)
     if(result) {
       info = {
         tranId: result.tranId,
@@ -89,7 +99,9 @@ router.post('/', async (req, res) => {
     }
   }
   const dataString = JSON.stringify(info)
-  let ret = {msg, errorCode, data: info, hash: hash(JSON.stringify(dataString)), signature: sign(dataString).toString(encoding)}
+  // console.log(JSON.stringify(dataString), SECRET_RSA)
+  // console.log('hash(JSON.stringify(dataString), SECRET_RSA', hash(JSON.stringify(dataString), SECRET_RSA))
+  let ret = {msg, errorCode, data: info, hash: hash(dataString, SECRET_RSA), signature: sign(dataString).toString(encoding)}
   res.status(200).json(ret)
 })
 module.exports = router
