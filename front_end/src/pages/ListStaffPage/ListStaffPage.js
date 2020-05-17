@@ -49,7 +49,7 @@ const ModalEdit = (props) => {
       <div>
         <Button color="primary" onClick={toggle}>{buttonLabel}</Button>
         <Modal isOpen={modal} fade={false} toggle={toggle} className={className}>
-          <ModalHeader toggle={toggle}>Nhắc nợ</ModalHeader>
+          <ModalHeader toggle={toggle}>Sửa</ModalHeader>
           <LocalForm id='edit-ac' onSubmit={(values) => handleSubmit(values)} autoComplete="off">
             <ModalBody>
               <div className='form-group'>

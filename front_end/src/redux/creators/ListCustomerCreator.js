@@ -24,3 +24,52 @@ import {
     };
   };
   
+
+  
+
+export const Edit = (data, accessToken) => (dispatch) => {
+    dispatch(loadingStaff());
+    return fetchFrom(UrlApi + '/api/listuser', 'PATCH', data, accessToken)
+        .then(res => {
+            if (res.err !== 200) {
+                dispatch(ALL_CUSTOMER_FAILED('Lỗi hệ thống'));
+            } else {
+                dispatch(staffsuccess(res.item))
+            }
+        }).catch(err => {
+            console.log(err);
+            dispatch(stafffailed('không thể kết nối server'));
+        })
+};
+
+export const Delete = (id, accessToken) => (dispatch) => {
+    dispatch(loadingStaff());
+    return fetchFrom(UrlApi + '/api/listuser', 'DELETE', {id:id}, accessToken)
+        .then(res => {
+            console.log(res);
+            if (res.err !== 200) {
+                dispatch(stafffailed('Lỗi hệ thống'));
+            } else {
+                dispatch(staffsuccess(res.item))
+            }
+        }).catch(err => {
+            console.log('Delete==================', err);
+            dispatch(stafffailed('không thể kết nối server'));
+        })
+};
+
+
+export const loadingStaff = () => ({
+  type: ALL_CUSTOMER_LOADING
+});
+
+export const staffsuccess = (response) => ({
+  type: ALL_CUSTOMER_SUCCESS,
+  payload: response
+});
+
+
+export const stafffailed = (error_msg) => ({
+  type: ALL_CUSTOMER_FAILED,
+  payload: error_msg
+});
