@@ -6,9 +6,11 @@ import useToggle from "../../utils/useToggle";
 import {useDispatch} from "react-redux";
 import {Delete, getAllDebt} from "../../redux/creators/debtCreator";
 import useInputChange from "../../utils/useInputChange";
+import {useHistory} from "react-router";
 
 const CancelDebt = ({debtId}) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const modalToggle = useToggle(false);
   const message = useInputChange("");
 
@@ -28,12 +30,13 @@ const CancelDebt = ({debtId}) => {
               .then((response) => {
                 console.log(response);
                 modalToggle.setInActive();
+                history.go(0);
               })
         })
         .catch((err) => {
           console.log(err);
         })
-  }, [dispatch, message, modalToggle, debtId])
+  }, [dispatch, message, modalToggle, debtId, history])
 
   return (
       <>

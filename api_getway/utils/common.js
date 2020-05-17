@@ -132,6 +132,8 @@ const validate = (data) => {
   return true
 };
 
+const convertObjectToArray = (object) => Object.keys(object).map(i => object[i]);
+
 module.exports = {
   required,
   maxLength,
@@ -147,5 +149,6 @@ module.exports = {
   msgLogingTemplate,
   htmlMsgLogingTemplate,
   msgForgetTemplate,
-  htmlForgetTemplate
+  htmlForgetTemplate,
+  convertObjectToArray
 };

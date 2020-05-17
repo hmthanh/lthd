@@ -15,7 +15,7 @@ import {GetAllStaff} from './actions/getAllStaff'
 import {ListTransferInfo} from './actions/getAllTransfer'
 import {ReminscentAcction} from './actions/reminscentAcc'
 import {GetAllReceiver} from './actions/getAllReceiver'
-import {GetRemindInfo} from './actions/getRemind'
+import {GetNotify, GetRemindInfo} from './actions/getRemind'
 import {GetRemindDetail} from './actions/getRemindDetail'
 import {AccountNum} from './actions/accountNum.action'
 import {InterBank, ReceiverSaved, TransferInfo, VerifyResult} from './actions/transfer.action'
@@ -41,6 +41,7 @@ export const ConfigureStore = () => {
         Reminscent: ReminscentAcction,
         ReceiverInfo: GetAllReceiver,
         RemindInfo: GetRemindInfo,
+            GetNotify: GetNotify,
         RemindDetail: GetRemindDetail,
         InterBank: InterBank,
         TransferInfo: TransferInfo,

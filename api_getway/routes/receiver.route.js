@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
     partner_bank: req.body.banking
   };
   console.log('entity', entity);
-  let ret, errorCode, item = null;
+  let item = null;
   // if(!entity.account_num || !entity.ower_id || !entity.alias_name || !entity.partner_bank) {
   //   msg = 'invalid parameters, require userName or accountNum'
   //   errorCode = 201
@@ -21,28 +21,23 @@ router.post('/', async (req, res) => {
   let rows = await receiverModel.add(entity);
   if (rows) item = entity;
   console.log('await', rows);
-  errorCode = 200;
-  msg = 'successfully';
-  // }
-  ret = {
+
+  await res.status(200).json({
     item,
-    msg
-  };
-  res.status(errorCode).json(ret)
+    msg : 'successfully'
+  });
 });
 
 router.post('/:id', async (req, res) => {
   console.log("abc");
-  let rows = await receiverModel.get(req.params.id);
+  let receiver = await receiverModel.get(req.params.id);
   console.log(req.body)
   // let rows = await receiverModel.getByPartner(req.params.id, req.body.partnerCode);
-  // console.log("2")
-  // console.log(rows)
-  res.status(200).json(rows)
-  res.status(200).json({
+  // res.status(200).json(rows)
+  await res.status(200).json({
     errorCode: 0,
     msg: 'successfully',
-    item: rows
+    item:receiver
   })
 });
 

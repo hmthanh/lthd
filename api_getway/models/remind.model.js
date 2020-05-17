@@ -9,6 +9,9 @@ module.exports = {
   get: (account_num) => {
     return db.load(`SELECT d.id, u.name, d.debt_val, d.date_time, d.note, u.account_num FROM debt_info as d JOIN user_info as u on d.owner_id = u.id WHERE d.account_num=${account_num} order by d.id DESC`)
   },
+  getRemind: (userId) => {
+    return db.load(`SELECT * FROM debt_info as d JOIN user_info as u on d.owner_id = u.id WHERE d.account_num=${account_num} order by d.id DESC`)
+  },
   delete: (id) => {
     return db.del({id: id}, 'debt_info')
   },
