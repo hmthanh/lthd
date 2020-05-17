@@ -1,6 +1,6 @@
 const express = require('express')
 const moment = require('moment')
-const {hash, verifyHash, verify, sign} = require('../utils/rsa.signature')
+const {hash, verifyHash, verify, sign, setPubkeyRSA} = require('../utils/rsa.signature')
 const { plus } = require('../utils/db')
 const {RSA_PARTNER_SCRE, SECRET_RSA, RSA_PARTNERCODE} = require('../config')
 const bcrypt = require('bcryptjs')
@@ -19,7 +19,7 @@ const validateData = (data) => {
 }
 
 router.post('/', async (req, res) => {
-  // console.log(req.body)
+  console.log(req.body)
   // console.log(req.body.data)
   const timestemp = moment().valueOf(new Date()) 
   const hashRev = req.body.hash
@@ -30,26 +30,30 @@ router.post('/', async (req, res) => {
   let hashVal = null
   let signature = null
   let data = req.body.data
+  let signData = null
   if (partnerCode === '6572') {
-    let sigRSA = Buffer.from(req.body.sign, 'base64')
-    signature = Buffer.from(sigRSA, 'utf8')
+    let signRSA = Buffer.from(req.body.sign, 'base64')
+    signature = Buffer.from(signRSA, 'utf8')
     hashVal = hash(JSON.stringify(data), RSA_PARTNER_SCRE)
     // console.log(hashVal)
     hashValid = verifyHash(hashVal, hashRev)
+    signData = JSON.stringify(data)
   }
-  if (partnerCode == '5412') {
-    signature = Buffer.from(req.body.sign, 'base64')
+  if (partnerCode === '5412') {
+    setPubkeyRSA('./thirt_app/publicKeyNghia.pem')
+    signature = Buffer.from(req.body.signature, 'base64')
     // hashVal = bcrypt.hashSync(data)
     hashValid = bcrypt.compareSync(JSON.stringify(data), hashRev)
+    signData = Buffer.from(JSON.stringify(data))
   }
-  isValid = verify(JSON.stringify(data), signature)
+  isValid = verify(signData, signature)
   let msg = 'successfully'
   let errorCode = 0
   let info = {}
   if(partnerCode !== '5412' && partnerCode !== '6572') {
     msg = 'invalid partner code'
     errorCode = 1000
-  } else if( timestemp - data.ts > (30000 * 20)) {
+  } else if( timestemp - data.ts > (30000 * 5)) {
     msg = 'request timeout'
     errorCode = 1001
   }

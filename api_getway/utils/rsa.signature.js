@@ -47,9 +47,15 @@ const privateKeyString = readFileSync(privateKeyPath, encoding)
 // create KeyObject for private key
 const privateKey = crypto.createPrivateKey({...privateKeyOption, key: privateKeyString})
 
-const publicKeyPath = resolve(publicKeyFileName)
-const publicKeyString = readFileSync(publicKeyPath, encoding)
-const publicKey = crypto.createPublicKey({...publicKeyOption, key: publicKeyString})
+let publicKeyPath = resolve(publicKeyFileName)
+let publicKeyString = readFileSync(publicKeyPath, encoding)
+let publicKey = crypto.createPublicKey({...publicKeyOption, key: publicKeyString})
+
+const setPubkeyRSA = (fileName) => {
+  publicKeyPath = resolve(fileName)
+  publicKeyString = readFileSync(publicKeyPath, encoding)
+  publicKey = crypto.createPublicKey({...publicKeyOption, key: publicKeyString})
+}
 
 module.exports = {
   sign: (data) => {
@@ -83,5 +89,6 @@ module.exports = {
       buffer2 = Buffer.from(hashData)
     }
     return crypto.timingSafeEqual(buffer1, buffer2)
-  }
+  },
+  setPubkeyRSA
 }
