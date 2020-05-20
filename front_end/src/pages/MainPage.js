@@ -13,7 +13,7 @@ class Main extends Component {
           <Header></Header>
           <Notification></Notification>
           <Container className="themed-container">
-            <main className="main" style={{minHeight: "600px"}}>
+            <main className="main" style={{minHeight: "800px"}}>
               <Suspense fallback={<div>
                 <Spinner type="grow" color="primary"/>
                 <Spinner type="grow" color="secondary"/>

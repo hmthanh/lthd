@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {Button, Container, Navbar, NavbarBrand, NavbarToggler} from 'reactstrap'
-import {Link} from 'react-router-dom'
+import {Link, useHistory} from 'react-router-dom'
 import AdministratorNav from '../components/Nav/AdministratorNav'
 import CustomerNav from '../components/Nav/CustomerNav'
 import EmployeeNav from '../components/Nav/EmployeeNav'
@@ -91,6 +91,15 @@ const InfoUser = () => {
 
 
 const Header = () => {
+  const history = useHistory();
+  useEffect(() => {
+    const uid = localStorage.getItem('uid');
+    console.log("uid", uid, "abc");
+    if (!uid){
+      history.push("/login");
+    }
+  }, [history])
+
   return (
       <Container>
         <Navbar color="light" light expand="md" style={{marginBottom: "15px"}}>
