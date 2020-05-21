@@ -129,7 +129,7 @@ module.exports = {
           if (surplus < amount)
             resolve(-1)
           else {
-            let acc = surplus - amount
+            let acc = parseInt(surplus) - parseInt(amount)
             connection.query('UPDATE banking_account SET ? WHERE ?', [{surplus: acc}, {id: id}], (error, results, fields) => {
               if (error) 
                 return connection.rollback(function () {
