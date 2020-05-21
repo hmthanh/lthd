@@ -92,6 +92,16 @@ const tranferRSA = async transaction => {
   return await axios.post(UrlApi, body)
 }
 
+/**
+ * logic chung, chuyển tiền liên ngân hàng,
+ * bước 1: tạo 1 transaction chuyển tiền, tạo mã OTP
+ * bước 2: user verify OTP thành công
+ * buóc 3: thực hiện gọi các api bên ngoài ngân hàng chờ chữ ký trả về
+ * bước 4: veryfy chữ ký.
+ * bước 5. lưu lại và charge tiền
+ */
+
+
 router.post('/', async (req, res) => {
   const type = req.body.type ? req.body.type : 1
   if (!req.body.to_account) {
@@ -227,7 +237,7 @@ router.post('/:id', async (req, res) => {
       // chuyển khoản pgp
       if(transaction.partner_code === '7261' || transaction.partner_code === 7261) { 
         let respose = await tranferPgp(transaction)
-        console.log(respose.data)
+        // console.log(respose.data)
        
         let signature = respose.data.sign
         
