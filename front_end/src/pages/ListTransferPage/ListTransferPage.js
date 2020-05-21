@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {transfer} from "../../redux/creators/ListtransferCreator";
 import {formatMoney} from "../../utils/utils";
+//import DataTable, { createTheme } from 'react-data-table-component';
 
 const ListTransferPage = () => {
   const dispatch = useDispatch();

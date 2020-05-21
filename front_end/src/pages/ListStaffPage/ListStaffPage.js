@@ -7,20 +7,6 @@ import {formatFormalDate} from "../../utils/utils";
 
 
 const required = (val) => val && val.length;
-// const ListStaffPage = () => {
-//   const dispatch = useDispatch();
-//   const listStaff = useSelector((state) => {
-//     return state.StaffInfo.data
-//   });
-
-//   useEffect(() => {
-//     const uid = localStorage.getItem('uid');
-//     const accessToken = localStorage.getItem('accessToken');
-//     dispatch(getAllStaff(uid, accessToken))
-//         .then((response) => {
-//           console.log(response);
-//         });
-//   }, [dispatch]);
 
 
 const ModalEdit = (props) => {
