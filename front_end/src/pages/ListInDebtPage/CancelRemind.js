@@ -37,7 +37,7 @@ const CancelRemind = ({debtId}) => {
         .catch((err) => {
           console.log(err);
         })
-  }, [dispatch, message, debtId])
+  }, [dispatch, message, debtId, history])
 
   return (
       <>
