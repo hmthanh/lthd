@@ -1,12 +1,10 @@
 import React, {Component,useState} from 'react';
-// import {useDispatch, useSelector} from 'react-redux';
 import {Button, Card, CardGroup, Col, Container, Modal, ModalBody, ModalFooter, ModalHeader, Row, Table} from 'reactstrap'
 import {connect} from 'react-redux';
 import {Control, Errors, LocalForm} from 'react-redux-form'
 import {Delete, Edit,getAllCustomer} from "../../redux/creators/ListCustomerCreator";
 import {formatFormalDate} from "../../utils/utils";
-// import {formatMoney} from "../../utils/utils";
-// import {getAllAccount} from '../../redux/creators/accountCreator'
+
 
 const required = (val) => val && val.length;
 

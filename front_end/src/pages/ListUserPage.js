@@ -11,7 +11,7 @@ class ListUserPage extends Component {
   }
 
   componentDidMount() {
-    //const uid = localStorage.getItem('uid')
+    
     this.props.getAllUser()
   }
 
