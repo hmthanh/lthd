@@ -15,16 +15,16 @@ const convertStrToDate = (dateStr) => {
   return date
 };
 
-const genagrateAccountNumber = (id, dob) => {
-  let _dob = convertStrToDate(dob);
-  // console.log('genagrateAccountNumber ' + _dob)
-  let dobi64 = moment().valueOf(_dob);
-  let nowi64 = moment().valueOf(new Date());
-  let val = (+nowi64) & (+dobi64);
-  if (val < 0) val = -val;
-  return BANKING_CODE + val
-};
+const genagrateAccountNumber = (dob, count) => {
+  const timestamp = moment().valueOf(new Date())
+  const userTimestamp = moment().valueOf(dob)
+  let ret = timestamp & userTimestamp
+  ret += count
+  if (ret < 0) ret *= -1
+  return `${BANKING_CODE}${ret}`
+}
 
+const strimString = (str) => str.replace(/\s/g, '')
 
 const nonAccentVietnamese = (str) => {
   str = str.toLowerCase();
@@ -79,21 +79,25 @@ const htmlMsgTemplate = (name, requestName, OTP) => `Dear ${name}! <br/></br>
   Thanks,</br>
   The New Vimo Team`
 
-const msgLogingTemplate = (name, username, password) => `Dear ${name}!
+const msgLogingTemplate = (info) => `Dear ${info.name}!
 
   Account of you ready to use. Now, you can loging and change password to use
   
   Username: ${username}
   Password: ${password}
+  Account main: ${}
+  Account save: ${}
   Thanks,
   The New Vimo Team`
 
-const htmlMsgLogingTemplate = (name, username, password) => `Dear ${name}! <br/></br>
+const htmlMsgLogingTemplate = (info) => `Dear ${info.name}! <br/></br>
 
   Account of you ready to use. Now, you can loging and change password to use </br>
   
   Username: <h1>${username}</h1></br>
   Password: <h1>${password}</h1></br>
+  Account main: <h2>${}</h2></br>
+  Account save: <h2>${}</h2></br>
   Thanks,</br>
   The New Vimo Team`
 
@@ -135,6 +139,7 @@ const validate = (data) => {
 const convertObjectToArray = (object) => Object.keys(object).map(i => object[i]);
 
 module.exports = {
+  strimString,
   required,
   maxLength,
   minLength,

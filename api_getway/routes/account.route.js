@@ -4,6 +4,8 @@ const rndToken = require('rand-token')
 const authModel = require('../models/auth.model')
 const common = require('../utils/common')
 const accountModel = require('../models/account.model')
+const userAccount = require('../models/userAccount.model')
+const bankingInfoModel = require('../models/bankingInfo.model')
 const receiverModel = require('../models/receiverInfo.model')
 const userModel = require('../models/user.model')
 const {SECRET_TOKEN, OTP, PGP_URL_INFO, PGP_PARTNERCODE, RSA_PARTNERCODE,
@@ -21,14 +23,79 @@ const axios = require('axios')
 const router = express.Router()
 
 function validateReceiverData(data) {
-  if (!common.required(data['id'])) return false
-  if (!common.required(data['accountNum'])) return false
-  if (!common.isNumber(data['accountNum'])) return false
-
+  if (!common.isNumber(data.phone)) return false
+  if (!common.validEmail(data.email)) return false
+  if (!data.name) return false
+  try {
+    new Date(data.date_of_birth)
+  } catch (error) {
+    return false
+  }
   return true
 }
 
 router.post('/', async (req, res) => {
+  let restItem = {}
+  let errorCode = 0
+  const data = req.body
+  const isValid = validateReceiverData(data)
+  const pass = OTP.generate(SECRET_TOKEN)
+  const dob = new Date(data.date_of_birth)
+  let count = await userAccount.countUserName(data.name)
+  count = count[0].num + 1
+  if(isValid) {
+    let entity = {
+      name: data.name,
+      user_name: `${common.nonAccentVietnamese(common.strimString(data.name))}${count}`,
+      email: data.email,
+      password: pass,
+      date_of_birth: dob,
+      phone: parseInt(`84${parseInt(data.phone)}`),
+      role: data.role || 3,
+      status: data.role || 0
+    }
+    // console.log(entity)
+    restItem = {
+      name: data.name,
+      user_name: `${common.nonAccentVietnamese(common.strimString(data.name))}${count}`,
+      email: data.email,
+      date_of_birth: dob,
+      phone: parseInt(`84${parseInt(data.phone)}`)
+    }
+    let results = await userAccount.add(entity)
+    let account_num1 = common.genagrateAccountNumber(dob, count)
+    entity = {
+      owner_id: results.insertId,
+      account_num: account_num1,
+      surplus: 0,
+      type: 1
+    }
+    await bankingInfoModel.add(entity)
+    account_num2 = common.genagrateAccountNumber(dob, count + 1)
+    entity.account_num = account_num2
+    entity.type = 2
+    
+    await bankingInfoModel.add(entity)
+    restItem.account = [ {accountNum: account_num1, type: 1},{accountNum: account_num2, type: 2}]
+    msg = 'successfully'
+    errorCode = 0
+
+    let msg = common.msgLogingTemplate(restItem);
+    // console.log(sender.email, sender);
+    let htmlmsg = common.htmlMsgLogingTemplate(restItem);
+    mailController.sentMail(data['email'], '[New Vimo][important !!!] Account Vimo', msg, htmlmsg);
+
+  } else {
+    msg = 'invalid params'
+    errorCode = -100
+  }
+  res.status(400).json({
+    restItem,
+    msg
+  })
+})
+
+/**
   let data = {...req.body};
   let DoB = data['date_of_birth'];
   const isValid = common.validate(data);
@@ -49,27 +116,11 @@ router.post('/', async (req, res) => {
     mailController.sentMail(data['email'], '[New Vimo][important !!!] Account Vimo', msg, htmlmsg);
     accountModel.setDefaultAccount(insertId);
 
-    item = {
-      id: insertId,
-      ...req.body,
-      accountNum,
-      userName
-    };
-    msg = 'successfully';
-    errorCode = 200
-  } else {
-    errorCode = 400;
-    msg = 'invalid parameters'
-  }
-  ret = {
-    item,
-    msg
-  };
-  res.status(errorCode).json(ret)
-});
+
+*/
 
 router.post('/id', async (req, res) => {
-  let account = await accountModel.getInfoAccount(req.body.id);
+  let account = await bankingInfoModel.getInfoAccount(req.body.id);
   let ret = {
     errorCode: -201,
     msg: 'invalid parameters',
@@ -169,7 +220,7 @@ router.post('/acc', async (req, res) => {
 
   console.log(req.body)
   let item = {}
-  if(req.body.partner && req.body.partner !== 0) {
+  if(req.body.partner && req.body.partner !== '0') {
     let info = {}
     if (req.body.partner === '0923' ) {
       info = await getInfoParnerBankRSA(req.body.query)
@@ -227,7 +278,7 @@ router.post('/acc', async (req, res) => {
 
 // create receiver_info
 router.post('/ref/account', async (req, res) => {
-  const isValid = validateReceiverData(req.body);
+  const isValid = true;//validateReceiverData(req.body);
   let errorCode = 400;
   let ret = {
     msg: 'invalid parameters',
