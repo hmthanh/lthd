@@ -83,10 +83,10 @@ const msgLogingTemplate = (info) => `Dear ${info.name}!
 
   Account of you ready to use. Now, you can loging and change password to use
   
-  Username: ${username}
-  Password: ${password}
-  Account main: ${}
-  Account save: ${}
+  Username: ${info.username}
+  Password: ${info.password}
+  Account main: ${info.account[0].accountNum}
+  Account save: ${info.account[1].accountNum}
   Thanks,
   The New Vimo Team`
 
@@ -94,10 +94,10 @@ const htmlMsgLogingTemplate = (info) => `Dear ${info.name}! <br/></br>
 
   Account of you ready to use. Now, you can loging and change password to use </br>
   
-  Username: <h1>${username}</h1></br>
-  Password: <h1>${password}</h1></br>
-  Account main: <h2>${}</h2></br>
-  Account save: <h2>${}</h2></br>
+  Username: <h1>${info.username}</h1></br>
+  Password: <h1>${info.password}</h1></br>
+  Account main: <h2>${info.account[0].accountNum}</h2></br>
+  Account save: <h2>${info.account[1].accountNum}</h2></br>
   Thanks,</br>
   The New Vimo Team`
 

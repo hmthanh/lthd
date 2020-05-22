@@ -1,25 +1,12 @@
 const bcrypt = require('bcryptjs');
 const db = require('../utils/db');
 const {PW_SEED} = require('../config');
+const TABLE = 'user_account'
 
 module.exports = {
-  // add: entity => {
-  //   // entity = {
-  //   //   f_Username: "test",
-  //   //   f_Password: "test",
-  //   //   f_Name: "test",
-  //   //   f_Email: "test@test.c",
-  //   //   f_DOB: "2000-09-01",
-  //   //   f_Permission: 0
-  //   // }
-  //   const hash = bcrypt.hashSync(entity.f_Password, PW_SEED);
-  //   entity.f_Password = hash;
-  //   return db.add(entity, 'users')
-  // },
-
-  singleByUserName: username => db.load(`select * from user_info where user_name = '${username}'`),
-  singleByEmail: email => db.load(`select * from user_info where email = '${email}'`),
-  singleByUserId: uId => db.load(`select * from user_info where id = '${uId}'`),
-  singleByAccountNum: accountNumber => db.load(`select * from user_info where account_num = '${accountNumber}'`),
-  singleByUser: (userName, accountNumber) => db.load(`select * from user_info where user_name = '${userName}' or account_num = '${accountNumber}'`),
+  singleByUserName: username => db.load(`SELECT * FROM ${TABLE} WHERE user_name = '${username}'`),
+  singleByEmail: email => db.load(`SELECT * FROM ${TABLE} WHERE email = '${email}'`),
+  singleByUserId: uId => db.load(`SELECT * FROM ${TABLE} WHERE id = '${uId}'`),
+  singleByAccountNum: accountNumber => db.load(`SELECT * FROM ${TABLE} u JOIN banking_info b ON u.id = b.owner_id WHERE b.account_num = '${accountNumber}'`),
+  singleByUser: (userName, accountNumber) => db.load(`SELECT * FROM ${TABLE} JOIN banking_info b ON u.id = b.owner_id WHERE u.user_name = '${userName}' OR b.account_num = '${accountNumber}'`),
 };

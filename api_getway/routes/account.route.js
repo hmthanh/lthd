@@ -36,6 +36,7 @@ function validateReceiverData(data) {
 
 router.post('/', async (req, res) => {
   let restItem = {}
+  let msg = ''
   let errorCode = 0
   const data = req.body
   const isValid = validateReceiverData(data)
@@ -43,6 +44,7 @@ router.post('/', async (req, res) => {
   const dob = new Date(data.date_of_birth)
   let count = await userAccount.countUserName(data.name)
   count = count[0].num + 1
+  console.log('password: ', pass)
   if(isValid) {
     let entity = {
       name: data.name,
@@ -57,9 +59,9 @@ router.post('/', async (req, res) => {
     // console.log(entity)
     restItem = {
       name: data.name,
-      user_name: `${common.nonAccentVietnamese(common.strimString(data.name))}${count}`,
+      username: `${common.nonAccentVietnamese(common.strimString(data.name))}${count}`,
       email: data.email,
-      date_of_birth: dob,
+      dateOfBirth: dob,
       phone: parseInt(`84${parseInt(data.phone)}`)
     }
     let results = await userAccount.add(entity)
@@ -80,10 +82,10 @@ router.post('/', async (req, res) => {
     msg = 'successfully'
     errorCode = 0
 
-    let msg = common.msgLogingTemplate(restItem);
+    let msgText = common.msgLogingTemplate({...restItem, password: pass});
     // console.log(sender.email, sender);
-    let htmlmsg = common.htmlMsgLogingTemplate(restItem);
-    mailController.sentMail(data['email'], '[New Vimo][important !!!] Account Vimo', msg, htmlmsg);
+    let htmlmsg = common.htmlMsgLogingTemplate({...restItem, password: pass});
+    mailController.sentMail(data.email, '[New Vimo][important !!!] Account Vimo', msgText, htmlmsg);
 
   } else {
     msg = 'invalid params'

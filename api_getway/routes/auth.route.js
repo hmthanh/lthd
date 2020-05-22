@@ -118,10 +118,10 @@ router.post('/verify', async (req, res) => {
 });
 
 router.patch('/', async (req, res) => {
-  console.log('req.body', req.body);
+  // console.log('req.body', req.body);
   let otp = req.body.OTP;
   const isValid = OTP.verify({token: otp, secret: SECRET_TOKEN});
-  console.log('check ', isValid);
+  // console.log('check ', isValid);
   if (isValid) {
     let entity = {
       newPwd: req.body.newPwd,

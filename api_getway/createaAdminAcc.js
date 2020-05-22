@@ -12,14 +12,22 @@ let createAdmin = async () => {
   let curr = ts - (1000 * 60 * 60  * 24 * 365 * 20);
   // create 3 account admin
   for (let i = 0; i < 3; i++) {
-
+/**
+  `phone` bigint(20) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `date_of_birth` datetime NOT NULL,
+  `user_name` varchar(45) DEFAULT NULL,
+  `password` varchar(200) NOT NULL,
+  `role` int(11) NOT NULL DEFAULT '3',
+  `status` int(11) NOT NULL DEFAULT '0',
+ */
     curr = curr - Math.floor(Math.random() * 1000000000)
     let entity = {
       phone: '0909000213',
       email: 'admin@email.com',
       name: 'admin',
       date_of_birth: new Date(curr),
-      account_num: 'not have!',
       user_name: 'superadmin',
       password: hashPwd,
       role: 1,
@@ -27,7 +35,7 @@ let createAdmin = async () => {
     }
 
     console.log(`create admin account with info ${entity}`)
-    let res = await db.add({...entity}, 'user_info')
+    let res = await db.add({...entity}, 'user_account')
     entity = {...entity, user_name: `${entity.user_name}${i}`}
     console.log(`respone: ${res}`)
   }
@@ -50,7 +58,6 @@ let createEmployee = async () => {
       phone: `0909${Math.floor(Math.random() * 900000) + 100000}`,
       email: `${tmp}@email.com`,
       name: `${tmp}`,
-      account_num: 'not have!',
       user_name: `${tmp}`,
       date_of_birth: new Date(curr),
       password: hashPwd,
@@ -59,7 +66,7 @@ let createEmployee = async () => {
     }
     console.log('============================================')
     console.log(`create employee account with info ${entity}`)
-    let res = await db.add(entity, 'user_info')
+    let res = await db.add(entity, 'user_account')
     console.log(res)
   }
 }
