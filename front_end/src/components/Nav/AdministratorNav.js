@@ -1,12 +1,11 @@
 import React, {Component} from 'react'
-import {Nav, NavItem, NavLink} from 'reactstrap'
-import NavLogout from "./NavLogout";
+import { NavItem, NavLink} from 'reactstrap'
 import {AdminLink} from "../../shares/routes";
 
 class AdministratorNav extends Component {
   render() {
     return (
-        <Nav>
+        <>
           {
             AdminLink.map((link, index) => {
               return (
@@ -16,8 +15,7 @@ class AdministratorNav extends Component {
               )
             })
           }
-          <NavLogout/>
-        </Nav>
+        </>
     )
   }
 }

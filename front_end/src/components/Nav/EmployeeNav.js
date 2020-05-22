@@ -1,11 +1,10 @@
 import React from 'react'
-import {Nav, NavItem, NavLink} from 'reactstrap'
+import { NavItem, NavLink} from 'reactstrap'
 import {EmployeeLink} from "../../shares/routes";
-import NavLogout from "./NavLogout";
 
 const CustomerNav = () => {
   return (
-      <Nav>
+      <>
         {
           EmployeeLink.map((link, index) => {
             return (
@@ -15,9 +14,7 @@ const CustomerNav = () => {
             )
           })
         }
-
-        <NavLogout/>
-      </Nav>
+      </>
   )
 };
 

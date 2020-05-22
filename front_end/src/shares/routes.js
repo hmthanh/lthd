@@ -184,6 +184,10 @@ export const CustomerLink = [
     title: "Chuyển khoản",
     path: "/transfer",
   },
+  {
+    title: "Lịch sử giao dịch",
+    path: "/user-history",
+  },
   // {
   //   title: "Quản lý nhắc nợ",
   //   path: "/manage-debt",
@@ -191,10 +195,7 @@ export const CustomerLink = [
 ];
 
 export const CustomerItemLink = [
-  {
-    title: "Lịch sử giao dịch",
-    path: "/user-history",
-  },
+
   {
     title: "Đổi mật khẩu",
     path: "/change-password",
@@ -208,7 +209,7 @@ export const CustomerItemLink = [
 
 export const AdminLink = [
   {
-    title: "Danh sách nhân viên",
+    title: "Quản lý nhân viên",
     path: "/list-staff",
   },
   // {
