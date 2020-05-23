@@ -26,6 +26,7 @@ import {Auth} from "./actions/auth.action";
 import {ForgetPassword, VerifyForget} from "./actions/forgetPwd.action";
 import {AccName} from "./actions/getAccName";
 import CreatePayment from "./actions/createPayment.action";
+import ClosePayment from "./actions/closePayment.action";
 
 
 export const ConfigureStore = () => {
@@ -56,7 +57,8 @@ export const ConfigureStore = () => {
         HistoryDept: HistoryDebt,
         HistoryTransfer: HistoryTransfer,
         CreateAccount: CreateAcc,
-            CreatePayment: CreatePayment,
+        CreatePayment: CreatePayment,
+        ClosePayment: ClosePayment,
         Auth: Auth,
         ForgetPassword: ForgetPassword,
         VerifyForget: VerifyForget,

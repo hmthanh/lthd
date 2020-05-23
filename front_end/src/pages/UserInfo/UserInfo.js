@@ -1,11 +1,10 @@
 import React, {useEffect} from 'react'
 import './UserInfo.css'
 import {useDispatch, useSelector} from 'react-redux'
-import {Alert, Badge, Card, CardGroup, Col, Container, Form, FormGroup, Label, ListGroupItem, Row, UncontrolledTooltip} from 'reactstrap'
+import {Card, CardGroup, Col, Container, Form, FormGroup, Label, Row} from 'reactstrap'
 import {getBankingInfo} from '../../redux/creators/bankingInfoCreator'
 import {getAllAccount} from "../../redux/creators/accountCreator";
-import {formatMoney} from "../../utils/utils";
-import {Link} from "react-router-dom";
+import CloseAccount from "../CloseAccount/CloseAccount";
 
 const UserInfo = () => {
   const dispatch = useDispatch();
@@ -33,14 +32,6 @@ const UserInfo = () => {
         });
   }, [dispatch]);
 
-  console.log("user", user);
-  console.log("sdf", banking);
-
-  const closeAccount = (e) => {
-    console.log(e);
-  }
-
-
   return (
       user !== 'undefined' ?
           (<Container className="container" style={{marginTop: '20px'}}>
@@ -64,43 +55,11 @@ const UserInfo = () => {
                               <Col sm={9} className="algin-self">
                                 {
                                   banking && banking.map((acc, index) => {
-                                    if (acc.type === 1) {
-                                      return (<Alert color="danger" className="alert-dismissible" key={index}>
-                                        <Link type="button"
-                                              to="/close-account"
-                                              className="close"
-                                              color="link"
-                                              aria-label="Close"
-                                              id={"toolTip" + index}><span aria-hidden="true">×</span></Link>
-                                        <UncontrolledTooltip placement="top" target={"toolTip" + index}>Đóng tài khoản
-                                        </UncontrolledTooltip>
-                                        <ListGroupItem>
-                                          <h5 className="alert-heading">Số tài khoản : {`${acc.account_num} `}
-                                            <Badge color="danger">Thanh toán{` ${index + 1}`}</Badge>
-                                          </h5>
-                                          <hr/>
-                                          <p>Số dư : {`${formatMoney(acc.surplus)} VNĐ`}</p>
-                                        </ListGroupItem>
-                                      </Alert>);
-                                    } else {
-                                      return (<Alert color={"success"} key={index} toggle={closeAccount}>
-                                        <Link type="button"
-                                              to="/close-account"
-                                              className="close"
-                                              color="link"
-                                              aria-label="Close"
-                                              id={"toolTip" + index}><span aria-hidden="true">×</span></Link>
-                                        <UncontrolledTooltip placement="top" target={"toolTip" + index}>Đóng tài khoản
-                                        </UncontrolledTooltip>
-                                        <ListGroupItem>
-                                          <h5 className="alert-heading">Số tài khoản : {`${acc.account_num} `}
-                                            <Badge color="success">Tiết kiệm</Badge>
-                                          </h5>
-                                          <hr/>
-                                          <p>Số dư : {`${formatMoney(acc.surplus)} VNĐ`}</p>
-                                        </ListGroupItem>
-                                      </Alert>);
-                                    }
+                                    return <CloseAccount key={index}
+                                                         type={acc.type}
+                                                         index={index}
+                                                         surplus={acc.surplus}
+                                                         account_num={acc.account_num}></CloseAccount>
                                   })
                                 }
                               </Col>
