@@ -103,15 +103,15 @@ router.post('/', async (req, res) => {
 })
 
 router.post('/payment', async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const user = await userModel.singleByUserId(req.body.id);
   const userInfo = user[0];
-  console.log("date_of_birth", userInfo);
+  // console.log("date_of_birth", userInfo);
   const dob = new Date(userInfo.date_of_birth)
   let count = await userAccount.countUserName(userInfo.user_name)
-
+  count = count[0].num + 1
   let accountNum = await common.genagrateAccountNumber(dob, count)
-  console.log(accountNum);
+  // console.log('accountNum' , accountNum)
   let entity = {
     owner_id: req.body.id,
     account_num: accountNum,
@@ -124,34 +124,56 @@ router.post('/payment', async (req, res) => {
 
   await res.status(200).json({
     errorCode: 0,
-    data: update,
+    entity,
     msg: 'successfully'
   })
 })
 
-/**
- let data = {...req.body};
- let DoB = data['date_of_birth'];
- const isValid = common.validate(data);
- let ret, errorCode, item, msg = null;
- if (isValid) {
-    const pass = OTP.generate(SECRET_TOKEN);
-    data.password = pass;
-    let results = await accountModel.add(data);
-    let insertId = results.insertId;
-    let name = common.nonAccentVietnamese(data.name);
-    let userName = name.split(' ').join('') + insertId;
-    let accountNum = common.genagrateAccountNumber(insertId, DoB);
-    await accountModel.updateAccount(insertId, {user_name: userName, account_num: accountNum});
-    console.log(`userName: ${userName} default password: ${pass}`);
-    let msg = common.msgLogingTemplate(data['name'], userName, pass);
-    // console.log(sender.email, sender);
-    const htmlmsg = common.htmlMsgLogingTemplate(data['name'], userName, pass);
-    mailController.sentMail(data['email'], '[New Vimo][important !!!] Account Vimo', msg, htmlmsg);
-    accountModel.setDefaultAccount(insertId);
 
-
- */
+router.post('/closed', async (req, res) => {
+  console.log(req.body);
+  let account = await bankingInfoModel.getInfoAccountByAccNum(req.body.closerId)
+  if (!account || account.length === 0) {
+    res.json({
+      errorCode: -100,
+      msg: 'not found closerId'
+    })
+    return
+  }
+  account = account[0]
+  let tagetAcc = await bankingInfoModel.getInfoAccountByAccNum(req.body.receiveId)
+  if (!tagetAcc || tagetAcc.length === 0) {
+    res.json({
+      errorCode: -130,
+      msg: 'not found receiveId'
+    })
+    return
+  }
+  tagetAcc = tagetAcc[0]
+  let countAcc = await bankingInfoModel.countAccountAcctivate(req.body.uid)
+  count = countAcc[0].num
+  let isValid = countAcc > 1 ? true : false
+  if (isValid) {
+    res.json({
+      errorCode: -200,
+      msg: "không đóng được tài khoản cuối cùng"
+    })
+    return
+  }
+  const entity = {
+    is_close: 1,
+    surplus: 0
+  }
+  tagetAcc.surplus = parseInt(tagetAcc.surplus) + parseInt(account.surplus)
+  let r1 =  await bankingInfoModel.update(entity, {account_num: req.body.closerId})
+  console.log(r1)
+  let r2 = await bankingInfoModel.update(tagetAcc, {account_num: req.body.receiveId})
+  console.log(r2)
+  res.status(200).json({
+    errorCode: 0,
+    msg: 'successfully'
+  })
+})
 
 router.post('/id', async (req, res) => {
   let account = await bankingInfoModel.getInfoAccount(req.body.id);
@@ -160,10 +182,6 @@ router.post('/id', async (req, res) => {
     msg: 'invalid parameters',
   };
   if (account && account.length != 0) {
-    for (let i = 0; i < account.length; i++) {
-      const item = account[i];
-      item.account_num = item.account_num + item.type;
-    }
     ret = {
       errorCode: 0,
       msg: 'successfully',
@@ -172,31 +190,6 @@ router.post('/id', async (req, res) => {
   }
   await res.status(200).json(ret)
 });
-
-// const getInfoParnerBankPGP = async (accNum) => {
-//   let ts = moment().valueOf(new Date()) // get current milliseconds since the Unix Epoch
-//   let data = {
-//       STTTH:`${accNum}`,
-//       Time: `${parseInt(ts / 1000)}`,
-//       PartnerCode: `${PGP_PARTNERCODE}`
-//   }
-
-//   let hashString =  `${data.STTTH}${data.PartnerCode}${data.Time}Nhom6`
-//   // console.log(hashString)
-
-//   let hashVal = bcrypt.hashSync(hashString)
-//   data.Hash = hashVal
-//   console.log(data)
-
-//   const UrlApi = PGP_URL_INFO
-
-//   return axios.post(UrlApi, data)
-//   .then (respose => {
-//     console.log(respose.data);
-//     return respose;
-//   })
-//   .catch( error => console.error(error))
-// }
 
 
 const getInfoParnerBankRSA = async (accNum) => {
@@ -243,18 +236,13 @@ const getInfoParnerBankPGP = async (accNum) => {
   const UrlApi = PGP_URL_INFO
 
   return await axios.post(UrlApi, data)
-  // .then (respose => {
-  //   console.log(respose.data);
-  //   return respose.data;
-  // })
-  // .catch( error => console.error(error))
 }
 
 router.post('/acc', async (req, res) => {
   console.log(req.body)
   let item = {}
   let account = null;
-  if (req.body.partner && req.body.partner !== '0') {
+  if (req.body.partner && req.body.partner !== '0' && req.body.partner !== 0) {
     let info = {}
     if (req.body.partner === '0923') {
       info = await getInfoParnerBankRSA(req.body.query)
@@ -287,11 +275,7 @@ router.post('/acc', async (req, res) => {
     }
   } else {
     account = await accountModel.getInfoByAccount(req.body.query)
-    if (account.length === 0) {
-      // try account
-      let q = req.body.query.slice(0, -1)
-      account = await accountModel.getInfoByAccount(q)
-    }
+    // console.log('account getInfoByAccount', account )
     item = account[0]
   }
   let ret = {

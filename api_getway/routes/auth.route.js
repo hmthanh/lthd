@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
         delete user.password;
         const refreshToken = rndToken.generate(LENGTH_REFREST_TOKEN);
         refeshTokenModel.add({user_id: user.id, refresh_token: refreshToken});
-        const accessToken = jwt.sign({userId: user.id}, SECRET_KEY_TOKEN, {
+        const accessToken = jwt.sign({userId: user.id, role: ret.role}, SECRET_KEY_TOKEN, {
           expiresIn: TIME_OUT_TOKEN
         });
         res.json({
@@ -75,7 +75,8 @@ router.post('/relogin', async (req, res) => {
   const ret = await authModel.relogin(req.body);
   delete ret.password;
   const payload = {
-    userId: ret.id
+    userId: ret.id,
+    role: ret.role
   };
   const token = jwt.sign(payload, SECRET_KEY_TOKEN, {
     expiresIn: TIME_OUT_TOKEN
@@ -90,6 +91,7 @@ router.post('/relogin', async (req, res) => {
 });
 
 router.post('/forget', async (req, res) => {
+  console.log('forget', req.body)
   const rows = await userModel.singleByEmail(req.body.email)
   if (rows.length === 0) {
     res.status(200).json({
