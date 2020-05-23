@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
         delete user.password;
         const refreshToken = rndToken.generate(LENGTH_REFREST_TOKEN);
         refeshTokenModel.add({user_id: user.id, refresh_token: refreshToken});
-        const accessToken = jwt.sign({userId: user.id, role: ret.role}, SECRET_KEY_TOKEN, {
+        const accessToken = jwt.sign({userId: user.id, role: user.role}, SECRET_KEY_TOKEN, {
           expiresIn: TIME_OUT_TOKEN
         });
         res.json({
