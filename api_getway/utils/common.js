@@ -96,8 +96,8 @@ const htmlMsgLogingTemplate = (info) => `Dear ${info.name}! <br/></br>
   
   Username: <h1>${info.username}</h1></br>
   Password: <h1>${info.password}</h1></br>
-  Account main: <h2>${info.account[0].accountNum}</h2></br>
-  Account save: <h2>${info.account[1].accountNum}</h2></br>
+  Account main: <h4>${info.account[0].accountNum}</h4></br>
+  Account save: <h4>${info.account[1].accountNum}</h4></br>
   Thanks,</br>
   The New Vimo Team`
 
