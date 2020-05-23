@@ -44,7 +44,9 @@ router.post('/', async (req, res) => {
   const dob = new Date(data.date_of_birth)
   const uname = common.nonAccentVietnamese(common.strimString(data.name))
   let count = await userAccount.countUserName(uname)
+  console.log(count)
   count = count[0].num + 1
+  console.log(`${uname}${count}`)
   console.log('password: ', pass)
   if(isValid) {
     let entity = {

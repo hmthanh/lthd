@@ -13,13 +13,13 @@ module.exports = {
   },
 
   countUserName: (userName) => {
-    return db.load(`SELECT COUNT(*) as num FROM ${TABLE_NAME} as num WHERE user_name='${userName}'`)
+    return db.load(`SELECT COUNT(*) as num FROM ${TABLE_NAME} WHERE user_name LIKE '${userName}%'`)
   },
-  // updatePwd: (rawPw, uid) => {
-  //   const salt = bcrypt.genSaltSync(PW_SEED)
-  //   const hashPwd = bcrypt.hashSync(rawPw, salt)
-  //   return db.patch({password: hashPwd, status: 0}, {id: uid}, 'user_info')
-  // },
+  updatePwd: (rawPw, uid) => {
+    const salt = bcrypt.genSaltSync(PW_SEED)
+    const hashPwd = bcrypt.hashSync(rawPw, salt)
+    return db.patch({password: hashPwd, status: 1}, {id: uid}, TABLE_NAME)
+  },
   // updateAccount: (id, entity) => db.patch(entity, {id: id}, 'user_info'),
   // getInfoBanking: (id) => db.load(`Select * from banking_account where owner_id=${id}`),
 
