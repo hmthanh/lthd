@@ -1,27 +1,43 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Button, Card, CardGroup, Col, Container, Form, FormGroup, Input, InputGroup, Label, Row} from 'reactstrap'
+import {
+  Button,
+  Card,
+  CardGroup,
+  Col,
+  Container,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  Label,
+  Pagination,
+  PaginationItem,
+  PaginationLink,
+  Row
+} from 'reactstrap'
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
-import {getUserDeptHistory, getUserReceiveHistory, getUserTransHistory} from "../../redux/creators/historyTransCreator";
+import {getUserTransHistory} from "../../redux/creators/historyTransCreator";
 import TableInfoTransfer from "../../components/Table/TableInfoTransfer";
-import TableInfoDept from "../../components/Table/TableInfoDept";
 import MessageBox from "../../components/Modal/MessageBox";
 import "react-datepicker/dist/react-datepicker.css";
-import {getInterbank} from "../../redux/creators/transferCreator";
 import DatePicker from "react-datepicker";
+import {getInterbank} from "../../redux/creators/transferCreator";
+
+const moment = require('moment');
 
 const HistoryTrans = () => {
   const dispatch = useDispatch();
-  const historyDebt = useSelector(state => {
-    return state.HistoryDept.data
-  });
+  // const historyDebt = useSelector(state => {
+  //   return state.HistoryDept.data
+  // });
   const transHistory = useSelector(state => {
     return state.TransHistory.data
   });
-  const receiveHistory = useSelector(state => {
-    return state.ReceiveHistory.data
-  });
+  // const receiveHistory = useSelector(state => {
+  //   return state.ReceiveHistory.data
+  // });
   const interBankInfo = useSelector((state) => {
     return state.InterBank.data
   });
@@ -29,11 +45,17 @@ const HistoryTrans = () => {
   const [titleMsg, setTitleMsg] = useState("");
   const [contentMsg, setContentMsg] = useState("");
   const msgBoxToggle = useToggle(false);
-  const [time, setTime] = useState(new Date());
+  const [from, setFrom] = useState(moment().valueOf(new Date()) - (28 * 24 * 60 * 60 * 1000));
+  const [to, setTo] = useState(moment().valueOf(new Date()));
   const [banking, setBanking] = useState(0);
+  const [index, setIndex] = useState(0);
 
-  function onSetTime(value) {
-    setTime(value);
+  function onChangeFrom(value) {
+    setFrom(moment().valueOf(value));
+  }
+
+  function onChangeTo(value) {
+    setTo(moment().valueOf(value));
   }
 
   const showMsgBox = useCallback((title, content) => {
@@ -41,26 +63,33 @@ const HistoryTrans = () => {
     setContentMsg(content);
     msgBoxToggle.setActive();
   }, [setTitleMsg, setContentMsg, msgBoxToggle]);
+
   const findHistoryAccount = useCallback((e) => {
     e.preventDefault();
+    let data = {
+      from: from,
+      to: to,
+      partner: banking
+    };
     console.log("search value", search.value);
-    const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
-    dispatch(getUserTransHistory(uid, accessToken))
+    dispatch(getUserTransHistory(data, index, accessToken))
         .then((response) => {
-          console.log(response.item);
+          console.log(response);
         });
-    dispatch(getUserReceiveHistory(uid, accessToken))
-        .then((response) => {
-          console.log(response.item);
-        });
-    dispatch(getUserDeptHistory({id: uid}, accessToken))
-        .then((response) => {
-          console.log(response.item);
-        })
-        .catch((error) => {
-          showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
-        });
+    // dispatch(getUserReceiveHistory(uid, accessToken))
+    //     .then((response) => {
+    //       console.log(response.item);
+    //     });
+    // dispatch(getUserDeptHistory({id: uid}, accessToken))
+    //     .then((response) => {
+    //       console.log(response.item);
+    //     })
+    //     .catch((error) => {
+    //       showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
+    //     });
+
+
     // dispatch(getUserTransHistory(uid, accessToken))
     //     .then((response) => {
     //       console.log("getHistoryUserTrans", response.item);
@@ -75,25 +104,33 @@ const HistoryTrans = () => {
     //     .catch((error) => {
     //       showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
     //     });
-  }, [dispatch, search, showMsgBox]);
+  }, [dispatch, search, showMsgBox, index, from, to, banking]);
 
   function onChangeBanking(e) {
     setBanking(e.target.value);
   }
 
   useEffect(() => {
-    let accessToken = localStorage.getItem('accessToken');
-
+    let data = {
+      from: from,
+      to: to,
+      partner: banking
+    };
+    console.log("search value", data);
+    const accessToken = localStorage.getItem('accessToken');
+    dispatch(getUserTransHistory(data, index, accessToken))
+        .then((response) => {
+          console.log(response.item);
+        });
     dispatch(getInterbank(accessToken))
         .then((response) => {
-          console.log(response);
           // let partner_code = response.item[0].partner_code;
-          // setBanking(partner_code);
+          // setBanking(0);
         })
         .catch((err) => {
           console.log(err);
         });
-  }, [dispatch]);
+  }, [dispatch, from, to, index, banking]);
 
   return (
       <Container className="container" style={{marginTop: '20px'}}>
@@ -107,43 +144,63 @@ const HistoryTrans = () => {
                   <Form method="post" noValidate="novalidate"
                         className="needs-validation" onSubmit={findHistoryAccount}>
                     <h4>Thông tin tìm kiếm</h4>
-                    <FormGroup style={{width: "50%"}}>
-                      <Label for="time">Thời gian</Label>
-                      <InputGroup className="mb-2">
-                        <DatePicker
-                            className="form-control"
-                            type="text"
-                            name="time"
-                            dateFormat="MM-yyyyy"
-                            onSelect={onSetTime}
-                            onChange={onSetTime}
-                            selected={time}
-                            showMonthYearPicker
-                            showFullMonthYearPicker
-                        />
-                      </InputGroup>
-                      <Label for="time">Ngân hàng</Label>
-                      <Input type="select"
-                             value={banking}
-                             onChange={onChangeBanking}
-                             name="banking"
-                             id="banking">
-                        <option value={0}>-- Tất cả --</option>
-                        {
-                          interBankInfo.item &&
-                          interBankInfo.item.map((item, index) => {
-                            return <option key={index}
-                                           value={item.partner_code}>{item.name}</option>
-                          })
-                        }
-                      </Input>
+                    <FormGroup>
+                      <Row>
+                        <Col xs={6}>
+                          <Label for="from">Thời gian bắt đầu</Label>
+                          <InputGroup className="mb-2">
+                            <DatePicker
+                                className="form-control"
+                                type="text"
+                                name="from"
+                                dateFormat="dd-MM-yyyy"
+                                onSelect={onChangeFrom}
+                                onChange={onChangeFrom}
+                                selected={from}
+                            />
+                          </InputGroup>
+
+                          <Label for="time">Thời gian kết thúc</Label>
+                          <InputGroup className="mb-2">
+                            <DatePicker
+                                className="form-control"
+                                type="text"
+                                name="to"
+                                dateFormat="dd-MM-yyyy"
+                                onSelect={onChangeTo}
+                                onChange={onChangeTo}
+                                selected={to}
+                            />
+                          </InputGroup>
+                        </Col>
+                        <Col xs={6}>
+                          <Label for="time">Ngân hàng</Label>
+                          <Input type="select"
+                                 value={banking}
+                                 onChange={onChangeBanking}
+                                 name="banking"
+                                 id="banking">
+                            <option value={0}>-- Tất cả --</option>
+                            {
+                              interBankInfo.item &&
+                              interBankInfo.item.map((item, index) => {
+                                return <option key={index}
+                                               value={item.partner_code}>{item.name}</option>
+                              })
+                            }
+                          </Input>
+                          <Label for="btnSearch" style={{marginBottom: "34px"}}></Label>
+                          <InputGroup>
+                            <Button id="btnSearch" type="submit" color={"success"}
+                                    className="btn-search"
+                                    style={{width: "200px"}}
+                                    disabled={false}>
+                              <span>Tìm kiếm</span>
+                            </Button>
+                          </InputGroup>
+                        </Col>
+                      </Row>
                     </FormGroup>
-                    <Button id="btnSearch" type="submit" color={"success"}
-                            className="btn-search"
-                            style={{width: "200px"}}
-                            disabled={false}>
-                      <span>Tìm kiếm</span>
-                    </Button>
                   </Form>
                 </div>
               </Card>
@@ -157,17 +214,55 @@ const HistoryTrans = () => {
               <Card id="localBank">
                 <div className="card-body">
                   <h4>Giao dịch chuyển tiền</h4>
-                  <TableInfoTransfer
-                      data={transHistory}
-                  ></TableInfoTransfer>
+                  {
+                    <TableInfoTransfer data={transHistory}></TableInfoTransfer>
+                  }
+                  <Pagination aria-label="Page navigation example">
+                    <PaginationItem>
+                      <PaginationLink first href="#"/>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink previous href="#"/>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#">
+                        1
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#">
+                        2
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#">
+                        3
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#">
+                        4
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#">
+                        5
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink next href="#"/>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink last href="#"/>
+                    </PaginationItem>
+                  </Pagination>
+                  {/*<h4>Giao dịch nhận tiền</h4>*/}
+                  {/*<TableInfoTransfer*/}
+                  {/*    data={receiveHistory}*/}
+                  {/*></TableInfoTransfer>*/}
 
-                  <h4>Giao dịch nhận tiền</h4>
-                  <TableInfoTransfer
-                      data={receiveHistory}
-                  ></TableInfoTransfer>
-
-                  <h4>Giao dịch nhắc nợ</h4>
-                  <TableInfoDept data={historyDebt}></TableInfoDept>
+                  {/*<h4>Giao dịch nhắc nợ</h4>*/}
+                  {/*<TableInfoDept data={historyDebt}></TableInfoDept>*/}
                 </div>
               </Card>
             </CardGroup>

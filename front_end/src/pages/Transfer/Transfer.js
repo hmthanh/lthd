@@ -7,7 +7,8 @@ import {
   Col,
   Collapse,
   Container,
-  Form, FormFeedback,
+  Form,
+  FormFeedback,
   FormGroup,
   Input,
   InputGroup,
@@ -260,179 +261,177 @@ const Transfer = () => {
 
   return (
       <Container>
-        <div className="container-fluid py-3">
-          <Row>
-            <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
-              <Card id="localBank">
-                <div className="card-body">
-                  <CardTitle>
-                    <h3 className="text-center">CHUYỂN KHOẢN</h3>
-                  </CardTitle>
-                  <hr/>
-                  <Form method="post" noValidate="novalidate"
-                        className="needs-validation" onSubmit={onSubmitForm}>
-                    <h4>1. Người gửi</h4>
-                    <FormGroup>
-                      <Label for="senderAccountType">Tài khoản người gửi <ShowRequire/></Label>
-                      <Input type="select"
-                             onChange={sender.onChange}
-                             name="sender"
-                             id="sender"
-                             value={sender.value}>
-                        {senderInfo.account && senderInfo.account.map((item, index) => {
-                          return (item.type === 1 ? (
-                              <option
-                                  key={index}
-                                  value={item.account_num}>{(item.type === 1 ? ("Thanh toán " + index) : ("Tiết kiệm " + index))}
-                              </option>) : "")
-                        })}
-                      </Input>
-                    </FormGroup>
-                    <h4>2. Người nhận</h4>
-                    <FormGroup>
-                      <Label for="receiverTransfer">Chọn ngân hàng</Label>
-                      <div>
-                        <ButtonGroup className="mb-2 ">
-                          <Button color="primary" onClick={onChangeLocalBank}
-                                  active={isInterbank === false}>Nội bộ</Button>
-                          <Button color="primary" onClick={onChangeInterbank}
-                                  active={isInterbank === true}>Liên ngân hàng</Button>
-                        </ButtonGroup>
-                      </div>
-                      <Collapse isOpen={isInterbank}>
-                        <Input type="select"
-                               value={receiveBank}
-                               onChange={onChangeReceiveBank}
-                               name="receiveBank" id="receiveBank">
-                          {
-                            interBankInfo.item &&
-                            interBankInfo.item.map((item, index) => {
-                              return <option key={index}
-                                             value={item.partner_code}>{item.name}</option>
-                            })
-                          }
-                        </Input>
-                      </Collapse>
-                    </FormGroup>
-                    <FormGroup>
-                      <Label for="receiverSavedList">Thông tin người
-                        nhận <ShowRequire/></Label>
-                      <div>
-                        <ButtonGroup className="mb-2 ">
-                          <Button color="primary" onClick={onChangeNotUseSaved}
-                                  active={isUseSaved === false}>Nhập thông tin mới</Button>
-                          <Button color="primary" onClick={onChangeUseSaved}
-                                  active={isUseSaved === true}>Danh sách đã lưu</Button>
-                        </ButtonGroup>
-                      </div>
-                      <Collapse isOpen={isUseSaved}>
-                        <Input type="select"
-                               value={selectSaved}
-                               onChange={onChangeSelectSaved}
-                               name="selectSaved" id="selectSaved">
-                          {
-                            listSaved != null &&
-                            convertObjectToArray(listSaved).map((item, index) => {
-                              return <option key={index}
-                                             value={item.account_num}>{item.alias_name}</option>
-                            })
-                          }
-                        </Input>
-                      </Collapse>
-                    </FormGroup>
-                    <FormGroup>
-                      <InputGroup className="mb-2">
-                        <InputGroupAddon addonType="prepend">
-                          <InputGroupText>ID</InputGroupText>
-                        </InputGroupAddon>
-                        <Input type="text"
-                               name="accountNum"
-                               id="accountNum"
-                               onChange={onChangeAccountNum}
-                               value={accountNum}
-                               onBlur={onBlurAccountNum}
-                               invalid={accInValid}
-                               valid={accValid}
-                               placeholder="Nhập số tài khoản hoặc username"/>
-                        {
-                          AccName.isLoading ? (<InputGroupAddon addonType="prepend">
-                            <InputGroupText><Spinner color="primary"
-                                                     size={"sm"} role="status"
-                                                     aria-hidden="true"/></InputGroupText>
-                          </InputGroupAddon>) : ""
-                        }
-                        <FormFeedback>{accInValidMsg}</FormFeedback>
-                      </InputGroup>
-                      <InputGroup>
-                        <InputGroupAddon addonType="prepend">
-                          <InputGroupText>Họ và tên</InputGroupText>
-                        </InputGroupAddon>
-                        <Input type="text" name="name"
-                               disabled={true}
-                               value={name.value}/>
-                      </InputGroup>
-                    </FormGroup>
-                    <h4>3. Thông tin cần chuyển tiền</h4>
-                    <FormGroup>
-                      <Label for="money">Số tiền <ShowRequire/></Label>
-                      <Input type="number" name="money" id="money"
-                             onChange={money.onChange}
-                             value={money.value}
-                             required/>
-                    </FormGroup>
-                    <FormGroup>
-                      <Label for="message">Nội dung chuyển tiền</Label>
-                      <Input type="textarea" name="message"
-                             value={message.value}
-                             onChange={message.onChange}
-                             id="message"/>
-                    </FormGroup>
-                    <FormGroup>
-                      <Label>Hình thức trả phí</Label>
-                      <ButtonGroup className="mb-2">
-                        <Button color="primary" onClick={isSenderPay.setActive}
-                                active={isSenderPay.active === true}>Người nhận trả phí</Button>
-                        <Button color="primary" onClick={isSenderPay.setInActive}
-                                active={isSenderPay.active === false}>Người gửi trả phí</Button>
-                      </ButtonGroup>
-                    </FormGroup>
+        <Row>
+          <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
+            <Card id="localBank">
+              <div className="card-body">
+                <CardTitle>
+                  <h3 className="text-center">CHUYỂN KHOẢN</h3>
+                </CardTitle>
+                <hr/>
+                <Form method="post" noValidate="novalidate"
+                      className="needs-validation" onSubmit={onSubmitForm}>
+                  <h4>1. Người gửi</h4>
+                  <FormGroup>
+                    <Label for="senderAccountType">Tài khoản người gửi <ShowRequire/></Label>
+                    <Input type="select"
+                           onChange={sender.onChange}
+                           name="sender"
+                           id="sender"
+                           value={sender.value}>
+                      {senderInfo.account && senderInfo.account.map((item, index) => {
+                        return (item.type === 1 ? (
+                            <option
+                                key={index}
+                                value={item.account_num}>{(item.type === 1 ? ("Thanh toán " + index) : ("Tiết kiệm " + index))}
+                            </option>) : "")
+                      })}
+                    </Input>
+                  </FormGroup>
+                  <h4>2. Người nhận</h4>
+                  <FormGroup>
+                    <Label for="receiverTransfer">Chọn ngân hàng</Label>
                     <div>
-                      <Button id="btnTransferLocal"
-                              type="submit"
-                              color={"success"}
-                              size={"lg"}
-                              block={true}
-                              className="d-flex align-items-center justify-content-center"
-                              disabled={transferInfo.isLoading}
-                      >
+                      <ButtonGroup className="mb-2 ">
+                        <Button color="primary" onClick={onChangeLocalBank}
+                                active={isInterbank === false}>Nội bộ</Button>
+                        <Button color="primary" onClick={onChangeInterbank}
+                                active={isInterbank === true}>Liên ngân hàng</Button>
+                      </ButtonGroup>
+                    </div>
+                    <Collapse isOpen={isInterbank}>
+                      <Input type="select"
+                             value={receiveBank}
+                             onChange={onChangeReceiveBank}
+                             name="receiveBank" id="receiveBank">
+                        {
+                          interBankInfo.item &&
+                          interBankInfo.item.map((item, index) => {
+                            return <option key={index}
+                                           value={item.partner_code}>{item.name}</option>
+                          })
+                        }
+                      </Input>
+                    </Collapse>
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="receiverSavedList">Thông tin người
+                      nhận <ShowRequire/></Label>
+                    <div>
+                      <ButtonGroup className="mb-2 ">
+                        <Button color="primary" onClick={onChangeNotUseSaved}
+                                active={isUseSaved === false}>Nhập thông tin mới</Button>
+                        <Button color="primary" onClick={onChangeUseSaved}
+                                active={isUseSaved === true}>Danh sách đã lưu</Button>
+                      </ButtonGroup>
+                    </div>
+                    <Collapse isOpen={isUseSaved}>
+                      <Input type="select"
+                             value={selectSaved}
+                             onChange={onChangeSelectSaved}
+                             name="selectSaved" id="selectSaved">
+                        {
+                          listSaved != null &&
+                          convertObjectToArray(listSaved).map((item, index) => {
+                            return <option key={index}
+                                           value={item.account_num}>{item.alias_name}</option>
+                          })
+                        }
+                      </Input>
+                    </Collapse>
+                  </FormGroup>
+                  <FormGroup>
+                    <InputGroup className="mb-2">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>ID</InputGroupText>
+                      </InputGroupAddon>
+                      <Input type="text"
+                             name="accountNum"
+                             id="accountNum"
+                             onChange={onChangeAccountNum}
+                             value={accountNum}
+                             onBlur={onBlurAccountNum}
+                             invalid={accInValid}
+                             valid={accValid}
+                             placeholder="Nhập số tài khoản hoặc username"/>
+                      {
+                        AccName.isLoading ? (<InputGroupAddon addonType="prepend">
+                          <InputGroupText><Spinner color="primary"
+                                                   size={"sm"} role="status"
+                                                   aria-hidden="true"/></InputGroupText>
+                        </InputGroupAddon>) : ""
+                      }
+                      <FormFeedback>{accInValidMsg}</FormFeedback>
+                    </InputGroup>
+                    <InputGroup>
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>Họ và tên</InputGroupText>
+                      </InputGroupAddon>
+                      <Input type="text" name="name"
+                             disabled={true}
+                             value={name.value}/>
+                    </InputGroup>
+                  </FormGroup>
+                  <h4>3. Thông tin cần chuyển tiền</h4>
+                  <FormGroup>
+                    <Label for="money">Số tiền <ShowRequire/></Label>
+                    <Input type="number" name="money" id="money"
+                           onChange={money.onChange}
+                           value={money.value}
+                           required/>
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="message">Nội dung chuyển tiền</Label>
+                    <Input type="textarea" name="message"
+                           value={message.value}
+                           onChange={message.onChange}
+                           id="message"/>
+                  </FormGroup>
+                  <FormGroup>
+                    <Label>Hình thức trả phí</Label>
+                    <ButtonGroup className="mb-2">
+                      <Button color="primary" onClick={isSenderPay.setActive}
+                              active={isSenderPay.active === true}>Người nhận trả phí</Button>
+                      <Button color="primary" onClick={isSenderPay.setInActive}
+                              active={isSenderPay.active === false}>Người gửi trả phí</Button>
+                    </ButtonGroup>
+                  </FormGroup>
+                  <div>
+                    <Button id="btnTransferLocal"
+                            type="submit"
+                            color={"success"}
+                            size={"lg"}
+                            block={true}
+                            className="d-flex align-items-center justify-content-center"
+                            disabled={transferInfo.isLoading}
+                    >
                         <span style={{marginRight: "10px"}}>
                           {(transferInfo.isLoading ? <Spinner color="light"
                                                               size={"sm"} role="status"
                                                               aria-hidden="true"/> : "")}
                         </span>
 
-                        <span>Chuyển Tiền</span>
-                      </Button>
-                    </div>
-                  </Form>
-                  <MessageBox
-                      className={""}
-                      isOpen={msgBoxToggle.active}
-                      onClose={msgBoxToggle.setInActive}
-                      title={titleMsg}
-                      content={contentMsg}
-                  ></MessageBox>
-                </div>
-                <ModalVerifyTrans
-                    isShow={showVerifyToggle.active}
-                    transId={transId}
-                    onClose={showVerifyToggle.setInActive}
-                    onVerifySuccess={onVerifySuccess}
-                ></ModalVerifyTrans>
-              </Card>
-            </Col>
-          </Row>
-        </div>
+                      <span>Chuyển Tiền</span>
+                    </Button>
+                  </div>
+                </Form>
+                <MessageBox
+                    className={""}
+                    isOpen={msgBoxToggle.active}
+                    onClose={msgBoxToggle.setInActive}
+                    title={titleMsg}
+                    content={contentMsg}
+                ></MessageBox>
+              </div>
+              <ModalVerifyTrans
+                  isShow={showVerifyToggle.active}
+                  transId={transId}
+                  onClose={showVerifyToggle.setInActive}
+                  onVerifySuccess={onVerifySuccess}
+              ></ModalVerifyTrans>
+            </Card>
+          </Col>
+        </Row>
       </Container>
   );
 };
