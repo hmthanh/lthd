@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import {Button, Container, Navbar, NavbarBrand, NavbarToggler} from 'reactstrap'
+import {Button, Container, Nav, Navbar, NavbarBrand, NavbarToggler} from 'reactstrap'
 import {Link, useHistory} from 'react-router-dom'
 import AdministratorNav from '../components/Nav/AdministratorNav'
 import CustomerNav from '../components/Nav/CustomerNav'
@@ -10,6 +10,7 @@ import {fetchFrom} from "../utils/fetchHelper";
 import {UrlApi} from "../shares/baseUrl";
 import {AuthAdmin, AuthCustomer, AuthEmployee, AuthFailed} from "../redux/creators/authCreator";
 import history from "../utils/history";
+import NavLogout from "../components/Nav/NavLogout";
 
 const GetAccessTokenWorker = (uid, refresh) => {
   return new Promise(async (resolve, reject) => {
@@ -63,16 +64,19 @@ const InfoUser = () => {
         return (<>
           <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
           <AdministratorNav></AdministratorNav>
+          <NavLogout/>
         </>);
       case 2:
         return (<>
           <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
           <EmployeeNav></EmployeeNav>
+          <NavLogout/>
         </>);
       default:
         return (<>
           <NavbarToggler onClick={navToggle.toggle}></NavbarToggler>
           <CustomerNav></CustomerNav>
+          <NavLogout/>
         </>);
     }
   } else {
@@ -104,7 +108,10 @@ const Header = () => {
       <Container>
         <Navbar color="light" light expand="md" style={{marginBottom: "15px"}}>
           <NavbarBrand href="/" className="text-info">New ViMo</NavbarBrand>
-          <InfoUser/>
+          <Nav className="mr-auto" navbar>
+            <InfoUser/>
+
+          </Nav>
         </Navbar>
       </Container>
   );

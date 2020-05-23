@@ -4,13 +4,11 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Nav,
   NavItem,
   NavLink,
   UncontrolledDropdown
 } from 'reactstrap'
 import {CustomerItemLink, CustomerLink} from "../../shares/routes";
-import NavLogout from "./NavLogout";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBell} from "@fortawesome/free-solid-svg-icons";
 // import {useDispatch, useSelector} from "react-redux";
@@ -34,7 +32,6 @@ const CustomerNav = () => {
 
   return (
       <>
-        <Nav className="mr-auto" navbar>
           {
             CustomerLink.map((link, index) => {
               return (
@@ -81,7 +78,6 @@ const CustomerNav = () => {
               }
             </DropdownMenu>
           </UncontrolledDropdown>
-          <NavLogout/>
           <NavItem>
             <NavLink href="/reminder">
               <Card style={{position: "relative"}}>
@@ -94,7 +90,6 @@ const CustomerNav = () => {
               </Card>
             </NavLink>
           </NavItem>
-        </Nav>
       </>
   )
 };

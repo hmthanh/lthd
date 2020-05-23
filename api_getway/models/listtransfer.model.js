@@ -22,7 +22,7 @@ module.exports = {
   searching: acc => {
     return db.load(`SELECT * FROM transaction_tranfer u WHERE u.acc_name LIKE '%${val}%'`)
   },
-  searchByAcc: (accNum, from, count) => db.load(`SELECT * FROM transaction_tranfer u WHERE from_account='${accNum}' OR to_account='${accNum} ORDER BY timestamp DESC LIMIT ${from} , ${count}`),
+  searchByAcc: (accNum, from, count) => db.load(`SELECT * FROM transaction_tranfer u WHERE from_account='${accNum}' OR to_account='${accNum}' ORDER BY timestamp DESC LIMIT ${from} , ${count}`),
 
   delete: (id) => {
     return db.del({id: id}, 'transaction_tranfer')

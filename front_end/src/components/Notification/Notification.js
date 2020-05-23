@@ -29,7 +29,7 @@ const Notification = () => {
     if (uid === recipient) {
       history.go(0);
     }
-  }, [])
+  }, [history])
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');

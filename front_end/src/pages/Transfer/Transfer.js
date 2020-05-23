@@ -30,8 +30,7 @@ import {useLocation} from "react-router";
 
 const Transfer = () => {
   const dispatch = useDispatch();
-  const query = new URLSearchParams(useLocation().search);
-
+  const location = useLocation();
   const senderInfo = useSelector(state => {
     return state.AccountInfo.data
   });
@@ -68,6 +67,13 @@ const Transfer = () => {
   const [contentMsg, setContentMsg] = useState("");
   const [transId, setTransId] = useState(0);
   const [transType, setTransType] = useState(1);
+
+  const query = new URLSearchParams(location.search);
+  const qAccNum = query.get("account");
+  const qName = query.get("name");
+  const qMoney = query.get("money");
+  const qNote = query.get("note");
+  const qDebt = query.get("debt");
 
   const onChangeSelectSaved = (e) => {
     if (listSaved) {
@@ -124,7 +130,7 @@ const Transfer = () => {
           setAccountNum("")
         })
 
-  }, [accountNum, setAccountNum, dispatch, name]);
+  }, [accountNum, setAccountNum, dispatch, name, isInterbank, receiveBank]);
 
   function onChangeInterbank(e) {
     if (!e.target.value) {
@@ -231,18 +237,14 @@ const Transfer = () => {
         }, [dispatch]);
   }
 
+
   useEffect(() => {
     const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
     dispatch(getAllAccount(uid, accessToken))
         .then((response) => {
           console.log(response);
-          const qAccNum = query.get("account");
-          const qName = query.get("name");
-          const qMoney = query.get("money");
-          const qNote = query.get("note");
-          const qDebt = query.get("debt");
-          if (qAccNum && qName && qMoney && qNote){
+          if (qAccNum && qName && qMoney && qNote) {
             setTransType(4);
             setAccountNum(qAccNum);
             name.setValue(qName);
@@ -254,10 +256,7 @@ const Transfer = () => {
         .catch((e) => {
           console.log(e);
         });
-    return () => {
-
-    };
-  }, [dispatch]);
+  }, [dispatch, name, money, message, qAccNum, qDebt, qMoney, qName, qNote]);
 
   return (
       <Container>

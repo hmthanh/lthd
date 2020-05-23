@@ -7,6 +7,6 @@ module.exports = {
   },
 
   getInfoAccount: id => {
-    return db.load(`SELECT * FROM ${TABLE_NAME} WHERE owner_id=${id} AND is_close=${0}`)
+    return db.load(`SELECT * FROM ${TABLE_NAME} WHERE owner_id=${id} AND is_close=${0} ORDER BY type`)
   }
 };

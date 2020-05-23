@@ -65,7 +65,7 @@ export const getReceiverSaved = (uid, accessToken) => {
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetchFrom(UrlApi + `/api/receiver/${uid}`, 'POST', {}, accessToken);
-        dispatch({type: RECEIVER_SAVED_SUCCESS, payload: response});
+        dispatch({type: RECEIVER_SAVED_SUCCESS, payload: response.item});
         resolve(response);
       } catch (e) {
         reject(e);
