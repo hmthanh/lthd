@@ -1,7 +1,7 @@
 import {
   CHANGE_PASSWORD_FAILED,
   CHANGE_PASSWORD_LOADING,
-  CHANGE_PASSWORD_SUCCESS,
+  CHANGE_PASSWORD_SUCCESS, VERIFY_FORGET_FAILED, VERIFY_FORGET_LOADING, VERIFY_FORGET_SUCCESS,
   VERIFY_PASSWORD_FAILED,
   VERIFY_PASSWORD_LOADING,
   VERIFY_PASSWORD_SUCCESS
@@ -51,3 +51,22 @@ export const verifyPassword = (data, accessTocken) => {
     });
   };
 };
+
+export const verifyForget = (data) => {
+  return (dispatch) => {
+    dispatch({type: VERIFY_FORGET_LOADING});
+
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/auth/forget-otp', 'POST', data);
+        console.log(response);
+        dispatch({type: VERIFY_FORGET_SUCCESS, payload: response})
+        resolve(response);
+      } catch (e) {
+        console.log(e);
+        dispatch({type: VERIFY_FORGET_FAILED, payload: e});
+        reject(e);
+      }
+    });
+  }
+}

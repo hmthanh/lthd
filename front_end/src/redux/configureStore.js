@@ -2,7 +2,7 @@ import {applyMiddleware, combineReducers, createStore} from 'redux'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 
-import {LoginInfo} from './actions/login'
+import {ActiveAccount, LoginInfo} from './actions/login'
 import {Register} from './actions/register'
 import {ChangePassword} from './actions/changepassword'
 import {GetBankingInfo} from './actions/getBankingInfo'
@@ -23,7 +23,7 @@ import RechargeInfo from "./actions/recharge.action";
 import {HistoryTransfer} from "./actions/getHistoryTransfer.action";
 import CreateAcc from "./actions/createAcc.action";
 import {Auth} from "./actions/auth.action";
-import {ForgetPassword} from "./actions/forgetPwd.action";
+import {ForgetPassword, VerifyForget} from "./actions/forgetPwd.action";
 import {AccName} from "./actions/getAccName";
 
 
@@ -31,17 +31,18 @@ export const ConfigureStore = () => {
   const store = createStore(
       combineReducers({
         LoginInfo: LoginInfo,
+        ActiveAccount: ActiveAccount,
         Register: Register,
         ChangePassword: ChangePassword,
         BankingInfo: GetBankingInfo,
         DebtInfo: GetDebtInfo,
-            CreateDebt: CreateDebt,
+        CreateDebt: CreateDebt,
         GetInDebtInfo: GetInDebtInfo,
         AccountInfo: GetAllAccount,
         Reminscent: ReminscentAcction,
         ReceiverInfo: GetAllReceiver,
         RemindInfo: GetRemindInfo,
-            GetNotify: GetNotify,
+        GetNotify: GetNotify,
         RemindDetail: GetRemindDetail,
         InterBank: InterBank,
         TransferInfo: TransferInfo,
@@ -50,12 +51,13 @@ export const ConfigureStore = () => {
         AccountNum: AccountNum,
         RechargeInfo: RechargeInfo,
         TransHistory: TransHistory,
-            ReceiveHistory: ReceiveHistory,
+        ReceiveHistory: ReceiveHistory,
         HistoryDept: HistoryDebt,
         HistoryTransfer: HistoryTransfer,
         CreateAccount: CreateAcc,
         Auth: Auth,
         ForgetPassword: ForgetPassword,
+        VerifyForget: VerifyForget,
         AllCustomer: GetAllCustomer,
         StaffInfo: GetAllStaff,
         ListTransferInfo: ListTransferInfo,
