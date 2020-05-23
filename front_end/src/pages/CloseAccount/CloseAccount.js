@@ -1,145 +1,131 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
+  Alert,
   Badge,
   Button,
-  Card,
-  CardTitle,
-  Col,
-  Container,
-  Form,
   FormGroup,
   Input,
   InputGroup,
   Label,
-  Row
+  ListGroupItem,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  UncontrolledTooltip
 } from "reactstrap";
-import {useDispatch} from "react-redux";
-import MessageBox from "../../components/Modal/MessageBox";
-import useInputChange from "../../utils/useInputChange";
-import {createAcc} from "../../redux/creators/accountCreator";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import {formatFormalDate} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
+import {useDispatch, useSelector} from "react-redux";
+import {useHistory} from "react-router";
+import {formatMoney} from "../../utils/utils";
+import {closeAccount} from "../../redux/creators/accountCreator";
 
-const CloseAccount = () => {
+const CloseAccount = ({index, account_num, surplus, type}) => {
+  const color = type === 1 ? "danger" : "success";
+  const payTitle = type === 1 ? "Thanh toán" : "Tiết kiệm";
   const dispatch = useDispatch();
-  const messageBoxToggle = useToggle(false);
-  const [contentMessage, setContentMessage] = useState("");
-  const [titleMessage, setTitleMessage] = useState("");
-  const fullName = useInputChange("");
-  const email = useInputChange("");
-  const phone = useInputChange("");
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const history = useHistory();
+  const modalToggle = useToggle(false);
+  const [receive, setReceive] = useState(0);
+  const listReceive = useSelector(state => {
+    return state.AccountInfo.data.account
+  });
 
-  function showFieldRequire() {
-    return <Badge color="danger" pill>Yêu cầu</Badge>
+  const onChangeReceive = (e) => {
+    setReceive(e.target.value);
   }
 
-  function onSetDateOfBirth(value) {
-    setDateOfBirth(value);
-  }
-
-  function onCreateAccount(e) {
-    e.preventDefault();
-    let data = {
-      phone: phone.value,
-      email: email.value,
-      name: fullName.value,
-      date_of_birth: formatFormalDate(dateOfBirth),
-    };
+  const onClosePayment = useCallback((e) => {
     let accessToken = localStorage.getItem('accessToken');
-    dispatch(createAcc(data, accessToken))
+    let uid = localStorage.getItem('uid');
+    let data = {
+      uid: uid,
+      closerId: account_num,
+      receiveId: receive,
+    }
+    console.log(data);
+    dispatch(closeAccount(data, accessToken))
         .then((response) => {
-          if (response.msg === "successfully") {
-            setTitleMessage("Thành công");
-            setContentMessage("Đã tạo tài khoản thành công !");
-            messageBoxToggle.setActive();
-          }
+          console.log(response);
+          modalToggle.setInActive();
+          history.go(0);
         })
-        .catch((e) => {
-          messageBoxToggle.active();
-          setTitleMessage("Thất bại");
-          setContentMessage("Đã xảy ra lỗi trong quá trình tạo tài khoản !");
-          console.log("error", e);
-        });
-  }
+        .catch((err) => {
+          console.log(err);
+        })
+  }, [dispatch, account_num, modalToggle, receive, history])
+
+  useEffect(() => {
+    setReceive(listReceive[0].account_num);
+  }, [listReceive])
+
+  console.log("listReceive.length", listReceive.length);
 
   return (
-      <Container>
-        <div className="container-fluid py-3">
-          <Row>
-            <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
-              <Card id="localBank">
-                <div className="card-body">
-                  <CardTitle>
-                    <h3 className="text-center">TẠO TÀI KHOẢN</h3>
-                  </CardTitle>
-                  <hr/>
-                  <Form method="post" noValidate="novalidate"
-                        className="needs-validation" onSubmit={onCreateAccount}>
-
-                    <h4>Thông tin cá nhân</h4>
-                    <FormGroup>
-                      <Label for="fullName">Họ và tên {showFieldRequire()}</Label>
-                      <InputGroup className="mb-2">
-                        <Input type="text"
-                               name="fullName"
-                               id="fullName"
-                               onChange={fullName.onChange}
-                               value={fullName.value}
-                               placeholder="Nguyễn Văn A"
-                        />
-                      </InputGroup>
-                      <Label for="email">Email {showFieldRequire()}</Label>
-                      <InputGroup className="mb-2">
-                        <Input type="email" name="email" id="email"
-                               onChange={email.onChange}
-                               value={email.value}
-                               placeholder="someone@gmail.com"/>
-                      </InputGroup>
-                      <Label for="phone">Số điện thoại {showFieldRequire()}</Label>
-                      <InputGroup className="mb-2">
-                        <Input type="text" name="phone" id="phone"
-                               onChange={phone.onChange}
-                               value={phone.value}
-                               placeholder="0913-472506"/>
-                      </InputGroup>
-                      <Label for="phone">Ngày sinh {showFieldRequire()}</Label>
-                      <InputGroup className="mb-2">
-                        <DatePicker
-                            className="form-control"
-                            type="text"
-                            name="date_of_birth"
-                            dateFormat="dd-MM-yyyy"
-                            onSelect={onSetDateOfBirth}
-                            onChange={onSetDateOfBirth}
-                            selected={dateOfBirth}
-                        />
-                      </InputGroup>
-                    </FormGroup>
-                    <hr/>
-                    <Button id="btnRecharge" type="submit" color={"success"}
-                            size={"lg"}
-                            block={true}
-                            className="d-flex align-items-center justify-content-center"
-                            disabled={false}>
-                      <span>Tạo tài khoản</span>
-                    </Button>
-                  </Form>
-                  <MessageBox
-                      isOpen={messageBoxToggle.active}
-                      title={titleMessage}
-                      content={contentMessage}
-                      onClose={messageBoxToggle.setInActive}
-                  ></MessageBox>
+      <>
+        <Alert color={color} className="alert-dismissible">
+          {
+            listReceive.length > 1 ? (
+                <div>
+                  <Button type="button"
+                          className="close"
+                          color="link"
+                          onClick={modalToggle.setActive}
+                          aria-label="Close"
+                          id={"toolTip" + index}><span aria-hidden="true">×</span></Button>
+                  <UncontrolledTooltip placement="top" target={"toolTip" + index}>Đóng tài khoản
+                  </UncontrolledTooltip>
                 </div>
-              </Card>
-            </Col>
-          </Row>
-        </div>
-      </Container>
-  )
-};
+            ) : ""
+          }
+          <ListGroupItem>
+            <h5 className="alert-heading">Số tài khoản : {`${account_num} `}
+              <Badge color={color}>{`${payTitle} ${index + 1}`}</Badge>
+            </h5>
+            <hr/>
+            <p>Số dư : {`${formatMoney(surplus)} VNĐ`}</p>
+          </ListGroupItem>
+        </Alert>
+
+        <Modal isOpen={modalToggle.active} toggle={modalToggle.toggle}>
+          <ModalHeader className="padding-header" toggle={modalToggle.toggle}>Đóng tài khoản</ModalHeader>
+          <ModalBody className="padding-body">
+            <strong>Để đóng tài khoản, bạn cần chọn tài khoản để chuyển số dư {formatMoney(surplus)} VNĐ</strong>
+            <FormGroup>
+              <Label>Số tài khoản</Label>
+              <InputGroup>
+                <Input type="select"
+                       onChange={onChangeReceive}
+                       name="receive"
+                       id="receive"
+                       value={receive}>
+                  {
+                    listReceive.map((acc, index) => {
+                      if (account_num !== acc.account_num) {
+                        return (
+                            <option key={index} value={acc.account_num}>{acc.account_num}</option>)
+                      }
+                    })
+                  }
+                </Input>
+              </InputGroup>
+            </FormGroup>
+            <h6>Bạn có chăc muốn đóng tài khoản không ?</h6>
+          </ModalBody>
+          <ModalFooter className="padding-footer">
+            <Button color="danger"
+                    className="d-flex align-items-center justify-content-center"
+                    onClick={onClosePayment}>
+              <span style={{padding: "0px 40px"}}>Đóng tài khoản</span></Button>
+            <Button color="light"
+                    className="d-flex align-items-center justify-content-center"
+                    onClick={modalToggle.setInActive}>
+              <span style={{padding: "0px 40px"}}>Bỏ qua</span></Button>
+          </ModalFooter>
+        </Modal>
+      </>
+  );
+}
+
 
 export default CloseAccount;

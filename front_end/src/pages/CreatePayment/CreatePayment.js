@@ -1,9 +1,11 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
+  Alert,
   Button,
   Card,
   CardTitle,
   Col,
+  Collapse,
   Container,
   Form,
   FormFeedback,
@@ -22,6 +24,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import {getAccName} from "../../redux/creators/transferCreator";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import {createPayment} from "../../redux/creators/accountCreator";
+import useToggle from "../../utils/useToggle";
 
 const CreatePayment = () => {
   const dispatch = useDispatch();
@@ -46,6 +49,8 @@ const CreatePayment = () => {
   const [accInValid, setAccInValid] = useState(false);
   const [accInValidMsg, setAccInValidMsg] = useState("");
   const name = useInputChange('');
+  const createdToggle = useToggle(false);
+  const [result, setResult] = useState({});
 
   const onSelectPayChange = (e) => {
     setPayType(e.target.value);
@@ -96,20 +101,21 @@ const CreatePayment = () => {
 
     let data = {
       id: userId,
-      type: payType.value
+      type: payType
     };
     console.log(data);
     let accessToken = localStorage.getItem('accessToken');
     dispatch(createPayment(data, accessToken))
         .then((response) => {
           if (response.msg === "successfully") {
-
+            setResult(response.entity);
+            createdToggle.setActive();
           }
         })
         .catch((e) => {
           // console.log("error", e);
         });
-  }, [dispatch, userId, payType.value, accountNum]);
+  }, [dispatch, userId, payType, accountNum]);
 
   // useEffect(() => {
   //   payType.setValue(paymentTitle[0].type);
@@ -123,75 +129,91 @@ const CreatePayment = () => {
             <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
               <Card id="localBank">
                 <div className="card-body">
-                  <CardTitle>
-                    <h3 className="text-center">TẠO THANH TOÁN</h3>
-                  </CardTitle>
-                  <hr/>
-                  <Form method="post" noValidate="novalidate"
-                        className="needs-validation" onSubmit={onCreatePayment}>
-
-                    <h5>Thông tin tài khoản <ShowRequire/></h5>
-                    <FormGroup>
-                      <InputGroup className="mb-2">
-                        <InputGroupAddon addonType="prepend">
-                          <InputGroupText>Username</InputGroupText>
-                        </InputGroupAddon>
-                        <Input type="text"
-                               name="accountNum"
-                               id="accountNum"
-                               onChange={onChangeAccountNum}
-                               value={accountNum}
-                               onBlur={onBlurAccountNum}
-                               invalid={accInValid}
-                               valid={accValid}
-                               placeholder="Nhập số tài khoản hoặc username"/>
-                        {
-                          AccName.isLoading ? (<InputGroupAddon addonType="prepend">
-                            <InputGroupText><Spinner color="primary"
-                                                     size={"sm"} role="status"
-                                                     aria-hidden="true"/></InputGroupText>
-                          </InputGroupAddon>) : ""
-                        }
-                        <FormFeedback>{accInValidMsg}</FormFeedback>
-                      </InputGroup>
-                      <InputGroup>
-                        <InputGroupAddon addonType="prepend">
-                          <InputGroupText>Họ và tên</InputGroupText>
-                        </InputGroupAddon>
-                        <Input type="text" name="name"
-                               disabled={true}
-                               value={name.value}/>
-                      </InputGroup>
-                    </FormGroup>
-                    <h5>Tài khoản thanh toán cần tạo <ShowRequire/></h5>
-                    <FormGroup>
-                      <Label>Loại tài khoản</Label>
-                      <InputGroup>
-                        <Input type="select"
-                               onChange={onSelectPayChange}
-                               name="sender"
-                               id="sender"
-                               value={payType}>
-                          {
-                            paymentTitle.map((item, index) => {
-                              return (
-                                  <option key={index} value={item.type}>{item.title}</option>)
-                            })
-                          }
-                        </Input>
-                      </InputGroup>
-                    </FormGroup>
+                  <Collapse
+                      isOpen={!createdToggle.active}>
+                    <CardTitle>
+                      <h3 className="text-center">TẠO THANH TOÁN</h3>
+                    </CardTitle>
                     <hr/>
-                    <Button id="btnRecharge" type="submit" color={"success"}
-                            size={"lg"}
-                            block={true}
-                            className="d-flex align-items-center justify-content-center"
-                            disabled={false}
-                            onClick={onCreatePayment}
-                    >
-                      <span>Tạo thanh toán</span>
-                    </Button>
-                  </Form>
+                    <Form method="post" noValidate="novalidate"
+                          className="needs-validation" onSubmit={onCreatePayment}>
+
+                      <h5>Thông tin tài khoản <ShowRequire/></h5>
+                      <FormGroup>
+                        <InputGroup className="mb-2">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>Username</InputGroupText>
+                          </InputGroupAddon>
+                          <Input type="text"
+                                 name="accountNum"
+                                 id="accountNum"
+                                 onChange={onChangeAccountNum}
+                                 value={accountNum}
+                                 onBlur={onBlurAccountNum}
+                                 invalid={accInValid}
+                                 valid={accValid}
+                                 placeholder="Nhập số tài khoản hoặc username"/>
+                          {
+                            AccName.isLoading ? (<InputGroupAddon addonType="prepend">
+                              <InputGroupText><Spinner color="primary"
+                                                       size={"sm"} role="status"
+                                                       aria-hidden="true"/></InputGroupText>
+                            </InputGroupAddon>) : ""
+                          }
+                          <FormFeedback>{accInValidMsg}</FormFeedback>
+                        </InputGroup>
+                        <InputGroup>
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>Họ và tên</InputGroupText>
+                          </InputGroupAddon>
+                          <Input type="text" name="name"
+                                 disabled={true}
+                                 value={name.value}/>
+                        </InputGroup>
+                      </FormGroup>
+                      <h5>Tài khoản thanh toán cần tạo <ShowRequire/></h5>
+                      <FormGroup>
+                        <Label>Loại tài khoản</Label>
+                        <InputGroup>
+                          <Input type="select"
+                                 onChange={onSelectPayChange}
+                                 name="sender"
+                                 id="sender"
+                                 value={payType}>
+                            {
+                              paymentTitle.map((item, index) => {
+                                return (
+                                    <option key={index} value={item.type}>{item.title}</option>)
+                              })
+                            }
+                          </Input>
+                        </InputGroup>
+                      </FormGroup>
+                      <hr/>
+                      <Button id="btnRecharge" type="submit" color={"success"}
+                              size={"lg"}
+                              block={true}
+                              className="d-flex align-items-center justify-content-center"
+                              disabled={false}
+                              onClick={onCreatePayment}
+                      >
+                        <span>Tạo thanh toán</span>
+                      </Button>
+                    </Form>
+                  </Collapse>
+                  <Collapse isOpen={createdToggle.active}>
+                    <CardTitle>
+                      <h3 className="text-center">TẠO THÀNH CÔNG</h3>
+                    </CardTitle>
+                    <hr/>
+                    <Alert>
+                      <h6>Đã tạo tài khoản thanh toán thành công</h6>
+                      <hr/>
+                      Số tài khoản : {result.account_num}<br/>
+                      Số dư : {result.surplus}<br/>
+                      Loại tài khoản : {result.type === 1 ? "Thanh toán" : "Tiết kiệm"}<br/>
+                    </Alert>
+                  </Collapse>
                 </div>
               </Card>
             </Col>
