@@ -1,7 +1,7 @@
 const db = require('../utils/db')
 const TABLE_NAME = 'banking_info'
-module.exports = {
 
+module.exports = {
   add: entity => {
     return db.add(entity, TABLE_NAME)
   },

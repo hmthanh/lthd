@@ -102,6 +102,33 @@ router.post('/', async (req, res) => {
   })
 })
 
+router.post('/payment', async (req, res) => {
+  console.log(req.body);
+  const user = await userModel.singleByUserId(req.body.id);
+  const userInfo = user[0];
+  console.log("date_of_birth", userInfo);
+  const dob = new Date(userInfo.date_of_birth)
+  let count = await userAccount.countUserName(userInfo.user_name)
+
+  let accountNum = await common.genagrateAccountNumber(dob, count)
+  console.log(accountNum);
+  let entity = {
+    owner_id: req.body.id,
+    account_num: accountNum,
+    surplus: 0,
+    type: req.body.type,
+    is_close: 0
+  }
+
+  const update = await bankingInfoModel.add(entity);
+
+  await res.status(200).json({
+    errorCode: 0,
+    data: update,
+    msg: 'successfully'
+  })
+})
+
 /**
  let data = {...req.body};
  let DoB = data['date_of_birth'];

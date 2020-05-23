@@ -18,6 +18,7 @@ module.exports = {
     SELECT *
     FROM ${TABLE} 
     WHERE id = '${uId}'`),
+
   singleByAccountNum: accountNumber => db.load(`
     SELECT * 
     FROM ${TABLE} u 

@@ -4,7 +4,7 @@ import {
   ALL_ACCOUNT_SUCCESS,
   CREATE_ACC_FAILED,
   CREATE_ACC_LOADING,
-  CREATE_ACC_SUCCESS
+  CREATE_ACC_SUCCESS, CREATE_PAYMENT_FAILED, CREATE_PAYMENT_LOADING, CREATE_PAYMENT_SUCCESS
 } from '../actions/actionType'
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'
@@ -38,6 +38,23 @@ export const createAcc = (data, accessToken) => {
         reject(e);
         console.log(e);
         dispatch({type: CREATE_ACC_FAILED, payload: e});
+      }
+    });
+  }
+};
+
+export const createPayment = (data, accessToken) => {
+  return dispatch => {
+    dispatch({type: CREATE_PAYMENT_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/accounts/payment', 'POST', data, accessToken);
+        dispatch({type: CREATE_PAYMENT_SUCCESS, payload: response});
+        resolve(response);
+      } catch (e) {
+        reject(e);
+        console.log(e);
+        dispatch({type: CREATE_PAYMENT_FAILED, payload: e});
       }
     });
   }

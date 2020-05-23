@@ -52,7 +52,7 @@ module.exports = {
   },
 
   getInfoByAccount: (acc) => db.load(`
-    SELECT b.account_num, u.name, u.email
+    SELECT b.account_num, u.name, u.email, u.user_name, u.id
     FROM user_account u
     JOIN banking_info b ON u.id = b.owner_id
     WHERE b.account_num='${acc}' OR u.user_name='${acc}'`),
