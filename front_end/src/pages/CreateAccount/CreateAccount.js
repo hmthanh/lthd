@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Badge,
   Button,
   Card,
   CardTitle,
@@ -12,6 +13,7 @@ import {
   Label,
   Row
 } from "reactstrap";
+import './CreateAccount.css';
 import {useDispatch} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import useInputChange from "../../utils/useInputChange";
@@ -20,7 +22,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {formatFormalDate} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
-import ShowRequire from "../../components/ShowRequire/ShowRequire";
+const moment = require('moment')
 
 const CreateAccount = () => {
   const dispatch = useDispatch();
@@ -30,7 +32,11 @@ const CreateAccount = () => {
   const fullName = useInputChange("");
   const email = useInputChange("");
   const phone = useInputChange("");
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const [dateOfBirth, setDateOfBirth] = useState(new Date(moment().valueOf(new Date()) - (20 * 365 * 24 * 60 * 60 * 1000)));
+
+  function showFieldRequire() {
+    return <Badge color="danger" pill>Yêu cầu</Badge>
+  }
 
   function onSetDateOfBirth(value) {
     setDateOfBirth(value);
@@ -42,7 +48,7 @@ const CreateAccount = () => {
       phone: phone.value,
       email: email.value,
       name: fullName.value,
-      date_of_birth: formatFormalDate(dateOfBirth),
+      date_of_birth: dateOfBirth,
     };
     let accessToken = localStorage.getItem('accessToken');
     dispatch(createAcc(data, accessToken))
@@ -77,7 +83,7 @@ const CreateAccount = () => {
 
                     <h4>Thông tin cá nhân</h4>
                     <FormGroup>
-                      <Label for="fullName">Họ và tên <ShowRequire/></Label>
+                      <Label for="fullName">Họ và tên {showFieldRequire()}</Label>
                       <InputGroup className="mb-2">
                         <Input type="text"
                                name="fullName"
@@ -87,21 +93,21 @@ const CreateAccount = () => {
                                placeholder="Nguyễn Văn A"
                         />
                       </InputGroup>
-                      <Label for="email">Email <ShowRequire/></Label>
+                      <Label for="email">Email {showFieldRequire()}</Label>
                       <InputGroup className="mb-2">
                         <Input type="email" name="email" id="email"
                                onChange={email.onChange}
                                value={email.value}
                                placeholder="someone@gmail.com"/>
                       </InputGroup>
-                      <Label for="phone">Số điện thoại <ShowRequire/></Label>
+                      <Label for="phone">Số điện thoại {showFieldRequire()}</Label>
                       <InputGroup className="mb-2">
                         <Input type="text" name="phone" id="phone"
                                onChange={phone.onChange}
                                value={phone.value}
                                placeholder="0913-472506"/>
                       </InputGroup>
-                      <Label for="phone">Ngày sinh <ShowRequire/></Label>
+                      <Label for="phone">Ngày sinh {showFieldRequire()}</Label>
                       <InputGroup className="mb-2">
                         <DatePicker
                             className="form-control"
