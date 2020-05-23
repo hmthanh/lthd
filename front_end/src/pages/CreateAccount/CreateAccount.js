@@ -13,14 +13,13 @@ import {
   Label,
   Row
 } from "reactstrap";
-import './CreateAccount.css';
 import {useDispatch} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import useInputChange from "../../utils/useInputChange";
 import {createAcc} from "../../redux/creators/accountCreator";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {formatFormalDate} from "../../utils/utils";
+// import {formatFormalDate} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
 const moment = require('moment')
 

@@ -1,21 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  Button,
-  Card,
-  CardGroup,
-  Col,
-  Container,
-  Form,
-  FormFeedback,
-  FormGroup,
-  Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText, Label,
-  Row,
-  Spinner
-} from 'reactstrap'
+import {Button, Card, CardGroup, Col, Container, Form, FormGroup, Input, InputGroup, Label, Row} from 'reactstrap'
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import {getUserDeptHistory, getUserReceiveHistory, getUserTransHistory} from "../../redux/creators/historyTransCreator";
@@ -23,7 +8,7 @@ import TableInfoTransfer from "../../components/Table/TableInfoTransfer";
 import TableInfoDept from "../../components/Table/TableInfoDept";
 import MessageBox from "../../components/Modal/MessageBox";
 import "react-datepicker/dist/react-datepicker.css";
-import {getAccName, getInterbank} from "../../redux/creators/transferCreator";
+import {getInterbank} from "../../redux/creators/transferCreator";
 import DatePicker from "react-datepicker";
 
 const HistoryTrans = () => {

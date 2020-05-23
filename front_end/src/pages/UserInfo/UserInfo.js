@@ -1,10 +1,27 @@
 import React, {useEffect} from 'react'
 import './UserInfo.css'
 import {useDispatch, useSelector} from 'react-redux'
-import {Badge, Card, CardGroup, Col, Container, Form, FormGroup, Label, ListGroup, ListGroupItem, Row} from 'reactstrap'
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  CardGroup,
+  Col,
+  Container,
+  Form,
+  FormGroup,
+  Label,
+  ListGroupItem,
+  Row,
+  Tooltip,
+  UncontrolledTooltip
+} from 'reactstrap'
 import {getBankingInfo} from '../../redux/creators/bankingInfoCreator'
 import {getAllAccount} from "../../redux/creators/accountCreator";
 import {formatMoney} from "../../utils/utils";
+import useToggle from "../../utils/useToggle";
+import {Link} from "react-router-dom";
 
 const UserInfo = () => {
   const dispatch = useDispatch();
@@ -14,6 +31,7 @@ const UserInfo = () => {
   const banking = useSelector(state => {
     return state.AccountInfo.data.account
   });
+  const tooltipToggle = useToggle(false);
 
   useEffect(() => {
     let accessToken = localStorage.getItem('accessToken');
@@ -35,6 +53,10 @@ const UserInfo = () => {
   console.log("user", user);
   console.log("sdf", banking);
 
+  const closeAccount = (e) => {
+    console.log(e);
+  }
+
 
   return (
       user !== 'undefined' ?
@@ -46,28 +68,58 @@ const UserInfo = () => {
                         <div className="card-block" style={{padding: "20px 40px"}}>
                           <h3 className="col-centered table-heading">THÔNG TIN TÀI KHOẢN</h3>
                           <hr/>
-
                           <Form>
-                            <FormGroup row>
-                              <Label sm={3} className="float-sm-right text-right">Số tài khoản</Label>
-                              <Col sm={9} className="algin-self">
-                                {user.account_num}
-                              </Col>
-                            </FormGroup>
+                            {/*<FormGroup row>*/}
+                            {/*  <Label sm={3} className="float-sm-right text-right">Số tài khoản</Label>*/}
+                            {/*  <Col sm={9} className="algin-self">*/}
+                            {/*    {user.account_num}*/}
+                            {/*  </Col>*/}
+                            {/*</FormGroup>*/}
 
                             <FormGroup row>
                               <Label sm={3} className="float-sm-right text-right">Tài khoản ngân hàng</Label>
                               <Col sm={9} className="algin-self">
-                                <ListGroup>
-                                  {
-                                    banking && banking.map((acc, index) => {
-                                      return <ListGroupItem key={index}>
-                                        {(acc.type === 1 ? "Thanh toán" : `Tiết kiệm ${index}`)}
-                                        {':  '}<Badge color="success">{`${formatMoney(acc.surplus)} VNĐ`}</Badge>
-                                      </ListGroupItem>
-                                    })
-                                  }
-                                </ListGroup>
+                                {
+                                  banking && banking.map((acc, index) => {
+                                    if (acc.type === 1) {
+                                      return (<Alert color="danger" className="alert-dismissible" key={index}>
+                                        <Link type="button"
+                                              to="/close-account"
+                                              className="close"
+                                              color="link"
+                                              aria-label="Close"
+                                              id={"toolTip" + index}><span aria-hidden="true">×</span></Link>
+                                        <UncontrolledTooltip placement="top" target={"toolTip" + index}>Đóng tài khoản
+                                        </UncontrolledTooltip>
+                                        <ListGroupItem>
+                                          <h5 className="alert-heading">Số tài khoản : {`${acc.account_num} `}
+                                            <Badge color="danger">Thanh toán{` ${index + 1}`}</Badge>
+                                          </h5>
+                                          <hr/>
+                                          <p>Số dư : {`${formatMoney(acc.surplus)} VNĐ`}</p>
+                                        </ListGroupItem>
+                                      </Alert>);
+                                    } else {
+                                      return (<Alert color={"success"} key={index} toggle={closeAccount}>
+                                        <Link type="button"
+                                              to="/close-account"
+                                              className="close"
+                                              color="link"
+                                              aria-label="Close"
+                                              id={"toolTip" + index}><span aria-hidden="true">×</span></Link>
+                                        <UncontrolledTooltip placement="top" target={"toolTip" + index}>Đóng tài khoản
+                                        </UncontrolledTooltip>
+                                        <ListGroupItem>
+                                          <h5 className="alert-heading">Số tài khoản : {`${acc.account_num} `}
+                                            <Badge color="success">Tiết kiệm</Badge>
+                                          </h5>
+                                          <hr/>
+                                          <p>Số dư : {`${formatMoney(acc.surplus)} VNĐ`}</p>
+                                        </ListGroupItem>
+                                      </Alert>);
+                                    }
+                                  })
+                                }
                               </Col>
                             </FormGroup>
 
