@@ -1,69 +1,126 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
-  Badge,
+  Alert,
   Button,
   Card,
   CardTitle,
   Col,
+  Collapse,
   Container,
   Form,
+  FormFeedback,
   FormGroup,
   Input,
   InputGroup,
+  InputGroupAddon,
+  InputGroupText,
   Label,
-  Row
+  Row,
+  Spinner
 } from "reactstrap";
-import {useDispatch} from "react-redux";
-import MessageBox from "../../components/Modal/MessageBox";
+import {useDispatch, useSelector} from "react-redux";
 import useInputChange from "../../utils/useInputChange";
-import {createAcc} from "../../redux/creators/accountCreator";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {formatFormalDate} from "../../utils/utils";
+import {getAccName} from "../../redux/creators/transferCreator";
+import ShowRequire from "../../components/ShowRequire/ShowRequire";
+import {createPayment} from "../../redux/creators/accountCreator";
 import useToggle from "../../utils/useToggle";
 
 const CreatePayment = () => {
   const dispatch = useDispatch();
-  const messageBoxToggle = useToggle(false);
-  const [contentMessage, setContentMessage] = useState("");
-  const [titleMessage, setTitleMessage] = useState("");
-  const fullName = useInputChange("");
-  const email = useInputChange("");
-  const phone = useInputChange("");
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const AccName = useSelector((state) => {
+    return state.AccName
+  });
+  const paymentTitle = [
+    {
+      title: "Thanh toán",
+      type: 1,
+    },
+    {
+      title: "Tiết kiệm",
+      type: 2,
+    }
+  ];
+  // const payType = useInputChange(1);
+  const [payType, setPayType] = useState(1);
+  const [userId, setUserId] = useState(0);
+  const [accountNum, setAccountNum] = useState("");
+  const [accValid, setAccValid] = useState(false);
+  const [accInValid, setAccInValid] = useState(false);
+  const [accInValidMsg, setAccInValidMsg] = useState("");
+  const name = useInputChange('');
+  const createdToggle = useToggle(false);
+  const [result, setResult] = useState({});
 
-  function showFieldRequire() {
-    return <Badge color="danger" pill>Yêu cầu</Badge>
+  const onSelectPayChange = (e) => {
+    setPayType(e.target.value);
   }
 
-  function onSetDateOfBirth(value) {
-    setDateOfBirth(value);
-  }
-
-  function onCreateAccount(e) {
-    e.preventDefault();
+  const onBlurAccountNum = useCallback(() => {
+    if (accountNum === "") {
+      setAccInValid(true)
+      setAccInValidMsg("Không được để trống")
+      return false;
+    }
+    let accessToken = localStorage.getItem('accessToken')
+    let partner_code = '0'
     let data = {
-      phone: phone.value,
-      email: email.value,
-      name: fullName.value,
-      date_of_birth: formatFormalDate(dateOfBirth),
+      query: accountNum,
+      partner: partner_code
+    }
+    dispatch(getAccName(data, accessToken))
+        .then((response) => {
+          console.log("success response", response)
+          setUserId(response.account.id);
+          name.setValue(response.account.name)
+          setAccountNum(response.account.user_name)
+          setAccValid(true)
+          setAccInValid(false)
+          setAccInValidMsg("")
+        })
+        .catch((err) => {
+          console.log(err)
+          setAccInValid(true)
+          setAccInValidMsg("Không tìm thấy số tài khoản hoặc username trên")
+          setAccountNum("")
+        })
+
+  }, [dispatch, accountNum, name]);
+
+  function onChangeAccountNum(e) {
+    setAccountNum(e.target.value);
+  }
+
+  const onCreatePayment = useCallback((e) => {
+    e.preventDefault();
+    if (accountNum === "") {
+      setAccInValid(true);
+      setAccInValidMsg("Không được để trống")
+      return false;
+    }
+
+    let data = {
+      id: userId,
+      type: payType
     };
+    console.log(data);
     let accessToken = localStorage.getItem('accessToken');
-    dispatch(createAcc(data, accessToken))
+    dispatch(createPayment(data, accessToken))
         .then((response) => {
           if (response.msg === "successfully") {
-            setTitleMessage("Thành công");
-            setContentMessage("Đã tạo tài khoản thành công !");
-            messageBoxToggle.setActive();
+            setResult(response.entity);
+            createdToggle.setActive();
           }
         })
         .catch((e) => {
-          messageBoxToggle.active();
-          setTitleMessage("Thất bại");
-          setContentMessage("Đã xảy ra lỗi trong quá trình tạo tài khoản !");
-          console.log("error", e);
+          // console.log("error", e);
         });
-  }
+  }, [dispatch, userId, payType, accountNum]);
+
+  // useEffect(() => {
+  //   payType.setValue(paymentTitle[0].type);
+  // })
+
 
   return (
       <Container>
@@ -72,67 +129,91 @@ const CreatePayment = () => {
             <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
               <Card id="localBank">
                 <div className="card-body">
-                  <CardTitle>
-                    <h3 className="text-center">TẠO TÀI KHOẢN</h3>
-                  </CardTitle>
-                  <hr/>
-                  <Form method="post" noValidate="novalidate"
-                        className="needs-validation" onSubmit={onCreateAccount}>
-
-                    <h4>Thông tin cá nhân</h4>
-                    <FormGroup>
-                      <Label for="fullName">Họ và tên {showFieldRequire()}</Label>
-                      <InputGroup className="mb-2">
-                        <Input type="text"
-                               name="fullName"
-                               id="fullName"
-                               onChange={fullName.onChange}
-                               value={fullName.value}
-                               placeholder="Nguyễn Văn A"
-                        />
-                      </InputGroup>
-                      <Label for="email">Email {showFieldRequire()}</Label>
-                      <InputGroup className="mb-2">
-                        <Input type="email" name="email" id="email"
-                               onChange={email.onChange}
-                               value={email.value}
-                               placeholder="someone@gmail.com"/>
-                      </InputGroup>
-                      <Label for="phone">Số điện thoại {showFieldRequire()}</Label>
-                      <InputGroup className="mb-2">
-                        <Input type="text" name="phone" id="phone"
-                               onChange={phone.onChange}
-                               value={phone.value}
-                               placeholder="0913-472506"/>
-                      </InputGroup>
-                      <Label for="phone">Ngày sinh {showFieldRequire()}</Label>
-                      <InputGroup className="mb-2">
-                        <DatePicker
-                            className="form-control"
-                            type="text"
-                            name="date_of_birth"
-                            dateFormat="dd-MM-yyyy"
-                            onSelect={onSetDateOfBirth}
-                            onChange={onSetDateOfBirth}
-                            selected={dateOfBirth}
-                        />
-                      </InputGroup>
-                    </FormGroup>
+                  <Collapse
+                      isOpen={!createdToggle.active}>
+                    <CardTitle>
+                      <h3 className="text-center">TẠO THANH TOÁN</h3>
+                    </CardTitle>
                     <hr/>
-                    <Button id="btnRecharge" type="submit" color={"success"}
-                            size={"lg"}
-                            block={true}
-                            className="d-flex align-items-center justify-content-center"
-                            disabled={false}>
-                      <span>Tạo tài khoản</span>
-                    </Button>
-                  </Form>
-                  <MessageBox
-                      isOpen={messageBoxToggle.active}
-                      title={titleMessage}
-                      content={contentMessage}
-                      onClose={messageBoxToggle.setInActive}
-                  ></MessageBox>
+                    <Form method="post" noValidate="novalidate"
+                          className="needs-validation" onSubmit={onCreatePayment}>
+
+                      <h5>Thông tin tài khoản <ShowRequire/></h5>
+                      <FormGroup>
+                        <InputGroup className="mb-2">
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>Username</InputGroupText>
+                          </InputGroupAddon>
+                          <Input type="text"
+                                 name="accountNum"
+                                 id="accountNum"
+                                 onChange={onChangeAccountNum}
+                                 value={accountNum}
+                                 onBlur={onBlurAccountNum}
+                                 invalid={accInValid}
+                                 valid={accValid}
+                                 placeholder="Nhập số tài khoản hoặc username"/>
+                          {
+                            AccName.isLoading ? (<InputGroupAddon addonType="prepend">
+                              <InputGroupText><Spinner color="primary"
+                                                       size={"sm"} role="status"
+                                                       aria-hidden="true"/></InputGroupText>
+                            </InputGroupAddon>) : ""
+                          }
+                          <FormFeedback>{accInValidMsg}</FormFeedback>
+                        </InputGroup>
+                        <InputGroup>
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>Họ và tên</InputGroupText>
+                          </InputGroupAddon>
+                          <Input type="text" name="name"
+                                 disabled={true}
+                                 value={name.value}/>
+                        </InputGroup>
+                      </FormGroup>
+                      <h5>Tài khoản thanh toán cần tạo <ShowRequire/></h5>
+                      <FormGroup>
+                        <Label>Loại tài khoản</Label>
+                        <InputGroup>
+                          <Input type="select"
+                                 onChange={onSelectPayChange}
+                                 name="sender"
+                                 id="sender"
+                                 value={payType}>
+                            {
+                              paymentTitle.map((item, index) => {
+                                return (
+                                    <option key={index} value={item.type}>{item.title}</option>)
+                              })
+                            }
+                          </Input>
+                        </InputGroup>
+                      </FormGroup>
+                      <hr/>
+                      <Button id="btnRecharge" type="submit" color={"success"}
+                              size={"lg"}
+                              block={true}
+                              className="d-flex align-items-center justify-content-center"
+                              disabled={false}
+                              onClick={onCreatePayment}
+                      >
+                        <span>Tạo thanh toán</span>
+                      </Button>
+                    </Form>
+                  </Collapse>
+                  <Collapse isOpen={createdToggle.active}>
+                    <CardTitle>
+                      <h3 className="text-center">TẠO THÀNH CÔNG</h3>
+                    </CardTitle>
+                    <hr/>
+                    <Alert>
+                      <h6>Đã tạo tài khoản thanh toán thành công</h6>
+                      <hr/>
+                      Số tài khoản : {result.account_num}<br/>
+                      Số dư : {result.surplus}<br/>
+                      Loại tài khoản : {result.type === 1 ? "Thanh toán" : "Tiết kiệm"}<br/>
+                    </Alert>
+                  </Collapse>
                 </div>
               </Card>
             </Col>

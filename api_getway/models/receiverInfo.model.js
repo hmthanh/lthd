@@ -4,19 +4,32 @@ module.exports = {
   add: entity => {
     return db.add(entity, 'receiver_info')
   },
+
   update: (id, entity) => {
-    return db.patch(entity, { id: id }, 'receiver_info')
+    return db.patch(entity, {id: id}, 'receiver_info')
   },
+
   get: (id) => {
-    return db.load(`Select * from receiver_info where owner_id=${id}`)
+    return db.load(`
+      SELECT * FROM receiver_info WHERE owner_id=${id}`)
   },
+
   searching: (val, acc) => {
-    return db.load(`Select name, account_num from user_info u where u.name like '%${val}%' or u.account_num like '%${acc}%'`)
+    return db.load(`
+      SELECT u.name, b.account_num 
+      FROM user_account u
+      JOIN banking_info b ON b.owner_id = u.id
+      WHERE u.name LIKE '%${val}%' OR b.account_num LIKE '%${acc}%'`)
   },
+
   delete: (id) => {
-    return db.del({ id: id }, 'receiver_info')
+    return db.del({id: id}, 'receiver_info')
   },
+
   getByPartner: (id, partnerCode) => {
-    return db.load(`Select * from receiver_info where owner_id=${id} and partner_bank=${partnerCode}`)
+    return db.load(`
+      SELECT * 
+      FROM receiver_info 
+      WHERE owner_id=${id} AND partner_bank=${partnerCode}`)
   },
 };

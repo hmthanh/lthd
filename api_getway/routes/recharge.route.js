@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
       const insertVal = await transferModel.add(entityTF)
 
       // update số dư
-      const item = await db.load(`UPDATE banking_account SET surplus=${total} WHERE owner_id=${uid} AND type=1`)
+      const item = await db.load(`UPDATE banking_info SET surplus=${total} WHERE owner_id=${uid} AND type=1`)
 
       console.log("backing Update", item)
       if (item.affectedRows == 1) {
