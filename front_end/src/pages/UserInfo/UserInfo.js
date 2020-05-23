@@ -1,26 +1,10 @@
 import React, {useEffect} from 'react'
 import './UserInfo.css'
 import {useDispatch, useSelector} from 'react-redux'
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  CardGroup,
-  Col,
-  Container,
-  Form,
-  FormGroup,
-  Label,
-  ListGroupItem,
-  Row,
-  Tooltip,
-  UncontrolledTooltip
-} from 'reactstrap'
+import {Alert, Badge, Card, CardGroup, Col, Container, Form, FormGroup, Label, ListGroupItem, Row, UncontrolledTooltip} from 'reactstrap'
 import {getBankingInfo} from '../../redux/creators/bankingInfoCreator'
 import {getAllAccount} from "../../redux/creators/accountCreator";
 import {formatMoney} from "../../utils/utils";
-import useToggle from "../../utils/useToggle";
 import {Link} from "react-router-dom";
 
 const UserInfo = () => {
@@ -31,7 +15,6 @@ const UserInfo = () => {
   const banking = useSelector(state => {
     return state.AccountInfo.data.account
   });
-  const tooltipToggle = useToggle(false);
 
   useEffect(() => {
     let accessToken = localStorage.getItem('accessToken');

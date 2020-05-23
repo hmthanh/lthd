@@ -20,7 +20,7 @@ import {
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import useInputRequire from "../../utils/useInputRequire";
 import useToggle from "../../utils/useToggle";
-import MessageBox from "../../components/Modal/MessageBox";
+// import MessageBox from "../../components/Modal/MessageBox";
 import {forgetPwd} from "../../redux/creators/forgetPwdCreator";
 import {validEmail} from "../../utils/utils";
 import ModalVerifyForget from "./ModalVerifyForget";
@@ -32,9 +32,9 @@ const FogetPassword = () => {
     return state.ForgetPassword
   });
   const history = useHistory();
-  const msgBoxToggle = useToggle(false);
-  const [titleMsg, setTitleMsg] = useState("");
-  const [contentMsg, setContentMsg] = useState("");
+  // const msgBoxToggle = useToggle(false);
+  // const [titleMsg, setTitleMsg] = useState("");
+  // const [contentMsg, setContentMsg] = useState("");
   const email = useInputRequire({value: "", valid: false, invalid: false});
   const showVerifyToggle = useToggle(false);
   const [verifyPwdData, setVerifyPwdData] = useState({});
@@ -61,7 +61,7 @@ const FogetPassword = () => {
         .catch((error) => {
           console.log(error);
         });
-  }, [dispatch, email]);
+  }, [dispatch, email, showVerifyToggle]);
 
   const countDown = useCallback((i) => {
     let int = setInterval(function () {
@@ -77,12 +77,12 @@ const FogetPassword = () => {
       history.push("/logout")
     }, 3000)
   }
-
-  const showMsgBox = useCallback((title, content) => {
-    setTitleMsg(title);
-    setContentMsg(content);
-    msgBoxToggle.setActive();
-  }, [setTitleMsg, setContentMsg, msgBoxToggle]);
+  //
+  // const showMsgBox = useCallback((title, content) => {
+  //   setTitleMsg(title);
+  //   setContentMsg(content);
+  //   msgBoxToggle.setActive();
+  // }, [setTitleMsg, setContentMsg, msgBoxToggle]);
 
   return (
       <Container>
@@ -142,12 +142,12 @@ const FogetPassword = () => {
             </CardGroup>
           </Col>
         </Row>
-        <MessageBox
-            isOpen={msgBoxToggle.active}
-            onClose={msgBoxToggle.setInActive}
-            title={titleMsg}
-            content={contentMsg}
-        ></MessageBox>
+        {/*<MessageBox*/}
+        {/*    isOpen={msgBoxToggle.active}*/}
+        {/*    onClose={msgBoxToggle.setInActive}*/}
+        {/*    title={titleMsg}*/}
+        {/*    content={contentMsg}*/}
+        {/*></MessageBox>*/}
         <ModalVerifyForget
             isShow={showVerifyToggle.active}
             verifyPwdData={verifyPwdData}

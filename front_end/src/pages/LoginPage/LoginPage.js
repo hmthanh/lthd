@@ -128,7 +128,7 @@ const LoginPage = () => {
             alertToggle.setActive();
           }
         })
-  }, [dispatch, userId, pwdNew])
+  }, [dispatch, userId, pwdNew, activeAccountToggle, alertToggle])
 
   return (
       <Container>

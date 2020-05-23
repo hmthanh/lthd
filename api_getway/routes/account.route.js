@@ -8,16 +8,18 @@ const userAccount = require('../models/userAccount.model')
 const bankingInfoModel = require('../models/bankingInfo.model')
 const receiverModel = require('../models/receiverInfo.model')
 const userModel = require('../models/user.model')
-const {SECRET_TOKEN, OTP, PGP_URL_INFO, PGP_PARTNERCODE, RSA_PARTNERCODE,
-  RSA_URL_INFO, SECRET_RSA} = require('../config')
+const {
+  SECRET_TOKEN, OTP, PGP_URL_INFO, PGP_PARTNERCODE, RSA_PARTNERCODE,
+  RSA_URL_INFO, SECRET_RSA
+} = require('../config')
 
 const bcrypt = require('bcryptjs')
 
 const moment = require('moment')
 
-  // const {SECRET_RSA} = require('../config')
+// const {SECRET_RSA} = require('../config')
 const mailController = require('../mailer/mail.controller')
-const { hash } = require('../utils/rsa.signature')
+const {hash} = require('../utils/rsa.signature')
 const axios = require('axios')
 
 const router = express.Router()
@@ -48,7 +50,7 @@ router.post('/', async (req, res) => {
   count = count[0].num + 1
   console.log(`${uname}${count}`)
   console.log('password: ', pass)
-  if(isValid) {
+  if (isValid) {
     let entity = {
       name: data.name,
       user_name: `${uname}${count}`,
@@ -79,9 +81,9 @@ router.post('/', async (req, res) => {
     account_num2 = common.genagrateAccountNumber(dob, count + 1)
     entity.account_num = account_num2
     entity.type = 2
-    
+
     await bankingInfoModel.add(entity)
-    restItem.account = [ {accountNum: account_num1, type: 1},{accountNum: account_num2, type: 2}]
+    restItem.account = [{accountNum: account_num1, type: 1}, {accountNum: account_num2, type: 2}]
     msg = 'successfully'
     errorCode = 0
 
@@ -101,11 +103,11 @@ router.post('/', async (req, res) => {
 })
 
 /**
-  let data = {...req.body};
-  let DoB = data['date_of_birth'];
-  const isValid = common.validate(data);
-  let ret, errorCode, item, msg = null;
-  if (isValid) {
+ let data = {...req.body};
+ let DoB = data['date_of_birth'];
+ const isValid = common.validate(data);
+ let ret, errorCode, item, msg = null;
+ if (isValid) {
     const pass = OTP.generate(SECRET_TOKEN);
     data.password = pass;
     let results = await accountModel.add(data);
@@ -122,7 +124,7 @@ router.post('/', async (req, res) => {
     accountModel.setDefaultAccount(insertId);
 
 
-*/
+ */
 
 router.post('/id', async (req, res) => {
   let account = await bankingInfoModel.getInfoAccount(req.body.id);
@@ -133,7 +135,7 @@ router.post('/id', async (req, res) => {
   if (account && account.length != 0) {
     for (let i = 0; i < account.length; i++) {
       const item = account[i];
-      item.account_num = item.account_num  + item.type;
+      item.account_num = item.account_num + item.type;
     }
     ret = {
       errorCode: 0,
@@ -189,22 +191,22 @@ const getInfoParnerBankRSA = async (accNum) => {
   // console.log(UrlApi)
 
   return axios.post(UrlApi, body)
-  .then (respose => {
-    console.log(respose.data);
-    return respose;
-  })
-  .catch( error => console.error(error))
+      .then(respose => {
+        console.log(respose.data);
+        return respose;
+      })
+      .catch(error => console.error(error))
 }
 
 const getInfoParnerBankPGP = async (accNum) => {
   let ts = moment().valueOf(new Date()) // get current milliseconds since the Unix Epoch
   let data = {
-      STTTH:`${accNum}`,
-      Time: `${parseInt(ts / 1000)}`,
-      PartnerCode: `0725`
+    STTTH: `${accNum}`,
+    Time: `${parseInt(ts / 1000)}`,
+    PartnerCode: `0725`
   }
 
-  let hashString =  `${data.STTTH}${data.PartnerCode}${data.Time}Nhom6`
+  let hashString = `${data.STTTH}${data.PartnerCode}${data.Time}Nhom6`
   // console.log(hashString)
 
   let hashVal = bcrypt.hashSync(hashString)
@@ -222,12 +224,12 @@ const getInfoParnerBankPGP = async (accNum) => {
 }
 
 router.post('/acc', async (req, res) => {
-
   console.log(req.body)
   let item = {}
-  if(req.body.partner && req.body.partner !== '0') {
+  let account = null;
+  if (req.body.partner && req.body.partner !== '0') {
     let info = {}
-    if (req.body.partner === '0923' ) {
+    if (req.body.partner === '0923') {
       info = await getInfoParnerBankRSA(req.body.query)
       info = info.data
       // console.log('===========================', info)
@@ -245,10 +247,9 @@ router.post('/acc', async (req, res) => {
         name: info.name,
         email: info.phone,
       }
-    }
-    else {
+    } else {
       info = await getInfoParnerBankPGP(req.body.query)
-      
+
       account = info.data
       info = {...info.data}
       item = {
@@ -256,7 +257,7 @@ router.post('/acc', async (req, res) => {
         name: info.account.fullName,
         email: info.account.email,
       }
-    }   
+    }
   } else {
     account = await accountModel.getInfoByAccount(req.body.query)
     if (account.length === 0) {

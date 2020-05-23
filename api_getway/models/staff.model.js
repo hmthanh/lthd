@@ -2,18 +2,28 @@ const db = require('../utils/db')
 
 module.exports = {
   add: entity => {
-    return db.add(entity, 'user_info')
+    return db.add(entity, 'user_account')
   },
+
   update: (id, entity) => {
-    return db.patch(entity, {id: id}, 'user_info')
+    return db.patch(entity, {id: id}, 'user_account')
   },
+
   get: () => {
-    return db.load(`Select * from user_info where role = 2 `)
+    return db.load(`
+      SELECT * 
+      FROM user_account 
+      WHERE role = 2 `)
   },
+
   searching: (val) => {
-    return db.load(`Select * from user_info u where u.email like '%${val}%' and role = 2 `)
+    return db.load(`
+      SELECT *
+      FROM user_account u
+      WHERE u.email LIKE '%${val}%' AND role = 2 `)
   },
+
   delete: (id) => {
-    return db.del({id: id}, 'user_info')
+    return db.del({id: id}, 'user_account')
   },
 };

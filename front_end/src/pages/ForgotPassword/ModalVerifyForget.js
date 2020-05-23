@@ -3,7 +3,7 @@ import {Button, Form, FormFeedback, FormGroup, Input, Label, Modal, ModalBody, M
 import useInputChange from "../../utils/useInputChange";
 import {useDispatch, useSelector} from "react-redux";
 import useToggle from "../../utils/useToggle";
-import {changePwd, verifyForget} from "../../redux/creators/changePasswordCreator";
+import {verifyForget} from "../../redux/creators/changePasswordCreator";
 
 const ModalVerifyForget = ({isShow, verifyPwdData, onClose, onVerifySuccess}) => {
   const dispatch = useDispatch();
