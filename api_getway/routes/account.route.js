@@ -42,13 +42,14 @@ router.post('/', async (req, res) => {
   const isValid = validateReceiverData(data)
   const pass = OTP.generate(SECRET_TOKEN)
   const dob = new Date(data.date_of_birth)
-  let count = await userAccount.countUserName(data.name)
+  const uname = common.nonAccentVietnamese(common.strimString(data.name))
+  let count = await userAccount.countUserName(uname)
   count = count[0].num + 1
   console.log('password: ', pass)
   if(isValid) {
     let entity = {
       name: data.name,
-      user_name: `${common.nonAccentVietnamese(common.strimString(data.name))}${count}`,
+      user_name: `${uname}${count}`,
       email: data.email,
       password: pass,
       date_of_birth: dob,
@@ -59,7 +60,7 @@ router.post('/', async (req, res) => {
     // console.log(entity)
     restItem = {
       name: data.name,
-      username: `${common.nonAccentVietnamese(common.strimString(data.name))}${count}`,
+      username: `${uname}${count}`,
       email: data.email,
       dateOfBirth: dob,
       phone: parseInt(`84${parseInt(data.phone)}`)
@@ -91,7 +92,7 @@ router.post('/', async (req, res) => {
     msg = 'invalid params'
     errorCode = -100
   }
-  res.status(400).json({
+  res.status(200).json({
     restItem,
     msg
   })
