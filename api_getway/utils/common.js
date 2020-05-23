@@ -21,7 +21,7 @@ const genagrateAccountNumber = (dob, count) => {
   let ret = timestamp & userTimestamp
   ret += count
   if (ret < 0) ret *= -1
-  return `${BANKING_CODE}${ret}`
+  return `${ret}`
 }
 
 const strimString = (str) => str.replace(/\s/g, '')
