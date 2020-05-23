@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   Button,
@@ -12,7 +12,7 @@ import {
   Input,
   InputGroup,
   InputGroupAddon,
-  InputGroupText,
+  InputGroupText, Label,
   Row,
   Spinner
 } from 'reactstrap'
@@ -22,7 +22,9 @@ import {getUserDeptHistory, getUserReceiveHistory, getUserTransHistory} from "..
 import TableInfoTransfer from "../../components/Table/TableInfoTransfer";
 import TableInfoDept from "../../components/Table/TableInfoDept";
 import MessageBox from "../../components/Modal/MessageBox";
-import {getAccName} from "../../redux/creators/transferCreator";
+import "react-datepicker/dist/react-datepicker.css";
+import {getAccName, getInterbank} from "../../redux/creators/transferCreator";
+import DatePicker from "react-datepicker";
 
 const HistoryTrans = () => {
   const dispatch = useDispatch();
@@ -35,19 +37,19 @@ const HistoryTrans = () => {
   const receiveHistory = useSelector(state => {
     return state.ReceiveHistory.data
   });
-  const AccName = useSelector((state) => {
-    return state.AccName
+  const interBankInfo = useSelector((state) => {
+    return state.InterBank.data
   });
   const search = useInputChange();
   const [titleMsg, setTitleMsg] = useState("");
   const [contentMsg, setContentMsg] = useState("");
   const msgBoxToggle = useToggle(false);
+  const [time, setTime] = useState(new Date());
+  const [banking, setBanking] = useState(0);
 
-  const [accountNum, setAccountNum] = useState("");
-  const [accValid, setAccValid] = useState(false);
-  const [accInValid, setAccInValid] = useState(false);
-  const [accInValidMsg, setAccInValidMsg] = useState("");
-  const name = useInputChange("");
+  function onSetTime(value) {
+    setTime(value);
+  }
 
   const showMsgBox = useCallback((title, content) => {
     setTitleMsg(title);
@@ -90,38 +92,23 @@ const HistoryTrans = () => {
     //     });
   }, [dispatch, search, showMsgBox]);
 
-  const onBlurAccountNum = useCallback(() => {
-    if (accountNum.value === "") {
-      setAccInValid(true)
-      setAccInValidMsg("Không được để trống")
-      return false;
-    }
-    let accessToken = localStorage.getItem('accessToken');
-    let data = {
-      query: accountNum
-    }
-    dispatch(getAccName(data, accessToken))
-        .then((response) => {
-          console.log("success response", response)
-          name.setValue(response.account.name)
-          setAccountNum(response.account.account_num)
-          setAccValid(true)
-          setAccInValid(false)
-          setAccInValidMsg("")
-        })
-        .catch((err) => {
-          console.log(err)
-          setAccInValid(true)
-          setAccInValidMsg("Không tìm thấy số tài khoản hoặc username trên")
-          setAccountNum("")
-        })
-
-  }, [accountNum, dispatch, name]);
-
-  function onChangeAccountNum(e) {
-    setAccountNum(e.target.value);
+  function onChangeBanking(e) {
+    setBanking(e.target.value);
   }
 
+  useEffect(() => {
+    let accessToken = localStorage.getItem('accessToken');
+
+    dispatch(getInterbank(accessToken))
+        .then((response) => {
+          console.log(response);
+          // let partner_code = response.item[0].partner_code;
+          // setBanking(partner_code);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }, [dispatch]);
 
   return (
       <Container className="container" style={{marginTop: '20px'}}>
@@ -130,78 +117,48 @@ const HistoryTrans = () => {
             <CardGroup className=" mb-0">
               <Card className="p-6">
                 <div className="card-block" style={{padding: "20px 40px"}}>
-                  <h3 className="col-centered table-heading">TÌM KIẾM LỊCH SỬ GIAO DỊCH</h3>
+                  <h3 className="col-centered table-heading">LỊCH SỬ GIAO DỊCH</h3>
                   <hr/>
                   <Form method="post" noValidate="novalidate"
                         className="needs-validation" onSubmit={findHistoryAccount}>
-                    <h4>Tìm kiếm theo tài khoản</h4>
-                    <FormGroup>
-                      <Row>
-                        <Col xs={6}>
-                          <InputGroup className="mb-2" xs={6}>
-                            <InputGroupAddon addonType="prepend">
-                              <InputGroupText>Số tài khoản</InputGroupText>
-                            </InputGroupAddon>
-                            <Input type="text"
-                                   name="accountNum"
-                                   id="accountNum"
-                                   onChange={onChangeAccountNum}
-                                   value={accountNum}
-                                   onBlur={onBlurAccountNum}
-                                   invalid={accInValid}
-                                   valid={accValid}
-                                   placeholder="Nhập số tài khoản hoặc username"/>
-                            {
-                              AccName.isLoading ? (<InputGroupAddon addonType="prepend">
-                                <InputGroupText><Spinner color="primary"
-                                                         size={"sm"} role="status"
-                                                         aria-hidden="true"/></InputGroupText>
-                              </InputGroupAddon>) : ""
-                            }
-                            <FormFeedback>{accInValidMsg}</FormFeedback>
-                          </InputGroup>
-                          <InputGroup>
-                            <InputGroupAddon addonType="prepend">
-                              <InputGroupText>Họ và tên</InputGroupText>
-                            </InputGroupAddon>
-                            <Input type="text" name="name"
-                                   disabled={true}
-                                   value={name.value}/>
-                          </InputGroup>
-                        </Col>
-                        <Col xs={6}>
-                          <Button id="btnSearch" type="submit" color={"success"}
-                                  className="btn-search"
-                                  disabled={false}>
-                            <span>Tìm kiếm</span>
-                          </Button>
-                        </Col>
-                      </Row>
+                    <h4>Thông tin tìm kiếm</h4>
+                    <FormGroup style={{width: "50%"}}>
+                      <Label for="time">Thời gian</Label>
+                      <InputGroup className="mb-2">
+                        <DatePicker
+                            className="form-control"
+                            type="text"
+                            name="time"
+                            dateFormat="MM-yyyyy"
+                            onSelect={onSetTime}
+                            onChange={onSetTime}
+                            selected={time}
+                            showMonthYearPicker
+                            showFullMonthYearPicker
+                        />
+                      </InputGroup>
+                      <Label for="time">Ngân hàng</Label>
+                      <Input type="select"
+                             value={banking}
+                             onChange={onChangeBanking}
+                             name="banking"
+                             id="banking">
+                        <option value={0}>-- Tất cả --</option>
+                        {
+                          interBankInfo.item &&
+                          interBankInfo.item.map((item, index) => {
+                            return <option key={index}
+                                           value={item.partner_code}>{item.name}</option>
+                          })
+                        }
+                      </Input>
                     </FormGroup>
-                    {/*<FormGroup>*/}
-                    {/*  <Row>*/}
-                    {/*    <Col xs={6}>*/}
-                    {/*      <InputGroup>*/}
-                    {/*        <InputGroupAddon addonType="prepend">*/}
-                    {/*          <InputGroupText>Mã tài khoản</InputGroupText>*/}
-                    {/*        </InputGroupAddon>*/}
-                    {/*        <Input id="txtSearch"*/}
-                    {/*               type="text"*/}
-                    {/*               placeholder="2323-2334-2342"*/}
-                    {/*               onChange={search.onChange}*/}
-                    {/*               value={search.value}*/}
-                    {/*        ></Input>*/}
-                    {/*      </InputGroup>*/}
-                    {/*    </Col>*/}
-                    {/*    <Col xs={6}>*/}
-                    {/*      <Button id="btnSearch" type="submit" color={"success"}*/}
-                    {/*              className="btn-search"*/}
-                    {/*              disabled={false}>*/}
-                    {/*        <span>Tìm kiếm</span>*/}
-                    {/*      </Button>*/}
-                    {/*    </Col>*/}
-                    {/*  </Row>*/}
-                    {/*</FormGroup>*/}
+                    <Button id="btnSearch" type="submit" color={"success"}
+                            className="btn-search"
+                            style={{width: "200px"}}
+                            disabled={false}>
+                      <span>Tìm kiếm</span>
+                    </Button>
                   </Form>
                 </div>
               </Card>
@@ -237,8 +194,7 @@ const HistoryTrans = () => {
                     content={contentMsg}></MessageBox>
       </Container>
   )
-
-};
+}
 
 
 export default HistoryTrans;
