@@ -7,9 +7,11 @@ const mailController = require('../mailer/mail.controller')
 const {htmlMsgTemplate, msgTemplate} = require('../utils/common')
 const { updatePwd } = require('../models/account.model')
 const userModel = require('../models/user.model')
+const userAccountModel = require('../models/userAccount.model')
 const refeshTokenModel = require('../models/refeshToken.model')
 const bcrypt = require('bcryptjs')
 const common = require('../utils/common')
+
 
 const router = express.Router()
 
@@ -29,6 +31,7 @@ router.post('/', async (req, res) => {
       console.log("user.status", user.status);
       if (user.status === 0) {
         await res.json({
+          id: user.id,
           err_code: -202,
           msg: 'account not acctive',
           authenticated: false,
@@ -56,6 +59,16 @@ router.post('/', async (req, res) => {
       authenticated: false,
     })
   }
+});
+
+router.post('/activate', async (req, res) => {
+  // console.log('===================================')
+  // console.log(req.body)
+  await userAccountModel.updatePwd(req.body.newPwd, req.body.uid)
+  res.status(200).json({
+    errorCode: 0,
+    msg: 'successfully'
+  })
 });
 
 router.post('/relogin', async (req, res) => {
@@ -94,10 +107,30 @@ router.post('/forget', async (req, res) => {
     updatePwd(pass, item.id)
     res.status(200).json({
       err_code: 0,
+      uid: item.id,
       msg: `new password sent to ${item.email}`
     })
   }
 });
+
+router.post('/forget-otp', async (req, res) => {
+  let otp = req.body.otp;
+  const isValid = OTP.verify({token: otp, secret: SECRET_TOKEN});
+  if (isValid) {
+    await userAccountModel.updatePwd(req.body.newPwd, req.body.uid)
+    const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
+    refeshTokenModel.add({user_id: req.body.uid, refresh_token: rfToken})
+    res.status(200).json({
+      errorCode: 0,
+      msg: 'successfully'
+    })
+  } else {
+    res.status(200).json({
+      errorCode: 401,
+      msg: 'invalid OTP'
+    })
+  }
+})
 
 router.post('/verify', async (req, res) => {
   console.log("req.body", req.body)
@@ -125,11 +158,11 @@ router.patch('/', async (req, res) => {
   if (isValid) {
     let entity = {
       newPwd: req.body.newPwd,
-      uId: req.body.uId,
-      status: 1
+      uId: req.body.uId
     };
-    let ret = await authModel.updatePwd(entity);
-    delete ret.password;
+    let ret = await userAccountModel.updatePwd(req.body.newPwd, req.body.uId)
+    // await authModel.updatePwd(entity);
+    // delete ret.password;
     const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
     refeshTokenModel.add({user_id: req.body.uId, refresh_token: rfToken});
     res.status(200).json({
