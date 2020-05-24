@@ -11,7 +11,7 @@ import {GetAllAccount, GetPaymentAccount} from './actions/getAllAccount'
 import {CreateDebt, GetDebtInfo} from './actions/getDebt'
 import {GetInDebtInfo} from './actions/getInDebt'
 import {GetAllCustomer} from './actions/getAllCustomer'
-import {GetAllStaff} from './actions/getAllStaff'
+import {CreateStaff,GetAllStaff} from './actions/getAllStaff'
 import {ListTransferInfo} from './actions/getAllTransfer'
 import {AliasReceiver} from './actions/reminscentAcc'
 import {GetAllReceiver} from './actions/getAllReceiver'
@@ -65,6 +65,7 @@ export const ConfigureStore = () => {
         VerifyForget: VerifyForget,
         AllCustomer: GetAllCustomer,
         StaffInfo: GetAllStaff,
+        CreateStaff: CreateStaff,
         ListTransferInfo: ListTransferInfo,
         AccName: AccName
 

@@ -14,6 +14,11 @@ module.exports = {
       SELECT * FROM receiver_info WHERE owner_id=${id}`)
   },
 
+  countAcc: (acc) => {
+    return db.load(`
+      SELECT COUNT(*) as num FROM receiver_info WHERE account_num=${acc}`)
+  },
+
   searching: (val, acc) => {
     return db.load(`
       SELECT u.name, b.account_num 

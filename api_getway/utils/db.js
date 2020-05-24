@@ -205,4 +205,5 @@ module.exports = {
       })
     })
   }),
+  getPool: () => pool
 };

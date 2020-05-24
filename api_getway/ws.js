@@ -9,17 +9,10 @@ if (!socketServer) {
     });
 
     socketServer.on('connection', ws => {
-
         ws.on('message', msg => {
-            console.log(`receive: ${msg}`);
+          console.log(`receive: ${msg}`);
         });
-
-        // var num = 0;
-        // setInterval(() => {
-        //     ws.send(num++);
-        // }, 1000);
     });
-
     console.log(`WS running on port ${SOCKET_PORT}`);
 }
 

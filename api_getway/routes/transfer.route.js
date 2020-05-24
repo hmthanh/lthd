@@ -9,8 +9,9 @@ const mailController = require('../mailer/mail.controller')
 const transferModel = require('../models/transfer.model')
 const notifyModel = require('../models/notify.model')
 const debtModel = require('../models/debt.model')
-const { getReceiverById, getIdByAccountNum } = require('../models/account.model')
-const { htmlMsgTemplate, msgTemplate } = require('../utils/common')
+const { getAccountInfo, getIdByAccountNum } = require('../models/account.model')
+const { htmlOTPTemplate, msgOTPTemplate } = require('../utils/common')
+const {TranferInternalBank} = require('../models/transaction.Tranfer.Model')
 const { minusTransfer, plus, patch } = require('../utils/db')
 const bankingAccountModel = require('../models/bankingAccount.modal')
 const {broadcastAll} = require('../ws');
@@ -22,7 +23,8 @@ const bcrypt = require('bcryptjs')
 const axios = require("axios")
 
 const validateData = (data) => {
-  if (!data.to_account) return false;
+  if (!data.uid) return false;
+  if (!data.toAccount) return false;
   if (!data.amount) return false;
   return true
 }
@@ -101,14 +103,22 @@ const tranferRSA = async transaction => {
  * bước 5. lưu lại và charge tiền
  */
 
+ /*
+ * type = 2 chuyển tiền
+ * type = 1 nhận tiền
+ * type = 4 chuyển khoản nợ
+ */
+
 
 router.post('/', async (req, res) => {
-  const type = req.body.type ? req.body.type : 1
-  if (!req.body.to_account) {
-    req.body.to_account = 100001
-  }
+  const type = req.body.type ? req.body.type : 2
   console.log(req.body)
-  const isValid = validateData(req.body)
+  res.status(200).json({
+    error_code: 0,
+    message: 'successfully'
+  })
+  return
+  let isValid = validateData(req.body)
   if (!isValid) {
     res.status(200).json({
       error_code: -100,
@@ -116,21 +126,25 @@ router.post('/', async (req, res) => {
     })
     return
   }
-  const rows = await getReceiverById(req.body.uid);
+  // không cho chuyển tới chính mình
+  if (req.body.fromAccount === req.body.toAccount) {
+    res.status(200).json({
+      error_code: -103,
+      message: 'fromAccount = toAccount'
+    })
+    return
+  }
+  const rows = await getAccountInfo(req.body.fromAccount);
+  if (!rows || rows.length === 0)  {
+    res.status(200).json({
+      error_code: -101,
+      message: 'fromAccount not found'
+    })
+    return
+  }
+
   const sender = rows[0]
-
-  const entity = {
-    acc_name: sender.name,
-    from_account: sender.account_num,
-    to_account: req.body.to_account,
-    note: req.body.note,
-    amount: req.body.amount,
-    partner_code: req.body.partner_code,
-    timestamp: moment().valueOf(new Date()),
-    state: 1, // chưa thành công
-    type: type// type trừ tiền
-  };
-
+  // nếu số tiền trong tài khoản không đủ 
   // console.log('-------------', sender.surplus)
   if (sender.surplus < req.body.amount) {
     res.status(200).json({
@@ -138,11 +152,30 @@ router.post('/', async (req, res) => {
       errorCode: -201,
     })
   } else {
+
+    const entity = {
+      acc_name: sender.name,
+      from_account: sender.account_num,
+      to_account: req.body.toAccount,
+      note: req.body.note,
+      amount: req.body.amount,
+      partner_code: req.body.partnerCode,
+      timestamp: moment(new Date()).valueOf(),
+      state: 1, // chưa thành công
+      type: type// type trừ tiền
+    };
+    // res.status(200).json({
+    //   msg: 'successfully',
+    //   errorCode: 0,
+    //   transId: 1
+    // })
+    // return
+
     const insertVal = await transferModel.add(entity)
     const otp = OTP.generate(SECRET_TOKEN);
     console.log('OTP tranfer', otp);
-    let msg = msgTemplate(sender.name, 'transfer', otp)
-    let html_msg = htmlMsgTemplate(sender.name, 'transfer', otp)
+    let msg = msgOTPTemplate(sender.name, 'transfer', otp)
+    let html_msg = htmlOTPTemplate(sender.name, 'transfer', otp)
     mailController.sentMail(sender.email, '[New Vimo] Please verify OTP for transaction', msg, html_msg)
 
     res.status(200).json({
@@ -152,7 +185,7 @@ router.post('/', async (req, res) => {
     })
 
     if (type === 4){
-      const creditor = await getIdByAccountNum(req.body.to_account);
+      const creditor = await getIdByAccountNum(req.body.toAccount);
       const creditorInfo = creditor[0];
       let notify = {
         type: 4,
@@ -163,9 +196,9 @@ router.post('/', async (req, res) => {
         message: req.body.note,
         debt_id: req.body.debt
       }
-      const delNotify = await notifyModel.deleteByDebtId(req.body.debt);
-      let delDebt = await debtModel.delete(req.body.debt)
-      let update = await notifyModel.add(notify);
+      await notifyModel.deleteByDebtId(req.body.debt);
+      await debtModel.delete(req.body.debt)
+      await notifyModel.add(notify);
 
       broadcastAll(JSON.stringify(notify));
     }
@@ -173,7 +206,7 @@ router.post('/', async (req, res) => {
 })
 
 router.post('/:id', async (req, res) => {
-  console.log('req.body', req.body);
+  // console.log('req.body', req.body);
 
   let otp = req.body.OTP;
   const isValid = OTP.verify({ token: otp, secret: SECRET_TOKEN });
@@ -192,47 +225,23 @@ router.post('/:id', async (req, res) => {
       return
     }
     transaction = transaction[0]
-
-    let ts = moment().valueOf(new Date()); // get current milliseconds since the Unix Epoch
-    let data = {
-      from: transaction.acc_name,
-      from_account: transaction.from_account,
-      to_account: transaction.to_account,
-      amount: transaction.amount, // đơn vị VND
-      note: transaction.note,
-      ts: ts
-    }
-    // console.log('=======================transaction',transaction)
-    // chuyển khoản nội bộ
+    // chuyển khoản nội bộ 
     if(transaction.partner_code === null || transaction.partner_code === '0' || transaction.partner_code === 0) {
-      // console.log('===========================', transaction)
-      const err = await minusTransfer(req.body.transId, transaction.amount, transaction.from_account)
-      const entityPlus = {
-        acc_name: transaction.acc_name,
-        from_account: transaction.to_account,
-        to_account: transaction.from_account,
-        note: 'nhận tiền',
-        amount: transaction.amount,
-        partner_code: 0,
-        state: 0,
-        type: 0, // type = 0 nhận tiền
-        timestamp: moment().valueOf(new Date())
-      };
-      let result = await plus(entityPlus, transaction.to_account)
-      if (err == 0) {
+      TranferInternalBank(transaction)
+      .then((val) => {
+        console.log(val)
         res.status(200).json({
           msg: 'successfully',
           errorCode: 0,
-          transId: result.transId, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
-          to_account: result.to_account, // số tài khoản thụ hưởng
-          amount: result.amount // số tiền giao dịch
+          ...val
         })
-      } else {
-        res.status(200).json({
-          msg: 'failure, invalid OTP',
-          errorCode: -202, // mã lỗi sOTP không hợp lệ
-        })
-      }
+      }).catch(err => {
+          res.status(200).json({
+            msg: 'failure, invalid OTP',
+            errorCode: -202, // mã lỗi sOTP không hợp lệ
+          })
+      })
+       
     } else {
       // chuyển khoản pgp
       if(transaction.partner_code === '7261' || transaction.partner_code === 7261) { 

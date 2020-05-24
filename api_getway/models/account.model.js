@@ -29,6 +29,12 @@ module.exports = {
     JOIN banking_info b ON u.id = b.owner_id
     WHERE u.id = '${uId}'`),
 
+  getAllAccount: (uId) => db.load(`
+    SELECT b.account_num
+    FROM user_account u
+    JOIN banking_info b ON u.id = b.owner_id
+    WHERE u.id = '${uId}' AND is_close=0`),
+
   getReceiverById: (uId) => db.load(`
     SELECT b.account_num, b.id, b.surplus, b.type, u.name, u.email
     FROM user_account u 
@@ -66,4 +72,10 @@ module.exports = {
     SELECT *
     FROM user_account u
     WHERE b.account_num='${acc}' OR u.user_name='${acc}'`),
+
+  getAccountInfo: (acc) => db.load(`
+    SELECT b.account_num, u.name, u.email, u.user_name, u.id, b.surplus
+    FROM user_account u
+    JOIN banking_info b ON u.id = b.owner_id
+    WHERE b.account_num='${acc}' AND is_close=0`)
 };

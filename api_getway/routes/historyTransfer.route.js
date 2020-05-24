@@ -1,31 +1,39 @@
 const express = require('express')
 const moment = require('moment')
-const { getAccount } = require('../models/account.model')
-const { get } = require('../models/history.model')
+const { getallHistByUid } = require('../models/history.model')
+const {getAllAccount} = require('../models/account.model');
 const router = express.Router()
 
 
 
 router.post('/', async (req, res) => {
-  let from = req.params.from
-  let count =   req.params.count
-  if (!from) from = 0
-  if (!count) count = 30
-
+  console.log(req.body)
+  let from = req.params.from || 0
+  let count =   req.params.count || 30
+  let to = moment(new Date()).valueOf()
+  let fromTime = to - (30 * 24 * 60 * 60 * 1000)
+  let type = req.body.type
+  let partner = req.body.partner
   const uid = req.body.uid
-  const info = await getAccount(uid)
-  const accountNum = info[0].account_num
-  // console.log(accountNum)
-  const historyData = await get(accountNum, from, count)
-  // console.log(historyData)
-  historyData.map((val, index) => {
-    val.timestamp = moment(val.timestamp).format('HH:mm:ss, DD-MM-YYYY')
-  })
-  res.status(200).json({
-    msg: 'successfully',
-    errorCode: 0,
-    item: historyData
-  })
+  const rows = await getAllAccount(uid) 
+  
+  if (!rows || rows.length == 0) {
+    res.status(200).json({
+      msg: 'uid not exists',
+      errorCode: -202,
+    })
+  } else {
+    let accountNum = rows.map(item => item.account_num)
+    accountNum = `(${accountNum.join()})`
+    // console.log(from, count, fromTime, to, accountNum, type, partner)
+    const historyData = await getallHistByUid(from, count, fromTime, to, accountNum, type, partner)
+    // console.log(historyData)
+    res.status(200).json({
+      msg: 'successfully',
+      errorCode: 0,
+      item: historyData
+    })
+  }
 })
 
 module.exports = router

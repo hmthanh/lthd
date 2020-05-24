@@ -37,4 +37,12 @@ module.exports = {
       JOIN user_account u ON d.account_num = u.account_num
       WHERE d.id=${id}`)
   },
+  getAccountALL: (account_num) => {
+    return db.load(`
+      SELECT d.*, u.name
+      FROM debt_info d
+      JOIN user_account u ON d.owner_id = u.id
+      WHERE d.account_num IN ${account_num}
+      ORDER BY d.date_time DESC`)
+  }
 };
