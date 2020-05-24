@@ -52,15 +52,13 @@ const Transfer = () => {
   const [isInterbank, setIsInterbank] = useState(false);
   const [selectSaved, setSelectSaved] = useState(0);
   const [isUseSaved, setIsUseSaved] = useState(false);
+  const saveAlias = useToggle(false);
   const accountNum = useInputRequire({
     value: "",
     valid: false,
     invalid: false,
     inValidMsg: ""
   })
-  // const [accValid, setAccValid] = useState(false);
-  // const [accInValid, setAccInValid] = useState(false);
-  // const [accInValidMsg, setAccInValidMsg] = useState("");
   const name = useInputChange('');
   const money = useInputChange(0);
   const message = useInputChange('');
@@ -227,7 +225,8 @@ const Transfer = () => {
       note: note,
       amount: amount,
       costType: cost_type,
-      type: transType
+      type: transType,
+      saveAlias: saveAlias.active
     };
     console.log("data", data);
     let accessToken = localStorage.getItem('accessToken');
@@ -248,7 +247,11 @@ const Transfer = () => {
           let title = "Chuyển tiền thất bại";
           let content = "Đã xảy ra lỗi trong quá trình chuyển tiền\n Error : " + err;
           showMessageBox(title, content);
-        }, [dispatch]);
+        });
+  }
+
+  const onChangeSaveAlias = (e) => {
+    saveAlias.toggle();
   }
 
   useEffect(() => {
@@ -303,31 +306,6 @@ const Transfer = () => {
                     </Input>
                   </FormGroup>
                   <h4>2. Người nhận</h4>
-                  <FormGroup>
-                    <Label for="receiverTransfer">Chọn ngân hàng</Label>
-                    <div>
-                      <ButtonGroup className="mb-2 ">
-                        <Button color="primary" onClick={onChangeLocalBank}
-                                active={isInterbank === false}>Nội bộ</Button>
-                        <Button color="primary" onClick={onChangeInterbank}
-                                active={isInterbank === true}>Liên ngân hàng</Button>
-                      </ButtonGroup>
-                    </div>
-                    <Collapse isOpen={isInterbank}>
-                      <Input type="select"
-                             value={receiveBank}
-                             onChange={onChangeReceiveBank}
-                             name="receiveBank" id="receiveBank">
-                        {
-                          interBankInfo.item &&
-                          interBankInfo.item.map((item, index) => {
-                            return <option key={index}
-                                           value={item.partner_code}>{item.name}</option>
-                          })
-                        }
-                      </Input>
-                    </Collapse>
-                  </FormGroup>
                   <FormGroup>
                     <Label for="receiverSavedList">Thông tin người
                       nhận <ShowRequire/></Label>
@@ -385,6 +363,32 @@ const Transfer = () => {
                              value={name.value}/>
                     </InputGroup>
                   </FormGroup>
+                  <FormGroup>
+                    <Label for="receiverTransfer">Chọn ngân hàng</Label>
+                    <div>
+                      <ButtonGroup className="mb-2 ">
+                        <Button color="primary" onClick={onChangeLocalBank}
+                                active={isInterbank === false}>Nội bộ</Button>
+                        <Button color="primary" onClick={onChangeInterbank}
+                                active={isInterbank === true}>Liên ngân hàng</Button>
+                      </ButtonGroup>
+                    </div>
+                    <Collapse isOpen={isInterbank}>
+                      <Input type="select"
+                             value={receiveBank}
+                             onChange={onChangeReceiveBank}
+                             name="receiveBank" id="receiveBank">
+                        {
+                          interBankInfo.item &&
+                          interBankInfo.item.map((item, index) => {
+                            return <option key={index}
+                                           value={item.partner_code}>{item.name}</option>
+                          })
+                        }
+                      </Input>
+                    </Collapse>
+                  </FormGroup>
+
                   <h4>3. Thông tin cần chuyển tiền</h4>
                   <FormGroup>
                     <Label for="money">Số tiền <ShowRequire/></Label>
@@ -401,7 +405,14 @@ const Transfer = () => {
                            id="message"/>
                   </FormGroup>
                   <FormGroup>
-                    <Label>Hình thức trả phí</Label>
+                    <Label for="saveAlias">Lưu tên gợi nhớ</Label>
+                    <Input type="checkbox" name="saveAlias"
+                           className="form-check-input"
+                           value={saveAlias.active}
+                           onChange={onChangeSaveAlias}/>
+                  </FormGroup>
+                  <FormGroup>
+                    <Label>Hình thức trả phí</Label><br/>
                     <ButtonGroup className="mb-2">
                       <Button color="primary" onClick={isSenderPay.setActive}
                               active={isSenderPay.active === true}>Người nhận trả phí</Button>
