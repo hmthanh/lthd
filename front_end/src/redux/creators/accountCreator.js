@@ -10,7 +10,7 @@ import {
   CREATE_ACC_SUCCESS,
   CREATE_PAYMENT_FAILED,
   CREATE_PAYMENT_LOADING,
-  CREATE_PAYMENT_SUCCESS
+  CREATE_PAYMENT_SUCCESS, PAYMENT_ACCOUNT_FAILED, PAYMENT_ACCOUNT_LOADING, PAYMENT_ACCOUNT_SUCCESS
 } from '../actions/actionType'
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'
@@ -31,6 +31,24 @@ export const getAllAccount = (id, accessToken) => {
     });
   };
 };
+
+export const getPaymentAcc = (id, accessToken) => {
+  return (dispatch) => {
+    dispatch({type: PAYMENT_ACCOUNT_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + `/api/accounts/accpayment`, 'POST', {id: id}, accessToken);
+        dispatch({type: PAYMENT_ACCOUNT_SUCCESS, payload: response});
+        resolve(response);
+      } catch (e) {
+        reject(e);
+        console.log(e);
+        dispatch({type: PAYMENT_ACCOUNT_FAILED, payload: e});
+      }
+    });
+  };
+};
+
 
 export const createAcc = (data, accessToken) => {
   return dispatch => {

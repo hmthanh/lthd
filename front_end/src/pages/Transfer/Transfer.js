@@ -26,14 +26,14 @@ import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ModalVerifyTrans from "../../components/Modal/ModalVerifyTrans";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {getAllAccount} from "../../redux/creators/accountCreator";
+import {getPaymentAcc} from "../../redux/creators/accountCreator";
 import {useLocation} from "react-router";
 
 const Transfer = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const senderInfo = useSelector(state => {
-    return state.AccountInfo.data
+    return state.PaymentAcc.data
   });
   const transferInfo = useSelector((state) => {
     return state.TransferInfo
@@ -48,7 +48,7 @@ const Transfer = () => {
     return state.AccName
   });
 
-  const sender = useInputChange(1);
+  const sender = useInputChange(0);
   const [receiveBank, setReceiveBank] = useState(0);
   const [isInterbank, setIsInterbank] = useState(false);
   const [selectSaved, setSelectSaved] = useState(0);
@@ -60,7 +60,6 @@ const Transfer = () => {
   const name = useInputChange('');
   const money = useInputChange(0);
   const message = useInputChange('');
-  const [debt, setDebt] = useState(0);
   const isSenderPay = useToggle(true);
   const msgBoxToggle = useToggle(false);
   const showVerifyToggle = useToggle(false);
@@ -74,7 +73,6 @@ const Transfer = () => {
   const qName = query.get("name");
   const qMoney = query.get("money");
   const qNote = query.get("note");
-  const qDebt = query.get("debt");
 
   const onChangeSelectSaved = (e) => {
     if (listSaved) {
@@ -100,11 +98,12 @@ const Transfer = () => {
   }
 
   const onBlurAccountNum = useCallback(() => {
-    if (accountNum.value === "") {
+    if (accountNum === "") {
       setAccInValid(true)
       setAccInValidMsg("Không được để trống")
       return false;
     }
+
     let accessToken = localStorage.getItem('accessToken')
     let partner_code = '0'
     if (isInterbank) {
@@ -119,10 +118,16 @@ const Transfer = () => {
         .then((response) => {
           console.log("success response", response)
           name.setValue(response.account.name)
-          setAccountNum(response.account.account_num)
-          setAccValid(true)
-          setAccInValid(false)
-          setAccInValidMsg("")
+          let newAccountNum = response.account.account_num;
+          if (sender.value === newAccountNum) {
+            setAccInValid(true)
+            setAccInValidMsg("Không thể chuyển tiền chung tài khoản")
+          } else {
+            setAccountNum(newAccountNum)
+            setAccValid(true)
+            setAccInValid(false)
+            setAccInValidMsg("")
+          }
         })
         .catch((err) => {
           console.log(err)
@@ -131,7 +136,7 @@ const Transfer = () => {
           setAccountNum("")
         })
 
-  }, [accountNum, setAccountNum, dispatch, name, isInterbank, receiveBank]);
+  }, [accountNum, setAccountNum, sender, dispatch, name, isInterbank, receiveBank]);
 
   function onChangeInterbank(e) {
     if (!e.target.value) {
@@ -198,22 +203,27 @@ const Transfer = () => {
       setAccInValidMsg("Vui lòng nhập lại số tài khoản")
       return;
     }
+    if (sender.value === accountNum) {
+      setAccInValid(true)
+      setAccInValidMsg("Không thể chuyển tiền chung tài khoản")
+      return;
+    }
     let partner_code = 0;
     if (isInterbank) {
       partner_code = receiveBank;
     }
     let uid = localStorage.getItem('uid');
-    let to_account = accountNum, note = message.value, amount = money.value;
+    let note = message.value, amount = money.value;
     let cost_type = isSenderPay.active ? 0 : 1;
 
     let data = {
-      partner_code: partner_code,
+      partnerCode: partner_code,
       uid: uid,
-      to_account: to_account,
+      fromAccount: sender.value,
+      toAccount: accountNum,
       note: note,
       amount: amount,
-      cost_type: cost_type,
-      debt: debt,
+      costType: cost_type,
       type: transType
     };
     console.log("data", data);
@@ -238,26 +248,29 @@ const Transfer = () => {
         }, [dispatch]);
   }
 
+  console.log(sender.value, sender);
+
+  useEffect(() => {
+    if (qAccNum && qName && qMoney && qNote) {
+      setTransType(4);
+      setAccountNum(qAccNum);
+      name.setValue(qName);
+      money.setValue(qMoney);
+      message.setValue(qNote);
+    }
+  }, [location, qAccNum, qMoney, qName, qNote, message, money, name])
 
   useEffect(() => {
     const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
-    dispatch(getAllAccount(uid, accessToken))
+    dispatch(getPaymentAcc(uid, accessToken))
         .then((response) => {
-          console.log(response);
-          if (qAccNum && qName && qMoney && qNote) {
-            setTransType(4);
-            setAccountNum(qAccNum);
-            name.setValue(qName);
-            money.setValue(qMoney);
-            message.setValue(qNote);
-            setDebt(qDebt);
-          }
+          sender.setValue(response.account[0].account_num)
         })
         .catch((e) => {
           console.log(e);
         });
-  }, [dispatch, name, money, message, qAccNum, qDebt, qMoney, qName, qNote]);
+  }, [dispatch, sender]);
 
   return (
       <Container>
@@ -280,11 +293,10 @@ const Transfer = () => {
                            id="sender"
                            value={sender.value}>
                       {senderInfo.account && senderInfo.account.map((item, index) => {
-                        return (item.type === 1 ? (
-                            <option
-                                key={index}
-                                value={item.account_num}>{(item.type === 1 ? ("Thanh toán " + index) : ("Tiết kiệm " + index))}
-                            </option>) : "")
+                        return (<option
+                            key={index}
+                            value={item.account_num}>{(`Thanh toán ${index + 1} (${item.account_num})`)}
+                        </option>)
                       })}
                     </Input>
                   </FormGroup>

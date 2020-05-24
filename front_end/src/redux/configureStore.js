@@ -7,7 +7,7 @@ import {Register} from './actions/register'
 import {ChangePassword} from './actions/changepassword'
 import {GetBankingInfo} from './actions/getBankingInfo'
 import {HistoryDebt, ReceiveHistory, TransHistory} from './actions/getHistory'
-import {GetAllAccount} from './actions/getAllAccount'
+import {GetAllAccount, GetPaymentAccount} from './actions/getAllAccount'
 import {CreateDebt, GetDebtInfo} from './actions/getDebt'
 import {GetInDebtInfo} from './actions/getInDebt'
 import {GetAllCustomer} from './actions/getAllCustomer'
@@ -41,6 +41,7 @@ export const ConfigureStore = () => {
         CreateDebt: CreateDebt,
         GetInDebtInfo: GetInDebtInfo,
         AccountInfo: GetAllAccount,
+        PaymentAcc: GetPaymentAccount,
         Reminscent: ReminscentAcction,
         ReceiverInfo: GetAllReceiver,
         RemindInfo: GetRemindInfo,

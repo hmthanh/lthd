@@ -24,6 +24,7 @@ import MessageBox from "../../components/Modal/MessageBox";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import {getInterbank} from "../../redux/creators/transferCreator";
+import {formatMoney} from "../../utils/utils";
 
 const moment = require('moment');
 
@@ -48,8 +49,9 @@ const HistoryTrans = () => {
   // const [from, setFrom] = useState(moment().valueOf(new Date()) - (28 * 24 * 60 * 60 * 1000));
   const [from, setFrom] = useState(new Date(moment().subtract(28, 'day')));
   const [to, setTo] = useState(new Date(moment()));
-  const [banking, setBanking] = useState(0);
-  const [index, setIndex] = useState(0);
+  const [banking, setBanking] = useState("0");
+  const [pageIdx, setPageIdx] = useState(0);
+  const [total, setTotal] = useState(10);
 
   function onChangeFrom(value) {
     setFrom(value);
@@ -74,7 +76,7 @@ const HistoryTrans = () => {
     };
     console.log("search value", search.value);
     const accessToken = localStorage.getItem('accessToken');
-    dispatch(getUserTransHistory(data, index, accessToken))
+    dispatch(getUserTransHistory(data, pageIdx, accessToken))
         .then((response) => {
           console.log(response);
         });
@@ -105,7 +107,7 @@ const HistoryTrans = () => {
     //     .catch((error) => {
     //       showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
     //     });
-  }, [dispatch, search, showMsgBox, index, from, to, banking]);
+  }, [dispatch, search, showMsgBox, pageIdx, from, to, banking]);
 
   function onChangeBanking(e) {
     setBanking(e.target.value);
@@ -115,23 +117,28 @@ const HistoryTrans = () => {
     let data = {
       from: moment(from).valueOf(),
       to: moment(to).valueOf(),
-      partner: banking
+      partner: parseInt(banking)
     };
     console.log("search value", data);
     const accessToken = localStorage.getItem('accessToken');
-    dispatch(getUserTransHistory(data, index, accessToken))
+    dispatch(getUserTransHistory(data, pageIdx * 30, accessToken))
         .then((response) => {
+          let totalPage = Math.ceil(response.total / 30);
+          setTotal(totalPage);
           console.log(response.item);
         });
     dispatch(getInterbank(accessToken))
         .then((response) => {
-          // let partner_code = response.item[0].partner_code;
-          // setBanking(0);
+          console.log(response)
         })
         .catch((err) => {
           console.log(err);
         });
-  }, [dispatch, from, to, index, banking]);
+  }, [dispatch, from, to, pageIdx, banking]);
+
+  const changeIndex = (i) => {
+    setPageIdx(i);
+  }
   return (
       <Container className="container" style={{marginTop: '20px'}}>
         <Row className="justify-content-center">
@@ -188,15 +195,15 @@ const HistoryTrans = () => {
                               })
                             }
                           </Input>
-                          <Label for="btnSearch" style={{marginBottom: "34px"}}></Label>
-                          <InputGroup>
-                            <Button id="btnSearch" type="submit" color={"success"}
-                                    className="btn-search"
-                                    style={{width: "200px"}}
-                                    disabled={false}>
-                              <span>Tìm kiếm</span>
-                            </Button>
-                          </InputGroup>
+                          {/*<Label for="btnSearch" style={{marginBottom: "34px"}}></Label>*/}
+                          {/*<InputGroup>*/}
+                          {/*  <Button id="btnSearch" type="submit" color={"success"}*/}
+                          {/*          className="btn-search"*/}
+                          {/*          style={{width: "200px"}}*/}
+                          {/*          disabled={false}>*/}
+                          {/*    <span>Tìm kiếm</span>*/}
+                          {/*  </Button>*/}
+                          {/*</InputGroup>*/}
                         </Col>
                       </Row>
                     </FormGroup>
@@ -223,31 +230,26 @@ const HistoryTrans = () => {
                     <PaginationItem>
                       <PaginationLink previous href="#"/>
                     </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">
-                        1
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">
-                        2
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">
-                        3
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">
-                        4
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">
-                        5
-                      </PaginationLink>
-                    </PaginationItem>
+                    {
+                      Array.apply(null, Array(total)).map((i, index) => {
+                        if (index === pageIdx) {
+                          return (<PaginationItem active key={index}>
+                                <PaginationLink onClick={() => changeIndex(index)}>
+                                  {index + 1}
+                                </PaginationLink>
+                              </PaginationItem>
+                          )
+                        } else {
+                          return (<PaginationItem key={index}>
+                                <PaginationLink onClick={() => changeIndex(index)}>
+                                  {index + 1}
+                                </PaginationLink>
+                              </PaginationItem>
+                          )
+
+                        }
+                      })
+                    }
                     <PaginationItem>
                       <PaginationLink next href="#"/>
                     </PaginationItem>
