@@ -36,4 +36,22 @@ module.exports = {
       WHERE t.type=${type} AND t.from_account='${accountNum}' OR t.to_account='${accountNum}'
       ORDER BY t.timestamp DESC`)
   },
+
+  getallHist: (offset, count, from, to, partner) => {
+    let q = partner !== 0 ? `AND partner_code=${partner}` : ''
+    return db.load(`
+      SELECT t.trans_id, t.type, t.acc_name, t.from_account, t.to_account, t.amount, t.note, t.timestamp, t.surplus, t.state, t.signature 
+      FROM transaction_tranfer t
+      WHERE t.timestamp >= ${from} AND t.timestamp <= ${to} ${q}
+      ORDER BY t.timestamp DESC LIMIT ${offset},${count}`)
+  },
+
+  countRow: (offset, count, from, to, partner) => {
+    let q = partner !== 0 ? `AND partner_code=${partner}` : ''
+    return db.load(`
+      SELECT COUNT(t.trans_id) as numrow
+      FROM transaction_tranfer t
+      WHERE t.timestamp >= ${from} AND t.timestamp <= ${to} ${q}
+      ORDER BY t.timestamp DESC LIMIT ${offset},${count}`)
+  },
 };

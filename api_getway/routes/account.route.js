@@ -166,9 +166,9 @@ router.post('/closed', async (req, res) => {
   }
   tagetAcc.surplus = parseInt(tagetAcc.surplus) + parseInt(account.surplus)
   let r1 =  await bankingInfoModel.update(entity, {account_num: req.body.closerId})
-  console.log(r1)
+  // console.log(r1)
   let r2 = await bankingInfoModel.update(tagetAcc, {account_num: req.body.receiveId})
-  console.log(r2)
+  // console.log(r2)
   res.status(200).json({
     errorCode: 0,
     msg: 'successfully'
