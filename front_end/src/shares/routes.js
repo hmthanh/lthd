@@ -173,10 +173,6 @@ export const EmployeeLink = [
 
 export const CustomerLink = [
   {
-    title: "Danh sách tài khoản",
-    path: "/list-account",
-  },
-  {
     title: "Danh sách người nhận",
     path: "/list-receiver",
   },
