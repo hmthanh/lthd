@@ -2,12 +2,14 @@ import React, {useEffect} from 'react';
 import {Button, Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from 'react-redux';
 import {getAllDebt} from '../../redux/creators/debtCreator';
-import {formatFormalDate} from "../../utils/utils";
-// import ModalEdit from "./ModalEdit";
+import {formatFormalDate, fromMoment} from "../../utils/utils";
+// import ModalEdit from "./ModalEdit"
+//
 import CancelDebt from "./CancelDebt";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
+const moment = require('moment');
 
 const DebtPage = () => {
   const dispatch = useDispatch();
@@ -61,7 +63,7 @@ const DebtPage = () => {
                             <td>{it.name}</td>
                             <td>{it.account_num}</td>
                             <td>{it.debt_val}</td>
-                            <td>{formatFormalDate(it.date_time)}</td>
+                            <td>{moment(parseInt(it.date_time)).format("HH:mm DD-MM-YYYY")}</td>
                             <td>{it.note}</td>
                             {/*<td>*/}
                             {/*  <ModalEdit accountId={it.id}*/}

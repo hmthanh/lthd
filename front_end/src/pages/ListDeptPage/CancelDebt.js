@@ -20,7 +20,7 @@ const CancelDebt = ({debtId}) => {
     let data = {
       message: message.value,
       ownerId: uid,
-      debtId:debtId,
+      debtId: debtId,
     }
     dispatch(Delete(data, accessToken))
         .then((response) => {

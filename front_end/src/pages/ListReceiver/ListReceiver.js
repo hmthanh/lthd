@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react'
+import React, {Component, useEffect, useState} from 'react'
 import {Control, Errors, LocalForm} from 'react-redux-form'
 import {
   Button,
@@ -15,7 +15,7 @@ import {
   Row,
   Table
 } from 'reactstrap'
-import {connect} from 'react-redux'
+import {connect, useDispatch, useSelector} from 'react-redux'
 import {Create, Delete, Edit, Fetch} from '../../redux/creators/nameReminscentCreator'
 import Loading from '../../components/Loading'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -167,129 +167,134 @@ const ConfirmDelete = (props) => {
   );
 };
 
-class ListReceiver extends Component {
-
-  constructor(props) {
-    super(props);
-    this.handleCreate = this.handleCreate.bind(this);
-    this.handleEdit = this.handleEdit.bind(this);
-    this.handleDelete = this.handleDelete.bind(this)
-  }
-
-  componentDidMount() {
+const ListReceiver = () => {
+  const dispatch = useDispatch();
+  const Reminscent = useSelector(state => {
+    return state.Reminscent
+  });
+  useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     const uid = localStorage.getItem('uid');
     console.log(accessToken);
-    this.props.Fetch(uid, accessToken);
-  }
+    dispatch(Fetch(uid, accessToken))
+        .then((response) => {
+          console.log(response)
+        });
+  }, [dispatch])
 
-  handleCreate(data) {
-    const uid = localStorage.getItem('uid');
-    console.log('localStorage.getItem("uid")', uid);
-    const accessToken = localStorage.getItem('accessToken');
-    console.log('debtPage ' + accessToken);
-    data = {...data, ownerId: uid};
-    this.props.Create(data, accessToken).then(() => {
-      this.props.Fetch(uid, accessToken);
-    })
-  }
-
-  handleEdit(data) {
+  const handleCreate = (data) => {
     const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
     data = {...data, ownerId: uid};
-    this.props.Edit(data, accessToken).then(() => {
-      this.props.Fetch(uid, accessToken);
-    })
+    dispatch(Create(data, accessToken))
+        .then((response) => {
+          console.log(response);
+          dispatch(Fetch(uid, accessToken))
+              .then((response) => {
+                console.log(response)
+              });
+        })
   }
 
-  handleDelete(id) {
+  const handleEdit = (data) => {
+    const uid = localStorage.getItem('uid');
+    const accessToken = localStorage.getItem('accessToken');
+    data = {...data, ownerId: uid};
+    dispatch(Edit(data, accessToken))
+        .then(response => {
+          console.log(response);
+          dispatch(Fetch(uid, accessToken))
+              .then(res => {
+                console.log(res);
+              })
+        })
+  }
+
+  const handleDelete = (id) => {
     const accessToken = localStorage.getItem('accessToken');
     const uid = localStorage.getItem('uid');
-    this.props.Delete(id, accessToken).then(() => {
-      this.props.Fetch(uid, accessToken);
-    })
+    dispatch(Delete(id, accessToken))
+        .then((response) => {
+          console.log(response);
+          dispatch(Fetch(uid, accessToken))
+              .then((response) => {
+                console.log(response)
+              });
+        })
   }
 
-  render() {
-    if (this.props.Reminscent.isLoading) {
-      return (
-          <Loading/>
-      )
-    } else
-      return (
-          <Container className="container" style={{marginTop: '20px'}}>
-            <Row className="justify-content-center">
-              <Col md={12}>
-                <CardGroup className=" mb-0">
-                  <Card className="p-6">
-                    <div className="card-block" style={{padding: "20px 40px"}}>
-                      <h3 className="col-centered table-heading">DANH SÁCH NGƯỜI NHẬN</h3>
-                      <ModalAddNew handleCreate={this.handleCreate}/>
-                      <Table striped>
-                        <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Số Tài Khoản</th>
-                          <th>Tên Gợi Nhớ</th>
-                          <th></th>
-                          <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {
-                          this.props.Reminscent.data.item &&
-                          this.props.Reminscent.data.item.map((item, index) => {
-                            console.log(this.props.Reminscent);
-                            return (
-                                <tr key={index}>
-                                  <th scope="row">{index + 1}</th>
-                                  <td>{item.account_num}</td>
-                                  <td>{item.alias_name}</td>
-                                  <td>
-                                    <ButtonToolbar>
-                                      <ButtonGroup>
-                                        <ModalEdit buttonLabel={'Sửa'} accountId={item.id} accountNum={item.account_num}
-                                                   aliasName={item.alias_name} handleEdit={this.handleEdit}/>
+  return (
+      <Container className="container" style={{marginTop: '20px'}}>
+        <Row className="justify-content-center">
+          <Col md={12}>
+            <CardGroup className=" mb-0">
+              <Card className="p-6">
+                <div className="card-block" style={{padding: "20px 40px"}}>
+                  <h3 className="col-centered table-heading">DANH SÁCH NGƯỜI NHẬN</h3>
+                  <ModalAddNew handleCreate={handleCreate}/>
+                  <Table striped>
+                    <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Số Tài Khoản</th>
+                      <th>Tên Gợi Nhớ</th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                      Reminscent.data.item &&
+                      Reminscent.data.item.map((item, index) => {
+                        console.log(this.props.Reminscent);
+                        return (
+                            <tr key={index}>
+                              <th scope="row">{index + 1}</th>
+                              <td>{item.account_num}</td>
+                              <td>{item.alias_name}</td>
+                              <td>
+                                <ButtonToolbar>
+                                  <ButtonGroup>
+                                    <ModalEdit buttonLabel={'Sửa'} accountId={item.id} accountNum={item.account_num}
+                                               aliasName={item.alias_name} handleEdit={handleEdit}/>
 
-                                      </ButtonGroup>
-                                    </ButtonToolbar>
-                                  </td>
-                                  <td>
-                                    <ButtonToolbar>
-                                      <ButtonGroup>
-                                        <ConfirmDelete buttonLabel={'Xóa'} accountId={item.id}
-                                                       handleDelete={this.handleDelete}/>
-                                      </ButtonGroup>
-                                    </ButtonToolbar>
-                                  </td>
-                                </tr>
-                            )
-                          })
-                        }
-                        </tbody>
-                      </Table>
-                    </div>
-                  </Card>
-                </CardGroup>
-              </Col>
-            </Row>
-          </Container>
-      )
-  }
+                                  </ButtonGroup>
+                                </ButtonToolbar>
+                              </td>
+                              <td>
+                                <ButtonToolbar>
+                                  <ButtonGroup>
+                                    <ConfirmDelete buttonLabel={'Xóa'} accountId={item.id}
+                                                   handleDelete={handleDelete}/>
+                                  </ButtonGroup>
+                                </ButtonToolbar>
+                              </td>
+                            </tr>
+                        )
+                      })
+                    }
+                    </tbody>
+                  </Table>
+                </div>
+              </Card>
+            </CardGroup>
+          </Col>
+        </Row>
+      </Container>
+  )
 }
+//
+// const mapDispatchToProps = dispatch => ({
+//   Create: (item, accessToken) => dispatch(Create(item, accessToken)),
+//   Edit: (item, accessToken) => dispatch(Edit(item, accessToken)),
+//   Delete: (id, accessToken) => dispatch(Delete(id, accessToken)),
+//   Fetch: (id, accessToken) => dispatch(Fetch(id, accessToken))
+// });
+//
+// const mapStateToProps = (state) => {
+//   return {
+//     Reminscent: state.Reminscent
+//   }
+// };
 
-const mapDispatchToProps = dispatch => ({
-  Create: (item, accessToken) => dispatch(Create(item, accessToken)),
-  Edit: (item, accessToken) => dispatch(Edit(item, accessToken)),
-  Delete: (id, accessToken) => dispatch(Delete(id, accessToken)),
-  Fetch: (id, accessToken) => dispatch(Fetch(id, accessToken))
-});
-
-const mapStateToProps = (state) => {
-  return {
-    Reminscent: state.Reminscent
-  }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ListReceiver)
+export default ListReceiver;

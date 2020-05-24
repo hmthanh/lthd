@@ -17,15 +17,12 @@ import {
   PaginationLink,
   Row, Spinner
 } from "reactstrap";
-import useInputChange from "../../utils/useInputChange";
-import useToggle from "../../utils/useToggle";
 import {getInterbank} from "../../redux/creators/transferCreator";
 import MessageBox from "../../components/Modal/MessageBox";
 import TableUserTransfer from "../../components/Table/TableUserTransfer";
 import Paging from "../../components/Paging/Paging";
 import Loading from "../../components/Loading";
 
-const moment = require('moment');
 
 const HistoryUserTrans = () => {
   const paySelector = [
@@ -154,7 +151,7 @@ const HistoryUserTrans = () => {
                     isLoadingTable ? <Loading/> : (<TableUserTransfer data={transHistory}></TableUserTransfer>)
                   }
 
-                  {/*<Paging pageIdx={pageIdx} total={total} setPage={setPage}/>*/}
+                  <Paging pageIdx={pageIdx} total={total} setPage={setPage}/>
                 </div>
               </Card>
             </CardGroup>

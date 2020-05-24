@@ -1,3 +1,4 @@
+const moment = require('moment');
 export const required = (val) => val && val.length;
 export const checkEmpty = val => {return val && val.length}
 export const maxLength = (len) => (val) => !(val) || (val.length <= len);
@@ -24,6 +25,7 @@ export const formatFormalDate = (date) => {
 
   return [day, month, year].join('-');
 };
+
 
 export const formatMoney = (amount, decimalCount = 0, decimal = ".", thousands = ",") => {
   try {
