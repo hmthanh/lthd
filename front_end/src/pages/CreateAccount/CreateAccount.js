@@ -61,7 +61,7 @@ const CreateAccount = () => {
       <Container>
         <div className="container-fluid py-3">
           <Row>
-            <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
+            <Col xs={12} sm={8} md={6} lg={6} className={"mx-auto"}>
 
               <Card id="localBank">
                 <div className="card-body">

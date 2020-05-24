@@ -1,26 +1,12 @@
-import React, {Component, useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Control, Errors, LocalForm} from 'react-redux-form'
-import {
-  Button,
-  ButtonGroup,
-  ButtonToolbar,
-  Card,
-  CardGroup,
-  Col,
-  Container,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Row,
-  Table
-} from 'reactstrap'
-import {connect, useDispatch, useSelector} from 'react-redux'
+import {Button, ButtonGroup, ButtonToolbar, Card, Collapse, Container, Modal, ModalBody, ModalFooter, ModalHeader, Table} from 'reactstrap'
+import {useDispatch, useSelector} from 'react-redux'
 import {Create, Delete, Edit, Fetch} from '../../redux/creators/nameReminscentCreator'
-import Loading from '../../components/Loading'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faUser} from "@fortawesome/free-solid-svg-icons";
 import useToggle from "../../utils/useToggle";
+import CreateReceiver from "./CreateReceiver";
 
 const required = (val) => val && val.length;
 
@@ -42,7 +28,7 @@ const ModalAddNew = (props) => {
       <>
         <Button color="success" onClick={modalToggle.setActive}>
           <span style={{marginRight: "10px", paddingLeft: "10px"}}>Thêm mới</span>
-          <FontAwesomeIcon style={{marginRight: "10px"}} icon={faPlus}></FontAwesomeIcon>
+          <FontAwesomeIcon style={{marginRight: "10px"}} icon={faUser}></FontAwesomeIcon>
         </Button>
         <hr/>
         <Modal isOpen={modalToggle.active} toggle={modalToggle.toggle} className={className}>
@@ -151,7 +137,7 @@ const ConfirmDelete = (props) => {
   };
 
   return (
-      <div>
+      <>
         <Button color="danger" onClick={toggle}>{buttonLabel}</Button>
         <Modal isOpen={modal} toggle={toggle} className={className}>
           <ModalHeader toggle={toggle}>xóa</ModalHeader>
@@ -163,15 +149,16 @@ const ConfirmDelete = (props) => {
             <Button color="secondary" onClick={toggle}>bỏ qua</Button>
           </ModalFooter>
         </Modal>
-      </div>
+      </>
   );
 };
 
 const ListReceiver = () => {
   const dispatch = useDispatch();
   const Reminscent = useSelector(state => {
-    return state.Reminscent
+    return state.AliasReceiver
   });
+  const createToggle = useToggle(false);
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     const uid = localStorage.getItem('uid');
@@ -223,63 +210,69 @@ const ListReceiver = () => {
         })
   }
 
+  const handleCreateReceiver = (e) => {
+    createToggle.setActive();
+  }
+
   return (
       <Container className="container" style={{marginTop: '20px'}}>
-        <Row className="justify-content-center">
-          <Col md={12}>
-            <CardGroup className=" mb-0">
-              <Card className="p-6">
-                <div className="card-block" style={{padding: "20px 40px"}}>
-                  <h3 className="col-centered table-heading">DANH SÁCH NGƯỜI NHẬN</h3>
-                  <ModalAddNew handleCreate={handleCreate}/>
-                  <Table striped>
-                    <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Số Tài Khoản</th>
-                      <th>Tên Gợi Nhớ</th>
-                      <th></th>
-                      <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                      Reminscent.data.item &&
-                      Reminscent.data.item.map((item, index) => {
-                        console.log(this.props.Reminscent);
-                        return (
-                            <tr key={index}>
-                              <th scope="row">{index + 1}</th>
-                              <td>{item.account_num}</td>
-                              <td>{item.alias_name}</td>
-                              <td>
-                                <ButtonToolbar>
-                                  <ButtonGroup>
-                                    <ModalEdit buttonLabel={'Sửa'} accountId={item.id} accountNum={item.account_num}
-                                               aliasName={item.alias_name} handleEdit={handleEdit}/>
+        <CreateReceiver isOpen={createToggle.active}/>
+        <Collapse isOpen={!createToggle.active}>
+          <Card className="p-6">
+            <div className="card-block" style={{padding: "20px 40px"}}>
+              <h3 className="col-centered table-heading">DANH SÁCH NGƯỜI NHẬN</h3>
+              {/*<ModalAddNew handleCreate={handleCreate}/>*/}
+              <Button color="success" onClick={handleCreateReceiver}>
+                <FontAwesomeIcon style={{marginLeft: "40px"}} icon={faUser}></FontAwesomeIcon>
+                <span style={{marginLeft: "5px", paddingRight: "40px"}}>Tạo người nhận</span>
+              </Button>
+              <hr/>
+              <Table striped>
+                <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Số Tài Khoản</th>
+                  <th>Tên Gợi Nhớ</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {
+                  Reminscent.data.item &&
+                  Reminscent.data.item.map((item, index) => {
+                    console.log(this.props.Reminscent);
+                    return (
+                        <tr key={index}>
+                          <th scope="row">{index + 1}</th>
+                          <td>{item.account_num}</td>
+                          <td>{item.alias_name}</td>
+                          <td>
+                            <ButtonToolbar>
+                              <ButtonGroup>
+                                <ModalEdit buttonLabel={'Sửa'} accountId={item.id} accountNum={item.account_num}
+                                           aliasName={item.alias_name} handleEdit={handleEdit}/>
 
-                                  </ButtonGroup>
-                                </ButtonToolbar>
-                              </td>
-                              <td>
-                                <ButtonToolbar>
-                                  <ButtonGroup>
-                                    <ConfirmDelete buttonLabel={'Xóa'} accountId={item.id}
-                                                   handleDelete={handleDelete}/>
-                                  </ButtonGroup>
-                                </ButtonToolbar>
-                              </td>
-                            </tr>
-                        )
-                      })
-                    }
-                    </tbody>
-                  </Table>
-                </div>
-              </Card>
-            </CardGroup>
-          </Col>
-        </Row>
+                              </ButtonGroup>
+                            </ButtonToolbar>
+                          </td>
+                          <td>
+                            <ButtonToolbar>
+                              <ButtonGroup>
+                                <ConfirmDelete buttonLabel={'Xóa'} accountId={item.id}
+                                               handleDelete={handleDelete}/>
+                              </ButtonGroup>
+                            </ButtonToolbar>
+                          </td>
+                        </tr>
+                    )
+                  })
+                }
+                </tbody>
+              </Table>
+            </div>
+          </Card>
+        </Collapse>
       </Container>
   )
 }

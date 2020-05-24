@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Button, Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {getInDebt} from '../../redux/creators/InDebtCreator'
 import {Link} from "react-router-dom";
-import {formatFormalDate} from "../../utils/utils";
+import {formatMoment} from "../../utils/utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCreditCard} from "@fortawesome/free-solid-svg-icons";
 import CancelRemind from "./CancelRemind";
@@ -45,19 +45,20 @@ const ListInDebt = () => {
                     </thead>
                     <tbody>
                     {
-                      GetInDebtInfo.response &&
-                      GetInDebtInfo.response.map((item, index) => (
+                      GetInDebtInfo.item &&
+                      GetInDebtInfo.item.map((item, index) => (
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
                             <td>{item.name}</td>
                             <td>{item.debt_val}</td>
-                            <td>{formatFormalDate(item.date_time)}</td>
+                            <td>{formatMoment(item.date_time)}</td>
                             <td>{item.note}</td>
                             <td>
-                              <Link to={`/transfer?account=${item.account_num}&name=${item.name}&money=${item.debt_val}&note=${item.note}&debt=${item.id}`}>
+                              <Link
+                                  to={`/transfer?account=${item.account_num}&name=${item.name}&money=${item.debt_val}&note=${item.note}&debt=${item.id}`}>
                                 <Button color="success">
                                   <span style={{marginRight: "10px"}}>Thanh toán</span>
-                                  <FontAwesomeIcon  icon={faCreditCard}></FontAwesomeIcon>
+                                  <FontAwesomeIcon icon={faCreditCard}></FontAwesomeIcon>
                                 </Button>
                               </Link>
                             </td>

@@ -13,7 +13,7 @@ import {GetInDebtInfo} from './actions/getInDebt'
 import {GetAllCustomer} from './actions/getAllCustomer'
 import {GetAllStaff} from './actions/getAllStaff'
 import {ListTransferInfo} from './actions/getAllTransfer'
-import {ReminscentAcction} from './actions/reminscentAcc'
+import {AliasReceiver} from './actions/reminscentAcc'
 import {GetAllReceiver} from './actions/getAllReceiver'
 import {GetNotify, GetRemindInfo} from './actions/getRemind'
 import {GetRemindDetail} from './actions/getRemindDetail'
@@ -42,7 +42,7 @@ export const ConfigureStore = () => {
         GetInDebtInfo: GetInDebtInfo,
         AccountInfo: GetAllAccount,
         PaymentAcc: GetPaymentAccount,
-        Reminscent: ReminscentAcction,
+        AliasReceiver: AliasReceiver,
         ReceiverInfo: GetAllReceiver,
         RemindInfo: GetRemindInfo,
         GetNotify: GetNotify,

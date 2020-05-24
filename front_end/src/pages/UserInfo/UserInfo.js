@@ -34,9 +34,7 @@ const UserInfo = () => {
 
   return (
       user !== 'undefined' ?
-          (<Container className="container" style={{marginTop: '20px'}}>
-                <Row className="justify-content-center">
-                  <Col md={12}>
+          (
                     <CardGroup className=" mb-0">
                       <Card className="p-6">
                         <div className="card-block" style={{padding: "20px 40px"}}>
@@ -103,9 +101,6 @@ const UserInfo = () => {
                         </div>
                       </Card>
                     </CardGroup>
-                  </Col>
-                </Row>
-              </Container>
           )
           :
           (

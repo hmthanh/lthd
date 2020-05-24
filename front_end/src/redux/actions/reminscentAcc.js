@@ -6,7 +6,7 @@ import {
     NAME_REMINISCENT_SUCCESS
 } from '../actions/actionType'
 
-export const ReminscentAcction = (state = {
+export const AliasReceiver = (state = {
     isLoading: true,
     errMess: null,
     data: []
