@@ -77,6 +77,7 @@ app.use('/api/recharge', verifyAccessToken, require('./routes/recharge.route'));
 app.use('/api/history-account', verifyAccessToken, require('./routes/historyTransfer.route'));
 
 app.use('/api/employee', verifyAccessToken, require('./routes/employee.route'));
+app.use('/api/admin', verifyAccessToken, require('./routes/admin.route'));
 
 // WS
 require('./ws');

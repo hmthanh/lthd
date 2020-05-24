@@ -1,15 +1,31 @@
 const express = require('express')
 const bankingAccountModel = require('../models/bankingAccount.modal')
-const db = require('../utils/db')
 const userModel = require('../models/user.model')
 const { getAccount } = require('../models/account.model')
+const common = require('../utils/common')
 const moment = require('moment')
-const transferModel = require('../models/transfer.model')
+const { TranferToAccount } = require('../models/transaction.Tranfer.Model')
 const router = express.Router()
 
+const validateParams = (data) => {
+  if(!common.required(data.uid)) return false
+  if(!common.required(data.accountNum)) return false
+  if(!common.required(data.amount)) return false
+  return true
+}
+
 router.post('/', async (req, res) => {
-  // console.log(req.body)
-  const rows = await getAccount(req.payload.userId)
+  console.log(req.body)
+  const isValid = validateParams(req.body)
+  if (!isValid) {
+    res.status(200).json({
+      msg: 'invalid params',
+      errorCode: -200,
+    })
+    return
+  }
+  // check from valid account
+  const rows = await getAccount(req.body.uid) 
   if (!rows || rows.length == 0) {
     res.status(200).json({
       msg: 'uid not exists',
@@ -17,66 +33,50 @@ router.post('/', async (req, res) => {
     })
   } else {
     const employee = rows[0]
-    let userInfo = await userModel.singleByAccountNum(req.body.account_num)
-    
-    if(userInfo.length === 0) {
-      let q = req.body.account_num.slice(0, -1)
-      userInfo = await userModel.singleByAccountNum(q)
-    }
-
-    if(userInfo.length === 0) {
+    // check role staff
+    if (employee.role > 2) {
       res.status(200).json({
-        msg: 'account_num not exists',
-        errorCode: -205,
-      })
-      return
-    }
-    let uid = userInfo[0].id
-    // console.log("uid", uid)
-    const bankingInfos = await bankingAccountModel.get(uid)
-    if (!bankingInfos || bankingInfos.length == 0) {
-      res.status(200).json({
-        msg: `account_num: ${account_num} not exists`,
+        msg: 'permistion employee require',
         errorCode: -203,
       })
     } else {
-      const bankingInfo = bankingInfos[0]
-      const surplus = parseInt(bankingInfo.surplus)
-      const total = parseInt(req.body.money) + surplus
-      let entity = {
-        surplus: total
-      }
-
-      // ghi vào bảng transaction_tranfer
-      const entityTF = {
-        acc_name: employee.name,
-        from_account: '',
-        to_account: req.body.account_num,
-        note: 'Chuyển tiền tại quầy',
-        amount: req.body.money,
-        partner_code: '',
-        timestamp: moment().valueOf(new Date()),
-        surplus: surplus
-      }
-      const insertVal = await transferModel.add(entityTF)
-
-      // update số dư
-      const item = await db.load(`UPDATE banking_info SET surplus=${total} WHERE owner_id=${uid} AND type=1`)
-
-      console.log("backing Update", item)
-      if (item.affectedRows == 1) {
-        await transferModel.done(insertVal.insertId)
+      let userInfo = await userModel.singleByAccountNum(req.body.accountNum)
+      if(!userInfo || userInfo.length === 0) {
         res.status(200).json({
-          msg: 'successfully',
-          errorCode: 0
+          msg: 'account not exists',
+          errorCode: -205,
         })
-      } else {
-        res.status(501).json({
-          "msg": "failure",
-          "errorCode": -201
-        })
+        return
       }
+      let entity = {
+        acc_name: employee.name,
+        amount: req.body.amount,
+        to_account: req.body.accountNum,
+        note: 'Chuyển tiền tại quầy',
+        type: 1,
+        timestamp: moment(new Date()).valueOf(),
+        partner_code: 0,
+        state: 0
+      }
+      TranferToAccount(entity)
+      .then(rsl => {
+        res.status(200).json({
+          msg: 'sucessfully',
+          errorCode: 0,
+          results: {
+            ...rsl,
+            timestamp: entity.timestamp,
+            state:'Thành Công'
+          }
+        })
 
+      }).catch(err => {
+        console.log(err)
+        res.status(200).json({
+          msg: 'internal error',
+          errorCode: -209,
+        })
+      })
     }
   }
 });

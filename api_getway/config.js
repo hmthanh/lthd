@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const {totp} = require('otplib');
 totp.options = {
-  digits: 8,
+  digits: 6,
   epoch: Date.now(),
   step: 30,
   window: 1,

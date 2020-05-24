@@ -6,6 +6,50 @@ const validEmail = (val) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(val
 const {BANKING_CODE} = require('../config')
 const moment = require('moment')
 
+
+const SQL_SCHEMA = {
+  TABLE: {
+    TRANSACTION_TRANFER :'transaction_tranfer',
+    USER: 'user_account',
+    BANKING_INFO: 'banking_info'
+  },
+  FEILD_NAME: {
+    TRANSACTION_TRANFER: {
+      TRANSACTION_ID: 'trans_id',
+      ACCOUNT_NAME: 'acc_name',
+      FROM_ACCOUNT: 'from_account',
+      TO_ACCOUNT: 'to_account',
+      AMOUNT: 'amount',
+      NOTE: 'note',
+      TIMESTAMP: 'timestamp',
+      SIGNATURE: 'signature',
+      TYPE: 'type',
+      PARTNER_CODE: 'partner_code',
+      STATE:'state',
+      SURPLUS :'surplus'
+    },
+    BANKING_INFO: {
+      ID: 'id',
+      OWNER: 'owner_id',
+      ACCOUNT_NUM:'account_num',
+      SURPLUS :'surplus',
+      TYPE: 'type',
+      IS_CLOSE: 'is_close'
+    },
+    USER: {
+      ID: 'id',
+      PHONE: 'phone',
+      EMAIL: 'email',
+      NAME: 'name',
+      DOB: 'date_of_birth',
+      USER_NAME: 'user_name',
+      PASSWORD:'password',
+      ROLE: 'role',
+      STATUS: 'status'
+    }
+  }
+}
+
 const convertStrToDate = (dateStr) => {
   let dateArr = dateStr.split('-');
   let date = new Date();
@@ -64,6 +108,36 @@ const msgTemplate = (name, requestName, OTP) => {
   Thanks,
   The New Vimo Team`
 };
+
+
+const msgOTPTemplate = (name, requestName, OTP) =>  `Dear ${name}!
+
+  A request requires verification OTP. To complete tranfer the , enter the OTP code on the request device.
+  
+  Request: ${requestName}
+  OTP code: ${OTP}
+  
+  This OTP code expires in 3 minute.
+
+  If you did not this request. your password may be compromised. Visit New Vimo to create a new, strong password for your New Vimo account.
+  
+  Thanks,
+  The New Vimo Team`;
+
+const htmlOTPTemplate = (name, requestName, OTP) => `Dear ${name}! <br/></br>
+
+  A request requires verification OTP. To complete the sign in, enter the OTP code on the request device. </br>
+  
+  Request: ${requestName}</br>
+  OTP code:</br> <br> <h2>${OTP}</h2></br>
+
+  This OTP code expires in 3 minute. </br>
+  
+  If you did not this request. your password may be compromised. Visit New Vimo to create a new, strong password for your New Vimo account.</br>
+  
+  Thanks,</br>
+  The New Vimo Team`
+
 
 const htmlMsgTemplate = (name, requestName, OTP) => `Dear ${name}! <br/></br>
 
@@ -155,5 +229,8 @@ module.exports = {
   htmlMsgLogingTemplate,
   msgForgetTemplate,
   htmlForgetTemplate,
-  convertObjectToArray
+  convertObjectToArray,
+  SQL_SCHEMA,
+  msgOTPTemplate,
+  htmlOTPTemplate
 };

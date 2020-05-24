@@ -5,7 +5,7 @@ const {get, getReceive, getTrans, getallHist, countRow} = require('../models/his
 const router = express.Router();
 
 router.post('/:from', async (req, res) => {
-  console.log(req.body,req.params )
+  // console.log(req.body,req.params )
   let from = req.params.from || 0
   let count =   req.params.count || 30
   let fromTime = req.body.from;
@@ -13,12 +13,13 @@ router.post('/:from', async (req, res) => {
   let partner = req.body.partner || 0;
 
   const historyData = await getallHist(from, count, fromTime, to, partner)
+  // console.log(total)
   let total = await countRow(from, count, fromTime, to, partner)
-  // console.log(historyData)
+  console.log(total)
   res.status(200).json({
     msg: 'successfully',
     errorCode: 0,
-    total: total[0].numrow,
+    total: 0 || total[0].numrow,
     item: historyData
   })
 });

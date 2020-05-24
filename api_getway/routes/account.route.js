@@ -10,7 +10,7 @@ const receiverModel = require('../models/receiverInfo.model')
 const userModel = require('../models/user.model')
 const {
   SECRET_TOKEN, OTP, PGP_URL_INFO, PGP_PARTNERCODE, RSA_PARTNERCODE,
-  RSA_URL_INFO, SECRET_RSA
+  RSA_URL_INFO, SECRET_RSA, LENGTH_REFREST_TOKEN
 } = require('../config')
 
 const bcrypt = require('bcryptjs')
@@ -91,7 +91,8 @@ router.post('/', async (req, res) => {
     // console.log(sender.email, sender);
     let htmlmsg = common.htmlMsgLogingTemplate({...restItem, password: pass});
     mailController.sentMail(data.email, '[New Vimo][important !!!] Account Vimo', msgText, htmlmsg);
-
+    const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
+      refeshTokenModel.add({user_id: results.insertId, refresh_token: rfToken});
   } else {
     msg = 'invalid params'
     errorCode = -100
@@ -335,6 +336,22 @@ router.post('/ref/account/id', async (req, res) => {
     }
   }
   res.status(errorCode).json(ret)
+});
+
+router.post('/accpayment', async (req, res) => {
+  let account = await bankingInfoModel.getInfoAccountPayment(req.body.id);
+  let ret = {
+    errorCode: -201,
+    msg: 'invalid parameters',
+  };
+  if (account && account.length != 0) {
+    ret = {
+      errorCode: 0,
+      msg: 'successfully',
+      account: account
+    }
+  }
+  await res.status(200).json(ret)
 });
 
 // get account Num

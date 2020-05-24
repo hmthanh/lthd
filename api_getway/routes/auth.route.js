@@ -16,7 +16,7 @@ const common = require('../utils/common')
 const router = express.Router()
 
 router.post('/', async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const rows = await userModel.singleByUserName(req.body.username);
   if (rows.length !== 0) {
     const user = rows[0];
@@ -92,21 +92,20 @@ router.post('/relogin', async (req, res) => {
 
 router.post('/forget', async (req, res) => {
   console.log('forget', req.body)
-  const rows = await userModel.singleByEmail(req.body.email)
+  const rows = await userModel.singleByUserName(req.body.username)
   if (rows.length === 0) {
     res.status(200).json({
       err_code: -200,
-      msg: `not found email ${req.body.email}`
+      msg: `not found email ${req.body.username}`
     })
   } else {
     const item = rows[0]
     const pass = OTP.generate(SECRET_TOKEN)
-    console.log(`item: ${item} default password: ${pass}`)
+    console.log(` default password: ${pass}`)
     let msg = common.msgForgetTemplate(item.name, pass)
     // console.log(sender.email, sender);
     const htmlmsg = common.htmlForgetTemplate(item.name, pass)
     mailController.sentMail(item.email, '[New Vimo][important !!!] Account Vimo', msg, htmlmsg)
-    updatePwd(pass, item.id)
     res.status(200).json({
       err_code: 0,
       uid: item.id,
@@ -115,24 +114,56 @@ router.post('/forget', async (req, res) => {
   }
 });
 
-router.post('/forget-otp', async (req, res) => {
-  let otp = req.body.otp;
+
+router.patch('/forget', async (req, res) => {
+  console.log('forget', req.body)
+  let otp = req.body.OTP;
   const isValid = OTP.verify({token: otp, secret: SECRET_TOKEN});
-  if (isValid) {
-    await userAccountModel.updatePwd(req.body.newPwd, req.body.uid)
-    const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
-    refeshTokenModel.add({user_id: req.body.uid, refresh_token: rfToken})
+  if (!isValid) {
     res.status(200).json({
-      errorCode: 0,
-      msg: 'successfully'
-    })
-  } else {
-    res.status(200).json({
-      errorCode: 401,
+      error: -401,
       msg: 'invalid OTP'
     })
+  } else {
+    const rows = await userModel.singleByUserId(req.body.uid)
+    if (rows.length === 0) {
+      res.status(200).json({
+        err_code: -200,
+        msg: `not found email ${req.body.username}`
+      })
+    } else {
+      // const item = rows[0]
+      let ret = await userAccountModel.updatePwd(req.body.newPwd, req.body.uid)
+      const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
+      refeshTokenModel.add({user_id: req.body.uid, refresh_token: rfToken});
+      res.status(200).json({
+        error: 0,
+        authenticated: true,
+        user: ret,
+        refreshToken: rfToken
+      })
+    }
   }
-})
+});
+
+// router.post('/forget-otp', async (req, res) => {
+//   let otp = req.body.otp;
+//   const isValid = OTP.verify({token: otp, secret: SECRET_TOKEN});
+//   if (isValid) {
+//     await userAccountModel.updatePwd(req.body.newPwd, req.body.uid)
+//     const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
+//     refeshTokenModel.add({user_id: req.body.uid, refresh_token: rfToken})
+//     res.status(200).json({
+//       errorCode: 0,
+//       msg: 'successfully'
+//     })
+//   } else {
+//     res.status(200).json({
+//       errorCode: 401,
+//       msg: 'invalid OTP'
+//     })
+//   }
+// })
 
 router.post('/verify', async (req, res) => {
   console.log("req.body", req.body)

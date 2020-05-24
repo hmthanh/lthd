@@ -22,4 +22,8 @@ module.exports = {
   FROM ${TABLE_NAME} as b JOIN user_account u ON b.owner_id = u.id
   WHERE u.id=${id} AND is_close=${0}`),
   
+  getInfoAccountPayment: id =>  db.load(`
+      SELECT *
+      FROM ${TABLE_NAME}
+      WHERE owner_id=${id} AND is_close=${0} AND type=1`)
 }
