@@ -1,82 +1,76 @@
 import {
-  CREATE_DEBT_FAILED,
-  CREATE_DEBT_LOADING,
-  CREATE_DEBT_SUCCESS,
-  NAME_REMINISCENT_DELETED,
-  NAME_REMINISCENT_EDIT,
-  NAME_REMINISCENT_FAILED,
-  NAME_REMINISCENT_LOADING,
-  NAME_REMINISCENT_SUCCESS
+  CREATE_ALIAS_CREATING,
+  CREATE_ALIAS_DELETED,
+  CREATE_ALIAS_EDIT,
+  CREATE_ALIAS_FAILED,
+  CREATE_ALIAS_FETCH,
+  CREATE_ALIAS_LOADING
 } from '../actions/actionType'
 import {UrlApi} from '../../shares/baseUrl'
 import {fetchFrom} from '../../utils/fetchHelper'
 
-export const Fetch = (id, accessToken) => {
+export const FetchAlias = (id, accessToken) => {
   return (dispatch) => {
-    dispatch({type: NAME_REMINISCENT_LOADING});
+    dispatch({type: CREATE_ALIAS_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetchFrom(UrlApi + `/api/receiver/${id}`, 'POST', {}, accessToken);
         console.log(response);
-        dispatch({type: NAME_REMINISCENT_SUCCESS, payload: response})
+        dispatch({type: CREATE_ALIAS_FETCH, payload: response})
         resolve(response);
       } catch (e) {
         reject(e);
-        dispatch({type: NAME_REMINISCENT_FAILED, payload: e});
+        dispatch({type: CREATE_ALIAS_FAILED, payload: e});
       }
     });
   };
 }
 
-export const Create = (data, accessToken) => {
+export const CreateAlias = (data, accessToken) => {
   return (dispatch) => {
-    dispatch({type: CREATE_DEBT_LOADING});
+    dispatch({type: CREATE_ALIAS_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetchFrom(UrlApi + '/api/receiver', 'POST', data, accessToken);
-        if (response.err === 200) {
-          dispatch({type: CREATE_DEBT_SUCCESS, payload: response});
-        } else {
-          dispatch({type: CREATE_DEBT_FAILED, payload: response});
-        }
+        dispatch({type: CREATE_ALIAS_CREATING, payload: response});
         resolve(response);
       } catch (e) {
         console.log(e);
-        dispatch({type: CREATE_DEBT_FAILED, payload: e});
+        dispatch({type: CREATE_ALIAS_FAILED, payload: e});
         reject(e);
       }
     })
   };
 }
 
-export const Edit = (data, accessToken) => {
+export const EditAlias = (data, accessToken) => {
   return dispatch => {
-    dispatch({type: NAME_REMINISCENT_LOADING});
+    dispatch({type: CREATE_ALIAS_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetchFrom(UrlApi + '/api/receiver', 'PATCH', data, accessToken);
         resolve(response);
-        dispatch({type: NAME_REMINISCENT_EDIT, payload: response});
+        dispatch({type: CREATE_ALIAS_EDIT, payload: response});
       } catch (e) {
         reject(e);
-        dispatch({type: NAME_REMINISCENT_FAILED, payload: e})
+        dispatch({type: CREATE_ALIAS_FAILED, payload: e})
       }
     });
   }
 }
 
 
-export const Delete = (id, accessToken) => {
+export const DeleteAlias = (id, accessToken) => {
   return dispatch => {
-    dispatch({type: NAME_REMINISCENT_LOADING});
+    dispatch({type: CREATE_ALIAS_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetchFrom(UrlApi + '/api/receiver', 'DELETE', {id}, accessToken);
-        dispatch({type: NAME_REMINISCENT_DELETED, payload: response});
+        dispatch({type: CREATE_ALIAS_DELETED, payload: response});
         resolve(response);
       } catch (e) {
         reject(e);
-        dispatch({type: NAME_REMINISCENT_FAILED, payload: e});
+        dispatch({type: CREATE_ALIAS_FAILED, payload: e});
       }
     })
   };

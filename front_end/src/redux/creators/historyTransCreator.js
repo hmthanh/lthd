@@ -13,7 +13,7 @@ export const getUserTransHistory = (data, index, accessToken) => {
     dispatch({type: HISTORY_USER_TRANS_LOADING});
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetchFrom(UrlApi + `/api/history/${index}`, 'POST', data, accessToken);
+        const response = await fetchFrom(UrlApi + `/api/history-account`, 'POST', data, accessToken);
         dispatch({type: HISTORY_USER_TRANS_SUCCESS, payload: response});
         resolve(response);
       } catch (e) {

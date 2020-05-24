@@ -19,6 +19,7 @@ import {
 
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'
+// import {logger} from "redux-logger/src";
 
 
 export const transfer = (data, accessToken) => {
@@ -87,7 +88,6 @@ export const verifyOTP = (transID, data, accessToken) => {
         } else {
           dispatch({type: VERIFY_OTP_INVALID, payload: response});
         }
-        console.log(response);
         resolve(response);
       } catch (e) {
         console.log(e);

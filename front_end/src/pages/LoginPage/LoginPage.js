@@ -203,7 +203,7 @@ const LoginPage = () => {
                         </span>
                         <span>Đăng Nhập</span>
                       </Button>
-                      <Link style={{float: "right", marginTop: "10px"}} to={"/forget-password"}>Quên mật khẩu</Link>
+                      <Link style={{float: "right", marginTop: "10px"}} to={"/forgot-password"}>Quên mật khẩu</Link>
                     </Form>
                   </Collapse>
                   <Collapse isOpen={activeAccountToggle.active}>

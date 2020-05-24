@@ -7,13 +7,13 @@ import {Register} from './actions/register'
 import {ChangePassword} from './actions/changepassword'
 import {GetBankingInfo} from './actions/getBankingInfo'
 import {HistoryDebt, ReceiveHistory, TransHistory} from './actions/getHistory'
-import {GetAllAccount} from './actions/getAllAccount'
+import {GetAllAccount, GetPaymentAccount} from './actions/getAllAccount'
 import {CreateDebt, GetDebtInfo} from './actions/getDebt'
 import {GetInDebtInfo} from './actions/getInDebt'
 import {GetAllCustomer} from './actions/getAllCustomer'
 import {GetAllStaff} from './actions/getAllStaff'
 import {ListTransferInfo} from './actions/getAllTransfer'
-import {ReminscentAcction} from './actions/reminscentAcc'
+import {AliasReceiver} from './actions/reminscentAcc'
 import {GetAllReceiver} from './actions/getAllReceiver'
 import {GetNotify, GetRemindInfo} from './actions/getRemind'
 import {GetRemindDetail} from './actions/getRemindDetail'
@@ -41,7 +41,8 @@ export const ConfigureStore = () => {
         CreateDebt: CreateDebt,
         GetInDebtInfo: GetInDebtInfo,
         AccountInfo: GetAllAccount,
-        Reminscent: ReminscentAcction,
+        PaymentAcc: GetPaymentAccount,
+        AliasReceiver: AliasReceiver,
         ReceiverInfo: GetAllReceiver,
         RemindInfo: GetRemindInfo,
         GetNotify: GetNotify,

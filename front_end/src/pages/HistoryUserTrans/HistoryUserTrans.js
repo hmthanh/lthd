@@ -1,62 +1,157 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {getUserDeptHistory, getUserReceiveHistory, getUserTransHistory} from "../../redux/creators/historyTransCreator";
+import {getUserTransHistory} from "../../redux/creators/historyTransCreator";
 import TableInfoTransfer from "../../components/Table/TableInfoTransfer";
-import TableInfoDept from "../../components/Table/TableInfoDept";
-import {Card, CardGroup, Col, Container, Row} from "reactstrap";
+import {
+  Card,
+  CardGroup,
+  Col,
+  Container,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  Label,
+  Pagination,
+  PaginationItem,
+  PaginationLink,
+  Row, Spinner
+} from "reactstrap";
+import {getInterbank} from "../../redux/creators/transferCreator";
+import MessageBox from "../../components/Modal/MessageBox";
+import TableUserTransfer from "../../components/Table/TableUserTransfer";
+import Paging from "../../components/Paging/Paging";
+import Loading from "../../components/Loading";
+
 
 const HistoryUserTrans = () => {
+  const paySelector = [
+    {title: "-- Tất cả --", value: 0},
+    {title: "Nhập tiền", value: 1},
+    {title: "Chuyển tiền", value: 2},
+    {title: "Nhắc nợ", value: 4},
+  ]
   const dispatch = useDispatch();
-  const historyDebt = useSelector(state => {
-    return state.HistoryDept.data
-  });
   const transHistory = useSelector(state => {
     return state.TransHistory.data
   });
-  const receiveHistory = useSelector(state => {
-    return state.ReceiveHistory.data
+  const isLoadingTable = useSelector(state => {
+    return state.TransHistory.isLoading
   });
+  const interBankInfo = useSelector((state) => {
+    return state.InterBank.data
+  });
+  const [banking, setBanking] = useState("0");
+  const [pageIdx, setPageIdx] = useState(0);
+  const [total, setTotal] = useState(10);
+  const [payType, setPayType] = useState(0);
+
+  function onChangeBanking(e) {
+    setBanking(e.target.value);
+  }
 
   useEffect(() => {
-    const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
-    dispatch(getUserTransHistory(uid, accessToken))
-        .then((response) => {
-          console.log(response.item);
-        });
-    dispatch(getUserReceiveHistory(uid, accessToken))
-        .then((response) => {
-          console.log(response.item);
-        });
-    dispatch(getUserDeptHistory({id: uid}, accessToken))
-        .then((response) => {
-          console.log(response.item);
-        });
-  }, [dispatch]);
+    const uid = localStorage.getItem('uid');
+    let data = {
+      uid: uid,
+      partner: parseInt(banking),
+      type: payType
+    };
+    console.log("search value", data);
 
-  console.log("historyDebt", historyDebt);
+    dispatch(getUserTransHistory(data, pageIdx * 30, accessToken))
+        .then((response) => {
+          let totalPage = Math.ceil(response.total / 30);
+          setTotal(totalPage);
+          console.log(response.item);
+        });
 
+  }, [dispatch, pageIdx, banking, payType]);
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+    dispatch(getInterbank(accessToken))
+        .then((response) => {
+          console.log(response)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }, [])
+
+  const setPage = (i) => {
+    setPageIdx(i);
+  }
+  const onChangePayType = (e) => {
+    setPayType(e.target.value);
+  }
   return (
       <Container className="container" style={{marginTop: '20px'}}>
         <Row className="justify-content-center">
           <Col md={12}>
-            <CardGroup className=" mb-0">
+            <CardGroup className="mb-0">
               <Card className="p-6">
-                <div className="card-block" style={{padding: "20px 40px"}}>
+                <div className="card-block padding-card">
                   <h3 className="col-centered table-heading">LỊCH SỬ GIAO DỊCH</h3>
                   <hr/>
+                  <Form method="post" noValidate="novalidate"
+                        className="needs-validation">
+                    <h4>Thông tin tìm kiếm</h4>
+                    <FormGroup>
+                      <Row>
+                        <Col xs={6}>
+                          <Label for="banking">Ngân hàng</Label>
+                          <Input type="select"
+                                 value={banking}
+                                 onChange={onChangeBanking}
+                                 name="banking"
+                                 id="banking">
+                            <option value={0}>-- Tất cả --</option>
+                            {
+                              interBankInfo.item &&
+                              interBankInfo.item.map((item, index) => {
+                                return <option key={index}
+                                               value={item.partner_code}>{item.name}</option>
+                              })
+                            }
+                          </Input>
+                        </Col>
+                        <Col xs={6}>
+                          <Label for="payType">Loại giao dịch</Label>
+                          <Input type="select"
+                                 value={payType}
+                                 onChange={onChangePayType}
+                                 name="payType"
+                                 id="payType">
+                            {
+                              paySelector &&
+                              paySelector.map((item, index) => {
+                                return <option key={index} value={item.value}>{item.title}</option>
+                              })
+                            }
+                          </Input>
+                        </Col>
+                      </Row>
+                    </FormGroup>
+                  </Form>
+                </div>
+              </Card>
+            </CardGroup>
+          </Col>
+        </Row>
+        <div style={{marginTop: "10px"}}></div>
+        <Row>
+          <Col md={12}>
+            <CardGroup>
+              <Card id="localBank">
+                <div className="card-body padding-card">
                   <h4>Giao dịch chuyển tiền</h4>
-                  <TableInfoTransfer
-                      data={transHistory}
-                  ></TableInfoTransfer>
+                  {
+                    isLoadingTable ? <Loading/> : (<TableUserTransfer data={transHistory}></TableUserTransfer>)
+                  }
 
-                  <h4>Giao dịch nhận tiền</h4>
-                  <TableInfoTransfer
-                      data={receiveHistory}
-                  ></TableInfoTransfer>
-
-                  <h4>Giao dịch nhắc nợ</h4>
-                  <TableInfoDept data={historyDebt}></TableInfoDept>
+                  <Paging pageIdx={pageIdx} total={total} setPage={setPage}/>
                 </div>
               </Card>
             </CardGroup>

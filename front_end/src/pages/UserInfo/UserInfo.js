@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import './UserInfo.css'
 import {useDispatch, useSelector} from 'react-redux'
-import {Card, CardGroup, Col, Container, Form, FormGroup, Label, Row} from 'reactstrap'
+import {Card, CardGroup, Col, Form, FormGroup, Label} from 'reactstrap'
 import {getBankingInfo} from '../../redux/creators/bankingInfoCreator'
 import {getAllAccount} from "../../redux/creators/accountCreator";
 import CloseAccount from "../CloseAccount/CloseAccount";
@@ -34,78 +34,73 @@ const UserInfo = () => {
 
   return (
       user !== 'undefined' ?
-          (<Container className="container" style={{marginTop: '20px'}}>
-                <Row className="justify-content-center">
-                  <Col md={12}>
-                    <CardGroup className=" mb-0">
-                      <Card className="p-6">
-                        <div className="card-block" style={{padding: "20px 40px"}}>
-                          <h3 className="col-centered table-heading">THÔNG TIN TÀI KHOẢN</h3>
-                          <hr/>
-                          <Form>
-                            {/*<FormGroup row>*/}
-                            {/*  <Label sm={3} className="float-sm-right text-right">Số tài khoản</Label>*/}
-                            {/*  <Col sm={9} className="algin-self">*/}
-                            {/*    {user.account_num}*/}
-                            {/*  </Col>*/}
-                            {/*</FormGroup>*/}
+          (
+              <CardGroup className=" mb-0">
+                <Card className="p-6">
+                  <div className="card-block" style={{padding: "20px 40px"}}>
+                    <h3 className="col-centered table-heading">THÔNG TIN TÀI KHOẢN</h3>
+                    <hr/>
+                    <Form>
+                      {/*<FormGroup row>*/}
+                      {/*  <Label sm={3} className="float-sm-right text-right">Số tài khoản</Label>*/}
+                      {/*  <Col sm={9} className="algin-self">*/}
+                      {/*    {user.account_num}*/}
+                      {/*  </Col>*/}
+                      {/*</FormGroup>*/}
 
-                            <FormGroup row>
-                              <Label sm={3} className="float-sm-right text-right">Tài khoản ngân hàng</Label>
-                              <Col sm={9} className="algin-self">
-                                {
-                                  banking && banking.map((acc, index) => {
-                                    return <CloseAccount key={index}
-                                                         type={acc.type}
-                                                         index={index}
-                                                         surplus={acc.surplus}
-                                                         account_num={acc.account_num}></CloseAccount>
-                                  })
-                                }
-                              </Col>
-                            </FormGroup>
+                      <FormGroup row>
+                        <Label sm={3} className="float-sm-right text-right">Tài khoản ngân hàng</Label>
+                        <Col sm={9} className="algin-self">
+                          {
+                            banking && banking.map((acc, index) => {
+                              return <CloseAccount key={index}
+                                                   type={acc.type}
+                                                   index={index}
+                                                   surplus={acc.surplus}
+                                                   account_num={acc.account_num}></CloseAccount>
+                            })
+                          }
+                        </Col>
+                      </FormGroup>
 
-                            <FormGroup row>
-                              <Label sm={3} className="float-sm-right text-right">Họ và tên</Label>
-                              <Col sm={9} className="algin-self">
-                                {user.name}
-                              </Col>
-                            </FormGroup>
+                      <FormGroup row>
+                        <Label sm={3} className="float-sm-right text-right">Họ và tên</Label>
+                        <Col sm={9} className="algin-self">
+                          {user.name}
+                        </Col>
+                      </FormGroup>
 
-                            <FormGroup row>
-                              <Label sm={3} className="float-sm-right text-right">Username</Label>
-                              <Col sm={9} className="algin-self">
-                                {user.user_name}
-                              </Col>
-                            </FormGroup>
+                      <FormGroup row>
+                        <Label sm={3} className="float-sm-right text-right">Username</Label>
+                        <Col sm={9} className="algin-self">
+                          {user.user_name}
+                        </Col>
+                      </FormGroup>
 
-                            <FormGroup row>
-                              <Label sm={3} className="float-sm-right text-right">Ngày sinh</Label>
-                              <Col sm={9} className="algin-self">
-                                {user.date_of_birth && new Intl.DateTimeFormat('en-GB').format(new Date(user.date_of_birth))}
-                              </Col>
-                            </FormGroup>
+                      <FormGroup row>
+                        <Label sm={3} className="float-sm-right text-right">Ngày sinh</Label>
+                        <Col sm={9} className="algin-self">
+                          {user.date_of_birth && new Intl.DateTimeFormat('en-GB').format(new Date(user.date_of_birth))}
+                        </Col>
+                      </FormGroup>
 
-                            <FormGroup row>
-                              <Label sm={3} className="float-sm-right text-right">Email</Label>
-                              <Col sm={9} className="algin-self">
-                                {user.email}
-                              </Col>
-                            </FormGroup>
+                      <FormGroup row>
+                        <Label sm={3} className="float-sm-right text-right">Email</Label>
+                        <Col sm={9} className="algin-self">
+                          {user.email}
+                        </Col>
+                      </FormGroup>
 
-                            <FormGroup row>
-                              <Label sm={3} className="float-sm-right text-right">Số điện thoại</Label>
-                              <Col sm={9} className="algin-self">
-                                {`+${user.phone}`}
-                              </Col>
-                            </FormGroup>
-                          </Form>
-                        </div>
-                      </Card>
-                    </CardGroup>
-                  </Col>
-                </Row>
-              </Container>
+                      <FormGroup row>
+                        <Label sm={3} className="float-sm-right text-right">Số điện thoại</Label>
+                        <Col sm={9} className="algin-self">
+                          {`+${user.phone}`}
+                        </Col>
+                      </FormGroup>
+                    </Form>
+                  </div>
+                </Card>
+              </CardGroup>
           )
           :
           (

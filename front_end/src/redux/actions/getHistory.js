@@ -11,7 +11,7 @@ import {
 } from './actionType'
 
 export const TransHistory = (state = {
-  isLoading: false,
+  isLoading: true,
   errMess: null,
   data: []
 }, action) => {

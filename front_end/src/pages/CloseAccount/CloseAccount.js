@@ -104,6 +104,8 @@ const CloseAccount = ({index, account_num, surplus, type}) => {
                       if (account_num !== acc.account_num) {
                         return (
                             <option key={index} value={acc.account_num}>{acc.account_num}</option>)
+                      }else{
+                        return ""
                       }
                     })
                   }

@@ -2,12 +2,12 @@ import React, {useEffect} from 'react';
 import {Button, Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from 'react-redux';
 import {getAllDebt} from '../../redux/creators/debtCreator';
-import {formatFormalDate} from "../../utils/utils";
-// import ModalEdit from "./ModalEdit";
+import {formatMoment} from "../../utils/utils";
 import CancelDebt from "./CancelDebt";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
+
 
 const DebtPage = () => {
   const dispatch = useDispatch();
@@ -61,7 +61,7 @@ const DebtPage = () => {
                             <td>{it.name}</td>
                             <td>{it.account_num}</td>
                             <td>{it.debt_val}</td>
-                            <td>{formatFormalDate(it.date_time)}</td>
+                            <td>{formatMoment(it.date_time)}</td>
                             <td>{it.note}</td>
                             {/*<td>*/}
                             {/*  <ModalEdit accountId={it.id}*/}
