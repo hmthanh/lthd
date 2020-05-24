@@ -46,7 +46,6 @@ const ShowSignal = ({index, signature}) => {
 }
 
 const TableInfoTransfer = (props) => {
-  console.log("sdla  ajlskj alskdfj lksjdl", props.data, props.data.item);
   const {items, requestSort, sortConfig} = useSortableData(props.data.item);
   const getClassNamesFor = (name) => {
     if (!sortConfig) {

@@ -1,19 +1,5 @@
 import React, {useState} from 'react';
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  CardTitle,
-  Col, Collapse,
-  Container,
-  Form,
-  FormGroup,
-  Input,
-  InputGroup,
-  Label, ListGroupItem,
-  Row
-} from "reactstrap";
+import {Alert, Button, Card, CardTitle, Col, Collapse, Container, Form, FormGroup, Input, InputGroup, Label, ListGroupItem, Row} from "reactstrap";
 import {useDispatch} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import useInputChange from "../../utils/useInputChange";
@@ -23,6 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 // import {formatFormalDate} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
 import {formatFormalDate} from "../../utils/utils";
+import ShowRequire from "../../components/ShowRequire/ShowRequire";
 
 const moment = require('moment')
 
@@ -35,12 +22,9 @@ const CreateAccount = () => {
   const email = useInputChange("");
   const phone = useInputChange("");
   const alertToggle = useToggle(false);
-  const [dateOfBirth, setDateOfBirth] = useState(new Date(moment().valueOf(new Date()) - (20 * 365 * 24 * 60 * 60 * 1000)));
+  const [dateOfBirth, setDateOfBirth] = useState(moment().subtract(30, 'year'));
   const [accInfo, setAccInfo] = useState([]);
 
-  function showFieldRequire() {
-    return <Badge color="danger" pill>Yêu cầu</Badge>
-  }
 
   function onSetDateOfBirth(value) {
     setDateOfBirth(value);
@@ -52,7 +36,7 @@ const CreateAccount = () => {
       phone: phone.value,
       email: email.value,
       name: fullName.value,
-      date_of_birth: dateOfBirth,
+      date_of_birth: moment(dateOfBirth).valueOf(),
     };
     let accessToken = localStorage.getItem('accessToken');
     dispatch(createAcc(data, accessToken))
@@ -81,9 +65,7 @@ const CreateAccount = () => {
 
               <Card id="localBank">
                 <div className="card-body">
-                  <Collapse
-                      isOpen={!alertToggle.active}
-                  >
+                  <Collapse isOpen={!alertToggle.active}>
                     <CardTitle>
                       <h3 className="text-center">TẠO TÀI KHOẢN</h3>
                     </CardTitle>
@@ -93,7 +75,7 @@ const CreateAccount = () => {
 
                       <h4>Thông tin cá nhân</h4>
                       <FormGroup>
-                        <Label for="fullName">Họ và tên {showFieldRequire()}</Label>
+                        <Label for="fullName">Họ và tên <ShowRequire/></Label>
                         <InputGroup className="mb-2">
                           <Input type="text"
                                  name="fullName"
@@ -103,21 +85,21 @@ const CreateAccount = () => {
                                  placeholder="Nguyễn Văn A"
                           />
                         </InputGroup>
-                        <Label for="email">Email {showFieldRequire()}</Label>
+                        <Label for="email">Email <ShowRequire/></Label>
                         <InputGroup className="mb-2">
                           <Input type="email" name="email" id="email"
                                  onChange={email.onChange}
                                  value={email.value}
                                  placeholder="someone@gmail.com"/>
                         </InputGroup>
-                        <Label for="phone">Số điện thoại {showFieldRequire()}</Label>
+                        <Label for="phone">Số điện thoại <ShowRequire/></Label>
                         <InputGroup className="mb-2">
                           <Input type="text" name="phone" id="phone"
                                  onChange={phone.onChange}
                                  value={phone.value}
                                  placeholder="0913-472506"/>
                         </InputGroup>
-                        <Label for="phone">Ngày sinh {showFieldRequire()}</Label>
+                        <Label for="phone">Ngày sinh <ShowRequire/></Label>
                         <InputGroup className="mb-2">
                           <DatePicker
                               className="form-control"
@@ -171,7 +153,6 @@ const CreateAccount = () => {
                                     Số tài khoản : {acc.accountNum}<br/>
                                   </ListGroupItem>)
                             }
-
                           })
                         }
                       </div>

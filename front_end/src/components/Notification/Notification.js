@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {formatMoney} from "../../utils/utils";
 import {useDispatch} from "react-redux";
 import {delNotify, getNotify} from "../../redux/creators/remindCreator";
+import {SocketUrl} from "../../shares/baseUrl";
 
 const Notification = () => {
   const dispatch = useDispatch();
@@ -60,7 +61,7 @@ const Notification = () => {
 
   return (
       <>
-        <Websocket url='ws://localhost:6500'
+        <Websocket url={SocketUrl}
                    onMessage={handleData} onOpen={handleOpen}
                    onClose={handleClose}/>
         <Container>

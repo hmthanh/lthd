@@ -9,13 +9,13 @@ export const recharge = (data, accessToken) => {
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetchFrom(UrlApi + '/api/recharge', 'POST', data, accessToken);
-        dispatch({type: RECHARGE_SUCCESS});
-        resolve(response.data);
-      }
-      catch (e) {
+        console.log(response);
+        dispatch({type: RECHARGE_SUCCESS, payload: response});
+        resolve(response);
+      } catch (e) {
         console.log(e);
         reject(e);
-        dispatch({type: RECHARGE_FAILED});
+        dispatch({type: RECHARGE_FAILED, payload: e});
       }
     });
   };

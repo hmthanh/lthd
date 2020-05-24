@@ -29,33 +29,34 @@ const moment = require('moment');
 
 const HistoryTrans = () => {
   const dispatch = useDispatch();
-  // const historyDebt = useSelector(state => {
-  //   return state.HistoryDept.data
-  // });
   const transHistory = useSelector(state => {
     return state.TransHistory.data
   });
-  // const receiveHistory = useSelector(state => {
-  //   return state.ReceiveHistory.data
-  // });
   const interBankInfo = useSelector((state) => {
     return state.InterBank.data
   });
+  // const historyDebt = useSelector(state => {
+  //   return state.HistoryDept.data
+  // });
+  // const receiveHistory = useSelector(state => {
+  //   return state.ReceiveHistory.data
+  // });
   const search = useInputChange();
   const [titleMsg, setTitleMsg] = useState("");
   const [contentMsg, setContentMsg] = useState("");
   const msgBoxToggle = useToggle(false);
-  const [from, setFrom] = useState(moment().valueOf(new Date()) - (28 * 24 * 60 * 60 * 1000));
-  const [to, setTo] = useState(moment().valueOf(new Date()));
+  // const [from, setFrom] = useState(moment().valueOf(new Date()) - (28 * 24 * 60 * 60 * 1000));
+  const [from, setFrom] = useState(new Date(moment().subtract(28, 'day')));
+  const [to, setTo] = useState(new Date(moment()));
   const [banking, setBanking] = useState(0);
   const [index, setIndex] = useState(0);
 
   function onChangeFrom(value) {
-    setFrom(moment().valueOf(value));
+    setFrom(value);
   }
 
   function onChangeTo(value) {
-    setTo(moment().valueOf(value));
+    setTo(value);
   }
 
   const showMsgBox = useCallback((title, content) => {
@@ -67,8 +68,8 @@ const HistoryTrans = () => {
   const findHistoryAccount = useCallback((e) => {
     e.preventDefault();
     let data = {
-      from: from,
-      to: to,
+      from: moment().valueOf(from),
+      to: moment().valueOf(to),
       partner: banking
     };
     console.log("search value", search.value);
@@ -112,8 +113,8 @@ const HistoryTrans = () => {
 
   useEffect(() => {
     let data = {
-      from: from,
-      to: to,
+      from: moment(from).valueOf(),
+      to: moment(to).valueOf(),
       partner: banking
     };
     console.log("search value", data);
@@ -131,12 +132,11 @@ const HistoryTrans = () => {
           console.log(err);
         });
   }, [dispatch, from, to, index, banking]);
-
   return (
       <Container className="container" style={{marginTop: '20px'}}>
         <Row className="justify-content-center">
           <Col md={12}>
-            <CardGroup className=" mb-0">
+            <CardGroup className="mb-0">
               <Card className="p-6">
                 <div className="card-block" style={{padding: "20px 40px"}}>
                   <h3 className="col-centered table-heading">LỊCH SỬ GIAO DỊCH</h3>
@@ -156,8 +156,7 @@ const HistoryTrans = () => {
                                 dateFormat="dd-MM-yyyy"
                                 onSelect={onChangeFrom}
                                 onChange={onChangeFrom}
-                                selected={from}
-                            />
+                                selected={from}/>
                           </InputGroup>
 
                           <Label for="time">Thời gian kết thúc</Label>
