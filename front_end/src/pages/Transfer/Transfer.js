@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {
   Button,
   ButtonGroup,
-  Card, CardGroup,
+  Card,
   CardTitle,
   Col,
   Collapse,
@@ -18,16 +18,17 @@ import {
   Row,
   Spinner
 } from "reactstrap";
-import {getAccName, getInterbank, getReceiverSaved, transfer} from "../../redux/creators/transferCreator";
+import {getAccName, getInterbank, transfer} from "../../redux/creators/transferCreator";
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
-import {convertObjectToArray} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ModalVerifyTrans from "../../components/Modal/ModalVerifyTrans";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import {getPaymentAcc} from "../../redux/creators/accountCreator";
 import {useLocation} from "react-router";
+import useInputRequire from "../../utils/useInputRequire";
+import {FetchAlias} from "../../redux/creators/nameReminscentCreator";
 
 const Transfer = () => {
   const dispatch = useDispatch();
@@ -41,9 +42,7 @@ const Transfer = () => {
   const interBankInfo = useSelector((state) => {
     return state.InterBank.data
   });
-  const listSaved = useSelector((state) => {
-    return state.ReceiverSaved.data
-  });
+  const listSaved = useSelector(state => state.AliasReceiver.fetch);
   const AccName = useSelector((state) => {
     return state.AccName
   });
@@ -53,10 +52,15 @@ const Transfer = () => {
   const [isInterbank, setIsInterbank] = useState(false);
   const [selectSaved, setSelectSaved] = useState(0);
   const [isUseSaved, setIsUseSaved] = useState(false);
-  const [accountNum, setAccountNum] = useState("");
-  const [accValid, setAccValid] = useState(false);
-  const [accInValid, setAccInValid] = useState(false);
-  const [accInValidMsg, setAccInValidMsg] = useState("");
+  const accountNum = useInputRequire({
+    value: "",
+    valid: false,
+    invalid: false,
+    inValidMsg: ""
+  })
+  // const [accValid, setAccValid] = useState(false);
+  // const [accInValid, setAccInValid] = useState(false);
+  // const [accInValidMsg, setAccInValidMsg] = useState("");
   const name = useInputChange('');
   const money = useInputChange(0);
   const message = useInputChange('');
@@ -75,18 +79,13 @@ const Transfer = () => {
   const qNote = query.get("note");
 
   const onChangeSelectSaved = (e) => {
-    if (listSaved) {
-      setSelectSaved(e.target.value);
-      setAccountNum(e.target.value);
-      setAccInValid(false)
-      setAccValid(true)
-      let change_name = listSaved[e.target.selectedIndex].name
-      name.setValue(change_name);
-    }
-  }
-
-  function onChangeAccountNum(e) {
-    setAccountNum(e.target.value);
+    console.log(e);
+    setSelectSaved(e.target.value);
+    accountNum.setValue(e.target.value);
+    accountNum.setInValid(false)
+    accountNum.setValid(true)
+    let change_name = listSaved.item[e.target.selectedIndex].name
+    name.setValue(change_name);
   }
 
   function onChangeLocalBank(e) {
@@ -98,9 +97,9 @@ const Transfer = () => {
   }
 
   const onBlurAccountNum = useCallback(() => {
-    if (accountNum === "") {
-      setAccInValid(true)
-      setAccInValidMsg("Không được để trống")
+    if (accountNum.value === "") {
+      accountNum.setInValid(true)
+      accountNum.setInValidMsg("Không được để trống")
       return false;
     }
 
@@ -110,33 +109,33 @@ const Transfer = () => {
       partner_code = receiveBank
     }
     let data = {
-      query: accountNum,
+      query: accountNum.value,
       partner: partner_code
     }
-    console.log("acc num", accountNum)
+    console.log("acc num", accountNum.value)
     dispatch(getAccName(data, accessToken))
         .then((response) => {
           console.log("success response", response)
           name.setValue(response.account.name)
           let newAccountNum = response.account.account_num;
           if (sender === newAccountNum) {
-            setAccInValid(true)
-            setAccInValidMsg("Không thể chuyển tiền chung tài khoản")
+            accountNum.setInValid(true)
+            accountNum.setInValidMsg("Không thể chuyển tiền chung tài khoản")
           } else {
-            setAccountNum(newAccountNum)
-            setAccValid(true)
-            setAccInValid(false)
-            setAccInValidMsg("")
+            accountNum.setValue(newAccountNum)
+            accountNum.setValid(true)
+            accountNum.setInValid(false)
+            accountNum.setInValidMsg("")
           }
         })
         .catch((err) => {
           console.log(err)
-          setAccInValid(true)
-          setAccInValidMsg("Không tìm thấy số tài khoản hoặc username trên")
-          setAccountNum("")
+          accountNum.setInValid(true)
+          accountNum.setInValidMsg("Không tìm thấy số tài khoản hoặc username trên")
+          accountNum.setValue("")
         })
 
-  }, [accountNum, setAccountNum, sender, dispatch, name, isInterbank, receiveBank]);
+  }, [accountNum, sender, dispatch, name, isInterbank, receiveBank]);
 
   function onChangeInterbank(e) {
     if (!e.target.value) {
@@ -167,12 +166,12 @@ const Transfer = () => {
       let accessToken = localStorage.getItem('accessToken');
       let uid = localStorage.getItem('uid');
 
-      dispatch(getReceiverSaved(uid, accessToken))
+      dispatch(FetchAlias(uid, accessToken))
           .then((response) => {
-            let firstUser = convertObjectToArray(response)[0];
+            let firstUser = response.item[0];
             setSelectSaved(0);
             console.log(firstUser)
-            setAccountNum(firstUser.account_num);
+            accountNum.setValue(firstUser.account_num);
             name.setValue(firstUser.name);
           })
           .catch((err) => {
@@ -182,6 +181,10 @@ const Transfer = () => {
             setIsUseSaved(false);
           }, [dispatch]);
     }
+  }
+
+  const onChangeSender = (e) => {
+    setSender(e.target.value);
   }
 
   function showMessageBox(title, content) {
@@ -198,14 +201,14 @@ const Transfer = () => {
 
   function onSubmitForm(e) {
     e.preventDefault();
-    if (accountNum === "") {
-      setAccInValid(true)
-      setAccInValidMsg("Vui lòng nhập lại số tài khoản")
+    if (accountNum.value === "") {
+      accountNum.setInValid(true)
+      accountNum.setInValidMsg("Vui lòng nhập lại số tài khoản")
       return;
     }
-    if (sender === accountNum) {
-      setAccInValid(true)
-      setAccInValidMsg("Không thể chuyển tiền chung tài khoản")
+    if (sender === accountNum.value) {
+      accountNum.setInValid(true)
+      accountNum.setInValidMsg("Không thể chuyển tiền chung tài khoản")
       return;
     }
     let partner_code = 0;
@@ -220,7 +223,7 @@ const Transfer = () => {
       partnerCode: partner_code,
       uid: uid,
       fromAccount: sender,
-      toAccount: accountNum,
+      toAccount: accountNum.value,
       note: note,
       amount: amount,
       costType: cost_type,
@@ -248,17 +251,15 @@ const Transfer = () => {
         }, [dispatch]);
   }
 
-  console.log(sender);
-
   useEffect(() => {
     if (qAccNum && qName && qMoney && qNote) {
       setTransType(4);
-      setAccountNum(qAccNum);
+      accountNum.setValue(qAccNum);
       name.setValue(qName);
       money.setValue(qMoney);
       message.setValue(qNote);
     }
-  }, [location, qAccNum, qMoney, qName, qNote, message, money, name])
+  }, [location, qAccNum, qMoney, qName, qNote, message, money, name, accountNum])
 
   useEffect(() => {
     const uid = localStorage.getItem('uid');
@@ -272,9 +273,6 @@ const Transfer = () => {
         });
   }, [dispatch]);
 
-  const onChangeSender = (e) => {
-    setSender(e.target.value);
-  }
 
   return (
       <Container>
@@ -347,10 +345,9 @@ const Transfer = () => {
                              onChange={onChangeSelectSaved}
                              name="selectSaved" id="selectSaved">
                         {
-                          listSaved != null &&
-                          convertObjectToArray(listSaved).map((item, index) => {
-                            return <option key={index}
-                                           value={item.account_num}>{item.alias_name}</option>
+                          listSaved.item &&
+                          listSaved.item.map((item, index) => {
+                            return <option key={index} value={item.account_num}>{item.alias_name}</option>
                           })
                         }
                       </Input>
@@ -364,11 +361,11 @@ const Transfer = () => {
                       <Input type="text"
                              name="accountNum"
                              id="accountNum"
-                             onChange={onChangeAccountNum}
-                             value={accountNum}
+                             onChange={accountNum.onChange}
+                             value={accountNum.value}
                              onBlur={onBlurAccountNum}
-                             invalid={accInValid}
-                             valid={accValid}
+                             invalid={accountNum.invalid}
+                             valid={accountNum.valid}
                              placeholder="Nhập số tài khoản hoặc username"/>
                       {
                         AccName.isLoading ? (<InputGroupAddon addonType="prepend">
@@ -377,7 +374,7 @@ const Transfer = () => {
                                                    aria-hidden="true"/></InputGroupText>
                         </InputGroupAddon>) : ""
                       }
-                      <FormFeedback>{accInValidMsg}</FormFeedback>
+                      <FormFeedback>{accountNum.inValidMsg}</FormFeedback>
                     </InputGroup>
                     <InputGroup>
                       <InputGroupAddon addonType="prepend">

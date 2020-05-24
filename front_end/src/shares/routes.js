@@ -11,7 +11,7 @@ const ForgotPassword = lazy(() => import('../pages/ForgotPassword/ForgotPassword
 
 // Customer
 const ListAccountPage = lazy(() => import('../pages/ListAccountPage/ListAccountPage'));
-const ListReceiver = lazy(() => import('../pages/ListReceiver/ListReceiver'));
+const ListReceiver = lazy(() => import('../pages/AliasReceiver/AliasReceiver'));
 const Transfer = lazy(() => import('../pages/Transfer/Transfer'));
 
 const RemindPage = lazy(() => import('../pages/ListInDebtPage/RemindPage'));

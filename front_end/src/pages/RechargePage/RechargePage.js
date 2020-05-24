@@ -85,7 +85,7 @@ const RechargePage = () => {
         .catch((e) => {
           console.log(e)
         });
-  }, [dispatch, accountNum, moneyTransfer,]);
+  }, [dispatch, accountNum, moneyTransfer, alertToggle, transState]);
 
   function submitRecharge(e) {
     e.preventDefault();
@@ -118,7 +118,7 @@ const RechargePage = () => {
           setAccountNum("")
         })
 
-  }, [accountNum, dispatch, name]);
+  }, [accountNum, dispatch, name, username]);
 
 
   return (
@@ -160,7 +160,7 @@ const RechargePage = () => {
                           <FormFeedback>{accInValidMsg}</FormFeedback>
                         </InputGroup>
                       </FormGroup>
-                    <FormGroup>
+                      <FormGroup>
                         <InputGroup>
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>Họ và tên</InputGroupText>
@@ -170,7 +170,7 @@ const RechargePage = () => {
                                  value={name.value}/>
                         </InputGroup>
                       </FormGroup>
-                    <FormGroup>
+                      <FormGroup>
                         <InputGroup>
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>Username</InputGroupText>

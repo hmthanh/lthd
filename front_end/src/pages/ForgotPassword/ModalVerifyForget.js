@@ -58,7 +58,7 @@ const ModalVerifyForget = ({isShow, verifyPwdData, onClose, onVerifySuccess}) =>
           console.log("Error", err);
           OTP.setInValid(true);
         });
-  }, [dispatch, OTP.value, newPwd.value]);
+  }, [dispatch, OTP, newPwd, onClose, onVerifySuccess, verifyPwdData]);
 
   return (
       <>

@@ -4,7 +4,8 @@ import {
   Button,
   Card,
   CardTitle,
-  Col, Collapse,
+  Col,
+  Collapse,
   Form,
   FormFeedback,
   FormGroup,
@@ -21,31 +22,27 @@ import {useDispatch, useSelector} from "react-redux";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {Create} from "../../redux/creators/debtCreator";
-import {useHistory} from "react-router";
 import useInputRequire from "../../utils/useInputRequire";
+import {CreateAlias, FetchAlias} from '../../redux/creators/nameReminscentCreator'
 
-const CreateReceiver = ({isOpen}) => {
+const CreateAliasReceiver = ({isOpen, showCreate}) => {
   const dispatch = useDispatch();
-  const history = useHistory();
   const AccName = useSelector((state) => {
     return state.AccName
   });
-  const CreateDebt = useSelector((state) => {
-    return state.CreateDebt
+  const createAliasReceiver = useSelector((state) => {
+    return state.AliasReceiver
   });
-  // const [accountNum, setAccountNum] = useState("");
-  const accountNum = useInputRequire({})
-  const [accValid, setAccValid] = useState(false);
-  const [accInValid, setAccInValid] = useState(false);
-  const [accInValidMsg, setAccInValidMsg] = useState("");
+  const accountNum = useInputRequire({
+    value: 0,
+    valid: false,
+    invalid: false,
+    inValidMsg: ""
+  })
   const name = useInputChange("");
   const alias = useInputChange("");
-
-  const onChangeAccountNum = useCallback((e) => {
-    accountNum.setValue(e.target.value);
-  }, [accountNum])
-
+  const alertToggle = useToggle(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const onBlurAccountNum = useCallback(() => {
     if (accountNum.value === "") {
       accountNum.setInValid(true)
@@ -86,19 +83,30 @@ const CreateReceiver = ({isOpen}) => {
     let data = {
       ownerId: uid,
       accountNum: accountNum.value,
-      message: alias.value,
-      datetime: new Date(),
+      aliasName: alias.value,
     }
-    console.log(data);
-    dispatch(Create(data, accessToken))
+
+    console.log(data)
+    dispatch(CreateAlias(data, accessToken))
         .then((response) => {
           console.log(response);
-          history.push("/debt");
+          if (parseInt(response.errorCode) === 0) {
+            dispatch(FetchAlias(uid, accessToken))
+                .then((response) => {
+                  showCreate();
+                  console.log(response)
+                });
+          } else {
+            setErrorMsg("Tài khoản đã tồn tại");
+            alertToggle.setActive();
+          }
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(err => {
+          setErrorMsg(err);
+          alertToggle.setActive();
         })
-  }, [dispatch, accountNum, alias, history]);
+
+  }, [dispatch, accountNum, alias, alertToggle, showCreate]);
 
 
   return (
@@ -121,7 +129,6 @@ const CreateReceiver = ({isOpen}) => {
                       </InputGroupAddon>
                       <Input type="text"
                              name="accountNum"
-                             id="accountNum"
                              onChange={accountNum.onChange}
                              value={accountNum.value}
                              onBlur={onBlurAccountNum}
@@ -156,6 +163,13 @@ const CreateReceiver = ({isOpen}) => {
                   </FormGroup>
                 </Form>
                 <hr/>
+                <Collapse isOpen={alertToggle.active}>
+                  <Alert color="danger" toggle={alertToggle.setInActive}>
+                    <h6>Tạo tên gợi nhớ thất bại</h6>
+                    <hr/>
+                    <p>{errorMsg}</p>
+                  </Alert>
+                </Collapse>
                 <Button id="btnTransferLocal"
                         type="submit"
                         color={"success"}
@@ -163,12 +177,12 @@ const CreateReceiver = ({isOpen}) => {
                         block={true}
                         className="d-flex align-items-center justify-content-center"
                         onClick={createReceive}
-                        disabled={CreateDebt.isLoading}
+                        disabled={createAliasReceiver.isLoading}
                 >
                         <span style={{marginLeft: "40px"}}>
-                    {(CreateDebt.isLoading ? <Spinner color="light"
-                                                      size={"sm"} role="status"
-                                                      aria-hidden="true"/> : "")}
+                    {(createAliasReceiver.isLoading ? <Spinner color="light"
+                                                               size={"sm"} role="status"
+                                                               aria-hidden="true"/> : "")}
                   </span>
                   <span>Tạo người nhận</span>
                 </Button>
@@ -181,4 +195,4 @@ const CreateReceiver = ({isOpen}) => {
 
 };
 
-export default CreateReceiver;
+export default CreateAliasReceiver;
