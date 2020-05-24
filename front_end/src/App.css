@@ -37,3 +37,7 @@ div.close{
     min-width: 0;
     margin-bottom: 0;
 }
+
+.padding-card{
+    padding: 20px 40px;
+}

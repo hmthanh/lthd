@@ -22,7 +22,7 @@ const CreateAccount = () => {
   const email = useInputChange("");
   const phone = useInputChange("");
   const alertToggle = useToggle(false);
-  const [dateOfBirth, setDateOfBirth] = useState(moment().subtract(30, 'year'));
+  const [dateOfBirth, setDateOfBirth] = useState(new Date(moment().subtract(30, 'year')));
   const [accInfo, setAccInfo] = useState([]);
 
 

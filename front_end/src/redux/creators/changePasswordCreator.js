@@ -58,7 +58,7 @@ export const verifyForget = (data) => {
 
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await fetchFrom(UrlApi + '/api/auth/forget-otp', 'POST', data);
+        const response = await fetchFrom(UrlApi + '/api/auth/forget', 'PATCH', data);
         console.log(response);
         dispatch({type: VERIFY_FORGET_SUCCESS, payload: response})
         resolve(response);

@@ -42,6 +42,9 @@ const Notification = () => {
             setAlertData(response);
           }
         });
+    return () => {
+
+    }
   }, [dispatch])
 
   function closeAlert(notifyId) {

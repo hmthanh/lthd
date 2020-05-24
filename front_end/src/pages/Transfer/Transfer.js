@@ -48,7 +48,7 @@ const Transfer = () => {
     return state.AccName
   });
 
-  const sender = useInputChange(0);
+  const [sender, setSender] = useState(0);
   const [receiveBank, setReceiveBank] = useState(0);
   const [isInterbank, setIsInterbank] = useState(false);
   const [selectSaved, setSelectSaved] = useState(0);
@@ -66,7 +66,7 @@ const Transfer = () => {
   const [titleMsg, setTitleMsg] = useState("");
   const [contentMsg, setContentMsg] = useState("");
   const [transId, setTransId] = useState(0);
-  const [transType, setTransType] = useState(1);
+  const [transType, setTransType] = useState(2);
 
   const query = new URLSearchParams(location.search);
   const qAccNum = query.get("account");
@@ -119,7 +119,7 @@ const Transfer = () => {
           console.log("success response", response)
           name.setValue(response.account.name)
           let newAccountNum = response.account.account_num;
-          if (sender.value === newAccountNum) {
+          if (sender === newAccountNum) {
             setAccInValid(true)
             setAccInValidMsg("Không thể chuyển tiền chung tài khoản")
           } else {
@@ -203,7 +203,7 @@ const Transfer = () => {
       setAccInValidMsg("Vui lòng nhập lại số tài khoản")
       return;
     }
-    if (sender.value === accountNum) {
+    if (sender === accountNum) {
       setAccInValid(true)
       setAccInValidMsg("Không thể chuyển tiền chung tài khoản")
       return;
@@ -219,7 +219,7 @@ const Transfer = () => {
     let data = {
       partnerCode: partner_code,
       uid: uid,
-      fromAccount: sender.value,
+      fromAccount: sender,
       toAccount: accountNum,
       note: note,
       amount: amount,
@@ -248,7 +248,7 @@ const Transfer = () => {
         }, [dispatch]);
   }
 
-  console.log(sender.value, sender);
+  console.log(sender);
 
   useEffect(() => {
     if (qAccNum && qName && qMoney && qNote) {
@@ -265,12 +265,16 @@ const Transfer = () => {
     const accessToken = localStorage.getItem('accessToken');
     dispatch(getPaymentAcc(uid, accessToken))
         .then((response) => {
-          sender.setValue(response.account[0].account_num)
+          setSender(response.account[0].account_num)
         })
         .catch((e) => {
           console.log(e);
         });
-  }, [dispatch, sender]);
+  }, [dispatch]);
+
+  const onChangeSender = (e) => {
+    setSender(e.target.value);
+  }
 
   return (
       <Container>
@@ -288,10 +292,10 @@ const Transfer = () => {
                   <FormGroup>
                     <Label for="senderAccountType">Tài khoản người gửi <ShowRequire/></Label>
                     <Input type="select"
-                           onChange={sender.onChange}
+                           onChange={onChangeSender}
                            name="sender"
                            id="sender"
-                           value={sender.value}>
+                           value={sender}>
                       {senderInfo.account && senderInfo.account.map((item, index) => {
                         return (<option
                             key={index}

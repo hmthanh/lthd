@@ -115,7 +115,7 @@ const CreatePayment = () => {
         .catch((e) => {
           // console.log("error", e);
         });
-  }, [dispatch, userId, payType, accountNum]);
+  }, [dispatch, userId, payType, accountNum, createdToggle]);
 
   // useEffect(() => {
   //   payType.setValue(paymentTitle[0].type);
