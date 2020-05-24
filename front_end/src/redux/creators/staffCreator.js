@@ -2,6 +2,9 @@ import {
     ALL_STAFF_FAILED,
     ALL_STAFF_LOADING,
     ALL_STAFF_SUCCESS,
+    CREATE_STAFF_SUCCESS,
+    CREATE_STAFF_LOADING,
+    CREATE_STAFF_FAILED,
     
   } from '../actions/actionType'
   import {fetchFrom} from '../../utils/fetchHelper'
@@ -56,6 +59,23 @@ export const Delete = (id, accessToken) => (dispatch) => {
             dispatch(stafffailed('không thể kết nối server'));
         })
 };
+
+export const Create = (data, accessToken) => {
+  return (dispatch) => {
+    dispatch({type: CREATE_STAFF_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/admin/employee', 'POST', data, accessToken)
+        dispatch({type: CREATE_STAFF_SUCCESS, payload: response});
+        resolve(response);
+      } catch (e) {
+        console.log(e);
+        dispatch({type: CREATE_STAFF_FAILED, payload: e});
+        reject(e);
+      }
+    })
+  };
+}
 
 
 export const loadingStaff = () => ({
