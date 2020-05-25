@@ -1,7 +1,5 @@
 const express = require('express')
-const jwt = require('jsonwebtoken')
 const rndToken = require('rand-token')
-const authModel = require('../models/auth.model')
 const common = require('../utils/common')
 const accountModel = require('../models/account.model')
 const userAccount = require('../models/userAccount.model')
@@ -92,7 +90,7 @@ router.post('/', async (req, res) => {
     let htmlmsg = common.htmlMsgLogingTemplate({...restItem, password: pass});
     mailController.sentMail(data.email, '[New Vimo][important !!!] Account Vimo', msgText, htmlmsg);
     const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
-      refeshTokenModel.add({user_id: results.insertId, refresh_token: rfToken});
+    refeshTokenModel.add({user_id: results.insertId, refresh_token: rfToken});
   } else {
     msg = 'invalid params'
     errorCode = -100
