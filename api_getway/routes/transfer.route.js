@@ -1,8 +1,7 @@
 const express = require('express')
 const moment = require('moment')
-const { hash, verifyHash, verify, sign } = require('../utils/rsa.signature')
+const { hash, sign } = require('../utils/rsa.signature')
 const pgp = require('../utils/pgp.signature')
-const rsa = require('../utils/rsa.signature')
 const { SECRET_TOKEN, OTP, PGP_URL_TRANFER, 
   RSA_URL_TRANFER,PGP_PARTNERCODE, RSA_PARTNERCODE, SECRET_RSA } = require('../config')
 const mailController = require('../mailer/mail.controller')
@@ -15,6 +14,7 @@ const {TranferInternalBank} = require('../models/transaction.Tranfer.Model')
 const { minusTransfer, plus, patch } = require('../utils/db')
 const bankingAccountModel = require('../models/bankingAccount.modal')
 const {broadcastAll} = require('../ws');
+const { saveAlias } = require('../models/receiverInfo.model')
 const router = express.Router()
 const partnerCode = 5412
 const encoding = 'base64'
@@ -112,12 +112,9 @@ const tranferRSA = async transaction => {
 
 router.post('/', async (req, res) => {
   const type = req.body.type ? req.body.type : 2
-  console.log(req.body)
-  res.status(200).json({
-    error_code: 0,
-    message: 'successfully'
-  })
-  return
+  if (req.body.isSaveAlias && req.body.isSaveAlias === true) {
+    saveAlias({...req.body})
+  }
   let isValid = validateData(req.body)
   if (!isValid) {
     res.status(200).json({

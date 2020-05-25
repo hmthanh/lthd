@@ -37,4 +37,18 @@ module.exports = {
       FROM receiver_info 
       WHERE owner_id=${id} AND partner_bank=${partnerCode}`)
   },
+  saveAlias: data => {
+    if (data.toName && data.uid) {
+      let entity = {
+        account_num: data.account_num,
+        owner_id: data.uid, 
+        alias_name: data.toName,
+        partner_bank: parseInt(data.partnerCode)
+      }
+      this.add(entity)
+    } else {
+      console.log('=========require toName and uid in body request==========')
+    }
+    
+  }
 };
