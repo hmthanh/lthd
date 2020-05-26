@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {Button, Card, Collapse, Container, Table} from 'reactstrap'
 import {useDispatch, useSelector} from 'react-redux'
-import {FetchAlias} from '../../redux/creators/nameReminscentCreator'
+import {FetchAlias} from '../../redux/creators/aliasReceiverCreator'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons";
 import useToggle from "../../utils/useToggle";

@@ -1,13 +1,13 @@
 const express = require('express')
 const moment = require('moment')
-const { getall, getByAccountNum } = require('../models/history.model')
+const { getAll, getByAccountNum } = require('../models/history.model')
 const router = express.Router()
 
 
 
 router.post('/hist', async (req, res) => {
     const type = req.body.type;
-    const historyData = await getall(type)
+    const historyData = await getAll(type)
     historyData.map((val, index) => {
       val.timestamp = moment(val.timestamp).format('HH:mm:ss, DD-MM-YYYY')
     })

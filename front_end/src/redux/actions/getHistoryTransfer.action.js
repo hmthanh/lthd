@@ -1,7 +1,7 @@
 import {HISTORY_TRANS_FAILED, HISTORY_TRANS_LOADING, HISTORY_TRANS_SUCCESS} from './actionType'
 
 export const HistoryTransfer = (state = {
-  isLoading: true,
+  isLoading: false,
   errMess: null,
   data: []
 }, action) => {

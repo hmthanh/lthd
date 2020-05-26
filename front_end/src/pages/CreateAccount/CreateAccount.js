@@ -50,7 +50,7 @@ const CreateAccount = () => {
           }
         })
         .catch((e) => {
-          messageBoxToggle.active();
+          messageBoxToggle.setActive();
           setTitleMessage("Thất bại");
           setContentMessage("Đã xảy ra lỗi trong quá trình tạo tài khoản !");
           console.log("error", e);

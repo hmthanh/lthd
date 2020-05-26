@@ -29,7 +29,7 @@ import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import {getPaymentAcc} from "../../redux/creators/accountCreator";
 import {useLocation} from "react-router";
 import useInputRequire from "../../utils/useInputRequire";
-import {FetchAlias} from "../../redux/creators/nameReminscentCreator";
+import {FetchAlias} from "../../redux/creators/aliasReceiverCreator";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart, faHeartBroken} from "@fortawesome/free-solid-svg-icons";
 

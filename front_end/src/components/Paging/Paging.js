@@ -1,10 +1,12 @@
 import React from 'react';
-import {PaginationItem, PaginationLink} from "reactstrap";
+import {Pagination, PaginationItem, PaginationLink} from "reactstrap";
 
 const Paging = ({pageIdx, total, setPage}) => {
+  console.log("paging", pageIdx, total, setPage);
+  console.log("total > 0", total > 0)
   if (total > 0) {
     return (
-        <Paging aria-label="Page navigation example">
+        <Pagination>
           <PaginationItem>
             <PaginationLink first onClick={() => setPage(0)} href="#"/>
           </PaginationItem>
@@ -30,7 +32,7 @@ const Paging = ({pageIdx, total, setPage}) => {
           <PaginationItem>
             <PaginationLink last onClick={() => setPage(total - 1)} href="#"/>
           </PaginationItem>
-        </Paging>
+        </Pagination>
     )
   } else {
     return ""

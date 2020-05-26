@@ -1,9 +1,8 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Card, CardGroup, Col, Container, Form, FormGroup, Input, InputGroup, Label, Pagination, PaginationItem, PaginationLink, Row} from 'reactstrap'
+import {Card, CardGroup, Col, Container, Form, FormGroup, Input, InputGroup, Label, Row} from 'reactstrap'
 import useToggle from "../../utils/useToggle";
-import useInputChange from "../../utils/useInputChange";
-import {getUserTransHistory} from "../../redux/creators/historyTransCreator";
+import {getTransHistory} from "../../redux/creators/historyTransCreator";
 import TableInfoTransfer from "../../components/Table/TableInfoTransfer";
 import MessageBox from "../../components/Modal/MessageBox";
 import "react-datepicker/dist/react-datepicker.css";
@@ -15,19 +14,17 @@ const moment = require('moment');
 
 const HistoryTrans = () => {
   const dispatch = useDispatch();
-  const transHistory = useSelector(state => {
-    return state.TransHistory.data
-  });
-  const interBankInfo = useSelector((state) => {
-    return state.InterBank.data
-  });
-  // const historyDebt = useSelector(state => {
-  //   return state.HistoryDept.data
+  const paySelector = [
+    {title: "-- Tất cả --", value: 0},
+    {title: "Nhập tiền", value: 1},
+    {title: "Chuyển tiền", value: 2},
+    {title: "Nhắc nợ", value: 4},
+  ]
+  // const transHistory = useSelector(state => {
+  //   return state.TransHistory.data
   // });
-  // const receiveHistory = useSelector(state => {
-  //   return state.ReceiveHistory.data
-  // });
-  const search = useInputChange();
+  const historyTrans = useSelector(state => state.HistoryTransfer.data);
+  const interBankInfo = useSelector((state) => state.InterBank.data);
   const [titleMsg, setTitleMsg] = useState("");
   const [contentMsg, setContentMsg] = useState("");
   const msgBoxToggle = useToggle(false);
@@ -37,6 +34,8 @@ const HistoryTrans = () => {
   const [banking, setBanking] = useState("0");
   const [pageIdx, setPageIdx] = useState(0);
   const [total, setTotal] = useState(10);
+  const [payType, setPayType] = useState("0");
+
 
   function onChangeFrom(value) {
     setFrom(value);
@@ -52,66 +51,34 @@ const HistoryTrans = () => {
     msgBoxToggle.setActive();
   }, [setTitleMsg, setContentMsg, msgBoxToggle]);
 
-  // const findHistoryAccount = useCallback((e) => {
-  //   e.preventDefault();
-  //   let data = {
-  //     from: moment().valueOf(from),
-  //     to: moment().valueOf(to),
-  //     partner: banking
-  //   };
-  //   console.log("search value", search.value);
-  //   const accessToken = localStorage.getItem('accessToken');
-  //   dispatch(getUserTransHistory(data, pageIdx, accessToken))
-  //       .then((response) => {
-  //         console.log(response);
-  //       });
-  //   // dispatch(getUserReceiveHistory(uid, accessToken))
-  //   //     .then((response) => {
-  //   //       console.log(response.item);
-  //   //     });
-  //   // dispatch(getUserDeptHistory({id: uid}, accessToken))
-  //   //     .then((response) => {
-  //   //       console.log(response.item);
-  //   //     })
-  //   //     .catch((error) => {
-  //   //       showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
-  //   //     });
-  //
-  //
-  //   // dispatch(getUserTransHistory(uid, accessToken))
-  //   //     .then((response) => {
-  //   //       console.log("getHistoryUserTrans", response.item);
-  //   //     })
-  //   //     .catch((error) => {
-  //   //       showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n${error}`);
-  //   //     });
-  //   // dispatch(getUserDeptHistory({id: uid}, accessToken))
-  //   //     .then((response) => {
-  //   //       console.log("getHistoryUserDept", response.item);
-  //   //     })
-  //   //     .catch((error) => {
-  //   //       showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
-  //   //     });
-  // }, [dispatch, search, showMsgBox, pageIdx, from, to, banking]);
-
   function onChangeBanking(e) {
     setBanking(e.target.value);
+  }
+
+  const onChangePayType = (e) => {
+    setPayType(e.target.value);
   }
 
   useEffect(() => {
     let data = {
       from: moment(from).valueOf(),
       to: moment(to).valueOf(),
-      partner: parseInt(banking)
+      partner: parseInt(banking),
+      type: parseInt(payType)
     };
     console.log("search value", data);
     const accessToken = localStorage.getItem('accessToken');
-    dispatch(getUserTransHistory(data, pageIdx * 30, accessToken))
+    dispatch(getTransHistory(data, pageIdx * 30, accessToken))
         .then((response) => {
           let totalPage = Math.ceil(response.total / 30);
           setTotal(totalPage);
-          console.log(response.item);
         });
+
+  }, [dispatch, from, to, pageIdx, banking, payType]);
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+
     dispatch(getInterbank(accessToken))
         .then((response) => {
           console.log(response)
@@ -119,7 +86,7 @@ const HistoryTrans = () => {
         .catch((err) => {
           console.log(err);
         });
-  }, [dispatch, from, to, pageIdx, banking]);
+  }, [dispatch])
 
   const setPage = (i) => {
     setPageIdx(i);
@@ -139,56 +106,67 @@ const HistoryTrans = () => {
                     <FormGroup>
                       <Row>
                         <Col xs={6}>
-                          <Label for="from">Thời gian bắt đầu</Label>
-                          <InputGroup className="mb-2">
-                            <DatePicker
-                                className="form-control"
-                                type="text"
-                                name="from"
-                                dateFormat="dd-MM-yyyy"
-                                onSelect={onChangeFrom}
-                                onChange={onChangeFrom}
-                                selected={from}/>
-                          </InputGroup>
-
-                          <Label for="time">Thời gian kết thúc</Label>
-                          <InputGroup className="mb-2">
-                            <DatePicker
-                                className="form-control"
-                                type="text"
-                                name="to"
-                                dateFormat="dd-MM-yyyy"
-                                onSelect={onChangeTo}
-                                onChange={onChangeTo}
-                                selected={to}
-                            />
-                          </InputGroup>
+                          <FormGroup>
+                            <Label for="from">Thời gian bắt đầu</Label>
+                            <InputGroup className="mb-2">
+                              <DatePicker
+                                  className="form-control"
+                                  type="text"
+                                  name="from"
+                                  dateFormat="dd-MM-yyyy"
+                                  onSelect={onChangeFrom}
+                                  onChange={onChangeFrom}
+                                  selected={from}/>
+                            </InputGroup>
+                          </FormGroup>
+                          <FormGroup>
+                            <Label for="time">Thời gian kết thúc</Label>
+                            <InputGroup className="mb-2">
+                              <DatePicker
+                                  className="form-control"
+                                  type="text"
+                                  name="to"
+                                  dateFormat="dd-MM-yyyy"
+                                  onSelect={onChangeTo}
+                                  onChange={onChangeTo}
+                                  selected={to}
+                              />
+                            </InputGroup>
+                          </FormGroup>
                         </Col>
                         <Col xs={6}>
-                          <Label for="time">Ngân hàng</Label>
-                          <Input type="select"
-                                 value={banking}
-                                 onChange={onChangeBanking}
-                                 name="banking"
-                                 id="banking">
-                            <option value={0}>-- Tất cả --</option>
-                            {
-                              interBankInfo.item &&
-                              interBankInfo.item.map((item, index) => {
-                                return <option key={index}
-                                               value={item.partner_code}>{item.name}</option>
-                              })
-                            }
-                          </Input>
-                          {/*<Label for="btnSearch" style={{marginBottom: "34px"}}></Label>*/}
-                          {/*<InputGroup>*/}
-                          {/*  <Button id="btnSearch" type="submit" color={"success"}*/}
-                          {/*          className="btn-search"*/}
-                          {/*          style={{width: "200px"}}*/}
-                          {/*          disabled={false}>*/}
-                          {/*    <span>Tìm kiếm</span>*/}
-                          {/*  </Button>*/}
-                          {/*</InputGroup>*/}
+                          <FormGroup>
+                            <Label for="time">Ngân hàng</Label>
+                            <Input type="select"
+                                   value={banking}
+                                   onChange={onChangeBanking}
+                                   name="banking"
+                                   id="banking">
+                              <option value={0}>-- Tất cả --</option>
+                              {
+                                interBankInfo.item &&
+                                interBankInfo.item.map((item, index) => {
+                                  return <option key={index}
+                                                 value={item.partner_code}>{item.name}</option>
+                                })
+                              }
+                            </Input>
+                          </FormGroup>
+                          <FormGroup>
+                            <Label for="payType">Loại giao dịch</Label>
+                            <Input type="select"
+                                   value={payType}
+                                   onChange={onChangePayType}
+                                   name="payType"
+                                   id="payType">
+                              {
+                                paySelector &&
+                                paySelector.map((item, index) => {
+                                  return <option key={index} value={item.value}>{item.title}</option>
+                                })
+                              }
+                            </Input>
+                          </FormGroup>
                         </Col>
                       </Row>
                     </FormGroup>
@@ -205,8 +183,10 @@ const HistoryTrans = () => {
               <Card id="localBank">
                 <div className="card-body padding-card">
                   <h4>Giao dịch chuyển tiền</h4>
-                  <TableInfoTransfer data={transHistory}></TableInfoTransfer>
-                  <Paging pageIdx={pageIdx} total={total} setPage={setPage}/>
+                  <TableInfoTransfer data={historyTrans}></TableInfoTransfer>
+                  <div className="col-centered">
+                    <Paging pageIdx={pageIdx} total={total} setPage={setPage}/>
+                  </div>
                 </div>
               </Card>
             </CardGroup>

@@ -32,8 +32,6 @@ const HistoryTrans = lazy(() => import('../pages/HistoryTrans/HistoryTrans'));
 const ListStaffPage = lazy(() => import("../pages/ListStaffPage/ListStaffPage"));
 
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
-// const ListCustomerPage = lazy(() => import("../pages/ListCustomerPage/ListCustomerPage"));
-// const ListTransferPage = lazy(() => import( "../pages/ListTransferPage/ListTransferPage"));
 
 
 const routes = [
@@ -184,10 +182,6 @@ export const CustomerLink = [
     title: "Lịch sử giao dịch",
     path: "/user-history",
   },
-  // {
-  //   title: "Quản lý nhắc nợ",
-  //   path: "/manage-debt",
-  // }
 ];
 
 export const CustomerItemLink = [
@@ -208,10 +202,6 @@ export const AdminLink = [
     title: "Quản lý nhân viên",
     path: "/list-staff",
   },
-  // {
-  //   title: "Danh sách khách hàng",
-  //   path: "/list-customer",
-  // },
   {
     title: "Danh sách giao dịch",
     path: "/history-trans",

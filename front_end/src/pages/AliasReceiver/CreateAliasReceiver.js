@@ -23,7 +23,7 @@ import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import useInputRequire from "../../utils/useInputRequire";
-import {CreateAlias, FetchAlias} from '../../redux/creators/nameReminscentCreator'
+import {CreateAlias, FetchAlias} from '../../redux/creators/aliasReceiverCreator'
 
 const CreateAliasReceiver = ({isOpen, showCreate}) => {
   const dispatch = useDispatch();

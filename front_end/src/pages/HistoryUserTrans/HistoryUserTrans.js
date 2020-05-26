@@ -1,26 +1,9 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {getUserTransHistory} from "../../redux/creators/historyTransCreator";
-import TableInfoTransfer from "../../components/Table/TableInfoTransfer";
-import {
-  Card,
-  CardGroup,
-  Col,
-  Container,
-  Form,
-  FormGroup,
-  Input,
-  InputGroup,
-  Label,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Row, Spinner
-} from "reactstrap";
+import {Card, CardGroup, Col, Container, Form, FormGroup, Input, Label, Row} from "reactstrap";
 import {getInterbank} from "../../redux/creators/transferCreator";
-import MessageBox from "../../components/Modal/MessageBox";
 import TableUserTransfer from "../../components/Table/TableUserTransfer";
-import Paging from "../../components/Paging/Paging";
 import Loading from "../../components/Loading";
 
 
@@ -32,19 +15,13 @@ const HistoryUserTrans = () => {
     {title: "Nhắc nợ", value: 4},
   ]
   const dispatch = useDispatch();
-  const transHistory = useSelector(state => {
-    return state.TransHistory.data
-  });
-  const isLoadingTable = useSelector(state => {
-    return state.TransHistory.isLoading
-  });
-  const interBankInfo = useSelector((state) => {
-    return state.InterBank.data
-  });
+  const transHistory = useSelector(state => state.UserTransHistory.data);
+  const isLoadingTable = useSelector(state => state.UserTransHistory.isLoading);
+  const interBankInfo = useSelector((state) => state.InterBank.data);
   const [banking, setBanking] = useState("0");
   const [pageIdx, setPageIdx] = useState(0);
   const [total, setTotal] = useState(10);
-  const [payType, setPayType] = useState(0);
+  const [payType, setPayType] = useState("0");
 
   function onChangeBanking(e) {
     setBanking(e.target.value);
@@ -56,7 +33,7 @@ const HistoryUserTrans = () => {
     let data = {
       uid: uid,
       partner: parseInt(banking),
-      type: payType
+      type: parseInt(payType)
     };
     console.log("search value", data);
 
@@ -65,7 +42,10 @@ const HistoryUserTrans = () => {
           let totalPage = Math.ceil(response.total / 30);
           setTotal(totalPage);
           console.log(response.item);
-        });
+        })
+        .catch(error => {
+
+        })
 
   }, [dispatch, pageIdx, banking, payType]);
 
@@ -150,8 +130,6 @@ const HistoryUserTrans = () => {
                   {
                     isLoadingTable ? <Loading/> : (<TableUserTransfer data={transHistory}></TableUserTransfer>)
                   }
-
-                  <Paging pageIdx={pageIdx} total={total} setPage={setPage}/>
                 </div>
               </Card>
             </CardGroup>

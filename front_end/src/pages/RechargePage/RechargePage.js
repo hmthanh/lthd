@@ -209,7 +209,7 @@ const RechargePage = () => {
                   <Collapse isOpen={alertToggle.active}>
                     <CardTitle>
                       {
-                        transState.active ? <h3 className="text-center">CHUYỂN TIỀN THÀNH CÔNG</h3> :
+                        transState.active ? <h3 className="text-center">NẠP TIỀN THÀNH CÔNG</h3> :
                             <h3 className="text-center">GIAO DỊCH THẤT BẠI</h3>
                       }
                     </CardTitle>

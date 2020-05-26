@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import useToggle from "../../utils/useToggle";
 import {useDispatch} from "react-redux";
-import {DeleteAlias, FetchAlias} from "../../redux/creators/nameReminscentCreator";
+import {DeleteAlias, FetchAlias} from "../../redux/creators/aliasReceiverCreator";
 
 const DeleteAliasReceiver = ({accountId}) => {
   const dispatch = useDispatch();
