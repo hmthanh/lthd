@@ -5,7 +5,7 @@ import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import useToggle from "../../utils/useToggle";
 import {useDispatch} from "react-redux";
 import useInputChange from "../../utils/useInputChange";
-import {DeleteInDebt, getInDebt} from "../../redux/creators/InDebtCreator";
+import {DeleteInDebt, getInDebt} from "../../redux/actions/InDebt.action";
 import {useHistory} from "react-router";
 
 const CancelRemind = ({debtId}) => {

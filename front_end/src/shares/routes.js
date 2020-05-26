@@ -29,13 +29,13 @@ const RechargePage = lazy(() => import('../pages/RechargePage/RechargePage'));
 
 // Admin
 const HistoryTrans = lazy(() => import('../pages/HistoryTrans/HistoryTrans'));
-const ListStaffPage = lazy(() => import("../pages/ListStaffPage/ListStaffPage"));
+const ListEmployee = lazy(() => import("../pages/ListEmployee/ListEmployee"));
 
-const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+const NotFoundPage = lazy(() => import('../pages/NotFound/NotFoundPage'));
 
 
 const routes = [
-    // All account page
+  // All account page
   {
     path: "/",
     exact: true,
@@ -72,7 +72,7 @@ const routes = [
     component: () => <ForgotPassword></ForgotPassword>
   },
 
-    // user page
+  // user page
   {
     path: "/list-account",
     exact: true,
@@ -119,7 +119,7 @@ const routes = [
     component: () => <CloseAccount></CloseAccount>
   },
 
-    // Employee
+  // Employee
   {
     path: "/create-account",
     exact: true,
@@ -136,16 +136,16 @@ const routes = [
     component: () => <RechargePage></RechargePage>
   },
 
-    // Admin
+  // Admin
   {
     path: "/history-trans",
     exact: true,
     component: () => <HistoryTrans></HistoryTrans>
   },
   {
-    path: "/list-staff",
+    path: "/list-employee",
     exact: true,
-    component: () => <ListStaffPage></ListStaffPage>
+    component: () => <ListEmployee></ListEmployee>
   },
   {
     path: "*",
@@ -200,7 +200,7 @@ export const CustomerItemLink = [
 export const AdminLink = [
   {
     title: "Quản lý nhân viên",
-    path: "/list-staff",
+    path: "/list-employee",
   },
   {
     title: "Danh sách giao dịch",

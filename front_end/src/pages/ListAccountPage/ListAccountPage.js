@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
-import {getAllAccount} from '../../redux/creators/accountCreator'
+import {getAllAccount} from '../../redux/actions/account.action'
 import {formatMoney} from "../../utils/utils";
 
 const ListAccountPage = () => {

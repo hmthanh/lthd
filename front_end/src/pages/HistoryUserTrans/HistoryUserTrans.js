@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {getUserTransHistory} from "../../redux/creators/historyTransCreator";
+import {getUserTransHistory} from "../../redux/actions/historyTrans.action";
 import {Card, CardGroup, Col, Container, Form, FormGroup, Input, Label, Row} from "reactstrap";
-import {getInterbank} from "../../redux/creators/transferCreator";
+import {getInterbank} from "../../redux/actions/transfer.action";
 import TableUserTransfer from "../../components/Table/TableUserTransfer";
 import Loading from "../../components/Loading";
 
@@ -19,8 +19,6 @@ const HistoryUserTrans = () => {
   const isLoadingTable = useSelector(state => state.UserTransHistory.isLoading);
   const interBankInfo = useSelector((state) => state.InterBank.data);
   const [banking, setBanking] = useState("0");
-  const [pageIdx, setPageIdx] = useState(0);
-  const [total, setTotal] = useState(10);
   const [payType, setPayType] = useState("0");
 
   function onChangeBanking(e) {
@@ -37,17 +35,15 @@ const HistoryUserTrans = () => {
     };
     console.log("search value", data);
 
-    dispatch(getUserTransHistory(data, pageIdx * 30, accessToken))
+    dispatch(getUserTransHistory(data, accessToken))
         .then((response) => {
-          let totalPage = Math.ceil(response.total / 30);
-          setTotal(totalPage);
           console.log(response.item);
         })
         .catch(error => {
 
         })
 
-  }, [dispatch, pageIdx, banking, payType]);
+  }, [dispatch, banking, payType]);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
@@ -58,11 +54,8 @@ const HistoryUserTrans = () => {
         .catch((err) => {
           console.log(err);
         });
-  }, [])
+  }, [dispatch])
 
-  const setPage = (i) => {
-    setPageIdx(i);
-  }
   const onChangePayType = (e) => {
     setPayType(e.target.value);
   }

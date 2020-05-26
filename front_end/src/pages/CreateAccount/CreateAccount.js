@@ -3,7 +3,7 @@ import {Alert, Button, Card, CardTitle, Col, Collapse, Container, Form, FormGrou
 import {useDispatch} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import useInputChange from "../../utils/useInputChange";
-import {createAcc} from "../../redux/creators/accountCreator";
+import {createAcc} from "../../redux/actions/account.action";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 // import {formatFormalDate} from "../../utils/utils";

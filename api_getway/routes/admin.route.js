@@ -7,9 +7,11 @@ const {
 } = require('../config')
 const common = require('../utils/common')
 const mailController = require('../mailer/mail.controller')
+const refreshTokenModal = require('../models/refeshToken.model');
+const rndToken = require('rand-token')
 
 const router = express.Router()
-const validateData = (data)=> {
+const validateData = (data) => {
   if (!common.isNumber(data.phone)) return false
   if (!common.validEmail(data.email)) return false
   if (!data.name) return false
@@ -23,41 +25,41 @@ const validateData = (data)=> {
 
 router.post('/employee', async (req, res) => {
   console.log(req.body)
-  const isValid = validateReceiverData(data)
-  if(!isValid){
-    res.json({
+  const isValid = validateData(req.body)
+  if (!isValid) {
+    await res.json({
       msg: 'invalid params',
       errorCode: -100
     })
     return
   }
-  const uname = common.nonAccentVietnamese(common.strimString(data.name))
-  let count = await userAccount.countUserName(uname)
+  const nonUsername = common.nonAccentVietnamese(common.strimString(req.body.name))
+  let count = await userAccount.countUserName(nonUsername)
   let entity = {
     name: req.body.name,
-    email: reqeq.body.email,
-    phone: parseInt( '84' + parseInt(req.body.phone)),
+    email: req.body.email,
+    phone: parseInt('84' + parseInt(req.body.phone)),
     date_of_birth: moment(req.body.date_of_birth, 'MM-DD-YYYY'),
-    user_name: `${uname}${count}`,
-    role: data.role || 3,
-    status: data.role || 2
+    user_name: `${nonUsername}${count}`,
+    role: req.body.role || 3,
+    status: req.body.role || 2
   }
   let results = await userAccount.add(entity)
-  restItem = {
+  let restItem = {
     id: results.insertId,
-    name: data.name,
-    username: `${uname}${count}`,
-    email: data.email,
-    dateOfBirth: dob,
-    phone: parseInt(`84${parseInt(data.phone)}`)
+    name: req.body.name,
+    username: `${nonUsername}${count}`,
+    email: req.body.email,
+    dateOfBirth: req.body.date_of_birth,
+    phone: parseInt(`84${parseInt(req.body.phone)}`)
   }
   let msgText = common.msgLogingTemplate({...restItem, password: pass});
-    // console.log(sender.email, sender);
-  let htmlmsg = common.htmlMsgLogingTemplate({...restItem, password: pass});
-  mailController.sentMail(data.email, '[New Vimo][important !!!] Account Vimo', msgText, htmlmsg);
+  // console.log(sender.email, sender);
+  let html_msg = common.htmlMsgLogingTemplate({...restItem, password: pass});
+  mailController.sentMail(req.body.email, '[New Vimo][important !!!] Account Vimo', msgText, html_msg);
   const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
-  refeshTokenModel.add({user_id: results.insertId, refresh_token: rfToken});
-  res.status(200).json({
+  refreshTokenModal.add({user_id: results.insertId, refresh_token: rfToken});
+  await res.status(200).json({
     msg: 'successfully',
     errorCode: 0,
     item: restItem

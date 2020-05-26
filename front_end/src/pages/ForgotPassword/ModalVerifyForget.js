@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import {Button, Form, FormFeedback, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Spinner} from "reactstrap";
 import {useDispatch, useSelector} from "react-redux";
-import {verifyForget} from "../../redux/creators/changePasswordCreator";
+import {verifyForget} from "../../redux/actions/changePassword";
 import useInputRequire from "../../utils/useInputRequire";
 
 const ModalVerifyForget = ({isShow, verifyPwdData, onClose, onVerifySuccess}) => {

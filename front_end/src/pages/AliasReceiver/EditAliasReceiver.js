@@ -20,7 +20,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import useToggle from "../../utils/useToggle";
 import {useDispatch, useSelector} from "react-redux";
-import {EditAlias, FetchAlias} from "../../redux/creators/aliasReceiverCreator";
+import {EditAlias, FetchAlias} from "../../redux/actions/aliasReceiver.action";
 import useInputRequire from "../../utils/useInputRequire";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 

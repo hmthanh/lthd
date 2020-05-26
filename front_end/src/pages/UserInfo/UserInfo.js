@@ -2,8 +2,8 @@ import React, {useEffect} from 'react'
 import './UserInfo.css'
 import {useDispatch, useSelector} from 'react-redux'
 import {Card, CardGroup, Col, Form, FormGroup, Label} from 'reactstrap'
-import {getBankingInfo} from '../../redux/creators/bankingInfoCreator'
-import {getAllAccount} from "../../redux/creators/accountCreator";
+import {getBankingInfo} from '../../redux/actions/bankingInfo'
+import {getAllAccount} from "../../redux/actions/account.action";
 import CloseAccount from "../CloseAccount/CloseAccount";
 
 const UserInfo = () => {

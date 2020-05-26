@@ -8,7 +8,7 @@ import EmployeeNav from '../components/Nav/EmployeeNav'
 import useToggle from "../utils/useToggle";
 import {fetchFrom} from "../utils/fetchHelper";
 import {UrlApi} from "../shares/baseUrl";
-import {AuthAdmin, AuthCustomer, AuthEmployee, AuthFailed} from "../redux/creators/authCreator";
+import {AuthAdmin, AuthCustomer, AuthEmployee, AuthFailed} from "../redux/actions/auth.action";
 import history from "../utils/history";
 import NavLogout from "../components/Nav/NavLogout";
 

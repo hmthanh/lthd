@@ -19,17 +19,17 @@ import {
   Spinner,
   UncontrolledTooltip
 } from "reactstrap";
-import {getAccName, getInterbank, transfer} from "../../redux/creators/transferCreator";
+import {getAccName, getInterbank, transfer} from "../../redux/actions/transfer.action";
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ModalVerifyTrans from "../../components/Modal/ModalVerifyTrans";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {getPaymentAcc} from "../../redux/creators/accountCreator";
+import {getPaymentAcc} from "../../redux/actions/account.action";
 import {useLocation} from "react-router";
 import useInputRequire from "../../utils/useInputRequire";
-import {FetchAlias} from "../../redux/creators/aliasReceiverCreator";
+import {FetchAlias} from "../../redux/actions/aliasReceiver.action";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart, faHeartBroken} from "@fortawesome/free-solid-svg-icons";
 

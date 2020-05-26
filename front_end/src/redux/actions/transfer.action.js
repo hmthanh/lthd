@@ -1,4 +1,6 @@
 import {
+  GET_ACC_NAME_FAILED,
+  GET_ACC_NAME_LOADING, GET_ACC_NAME_SUCCESS,
   INTERBANK_ASSOCIATE_FAILED,
   INTERBANK_ASSOCIATE_LOADING,
   INTERBANK_ASSOCIATE_SUCCESS,
@@ -13,78 +15,104 @@ import {
   VERIFY_OTP_INVALID,
   VERIFY_OTP_LOADING,
   VERIFY_OTP_SUCCESS
-} from './actionType'
+} from '../actionType'
 
-export const TransferInfo = (state = {
-  isLoading: false,
-  statusId: 0,
-  errMess: null,
-  data: []
-}, action) => {
-  switch (action.type) {
-    case TRANSFER_LOADING:
-      return {isLoading: true, statusId: 0, errMess: action.payload, data: []};
-    case TRANSFER_FAILED:
-      return {...state, isLoading: false, statusId: 1, errMess: action.payload, data: []};
-    case TRANSFER_INVALID:
-      return {...state, isLoading: false, statusId: 2, data: {...action.payload}};
-    case TRANSFER_SUCCESS:
-      return {...state, isLoading: false, statusId: 3, data: {...action.payload}};
-    default:
-      return state;
+import {fetchFrom} from '../../utils/fetchHelper'
+import {UrlApi} from '../../shares/baseUrl'
+// import {logger} from "redux-logger/src";
+
+
+export const transfer = (data, accessToken) => {
+  return dispatch => {
+    dispatch({type: TRANSFER_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/transfer', 'POST', data, accessToken);
+        if (response.errorCode === 0) {
+          dispatch({type: TRANSFER_SUCCESS, payload: response});
+        } else {
+          dispatch({type: TRANSFER_INVALID, payload: response});
+        }
+        resolve(response);
+      } catch (e) {
+        reject(e);
+        console.log(e);
+        dispatch({type: TRANSFER_FAILED, payload: e});
+      }
+    });
   }
 };
 
-export const InterBank = (state = {
-  isLoading: false,
-  errMess: null,
-  data: []
-}, action) => {
-  switch (action.type) {
-    case INTERBANK_ASSOCIATE_LOADING:
-      return {isLoading: true, errMess: null, data: []};
-    case INTERBANK_ASSOCIATE_FAILED:
-      return {...state, isLoading: false, errMess: action.payload, data: []};
-    case INTERBANK_ASSOCIATE_SUCCESS:
-      return {...state, isLoading: false, errMess: null, data: {...action.payload}};
-    default:
-      return state;
+export const getInterbank = (accessToken) => {
+  return dispatch => {
+    dispatch({type: INTERBANK_ASSOCIATE_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/associate', 'POST', {}, accessToken);
+        dispatch({type: INTERBANK_ASSOCIATE_SUCCESS, payload: response});
+        resolve(response);
+      } catch (e) {
+        reject(e);
+        console.log(e);
+        dispatch({type: INTERBANK_ASSOCIATE_FAILED, payload: e});
+      }
+    });
+  };
+};
+
+export const getReceiverSaved = (uid, accessToken) => {
+  return dispatch => {
+    dispatch({type: RECEIVER_SAVED_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + `/api/receiver/${uid}`, 'POST', {}, accessToken);
+        dispatch({type: RECEIVER_SAVED_SUCCESS, payload: response.item});
+        resolve(response);
+      } catch (e) {
+        reject(e);
+        console.log(e);
+        dispatch({type: RECEIVER_SAVED_FAILED, payload: e});
+      }
+    });
   }
 };
 
-export const ReceiverSaved = (state = {
-  isLoading: false,
-  errMess: null,
-  data: []
-}, action) => {
-  switch (action.type) {
-    case RECEIVER_SAVED_LOADING:
-      return {isLoading: true, errMess: null, data: []};
-    case RECEIVER_SAVED_FAILED:
-      return {...state, isLoading: false, errMess: action.payload, data: []};
-    case RECEIVER_SAVED_SUCCESS:
-      return {...state, isLoading: false, errMess: null, data: {...action.payload}};
-    default:
-      return state;
+export const verifyOTP = (transID, data, accessToken) => {
+  return dispatch => {
+    dispatch({type: VERIFY_OTP_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + `/api/transfer/${transID}`, 'POST', data, accessToken);
+        if (response.errorCode === 0) {
+          dispatch({type: VERIFY_OTP_SUCCESS, payload: response});
+        } else {
+          dispatch({type: VERIFY_OTP_INVALID, payload: response});
+        }
+        resolve(response);
+      } catch (e) {
+        console.log(e);
+        reject(e);
+        dispatch({type: VERIFY_OTP_FAILED, payload: e});
+      }
+    });
   }
 };
 
-export const VerifyResult = (state = {
-  isLoading: false,
-  errMess: null,
-  statusId: 0,
-  data: []
-}, action) => {
-  switch (action.type) {
-    case VERIFY_OTP_LOADING:
-      return {isLoading: true, statusId: 0, errMess: null, data: []};
-    case VERIFY_OTP_FAILED:
-      return {...state, isLoading: false, statusId: 1, errMess: action.payload, data: []};
-    case VERIFY_OTP_INVALID:
-      return {...state, isLoading: false, statusId: 2, errMess: null, data: {...action.payload}};
-    case VERIFY_OTP_SUCCESS:
-      return {...state, isLoading: false, statusId: 3, errMess: null, data: {...action.payload}};
-    default:
-      return state;
+export const getAccName = (data, accessToken) => {
+  return dispatch => {
+    dispatch({type: GET_ACC_NAME_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + `/api/accounts/acc`, 'POST', data, accessToken);
+        dispatch({type: GET_ACC_NAME_SUCCESS, payload: response});
+        console.log(response);
+        resolve(response);
+      } catch (e) {
+        console.log(e);
+        reject(e);
+        dispatch({type: GET_ACC_NAME_FAILED, payload: e});
+      }
+    });
   }
 };
+

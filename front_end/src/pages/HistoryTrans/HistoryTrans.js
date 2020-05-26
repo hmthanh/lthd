@@ -2,12 +2,12 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Card, CardGroup, Col, Container, Form, FormGroup, Input, InputGroup, Label, Row} from 'reactstrap'
 import useToggle from "../../utils/useToggle";
-import {getTransHistory} from "../../redux/creators/historyTransCreator";
+import {getTransHistory} from "../../redux/actions/historyTrans.action";
 import TableInfoTransfer from "../../components/Table/TableInfoTransfer";
 import MessageBox from "../../components/Modal/MessageBox";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
-import {getInterbank} from "../../redux/creators/transferCreator";
+import {getInterbank} from "../../redux/actions/transfer.action";
 import Paging from "../../components/Paging/Paging";
 
 const moment = require('moment');
@@ -20,15 +20,11 @@ const HistoryTrans = () => {
     {title: "Chuyển tiền", value: 2},
     {title: "Nhắc nợ", value: 4},
   ]
-  // const transHistory = useSelector(state => {
-  //   return state.TransHistory.data
-  // });
   const historyTrans = useSelector(state => state.HistoryTransfer.data);
   const interBankInfo = useSelector((state) => state.InterBank.data);
   const [titleMsg, setTitleMsg] = useState("");
   const [contentMsg, setContentMsg] = useState("");
   const msgBoxToggle = useToggle(false);
-  // const [from, setFrom] = useState(moment().valueOf(new Date()) - (28 * 24 * 60 * 60 * 1000));
   const [from, setFrom] = useState(new Date(moment().subtract(28, 'day')));
   const [to, setTo] = useState(new Date(moment()));
   const [banking, setBanking] = useState("0");
@@ -72,9 +68,13 @@ const HistoryTrans = () => {
         .then((response) => {
           let totalPage = Math.ceil(response.total / 30);
           setTotal(totalPage);
-        });
+        })
+        .catch(e => {
+          showMsgBox("Đã xảy ra lỗi", `Nội dung ${e}`);
+          msgBoxToggle.setActive();
+        })
 
-  }, [dispatch, from, to, pageIdx, banking, payType]);
+  }, [dispatch, from, to, pageIdx, banking, payType, msgBoxToggle, showMsgBox]);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');

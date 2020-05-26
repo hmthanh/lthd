@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Button, Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
-import {getInDebt} from '../../redux/creators/InDebtCreator'
+import {getInDebt} from '../../redux/actions/InDebt.action'
 import {Link} from "react-router-dom";
 import {formatMoment} from "../../utils/utils";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

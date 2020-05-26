@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react'
 import {useHistory} from "react-router";
 import {useDispatch} from "react-redux";
-import {AuthFailed} from "../redux/creators/authCreator";
+import {AuthFailed} from "../redux/actions/auth.action";
 
 const LogoutPage = () => {
   const dispatch = useDispatch()

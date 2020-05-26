@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import useToggle from "../../utils/useToggle";
 import {useDispatch} from "react-redux";
-import {Delete, getAllDebt} from "../../redux/creators/debtCreator";
+import {Delete, getAllDebt} from "../../redux/actions/debt.action";
 import useInputChange from "../../utils/useInputChange";
 import {useHistory} from "react-router";
 
