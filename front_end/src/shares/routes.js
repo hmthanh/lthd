@@ -11,7 +11,7 @@ const ForgotPassword = lazy(() => import('../pages/ForgotPassword/ForgotPassword
 
 // Customer
 const ListAccountPage = lazy(() => import('../pages/ListAccountPage/ListAccountPage'));
-const ListReceiver = lazy(() => import('../pages/AliasReceiver/AliasReceiver'));
+const AliasReceiver = lazy(() => import('../pages/AliasReceiver/AliasReceiver'));
 const Transfer = lazy(() => import('../pages/Transfer/Transfer'));
 
 const RemindPage = lazy(() => import('../pages/ListInDebtPage/RemindPage'));
@@ -39,7 +39,7 @@ const routes = [
   {
     path: "/",
     exact: true,
-    component: () => <UserInfo></UserInfo>
+    component: () => <UserInfo/>
   },
   {
     path: "/login",
@@ -79,9 +79,9 @@ const routes = [
     component: () => <ListAccountPage></ListAccountPage>
   },
   {
-    path: "/list-receiver",
+    path: "/alias-receiver",
     exact: true,
-    component: () => <ListReceiver></ListReceiver>
+    component: () => <AliasReceiver></AliasReceiver>
   },
   {
     path: "/transfer",
@@ -172,7 +172,7 @@ export const EmployeeLink = [
 export const CustomerLink = [
   {
     title: "Danh sách người nhận",
-    path: "/list-receiver",
+    path: "/alias-receiver",
   },
   {
     title: "Chuyển khoản",
