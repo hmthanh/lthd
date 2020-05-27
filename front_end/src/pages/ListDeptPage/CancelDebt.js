@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import useToggle from "../../utils/useToggle";
 import {useDispatch} from "react-redux";
-import {Delete, getAllDebt} from "../../redux/actions/debt.action";
+import {Delete, fetchDebtReminder} from "../../redux/actions/debt.action";
 import useInputChange from "../../utils/useInputChange";
 import {useHistory} from "react-router";
 
@@ -26,7 +26,7 @@ const CancelDebt = ({debtId}) => {
         .then((response) => {
           console.log(response);
           const uid = localStorage.getItem('uid');
-          dispatch(getAllDebt(uid, accessToken))
+          dispatch(fetchDebtReminder(uid, accessToken))
               .then((response) => {
                 console.log(response);
                 modalToggle.setInActive();

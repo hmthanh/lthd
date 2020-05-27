@@ -38,19 +38,11 @@ const Transfer = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
-  const senderInfo = useSelector(state => {
-    return state.PaymentAcc.data
-  });
-  const transferInfo = useSelector((state) => {
-    return state.TransferInfo
-  });
-  const interBankInfo = useSelector((state) => {
-    return state.InterBank.data
-  });
+  const senderInfo = useSelector(state => state.PaymentAcc.data);
+  const transferInfo = useSelector((state) => state.TransferInfo);
+  const interBankInfo = useSelector((state) => state.InterBank.data);
   const listSaved = useSelector(state => state.AliasReceiver.fetch);
-  const AccName = useSelector((state) => {
-    return state.AccName
-  });
+  const AccName = useSelector((state) => state.AccName);
 
   const [sender, setSender] = useState(0);
   const [banking, setBanking] = useState(0);

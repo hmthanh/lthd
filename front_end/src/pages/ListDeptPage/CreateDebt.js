@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   Button,
@@ -22,27 +22,29 @@ import {useDispatch, useSelector} from "react-redux";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {Create} from "../../redux/actions/debt.action";
+import {createDebtReminder} from "../../redux/actions/debt.action";
 import {useHistory} from "react-router";
+import useInputRequire from "../../utils/useInputRequire";
+import {getPaymentAcc} from "../../redux/actions/account.action";
 
 const CreateDebt = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const AccName = useSelector((state) => {
-    return state.AccName
+  const senderInfo = useSelector(state => state.PaymentAcc.data);
+  const AccName = useSelector((state) => state.AccName);
+  const CreateDebt = useSelector((state) => state.CreateDebt);
+  const accountNum = useInputRequire({
+    value: "",
+    valid: false,
+    invalid: false,
+    inValidMsg: ""
   });
-  const CreateDebt = useSelector((state) => {
-    return state.CreateDebt
-  });
-  const [accountNum, setAccountNum] = useState("");
-  const [accValid, setAccValid] = useState(false);
-  const [accInValid, setAccInValid] = useState(false);
-  const [accInValidMsg, setAccInValidMsg] = useState("");
   const name = useInputChange("");
   const money = useInputChange(0);
   const message = useInputChange("");
   const alertToggle = useToggle(false)
   const [timeCounter, setTimeCounter] = useState(2);
+  const owner = useInputChange("");
 
   const countDown = useCallback((i) => {
     let int = setInterval(function () {
@@ -51,56 +53,54 @@ const CreateDebt = () => {
     }, 1000);
   }, [])
 
-  const onChangeAccountNum = useCallback((e) => {
-    setAccountNum(e.target.value);
-  }, [setAccountNum])
 
   const onBlurAccountNum = useCallback(() => {
     if (accountNum.value === "") {
-      setAccInValid(true)
-      setAccInValidMsg("Không được để trống")
+      accountNum.setInValid(true)
+      accountNum.setInValidMsg("Không được để trống")
       return false;
     }
     let accessToken = localStorage.getItem('accessToken');
     let data = {
-      query: accountNum
+      query: accountNum.value
     }
     dispatch(getAccName(data, accessToken))
         .then((response) => {
           console.log("success response", response)
           name.setValue(response.account.name)
-          setAccountNum(response.account.account_num)
-          setAccValid(true)
-          setAccInValid(false)
-          setAccInValidMsg("")
+          accountNum.setValue(response.account.account_num)
+          accountNum.setValid(true)
+          accountNum.setInValid(false)
+          accountNum.setInValidMsg("")
         })
         .catch((err) => {
           console.log(err)
-          setAccInValid(true)
-          setAccInValidMsg("Không tìm thấy số tài khoản hoặc username trên")
-          setAccountNum("")
+          accountNum.setInValid(true)
+          accountNum.setInValidMsg("Không tìm thấy số tài khoản hoặc username trên")
+          accountNum.setValue("")
         })
 
   }, [accountNum, dispatch, name]);
 
   const createDept = useCallback((e) => {
     e.preventDefault();
-    if (accountNum === "") {
-      setAccInValid(true)
-      setAccInValidMsg("Vui lòng nhập lại số tài khoản")
+    if (accountNum.value === "") {
+      accountNum.setInValid(true)
+      accountNum.setInValidMsg("Vui lòng nhập lại số tài khoản")
       return;
     }
     const uid = localStorage.getItem('uid');
     let accessToken = localStorage.getItem('accessToken');
     let data = {
       ownerId: uid,
-      accountNum: accountNum,
+      accountNum: accountNum.value,
       money: money.value,
       message: message.value,
       datetime: new Date(),
+      ownerAccount: owner.value,
     }
     console.log(data);
-    dispatch(Create(data, accessToken))
+    dispatch(createDebtReminder(data, accessToken))
         .then((response) => {
           console.log(response);
           alertToggle.setActive()
@@ -112,7 +112,19 @@ const CreateDebt = () => {
         .catch((err) => {
           console.log(err);
         })
-  }, [dispatch, accountNum, money, message, alertToggle, countDown, history]);
+  }, [dispatch, accountNum, money, owner, message, alertToggle, countDown, history]);
+
+  useEffect(() => {
+    let accessToken = localStorage.getItem('accessToken');
+    let uid = localStorage.getItem('uid');
+    dispatch(getPaymentAcc(uid, accessToken))
+        .then((response) => {
+          owner.setValue(response.account[0].account_num)
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+  }, [dispatch, owner])
 
 
   return (
@@ -128,8 +140,29 @@ const CreateDebt = () => {
                   <hr/>
                   <Form method="post" noValidate="novalidate"
                         className="needs-validation" onSubmit={createDept}>
-                    <Label for="accountNum">Thông tin tài khoản <ShowRequire/></Label>
+                    <h4>1. Tài khoản thanht toán nợ</h4>
                     <FormGroup>
+                      <InputGroup>
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText>Tài khoản</InputGroupText>
+                        </InputGroupAddon>
+                        <Input type="select"
+                               onChange={owner.onChange}
+                               name="sender"
+                               id="sender"
+                               value={owner.value || ""}>
+                          {senderInfo.account && senderInfo.account.map((item, index) => {
+                            return (<option
+                                key={index}
+                                value={item.account_num}>{(`Thanh toán ${index + 1} (${item.account_num})`)}
+                            </option>)
+                          })}
+                        </Input>
+                      </InputGroup>
+                    </FormGroup>
+                    <h4>2. Tài khoản trả nợ</h4>
+                    <FormGroup>
+                      <Label for="accountNum">Tìm kiếm số tài khoản hoặc username</Label>
                       <InputGroup className="mb-2">
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>ID</InputGroupText>
@@ -137,11 +170,11 @@ const CreateDebt = () => {
                         <Input type="text"
                                name="accountNum"
                                id="accountNum"
-                               onChange={onChangeAccountNum}
-                               value={accountNum}
+                               onChange={accountNum.onChange}
+                               value={accountNum.value || ''}
                                onBlur={onBlurAccountNum}
-                               invalid={accInValid}
-                               valid={accValid}
+                               invalid={accountNum.invalid}
+                               valid={accountNum.valid}
                                placeholder="Nhập số tài khoản hoặc username"/>
                         {
                           AccName.isLoading ? (<InputGroupAddon addonType="prepend">
@@ -150,15 +183,17 @@ const CreateDebt = () => {
                                                      aria-hidden="true"/></InputGroupText>
                           </InputGroupAddon>) : ""
                         }
-                        <FormFeedback>{accInValidMsg}</FormFeedback>
+                        <FormFeedback>{accountNum.inValidMsg}</FormFeedback>
                       </InputGroup>
+                    </FormGroup>
+                    <FormGroup>
                       <InputGroup>
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>Họ và tên</InputGroupText>
                         </InputGroupAddon>
                         <Input type="text" name="name"
                                disabled={true}
-                               value={name.value}/>
+                               value={name.value || ""}/>
                       </InputGroup>
                     </FormGroup>
                     <hr/>
