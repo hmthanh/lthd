@@ -22,7 +22,11 @@ const UserInfo = () => {
         .then((response) => {
           console.log("response", response);
         });
+  }, [dispatch]);
 
+  useEffect(() => {
+    const uid = localStorage.getItem('uid');
+    let accessToken = localStorage.getItem('accessToken');
     dispatch(getAllAccount(uid, accessToken))
         .then((response) => {
           console.log(response);
@@ -30,7 +34,7 @@ const UserInfo = () => {
         .catch((e) => {
           console.log(e);
         });
-  }, [dispatch]);
+  }, [dispatch])
 
   return (
       user !== 'undefined' ?

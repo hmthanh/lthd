@@ -16,20 +16,19 @@ import {
 } from "reactstrap";
 import useToggle from "../../utils/useToggle";
 import {useDispatch, useSelector} from "react-redux";
-import {useHistory} from "react-router";
 import {formatMoney} from "../../utils/utils";
-import {closeAccount} from "../../redux/actions/account.action";
+import {closeAccount, getAllAccount} from "../../redux/actions/account.action";
 
 const CloseAccount = ({index, account_num, surplus, type}) => {
   const color = type === 1 ? "danger" : "success";
   const payTitle = type === 1 ? "Thanh toán" : "Tiết kiệm";
   const dispatch = useDispatch();
-  const history = useHistory();
   const modalToggle = useToggle(false);
-  const [receive, setReceive] = useState(0);
+  const [receive, setReceive] = useState("");
   const listReceive = useSelector(state => {
     return state.AccountInfo.data.account
   });
+
 
   const onChangeReceive = (e) => {
     setReceive(e.target.value);
@@ -48,18 +47,29 @@ const CloseAccount = ({index, account_num, surplus, type}) => {
         .then((response) => {
           console.log(response);
           modalToggle.setInActive();
-          history.go(0);
+
+          dispatch(getAllAccount(uid, accessToken))
+              .then((response) => {
+                console.log(response);
+              })
+              .catch((e) => {
+                console.log(e);
+              });
         })
         .catch((err) => {
           console.log(err);
         })
-  }, [dispatch, account_num, modalToggle, receive, history])
+  }, [dispatch, account_num, modalToggle, receive])
 
   useEffect(() => {
-    setReceive(listReceive[0].account_num);
-  }, [listReceive])
-
-  console.log("listReceive.length", listReceive.length);
+    for (let i = 0; i < listReceive.length; i++) {
+      if (listReceive[i].account_num !== account_num) {
+        let acc_num = listReceive[i].account_num;
+        setReceive(acc_num);
+        break;
+      }
+    }
+  }, [listReceive, account_num]);
 
   return (
       <>
@@ -104,7 +114,7 @@ const CloseAccount = ({index, account_num, surplus, type}) => {
                       if (account_num !== acc.account_num) {
                         return (
                             <option key={index} value={acc.account_num}>{acc.account_num}</option>)
-                      }else{
+                      } else {
                         return ""
                       }
                     })
