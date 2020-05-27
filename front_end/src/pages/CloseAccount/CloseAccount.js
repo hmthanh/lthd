@@ -64,7 +64,7 @@ const CloseAccount = ({index, account_num, surplus, type}) => {
         .catch((err) => {
           console.log(err);
         })
-  }, [dispatch, account_num, modalToggle, receive])
+  }, [dispatch, account_num, modalToggle, receive, alertToggle])
 
   useEffect(() => {
     for (let i = 0; i < listReceive.length; i++) {

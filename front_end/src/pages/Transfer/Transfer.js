@@ -229,7 +229,8 @@ const Transfer = () => {
       amount: amount,
       costType: cost_type,
       type: transType,
-      saveAlias: saveAlias.active
+      saveAlias: saveAlias.active,
+      to_name: name.value
     };
     console.log("data", data);
     let accessToken = localStorage.getItem('accessToken');
