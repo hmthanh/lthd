@@ -126,7 +126,7 @@ const RechargePage = () => {
         <div className="container-fluid py-3">
           <Row>
             <Col xs={12} sm={8} md={6} lg={6} className={"mx-auto"}>
-              <Card id="localBank">
+              <Card>
                 <div className="card-body">
                   <Collapse isOpen={!alertToggle.active}>
                     <CardTitle>
