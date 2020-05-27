@@ -2,11 +2,12 @@ const express = require('express')
 const moment = require('moment')
 const userAccount = require('../models/userAccount.model')
 const {
-  SECRET_TOKEN, OTP, PGP_URL_INFO, PGP_PARTNERCODE, RSA_PARTNERCODE,
-  RSA_URL_INFO, SECRET_RSA, LENGTH_REFREST_TOKEN
+ LENGTH_REFREST_TOKEN
 } = require('../config')
+const {generate} = require('rand-token')
 const common = require('../utils/common')
 const mailController = require('../mailer/mail.controller')
+const refeshTokenModel = require('../models/refeshToken.model')
 
 const router = express.Router()
 const validateData = (data)=> {
@@ -23,7 +24,8 @@ const validateData = (data)=> {
 
 router.post('/employee', async (req, res) => {
   console.log(req.body)
-  const isValid = validateReceiverData(data)
+  let data = {...req.body}
+  const isValid = validateData(data)
   if(!isValid){
     res.json({
       msg: 'invalid params',
@@ -33,14 +35,16 @@ router.post('/employee', async (req, res) => {
   }
   const uname = common.nonAccentVietnamese(common.strimString(data.name))
   let count = await userAccount.countUserName(uname)
+  const pass = generate(8)
   let entity = {
     name: req.body.name,
-    email: reqeq.body.email,
+    email: req.body.email,
     phone: parseInt( '84' + parseInt(req.body.phone)),
-    date_of_birth: moment(req.body.date_of_birth, 'MM-DD-YYYY'),
+    date_of_birth: new Date(moment(req.body.date_of_birth, 'YYYY-MM-DD')),
     user_name: `${uname}${count}`,
-    role: data.role || 3,
-    status: data.role || 2
+    role: data.role || 2,
+    status: 0,
+    password: pass
   }
   let results = await userAccount.add(entity)
   restItem = {
@@ -48,14 +52,14 @@ router.post('/employee', async (req, res) => {
     name: data.name,
     username: `${uname}${count}`,
     email: data.email,
-    dateOfBirth: dob,
+    dateOfBirth: entity.date_of_birth,
     phone: parseInt(`84${parseInt(data.phone)}`)
   }
-  let msgText = common.msgLogingTemplate({...restItem, password: pass});
+  let msgText = common.msgLogingAdminTemplate({...restItem, password: pass});
     // console.log(sender.email, sender);
-  let htmlmsg = common.htmlMsgLogingTemplate({...restItem, password: pass});
+  let htmlmsg = common.htmlMsgLogingAdminTemplate({...restItem, password: pass});
   mailController.sentMail(data.email, '[New Vimo][important !!!] Account Vimo', msgText, htmlmsg);
-  const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
+  const rfToken = generate(LENGTH_REFREST_TOKEN);
   refeshTokenModel.add({user_id: results.insertId, refresh_token: rfToken});
   res.status(200).json({
     msg: 'successfully',

@@ -11,6 +11,7 @@ const {
   RSA_URL_INFO, SECRET_RSA, LENGTH_REFREST_TOKEN
 } = require('../config')
 
+const refeshTokenModel = require('../models/refeshToken.model')
 const bcrypt = require('bcryptjs')
 
 const moment = require('moment')
@@ -44,10 +45,10 @@ router.post('/', async (req, res) => {
   const dob = new Date(data.date_of_birth)
   const uname = common.nonAccentVietnamese(common.strimString(data.name))
   let count = await userAccount.countUserName(uname)
-  console.log(count)
+  // console.log(count)
   count = count[0].num + 1
-  console.log(`${uname}${count}`)
-  console.log('password: ', pass)
+  // console.log(`${uname}${count}`)
+  // console.log('password: ', pass)
   if (isValid) {
     let entity = {
       name: data.name,
@@ -132,6 +133,13 @@ router.post('/payment', async (req, res) => {
 router.post('/closed', async (req, res) => {
   console.log(req.body);
   let account = await bankingInfoModel.getInfoAccountByAccNum(req.body.closerId)
+  if (req.body.closerId === req.body.receiveId) {
+    res.json({
+      errorCode: -102,
+      msg: 'closerId = receiveId'
+    })
+    return
+  }
   if (!account || account.length === 0) {
     res.json({
       errorCode: -100,
@@ -164,9 +172,9 @@ router.post('/closed', async (req, res) => {
     surplus: 0
   }
   tagetAcc.surplus = parseInt(tagetAcc.surplus) + parseInt(account.surplus)
-  let r1 =  await bankingInfoModel.update(entity, {account_num: req.body.closerId})
+  await bankingInfoModel.update(entity, {account_num: req.body.closerId})
   // console.log(r1)
-  let r2 = await bankingInfoModel.update(tagetAcc, {account_num: req.body.receiveId})
+  await bankingInfoModel.update(tagetAcc, {account_num: req.body.receiveId})
   // console.log(r2)
   res.status(200).json({
     errorCode: 0,
