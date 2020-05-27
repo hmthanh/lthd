@@ -59,10 +59,19 @@ module.exports = {
   getAllHistByUid: (offset, count, from, to, account, type, partner) => {
     let q = type !== 0 ? `AND t.type=${type}` : ''
     let q2 = partner !== 0 ? `AND t.partner_code=${partner}` : ''
+    if (q2 != '') {
+      if(partner === 7261) { // rsq
+        q2 = `AND t.partner_code IN (5412,7261)`
+      } else {
+        q2 = `AND t.partner_code IN (6572, 0923)`
+      }
+    }
+
     return db.load(`
       SELECT t.trans_id, t.type, t.acc_name, t.from_account, t.to_account, t.amount, t.note, t.timestamp, t.surplus, t.state, t.signature
       FROM transaction_tranfer t
-      WHERE t.timestamp >= ${from} AND t.timestamp <= ${to} AND t.from_account IN ${account} ${q} ${q2} 
+      WHERE t.timestamp >= ${from} AND t.timestamp <= ${to} AND (t.from_account IN ${account}
+      OR t.to_account IN ${account}) ${q} ${q2} 
       ORDER BY t.timestamp DESC LIMIT ${offset},${count}`)
   },
 };

@@ -1,9 +1,9 @@
 const express = require('express')
 const moment = require('moment')
-const { hash, sign } = require('../utils/rsa.signature')
+const { hash, sign, verify } = require('../utils/rsa.signature')
 const pgp = require('../utils/pgp.signature')
 const { SECRET_TOKEN, OTP, PGP_URL_TRANFER, 
-  RSA_URL_TRANFER,PGP_PARTNERCODE, RSA_PARTNERCODE, SECRET_RSA } = require('../config')
+  RSA_URL_TRANFER, RSA_PARTNERCODE, SECRET_RSA } = require('../config')
 const mailController = require('../mailer/mail.controller')
 const transferModel = require('../models/transfer.model')
 const notifyModel = require('../models/notify.model')
@@ -11,10 +11,9 @@ const debtModel = require('../models/debt.model')
 const { getAccountInfo, getIdByAccountNum } = require('../models/account.model')
 const { htmlOTPTemplate, msgOTPTemplate } = require('../utils/common')
 const {TranferInternalBank} = require('../models/transaction.Tranfer.Model')
-const { minusTransfer, plus, patch } = require('../utils/db')
-const bankingAccountModel = require('../models/bankingAccount.modal')
 const {broadcastAll} = require('../ws');
 const { saveAlias } = require('../models/receiverInfo.model')
+const {MinusTransfer} = require('../models/transaction.Tranfer.Model')
 const router = express.Router()
 const partnerCode = 5412
 const encoding = 'base64'
@@ -37,9 +36,10 @@ const tranferPgp = async transaction => {
       Time: `${parseInt(ts / 1000)}`,
       STTTHAnother: `${transaction.from_account}`,
       Money: `${transaction.amount}`,
-      PartnerCode: `0725`
+      PartnerCode: `0725`,
+      NameAnother: transaction.acc_name
   }
-
+  console.log(data)
   const UrlApi = PGP_URL_TRANFER
   let signature  =  await pgp.signUtf8(JSON.stringify(data))
   data.Signature = Buffer.from(signature).toString(encoding)
@@ -98,7 +98,7 @@ const tranferRSA = async transaction => {
  * logic chung, chuyển tiền liên ngân hàng,
  * bước 1: tạo 1 transaction chuyển tiền, tạo mã OTP
  * bước 2: user verify OTP thành công
- * buóc 3: thực hiện gọi các api bên ngoài ngân hàng chờ chữ ký trả về
+ * buóc 3: thực hiện gọi các api bên ng'oài ngân hàng chờ chữ ký trả về
  * bước 4: veryfy chữ ký.
  * bước 5. lưu lại và charge tiền
  */
@@ -111,8 +111,9 @@ const tranferRSA = async transaction => {
 
 
 router.post('/', async (req, res) => {
-  const type = req.body.type ? req.body.type : 2
-  if (req.body.isSaveAlias && req.body.isSaveAlias === true) {
+  console.log(req.body)
+  const type = req.body.type
+  if (req.body.saveAlias && req.body.saveAlias === true) {
     saveAlias({...req.body})
   }
   let isValid = validateData(req.body)
@@ -182,7 +183,7 @@ router.post('/', async (req, res) => {
     })
 
     if (type === 4){
-      const creditor = await getIdByAccountNum(req.body.toAccount);
+      const creditor = await getAccountInfo(req.body.toAccount);
       const creditorInfo = creditor[0];
       let notify = {
         type: 4,
@@ -191,10 +192,10 @@ router.post('/', async (req, res) => {
         name: sender.name,
         money: req.body.amount,
         message: req.body.note,
-        debt_id: req.body.debt
+        debt_id: req.body.debt_id
       }
-      await notifyModel.deleteByDebtId(req.body.debt);
-      await debtModel.delete(req.body.debt)
+      await notifyModel.deleteByDebtId(req.body.debt_id);
+      await debtModel.delete(req.body.debt_id)
       await notifyModel.add(notify);
 
       broadcastAll(JSON.stringify(notify));
@@ -226,11 +227,15 @@ router.post('/:id', async (req, res) => {
     if(transaction.partner_code === null || transaction.partner_code === '0' || transaction.partner_code === 0) {
       TranferInternalBank(transaction)
       .then((val) => {
-        console.log(val)
+        // console.log(val)
         res.status(200).json({
           msg: 'successfully',
           errorCode: 0,
-          ...val
+          transId: req.body.transId, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
+          to_account: transaction.to_account, // số tài khoản thụ hưởng
+          amount: transaction.amount, // số tiền giao dịch
+          from_account:transaction.from_account,
+          timestamp: transaction.timestamp
         })
       }).catch(err => {
           res.status(200).json({
@@ -242,6 +247,20 @@ router.post('/:id', async (req, res) => {
     } else {
       // chuyển khoản pgp
       if(transaction.partner_code === '7261' || transaction.partner_code === 7261) { 
+        let isFalse = false;
+        try {
+          await MinusTransfer(transaction)
+        } catch (err) {
+          isFalse = true
+        }
+        if (isFalse) {
+          res.status(200).json({
+            msg: 'Số dư không đủ',
+            errorCode: -100,
+          }) 
+          return
+        }
+        
         let respose = await tranferPgp(transaction)
         // console.log(respose.data)
        
@@ -253,16 +272,19 @@ router.post('/:id', async (req, res) => {
           state: 0,
           signature: signature
         }
-        let isVerify = await pgp.verifyUtf8(signature)
+        let isVerify = await pgp.verify(signature)
         if (isVerify) {
-          await minusTransfer(req.body.transId, transaction.amount, transaction.from_account)
-          patch(tran, {trans_id: req.body.transId}, 'transaction_tranfer')
+          // console.log(transaction)
+          transaction.signature = signature
+          // patch(tran, {trans_id: req.body.transId}, 'transaction_tranfer')
           res.status(200).json({
             msg: 'successfully',
             errorCode: 0,
             transId: req.body.transId, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
             to_account: transaction.to_account, // số tài khoản thụ hưởng
-            amount: transaction.amount // số tiền giao dịch
+            amount: transaction.amount, // số tiền giao dịch
+            from_account:transaction.from_account,
+            timestamp: transaction.timestamp
           }) 
         } else {
           res.status(200).json({
@@ -273,7 +295,7 @@ router.post('/:id', async (req, res) => {
       } else {
         let respose = await tranferRSA(transaction)
         // console.log(respose)
-        await minusTransfer(req.body.transId, transaction.amount, transaction.from_account)
+       
         let signature = respose.data.sign
         if (!signature) signature = `don't respone signature`
         const tran = {
@@ -281,13 +303,17 @@ router.post('/:id', async (req, res) => {
           state: 0,
           signature: signature
         }
-        patch(tran, {trans_id: req.body.transId}, 'transaction_tranfer')
+        //verify(signature)
+        transaction.signature = signature
+        await MinusTransfer(transaction)
         res.status(200).json({
           msg: 'successfully',
           errorCode: 0,
           transId: req.body.transId, // mã transaction thực hiên giao dịch cần gửi đi trong bước 3(OTP)
           to_account: transaction.to_account, // số tài khoản thụ hưởng
-          amount: transaction.amount // số tiền giao dịch
+          amount: transaction.amount, // số tiền giao dịch,
+          from_account:transaction.from_account,
+          timestamp: transaction.timestamp
         }) 
         
       }

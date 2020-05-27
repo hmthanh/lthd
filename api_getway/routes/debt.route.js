@@ -17,6 +17,7 @@ router.post('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   // console.log(req.body)
   let entity = {
+    owner_account: req.body.ownerAccount,
     account_num: req.body.accountNum,
     owner_id: req.body.ownerId,
     date_time: moment(new Date()).valueOf(),
@@ -36,7 +37,8 @@ router.post('/', async (req, res) => {
   let notify = {
     type: 1,
     recipient: debtorInfo.id,
-    account_id: ownerInfo.account_num,
+    account_id: debtorInfo.account_num,
+    owner_account: req.body.ownerAccount,
     name: ownerInfo.name,
     money: req.body.money,
     message: req.body.message,
@@ -46,7 +48,7 @@ router.post('/', async (req, res) => {
   // console.log("notify update", update);
 
   broadcastAll(JSON.stringify(notify))
-  await res.status(200).json({
+  res.status(200).json({
     item,
     msg: 'successfully'
   })
