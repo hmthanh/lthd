@@ -12,7 +12,7 @@ import {
 import {fetchFrom} from '../../utils/fetchHelper'
 import {UrlApi} from '../../shares/baseUrl'
 
-export const getAllDebt = (id, accessToken) => {
+export const fetchDebtReminder = (id, accessToken) => {
   return (dispatch) => {
     dispatch({type: DEBT_LOADING});
     return new Promise(async (resolve, reject) => {
@@ -29,7 +29,7 @@ export const getAllDebt = (id, accessToken) => {
   };
 }
 
-export const Create = (data, accessToken) => {
+export const createDebtReminder = (data, accessToken) => {
   return (dispatch) => {
     dispatch({type: CREATE_DEBT_LOADING});
     return new Promise(async (resolve, reject) => {

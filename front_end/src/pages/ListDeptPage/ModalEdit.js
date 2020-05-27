@@ -19,7 +19,7 @@ import useInputChange from "../../utils/useInputChange";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faBell} from "@fortawesome/free-solid-svg-icons";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {Edit, getAllDebt} from "../../redux/actions/debt.action";
+import {Edit, fetchDebtReminder} from "../../redux/actions/debt.action";
 
 const ModalEdit = ({accountId, accountNum, note, money, name}) => {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const ModalEdit = ({accountId, accountNum, note, money, name}) => {
         .then((response) => {
           console.log(response);
           const uid = localStorage.getItem('uid');
-          dispatch(getAllDebt(uid, accessToken))
+          dispatch(fetchDebtReminder(uid, accessToken))
               .then((response) => {
                 console.log(response);
                 modalToggle.setInActive();

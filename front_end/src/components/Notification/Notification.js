@@ -37,7 +37,6 @@ const Notification = () => {
     const uid = localStorage.getItem('uid');
     dispatch(getNotify(uid, accessToken))
         .then((response) => {
-          console.log("response alert data", response);
           if (response.status !== 403) {
             setAlertData(response);
           }

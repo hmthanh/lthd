@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Button, Card, CardGroup, Col, Container, Row, Table} from 'reactstrap'
 import {useDispatch, useSelector} from 'react-redux';
-import {getAllDebt} from '../../redux/actions/debt.action';
+import {fetchDebtReminder} from '../../redux/actions/debt.action';
 import {formatMoment} from "../../utils/utils";
 import CancelDebt from "./CancelDebt";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -18,7 +18,7 @@ const DebtPage = () => {
   useEffect(() => {
     let accessToken = localStorage.getItem('accessToken');
     let uid = localStorage.getItem('uid');
-    dispatch(getAllDebt(uid, accessToken))
+    dispatch(fetchDebtReminder(uid, accessToken))
         .then((response) => {
           // console.log(response);
         })

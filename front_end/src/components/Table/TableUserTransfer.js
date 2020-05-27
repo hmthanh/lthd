@@ -3,7 +3,7 @@ import {Badge, Table} from 'reactstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSort} from '@fortawesome/free-solid-svg-icons'
 import useSortableData from "../../utils/useSortableData";
-import {formatFormalDate, formatMoney} from "../../utils/utils";
+import {formatMoment, formatMoney} from "../../utils/utils";
 
 const sortItem = {
   cursor: "pointer"
@@ -91,7 +91,7 @@ const TableUserTransfer = (props) => {
           items.map((item, index) => (
               <tr key={index}>
                 <th scope="row">{index + 1}</th>
-                <td>{formatFormalDate(item.timestamp)}</td>
+                <td>{formatMoment(item.timestamp)}</td>
                 <td>{item.acc_name}</td>
                 <td>{item.from_account}</td>
                 <td>{item.to_account}</td>

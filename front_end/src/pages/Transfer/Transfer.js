@@ -38,22 +38,14 @@ const Transfer = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
-  const senderInfo = useSelector(state => {
-    return state.PaymentAcc.data
-  });
-  const transferInfo = useSelector((state) => {
-    return state.TransferInfo
-  });
-  const interBankInfo = useSelector((state) => {
-    return state.InterBank.data
-  });
+  const senderInfo = useSelector(state => state.PaymentAcc.data);
+  const transferInfo = useSelector((state) => state.TransferInfo);
+  const interBankInfo = useSelector((state) => state.InterBank.data);
   const listSaved = useSelector(state => state.AliasReceiver.fetch);
-  const AccName = useSelector((state) => {
-    return state.AccName
-  });
+  const AccName = useSelector((state) => state.AccName);
 
   const [sender, setSender] = useState(0);
-  const [receiveBank, setReceiveBank] = useState(0);
+  const [banking, setBanking] = useState(0);
   const [isInterbank, setIsInterbank] = useState(false);
   const [selectSaved, setSelectSaved] = useState(0);
   const [isUseSaved, setIsUseSaved] = useState(false);
@@ -81,14 +73,33 @@ const Transfer = () => {
   const qName = query.get("name");
   const qMoney = query.get("money");
   const qNote = query.get("note");
+  const qDebt = query.get("debt");
 
   const onChangeSelectSaved = (e) => {
     setSelectSaved(e.target.value);
     accountNum.setValue(e.target.value);
-    accountNum.setInValid(false)
-    accountNum.setValid(true)
-    let change_name = listSaved.item[e.target.selectedIndex].name
-    name.setValue(change_name);
+    accountNum.setInValid(false);
+    accountNum.setValid(true);
+    let {alias_name, partner_bank} = listSaved.item[e.target.selectedIndex];
+    console.log("partner_code", partner_bank);
+    name.setValue(alias_name);
+    setBanking(partner_bank);
+    if (partner_bank !== "0") {
+      setIsInterbank(true);
+      let accessToken = localStorage.getItem('accessToken');
+
+      dispatch(getInterbank(accessToken))
+          .then((response) => {
+            let partner_code = response.item[0].partner_code;
+            setBanking(partner_code);
+          })
+          .catch((err) => {
+            let title = "Đã xảy ra lỗi";
+            let content = "Không thể tải ngân hàng liên kết\nError : " + err;
+            showMessageBox(title, content);
+            setIsInterbank(false);
+          });
+    }
   }
 
   function onChangeLocalBank(e) {
@@ -96,7 +107,7 @@ const Transfer = () => {
   }
 
   function onChangeReceiveBank(e) {
-    setReceiveBank(e.target.value);
+    setBanking(e.target.value);
   }
 
   const onBlurAccountNum = useCallback(() => {
@@ -109,7 +120,7 @@ const Transfer = () => {
     let accessToken = localStorage.getItem('accessToken')
     let partner_code = '0'
     if (isInterbank) {
-      partner_code = receiveBank
+      partner_code = banking
     }
     let data = {
       query: accountNum.value,
@@ -139,7 +150,7 @@ const Transfer = () => {
           accountNum.setValue("")
         })
 
-  }, [accountNum, sender, dispatch, name, isInterbank, receiveBank]);
+  }, [accountNum, sender, dispatch, name, isInterbank, banking]);
 
   function onChangeInterbank(e) {
     if (!e.target.value) {
@@ -149,14 +160,14 @@ const Transfer = () => {
       dispatch(getInterbank(accessToken))
           .then((response) => {
             let partner_code = response.item[0].partner_code;
-            setReceiveBank(partner_code);
+            setBanking(partner_code);
           })
           .catch((err) => {
             let title = "Đã xảy ra lỗi";
             let content = "Không thể tải ngân hàng liên kết\nError : " + err;
             showMessageBox(title, content);
             setIsInterbank(false);
-          }, [dispatch]);
+          });
     }
   }
 
@@ -177,6 +188,7 @@ const Transfer = () => {
             console.log(firstUser)
             accountNum.setValue(firstUser.account_num);
             name.setValue(firstUser.name);
+            setBanking(firstUser.partner_code);
           })
           .catch((err) => {
             let title = "Đã xảy ra lỗi";
@@ -211,7 +223,7 @@ const Transfer = () => {
     }
     let partner_code = 0;
     if (isInterbank) {
-      partner_code = receiveBank;
+      partner_code = banking;
     }
     let uid = localStorage.getItem('uid');
     let note = message.value, amount = money.value;
@@ -227,7 +239,8 @@ const Transfer = () => {
       costType: cost_type,
       type: transType,
       saveAlias: saveAlias.active,
-      toName: name.value
+      toName: name.value,
+      debt_id: qDebt
     };
     console.log("data", data);
     let accessToken = localStorage.getItem('accessToken');
@@ -327,7 +340,7 @@ const Transfer = () => {
                       </div>
                       <Collapse isOpen={isInterbank}>
                         <Input type="select"
-                               value={receiveBank}
+                               value={banking}
                                onChange={onChangeReceiveBank}
                                name="receiveBank" id="receiveBank">
                           {
@@ -394,7 +407,7 @@ const Transfer = () => {
                         </InputGroupAddon>
                         <Input type="text" name="name"
                                disabled={true}
-                               value={name.value}/>
+                               value={name.value || ""}/>
                       </InputGroup>
                     </FormGroup>
                     <FormGroup>
@@ -463,6 +476,7 @@ const Transfer = () => {
                       transId={transId}
                       onFinish={onFinish}
                       onBack={onBack}
+                      finishToggle={finishToggle}
                   ></ModalVerifyTrans>
                 </Collapse>
                 <Collapse isOpen={finishToggle.active}>
