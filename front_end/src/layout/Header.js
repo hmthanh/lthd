@@ -98,7 +98,6 @@ const Header = () => {
   const history = useHistory();
   useEffect(() => {
     const uid = localStorage.getItem('uid');
-    console.log("uid", uid, "abc");
     if (!uid){
       history.push("/login");
     }

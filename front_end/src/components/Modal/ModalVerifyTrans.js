@@ -1,11 +1,11 @@
 import React from 'react';
-import {Button, CardTitle, Form, FormFeedback, FormGroup, Input, Label, ModalFooter, Spinner} from "reactstrap";
+import {Button, CardTitle, Collapse, Form, FormFeedback, FormGroup, Input, Label, ModalFooter, Spinner} from "reactstrap";
 import useInputChange from "../../utils/useInputChange";
 import {verifyOTP} from "../../redux/actions/transfer.action";
 import {useDispatch, useSelector} from "react-redux";
 import useToggle from "../../utils/useToggle";
 
-const ModalVerifyTrans = ({transId, onBack, onFinish}) => {
+const ModalVerifyTrans = ({transId, onBack, onFinish, finishToggle}) => {
   const dispatch = useDispatch();
   const verifyInfo = useSelector((state) => {
     return state.VerifyResult
@@ -55,24 +55,26 @@ const ModalVerifyTrans = ({transId, onBack, onFinish}) => {
             <FormFeedback>Mã OTP không chính xác, vui lòng kiểm tra lại</FormFeedback>
           </FormGroup>
         </Form>
-        <ModalFooter>
-          <Button color="success"
-                  className="d-flex align-items-center justify-content-center"
-                  onClick={onVerify}
-                  disabled={verifyInfo.isLoading}
-          >
+        <Collapse isOpen={!finishToggle.active}>
+          <ModalFooter>
+            <Button color="success"
+                    className="d-flex align-items-center justify-content-center"
+                    onClick={onVerify}
+                    disabled={verifyInfo.isLoading}
+            >
               <span style={{marginLeft: "40px"}}>
                 {(verifyInfo.isLoading ? <Spinner color="light"
                                                   size={"sm"} role="status"
                                                   aria-hidden="true"/> : "")}
               </span>
-            <span style={{marginLeft: "5px", paddingRight: "40px"}}>Đồng ý</span></Button>
-          {" "}
-          <Button color="secondary"
-                  onClick={onBack}
-                  className="d-flex align-items-center justify-content-center">
-            <span style={{marginLeft: "5px", paddingRight: "40px"}}>Quay lại</span></Button>
-        </ModalFooter>
+              <span style={{marginLeft: "5px", paddingRight: "40px"}}>Đồng ý</span></Button>
+            {" "}
+            <Button color="secondary"
+                    onClick={onBack}
+                    className="d-flex align-items-center justify-content-center">
+              <span style={{marginLeft: "5px", paddingRight: "40px"}}>Quay lại</span></Button>
+          </ModalFooter>
+        </Collapse>
       </>
   );
 };

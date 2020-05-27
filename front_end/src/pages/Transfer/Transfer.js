@@ -87,7 +87,8 @@ const Transfer = () => {
     accountNum.setValue(e.target.value);
     accountNum.setInValid(false)
     accountNum.setValid(true)
-    let change_name = listSaved.item[e.target.selectedIndex].name
+    let change_name = listSaved.item[e.target.selectedIndex].alias_name
+    console.log("change_name", change_name, listSaved, listSaved.item);
     name.setValue(change_name);
   }
 
@@ -276,9 +277,9 @@ const Transfer = () => {
 
   const onFinish = useCallback(() => {
     finishToggle.setActive();
-    setTimeout(() => {
-      history.push("/user-history")
-    }, 5000)
+    // setTimeout(() => {
+    //   history.push("/user-history")
+    // }, 5000)
   }, [finishToggle, history]);
 
   const onBack = () => {
@@ -394,7 +395,7 @@ const Transfer = () => {
                         </InputGroupAddon>
                         <Input type="text" name="name"
                                disabled={true}
-                               value={name.value}/>
+                               value={name.value || ""}/>
                       </InputGroup>
                     </FormGroup>
                     <FormGroup>
@@ -463,6 +464,7 @@ const Transfer = () => {
                       transId={transId}
                       onFinish={onFinish}
                       onBack={onBack}
+                      finishToggle={finishToggle}
                   ></ModalVerifyTrans>
                 </Collapse>
                 <Collapse isOpen={finishToggle.active}>
