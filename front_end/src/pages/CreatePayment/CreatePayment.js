@@ -21,9 +21,9 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import useInputChange from "../../utils/useInputChange";
 import "react-datepicker/dist/react-datepicker.css";
-import {getAccName} from "../../redux/creators/transferCreator";
+import {getAccName} from "../../redux/actions/transfer.action";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {createPayment} from "../../redux/creators/accountCreator";
+import {createPayment} from "../../redux/actions/account.action";
 import useToggle from "../../utils/useToggle";
 
 const CreatePayment = () => {
@@ -115,7 +115,7 @@ const CreatePayment = () => {
         .catch((e) => {
           // console.log("error", e);
         });
-  }, [dispatch, userId, payType, accountNum]);
+  }, [dispatch, userId, payType, accountNum, createdToggle]);
 
   // useEffect(() => {
   //   payType.setValue(paymentTitle[0].type);
@@ -126,7 +126,7 @@ const CreatePayment = () => {
       <Container>
         <div className="container-fluid py-3">
           <Row>
-            <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
+            <Col xs={12} sm={8} md={6} lg={6} className={"mx-auto"}>
               <Card id="localBank">
                 <div className="card-body">
                   <Collapse

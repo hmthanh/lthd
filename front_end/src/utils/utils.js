@@ -1,5 +1,8 @@
+const moment = require('moment');
 export const required = (val) => val && val.length;
-export const checkEmpty = val => {return val && val.length}
+export const checkEmpty = val => {
+  return val && val.length
+}
 export const maxLength = (len) => (val) => !(val) || (val.length <= len);
 export const minLength = (len) => (val) => val && (val.length >= len);
 export const isNumber = (val) => !isNaN(Number(val));
@@ -11,6 +14,7 @@ export const isNumberText = ' Trường yêu cầu định dạng số';
 export const maxLengthText = (val) => `Tối đa: ${val} kí tự`;
 export const minLengthText = (val) => `Tối thiểu: ${val} kí tự`;
 export const convertObjectToArray = (object) => Object.keys(object).map(i => object[i]);
+export const formatMoment = (value) => moment(parseInt(value)).format("HH:mm DD-MM-YYYY");
 export const formatFormalDate = (date) => {
   let d = new Date(date),
       month = '' + (d.getMonth() + 1),
@@ -24,6 +28,7 @@ export const formatFormalDate = (date) => {
 
   return [day, month, year].join('-');
 };
+
 
 export const formatMoney = (amount, decimalCount = 0, decimal = ".", thousands = ",") => {
   try {
@@ -42,11 +47,11 @@ export const formatMoney = (amount, decimalCount = 0, decimal = ".", thousands =
 };
 
 export const checkValue = (obj) => {
-  if (obj.value === ""){
+  if (obj.value === "") {
     obj.setInValid(true)
     obj.setInValidMsg("Không được để trống");
     return true
-  }else{
+  } else {
     return false;
   }
 }

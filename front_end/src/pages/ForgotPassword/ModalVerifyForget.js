@@ -1,42 +1,64 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {Button, Form, FormFeedback, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Spinner} from "reactstrap";
-import useInputChange from "../../utils/useInputChange";
 import {useDispatch, useSelector} from "react-redux";
-import useToggle from "../../utils/useToggle";
-import {verifyForget} from "../../redux/creators/changePasswordCreator";
+import {verifyForget} from "../../redux/actions/changePassword";
+import useInputRequire from "../../utils/useInputRequire";
 
 const ModalVerifyForget = ({isShow, verifyPwdData, onClose, onVerifySuccess}) => {
   const dispatch = useDispatch();
   const verifyPwd = useSelector((state) => {
     return state.ChangePassword
   });
-  const invalidOTPToggle = useToggle(false);
-  const OTP = useInputChange(0);
-  const newPwd = useInputChange("");
+  const OTP = useInputRequire({
+    value: "",
+    valid: false,
+    invalid: false,
+    inValidMsg: "Mã OTP không chính xác, vui lòng kiểm tra lại"
+  });
+  const newPwd = useInputRequire({
+    value: "",
+    valid: false,
+    invalid: false,
+    inValidMsg: "Mật khâu không được để trống"
+  });
+  const repeatPwd = useInputRequire({
+    value: "",
+    valid: false,
+    invalid: false,
+    inValidMsg: "Lặp lại mật khẩu không được để trống"
+  });
 
-  function onVerify(e) {
+  const onVerify = useCallback(() => {
+    if (!OTP.value) {
+      OTP.setInValid(true);
+      return;
+    }
+    if (!newPwd.value) {
+      newPwd.setInValid(true);
+      return;
+    }
     let data = {
       uid: verifyPwdData,
       newPwd: newPwd.value,
       OTP: OTP.value
-    };
+    }
     dispatch(verifyForget(data))
         .then((response) => {
-          console.log("response Verify OTP", response)
           if (response.error === 0) {
             console.log('success');
+            localStorage.setItem('refreshToken', response.refreshToken);
             onClose();
             onVerifySuccess();
           } else {
-            invalidOTPToggle.setActive();
+            OTP.setInValid(true);
           }
           console.log(response);
         })
         .catch((err) => {
           console.log("Error", err);
-          invalidOTPToggle.setActive();
-        }, [dispatch]);
-  }
+          OTP.setInValid(true);
+        });
+  }, [dispatch, OTP, newPwd, onClose, onVerifySuccess, verifyPwdData]);
 
   return (
       <>
@@ -49,10 +71,37 @@ const ModalVerifyForget = ({isShow, verifyPwdData, onClose, onVerifySuccess}) =>
                 <Input type="number" name="OTP" id="OTP"
                        onChange={OTP.onChange}
                        value={OTP.value}
-                       invalid={invalidOTPToggle.active}
+                       onBlur={OTP.onBlur}
+                       invalid={OTP.invalid}
                        required
                 />
-                <FormFeedback>Mã OTP không chính xác, vui lòng kiểm tra lại</FormFeedback>
+                <FormFeedback>{OTP.inValidMsg}</FormFeedback>
+              </FormGroup>
+              <FormGroup>
+                <Label for="newPwd">Mật khẩu mới</Label>
+                <Input type="password"
+                       name="newPwd"
+                       id="newPwd"
+                       onChange={newPwd.onChange}
+                       value={newPwd.value}
+                       onBlur={newPwd.onBlur}
+                       invalid={newPwd.invalid}
+                       required
+                />
+                <FormFeedback>{newPwd.inValidMsg}</FormFeedback>
+              </FormGroup>
+              <FormGroup>
+                <Label for="repeatPwd">Nhập lại mật khẩu mới</Label>
+                <Input type="password"
+                       name="repeatPwd"
+                       id="repeatPwd"
+                       onChange={repeatPwd.onChange}
+                       value={repeatPwd.value}
+                       onBlur={repeatPwd.onBlur}
+                       invalid={repeatPwd.invalid}
+                       required
+                />
+                <FormFeedback>{repeatPwd.inValidMsg}</FormFeedback>
               </FormGroup>
             </Form>
 

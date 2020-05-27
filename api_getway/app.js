@@ -53,9 +53,6 @@ app.use('/api/refresh', require('./routes/refresh.route'));
 
 app.use('/api/receiver', require('./routes/receiver.route'));
 
-// don't remote implement late
-// app.use('/api/reminscent', require('./routes/reminscent.route'))
-
 app.use('/api/transfer', verifyAccessToken, require('./routes/transfer.route'));
 
 app.use('/api/associate', verifyAccessToken, require('./routes/associate.route'));
@@ -66,17 +63,14 @@ app.use('/api/notify', require('./routes/notify.route'));
 
 app.use('/api/remind', require('./routes/remind.route'));
 
-app.use('/api/listuser', require('./routes/listuser.route'));
-app.use('/api/liststaff', require('./routes/liststaff.route'));
-app.use('/api/listtransfer', require('./routes/listtransfer.route'));
-
-app.use('/api/history', verifyAccessToken, require('./routes/history.route'));
 
 app.use('/api/recharge', verifyAccessToken, require('./routes/recharge.route'));
 
-app.use('/api/history-account', verifyAccessToken, require('./routes/historyTransfer.route'));
+app.use('/api/history', verifyAccessToken, require('./routes/history.route'));
+app.use('/api/history-user', verifyAccessToken, require('./routes/historyUser.route'));
 
-app.use('/api/employee', verifyAccessToken, require('./routes/employee.route'));
+app.use('/api/employee', require('./routes/employee.route'));
+
 app.use('/api/admin', verifyAccessToken, require('./routes/admin.route'));
 
 // WS

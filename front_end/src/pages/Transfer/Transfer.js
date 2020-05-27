@@ -16,24 +16,28 @@ import {
   InputGroupText,
   Label,
   Row,
-  Spinner
+  Spinner,
+  UncontrolledTooltip
 } from "reactstrap";
-import {getAccName, getInterbank, getReceiverSaved, transfer} from "../../redux/creators/transferCreator";
+import {getAccName, getInterbank, transfer} from "../../redux/actions/transfer.action";
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
-import {convertObjectToArray} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ModalVerifyTrans from "../../components/Modal/ModalVerifyTrans";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {getAllAccount} from "../../redux/creators/accountCreator";
+import {getPaymentAcc} from "../../redux/actions/account.action";
 import {useLocation} from "react-router";
+import useInputRequire from "../../utils/useInputRequire";
+import {FetchAlias} from "../../redux/actions/aliasReceiver.action";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faHeart, faHeartBroken} from "@fortawesome/free-solid-svg-icons";
 
 const Transfer = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const senderInfo = useSelector(state => {
-    return state.AccountInfo.data
+    return state.PaymentAcc.data
   });
   const transferInfo = useSelector((state) => {
     return state.TransferInfo
@@ -41,54 +45,48 @@ const Transfer = () => {
   const interBankInfo = useSelector((state) => {
     return state.InterBank.data
   });
-  const listSaved = useSelector((state) => {
-    return state.ReceiverSaved.data
-  });
+  const listSaved = useSelector(state => state.AliasReceiver.fetch);
   const AccName = useSelector((state) => {
     return state.AccName
   });
 
-  const sender = useInputChange(1);
+  const [sender, setSender] = useState(0);
   const [receiveBank, setReceiveBank] = useState(0);
   const [isInterbank, setIsInterbank] = useState(false);
   const [selectSaved, setSelectSaved] = useState(0);
   const [isUseSaved, setIsUseSaved] = useState(false);
-  const [accountNum, setAccountNum] = useState("");
-  const [accValid, setAccValid] = useState(false);
-  const [accInValid, setAccInValid] = useState(false);
-  const [accInValidMsg, setAccInValidMsg] = useState("");
+  const saveAlias = useToggle(false);
+  const accountNum = useInputRequire({
+    value: "",
+    valid: false,
+    invalid: false,
+    inValidMsg: ""
+  })
   const name = useInputChange('');
   const money = useInputChange(0);
   const message = useInputChange('');
-  const [debt, setDebt] = useState(0);
   const isSenderPay = useToggle(true);
   const msgBoxToggle = useToggle(false);
   const showVerifyToggle = useToggle(false);
   const [titleMsg, setTitleMsg] = useState("");
   const [contentMsg, setContentMsg] = useState("");
   const [transId, setTransId] = useState(0);
-  const [transType, setTransType] = useState(1);
+  const [transType, setTransType] = useState(2);
 
   const query = new URLSearchParams(location.search);
   const qAccNum = query.get("account");
   const qName = query.get("name");
   const qMoney = query.get("money");
   const qNote = query.get("note");
-  const qDebt = query.get("debt");
 
   const onChangeSelectSaved = (e) => {
-    if (listSaved) {
-      setSelectSaved(e.target.value);
-      setAccountNum(e.target.value);
-      setAccInValid(false)
-      setAccValid(true)
-      let change_name = listSaved[e.target.selectedIndex].name
-      name.setValue(change_name);
-    }
-  }
-
-  function onChangeAccountNum(e) {
-    setAccountNum(e.target.value);
+    console.log(e);
+    setSelectSaved(e.target.value);
+    accountNum.setValue(e.target.value);
+    accountNum.setInValid(false)
+    accountNum.setValid(true)
+    let change_name = listSaved.item[e.target.selectedIndex].name
+    name.setValue(change_name);
   }
 
   function onChangeLocalBank(e) {
@@ -101,37 +99,44 @@ const Transfer = () => {
 
   const onBlurAccountNum = useCallback(() => {
     if (accountNum.value === "") {
-      setAccInValid(true)
-      setAccInValidMsg("Không được để trống")
+      accountNum.setInValid(true)
+      accountNum.setInValidMsg("Không được để trống")
       return false;
     }
+
     let accessToken = localStorage.getItem('accessToken')
     let partner_code = '0'
     if (isInterbank) {
       partner_code = receiveBank
     }
     let data = {
-      query: accountNum,
+      query: accountNum.value,
       partner: partner_code
     }
-    console.log("acc num", accountNum)
+    console.log("acc num", accountNum.value)
     dispatch(getAccName(data, accessToken))
         .then((response) => {
           console.log("success response", response)
           name.setValue(response.account.name)
-          setAccountNum(response.account.account_num)
-          setAccValid(true)
-          setAccInValid(false)
-          setAccInValidMsg("")
+          let newAccountNum = response.account.account_num;
+          if (sender === newAccountNum) {
+            accountNum.setInValid(true)
+            accountNum.setInValidMsg("Không thể chuyển tiền chung tài khoản")
+          } else {
+            accountNum.setValue(newAccountNum)
+            accountNum.setValid(true)
+            accountNum.setInValid(false)
+            accountNum.setInValidMsg("")
+          }
         })
         .catch((err) => {
           console.log(err)
-          setAccInValid(true)
-          setAccInValidMsg("Không tìm thấy số tài khoản hoặc username trên")
-          setAccountNum("")
+          accountNum.setInValid(true)
+          accountNum.setInValidMsg("Không tìm thấy số tài khoản hoặc username trên")
+          accountNum.setValue("")
         })
 
-  }, [accountNum, setAccountNum, dispatch, name, isInterbank, receiveBank]);
+  }, [accountNum, sender, dispatch, name, isInterbank, receiveBank]);
 
   function onChangeInterbank(e) {
     if (!e.target.value) {
@@ -162,12 +167,12 @@ const Transfer = () => {
       let accessToken = localStorage.getItem('accessToken');
       let uid = localStorage.getItem('uid');
 
-      dispatch(getReceiverSaved(uid, accessToken))
+      dispatch(FetchAlias(uid, accessToken))
           .then((response) => {
-            let firstUser = convertObjectToArray(response)[0];
+            let firstUser = response.item[0];
             setSelectSaved(0);
             console.log(firstUser)
-            setAccountNum(firstUser.account_num);
+            accountNum.setValue(firstUser.account_num);
             name.setValue(firstUser.name);
           })
           .catch((err) => {
@@ -177,6 +182,10 @@ const Transfer = () => {
             setIsUseSaved(false);
           }, [dispatch]);
     }
+  }
+
+  const onChangeSender = (e) => {
+    setSender(e.target.value);
   }
 
   function showMessageBox(title, content) {
@@ -193,9 +202,14 @@ const Transfer = () => {
 
   function onSubmitForm(e) {
     e.preventDefault();
-    if (accountNum === "") {
-      setAccInValid(true)
-      setAccInValidMsg("Vui lòng nhập lại số tài khoản")
+    if (accountNum.value === "") {
+      accountNum.setInValid(true)
+      accountNum.setInValidMsg("Vui lòng nhập lại số tài khoản")
+      return;
+    }
+    if (sender === accountNum.value) {
+      accountNum.setInValid(true)
+      accountNum.setInValidMsg("Không thể chuyển tiền chung tài khoản")
       return;
     }
     let partner_code = 0;
@@ -203,18 +217,19 @@ const Transfer = () => {
       partner_code = receiveBank;
     }
     let uid = localStorage.getItem('uid');
-    let to_account = accountNum, note = message.value, amount = money.value;
+    let note = message.value, amount = money.value;
     let cost_type = isSenderPay.active ? 0 : 1;
 
     let data = {
-      partner_code: partner_code,
+      partnerCode: partner_code,
       uid: uid,
-      to_account: to_account,
+      fromAccount: sender,
+      toAccount: accountNum.value,
       note: note,
       amount: amount,
-      cost_type: cost_type,
-      debt: debt,
-      type: transType
+      costType: cost_type,
+      type: transType,
+      saveAlias: saveAlias.active
     };
     console.log("data", data);
     let accessToken = localStorage.getItem('accessToken');
@@ -235,34 +250,36 @@ const Transfer = () => {
           let title = "Chuyển tiền thất bại";
           let content = "Đã xảy ra lỗi trong quá trình chuyển tiền\n Error : " + err;
           showMessageBox(title, content);
-        }, [dispatch]);
+        });
   }
 
+  useEffect(() => {
+    if (qAccNum && qName && qMoney && qNote) {
+      setTransType(4);
+      accountNum.setValue(qAccNum);
+      name.setValue(qName);
+      money.setValue(qMoney);
+      message.setValue(qNote);
+    }
+  }, [location, qAccNum, qMoney, qName, qNote, message, money, name, accountNum])
 
   useEffect(() => {
     const uid = localStorage.getItem('uid');
     const accessToken = localStorage.getItem('accessToken');
-    dispatch(getAllAccount(uid, accessToken))
+    dispatch(getPaymentAcc(uid, accessToken))
         .then((response) => {
-          console.log(response);
-          if (qAccNum && qName && qMoney && qNote) {
-            setTransType(4);
-            setAccountNum(qAccNum);
-            name.setValue(qName);
-            money.setValue(qMoney);
-            message.setValue(qNote);
-            setDebt(qDebt);
-          }
+          setSender(response.account[0].account_num)
         })
         .catch((e) => {
           console.log(e);
         });
-  }, [dispatch, name, money, message, qAccNum, qDebt, qMoney, qName, qNote]);
+  }, [dispatch]);
+
 
   return (
       <Container>
         <Row>
-          <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
+          <Col xs={12} sm={8} md={6} lg={6} className={"mx-auto"}>
             <Card id="localBank">
               <div className="card-body">
                 <CardTitle>
@@ -275,20 +292,84 @@ const Transfer = () => {
                   <FormGroup>
                     <Label for="senderAccountType">Tài khoản người gửi <ShowRequire/></Label>
                     <Input type="select"
-                           onChange={sender.onChange}
+                           onChange={onChangeSender}
                            name="sender"
                            id="sender"
-                           value={sender.value}>
+                           value={sender}>
                       {senderInfo.account && senderInfo.account.map((item, index) => {
-                        return (item.type === 1 ? (
-                            <option
-                                key={index}
-                                value={item.account_num}>{(item.type === 1 ? ("Thanh toán " + index) : ("Tiết kiệm " + index))}
-                            </option>) : "")
+                        return (<option
+                            key={index}
+                            value={item.account_num}>{(`Thanh toán ${index + 1} (${item.account_num})`)}
+                        </option>)
                       })}
                     </Input>
                   </FormGroup>
                   <h4>2. Người nhận</h4>
+                  <FormGroup>
+                    <Label for="receiverSavedList">Thông tin người
+                      nhận <ShowRequire/></Label>
+                    <div>
+                      <ButtonGroup className="mb-2 ">
+                        <Button color="primary" onClick={onChangeNotUseSaved}
+                                active={isUseSaved === false}>Nhập thông tin mới</Button>
+                        <Button color="primary" onClick={onChangeUseSaved}
+                                active={isUseSaved === true}>Danh sách đã lưu</Button>
+                      </ButtonGroup>
+                    </div>
+                    <Collapse isOpen={isUseSaved}>
+                      <Input type="select"
+                             value={selectSaved}
+                             onChange={onChangeSelectSaved}
+                             name="selectSaved" id="selectSaved">
+                        {
+                          listSaved.item &&
+                          listSaved.item.map((item, index) => {
+                            return <option key={index} value={item.account_num}>{item.alias_name}</option>
+                          })
+                        }
+                      </Input>
+                    </Collapse>
+                  </FormGroup>
+                  <FormGroup>
+                    <InputGroup className="mb-2">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>ID</InputGroupText>
+                      </InputGroupAddon>
+                      <Input type="text"
+                             name="accountNum"
+                             id="accountNum"
+                             onChange={accountNum.onChange}
+                             value={accountNum.value}
+                             onBlur={onBlurAccountNum}
+                             invalid={accountNum.invalid}
+                             valid={accountNum.valid}
+                             placeholder="Nhập số tài khoản hoặc username"/>
+                      {
+                        AccName.isLoading ? (<InputGroupAddon addonType="prepend">
+                          <InputGroupText><Spinner color="primary"
+                                                   size={"sm"} role="status"
+                                                   aria-hidden="true"/></InputGroupText>
+                        </InputGroupAddon>) : ""
+                      }
+                      <FormFeedback>{accountNum.inValidMsg}</FormFeedback>
+                    </InputGroup>
+                    <InputGroup>
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>Họ và tên</InputGroupText>
+                      </InputGroupAddon>
+                      <Input type="text" name="name"
+                             disabled={true}
+                             value={name.value}/>
+                    </InputGroup>
+                  </FormGroup>
+                  <FormGroup>
+                    <Button color={(saveAlias.active ? "success" : "danger")} id="saveAlias" onClick={saveAlias.toggle}>
+                      <span style={{marginRight: "10px"}}>{(saveAlias.active ? "Đã lưu" : "Không lưu")}</span>
+                      <FontAwesomeIcon icon={(saveAlias.active ? faHeart : faHeartBroken)}></FontAwesomeIcon>
+                    </Button>
+                    <UncontrolledTooltip placement="right" target="saveAlias">Lưu tên gợi nhớ
+                    </UncontrolledTooltip>
+                  </FormGroup>
                   <FormGroup>
                     <Label for="receiverTransfer">Chọn ngân hàng</Label>
                     <div>
@@ -314,64 +395,7 @@ const Transfer = () => {
                       </Input>
                     </Collapse>
                   </FormGroup>
-                  <FormGroup>
-                    <Label for="receiverSavedList">Thông tin người
-                      nhận <ShowRequire/></Label>
-                    <div>
-                      <ButtonGroup className="mb-2 ">
-                        <Button color="primary" onClick={onChangeNotUseSaved}
-                                active={isUseSaved === false}>Nhập thông tin mới</Button>
-                        <Button color="primary" onClick={onChangeUseSaved}
-                                active={isUseSaved === true}>Danh sách đã lưu</Button>
-                      </ButtonGroup>
-                    </div>
-                    <Collapse isOpen={isUseSaved}>
-                      <Input type="select"
-                             value={selectSaved}
-                             onChange={onChangeSelectSaved}
-                             name="selectSaved" id="selectSaved">
-                        {
-                          listSaved != null &&
-                          convertObjectToArray(listSaved).map((item, index) => {
-                            return <option key={index}
-                                           value={item.account_num}>{item.alias_name}</option>
-                          })
-                        }
-                      </Input>
-                    </Collapse>
-                  </FormGroup>
-                  <FormGroup>
-                    <InputGroup className="mb-2">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>ID</InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text"
-                             name="accountNum"
-                             id="accountNum"
-                             onChange={onChangeAccountNum}
-                             value={accountNum}
-                             onBlur={onBlurAccountNum}
-                             invalid={accInValid}
-                             valid={accValid}
-                             placeholder="Nhập số tài khoản hoặc username"/>
-                      {
-                        AccName.isLoading ? (<InputGroupAddon addonType="prepend">
-                          <InputGroupText><Spinner color="primary"
-                                                   size={"sm"} role="status"
-                                                   aria-hidden="true"/></InputGroupText>
-                        </InputGroupAddon>) : ""
-                      }
-                      <FormFeedback>{accInValidMsg}</FormFeedback>
-                    </InputGroup>
-                    <InputGroup>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>Họ và tên</InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text" name="name"
-                             disabled={true}
-                             value={name.value}/>
-                    </InputGroup>
-                  </FormGroup>
+
                   <h4>3. Thông tin cần chuyển tiền</h4>
                   <FormGroup>
                     <Label for="money">Số tiền <ShowRequire/></Label>
@@ -387,8 +411,9 @@ const Transfer = () => {
                            onChange={message.onChange}
                            id="message"/>
                   </FormGroup>
+
                   <FormGroup>
-                    <Label>Hình thức trả phí</Label>
+                    <Label>Hình thức trả phí</Label><br/>
                     <ButtonGroup className="mb-2">
                       <Button color="primary" onClick={isSenderPay.setActive}
                               active={isSenderPay.active === true}>Người nhận trả phí</Button>

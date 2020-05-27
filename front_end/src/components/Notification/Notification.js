@@ -6,7 +6,8 @@ import {faCreditCard} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {formatMoney} from "../../utils/utils";
 import {useDispatch} from "react-redux";
-import {delNotify, getNotify} from "../../redux/creators/remindCreator";
+import {delNotify, getNotify} from "../../redux/actions/remind.action";
+import {SocketUrl} from "../../shares/baseUrl";
 
 const Notification = () => {
   const dispatch = useDispatch();
@@ -41,6 +42,9 @@ const Notification = () => {
             setAlertData(response);
           }
         });
+    return () => {
+
+    }
   }, [dispatch])
 
   function closeAlert(notifyId) {
@@ -60,7 +64,7 @@ const Notification = () => {
 
   return (
       <>
-        <Websocket url='ws://localhost:6500'
+        <Websocket url={SocketUrl}
                    onMessage={handleData} onOpen={handleOpen}
                    onClose={handleClose}/>
         <Container>

@@ -17,7 +17,7 @@ import {
   Row,
   Spinner
 } from 'reactstrap'
-import {verifyPassword} from '../../redux/creators/changePasswordCreator'
+import {verifyPassword} from '../../redux/actions/changePassword'
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import useToggle from "../../utils/useToggle";
 import useInputRequire from "../../utils/useInputRequire";

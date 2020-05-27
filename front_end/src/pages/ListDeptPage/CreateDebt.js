@@ -17,12 +17,12 @@ import {
   Row,
   Spinner
 } from "reactstrap";
-import {getAccName} from "../../redux/creators/transferCreator";
+import {getAccName} from "../../redux/actions/transfer.action";
 import {useDispatch, useSelector} from "react-redux";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {Create} from "../../redux/creators/debtCreator";
+import {Create} from "../../redux/actions/debt.action";
 import {useHistory} from "react-router";
 
 const CreateDebt = () => {
@@ -119,7 +119,7 @@ const CreateDebt = () => {
       <Container>
         <div className="container-fluid py-3">
           <Row>
-            <Col xs={12} sm={8} md={6} lg={5} className={"mx-auto"}>
+            <Col xs={12} sm={8} md={6} lg={6} className={"mx-auto"}>
               <Card id="localBank">
                 <div className="card-body">
                   <CardTitle>

@@ -10,7 +10,7 @@ const mailController = require('../mailer/mail.controller')
 const refeshTokenModel = require('../models/refeshToken.model')
 
 const router = express.Router()
-const validateData = (data)=> {
+const validateData = (data) => {
   if (!common.isNumber(data.phone)) return false
   if (!common.validEmail(data.email)) return false
   if (!data.name) return false
@@ -47,7 +47,7 @@ router.post('/employee', async (req, res) => {
     password: pass
   }
   let results = await userAccount.add(entity)
-  restItem = {
+  let restItem = {
     id: results.insertId,
     name: data.name,
     username: `${uname}${count}`,

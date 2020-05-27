@@ -16,12 +16,12 @@ import {
   Row,
   Spinner
 } from 'reactstrap'
-import {activeAccount, login} from '../../redux/creators/loginCreator'
+import {activeAccount, login} from '../../redux/actions/login.action'
 import ReCAPTCHA from "react-google-recaptcha";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import useInputRequire from "../../utils/useInputRequire";
 import {Link, useHistory} from 'react-router-dom';
-import {AuthAdmin, AuthCustomer, AuthEmployee, AuthFailed} from "../../redux/creators/authCreator";
+import {AuthAdmin, AuthCustomer, AuthEmployee, AuthFailed} from "../../redux/actions/auth.action";
 import {checkValue} from "../../utils/utils";
 import useToggle from "../../utils/useToggle";
 
@@ -203,7 +203,7 @@ const LoginPage = () => {
                         </span>
                         <span>Đăng Nhập</span>
                       </Button>
-                      <Link style={{float: "right", marginTop: "10px"}} to={"/forget-password"}>Quên mật khẩu</Link>
+                      <Link style={{float: "right", marginTop: "10px"}} to={"/forgot-password"}>Quên mật khẩu</Link>
                     </Form>
                   </Collapse>
                   <Collapse isOpen={activeAccountToggle.active}>

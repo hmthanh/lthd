@@ -1,61 +1,44 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  Button,
-  Card,
-  CardGroup,
-  Col,
-  Container,
-  Form,
-  FormGroup,
-  Input,
-  InputGroup,
-  Label,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Row
-} from 'reactstrap'
+import {Card, CardGroup, Col, Container, Form, FormGroup, Input, InputGroup, Label, Row} from 'reactstrap'
 import useToggle from "../../utils/useToggle";
-import useInputChange from "../../utils/useInputChange";
-import {getUserTransHistory} from "../../redux/creators/historyTransCreator";
+import {getTransHistory} from "../../redux/actions/historyTrans.action";
 import TableInfoTransfer from "../../components/Table/TableInfoTransfer";
 import MessageBox from "../../components/Modal/MessageBox";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
-import {getInterbank} from "../../redux/creators/transferCreator";
+import {getInterbank} from "../../redux/actions/transfer.action";
+import Paging from "../../components/Paging/Paging";
 
 const moment = require('moment');
 
 const HistoryTrans = () => {
   const dispatch = useDispatch();
-  // const historyDebt = useSelector(state => {
-  //   return state.HistoryDept.data
-  // });
-  const transHistory = useSelector(state => {
-    return state.TransHistory.data
-  });
-  // const receiveHistory = useSelector(state => {
-  //   return state.ReceiveHistory.data
-  // });
-  const interBankInfo = useSelector((state) => {
-    return state.InterBank.data
-  });
-  const search = useInputChange();
+  const paySelector = [
+    {title: "-- Tất cả --", value: 0},
+    {title: "Nhập tiền", value: 1},
+    {title: "Chuyển tiền", value: 2},
+    {title: "Nhắc nợ", value: 4},
+  ]
+  const historyTrans = useSelector(state => state.HistoryTransfer.data);
+  const interBankInfo = useSelector((state) => state.InterBank.data);
   const [titleMsg, setTitleMsg] = useState("");
   const [contentMsg, setContentMsg] = useState("");
   const msgBoxToggle = useToggle(false);
-  const [from, setFrom] = useState(moment().valueOf(new Date()) - (28 * 24 * 60 * 60 * 1000));
-  const [to, setTo] = useState(moment().valueOf(new Date()));
-  const [banking, setBanking] = useState(0);
-  const [index, setIndex] = useState(0);
+  const [from, setFrom] = useState(new Date(moment().subtract(28, 'day')));
+  const [to, setTo] = useState(new Date(moment()));
+  const [banking, setBanking] = useState("0");
+  const [pageIdx, setPageIdx] = useState(0);
+  const [total, setTotal] = useState(10);
+  const [payType, setPayType] = useState("0");
+
 
   function onChangeFrom(value) {
-    setFrom(moment().valueOf(value));
+    setFrom(value);
   }
 
   function onChangeTo(value) {
-    setTo(moment().valueOf(value));
+    setTo(value);
   }
 
   const showMsgBox = useCallback((title, content) => {
@@ -64,140 +47,126 @@ const HistoryTrans = () => {
     msgBoxToggle.setActive();
   }, [setTitleMsg, setContentMsg, msgBoxToggle]);
 
-  const findHistoryAccount = useCallback((e) => {
-    e.preventDefault();
-    let data = {
-      from: from,
-      to: to,
-      partner: banking
-    };
-    console.log("search value", search.value);
-    const accessToken = localStorage.getItem('accessToken');
-    dispatch(getUserTransHistory(data, index, accessToken))
-        .then((response) => {
-          console.log(response);
-        });
-    // dispatch(getUserReceiveHistory(uid, accessToken))
-    //     .then((response) => {
-    //       console.log(response.item);
-    //     });
-    // dispatch(getUserDeptHistory({id: uid}, accessToken))
-    //     .then((response) => {
-    //       console.log(response.item);
-    //     })
-    //     .catch((error) => {
-    //       showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
-    //     });
-
-
-    // dispatch(getUserTransHistory(uid, accessToken))
-    //     .then((response) => {
-    //       console.log("getHistoryUserTrans", response.item);
-    //     })
-    //     .catch((error) => {
-    //       showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n${error}`);
-    //     });
-    // dispatch(getUserDeptHistory({id: uid}, accessToken))
-    //     .then((response) => {
-    //       console.log("getHistoryUserDept", response.item);
-    //     })
-    //     .catch((error) => {
-    //       showMsgBox("Đã xảy ra lỗi", `Không thể tải lịch sử mắc nợ \n ${error}`);
-    //     });
-  }, [dispatch, search, showMsgBox, index, from, to, banking]);
-
   function onChangeBanking(e) {
     setBanking(e.target.value);
   }
 
+  const onChangePayType = (e) => {
+    setPayType(e.target.value);
+  }
+
   useEffect(() => {
     let data = {
-      from: from,
-      to: to,
-      partner: banking
+      from: moment(from).valueOf(),
+      to: moment(to).valueOf(),
+      partner: parseInt(banking),
+      type: parseInt(payType)
     };
     console.log("search value", data);
     const accessToken = localStorage.getItem('accessToken');
-    dispatch(getUserTransHistory(data, index, accessToken))
+    dispatch(getTransHistory(data, pageIdx * 30, accessToken))
         .then((response) => {
-          console.log(response.item);
-        });
+          let totalPage = Math.ceil(response.total / 30);
+          setTotal(totalPage);
+        })
+        .catch(e => {
+          showMsgBox("Đã xảy ra lỗi", `Nội dung ${e}`);
+          msgBoxToggle.setActive();
+        })
+
+  }, [dispatch, from, to, pageIdx, banking, payType, msgBoxToggle, showMsgBox]);
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+
     dispatch(getInterbank(accessToken))
         .then((response) => {
-          // let partner_code = response.item[0].partner_code;
-          // setBanking(0);
+          console.log(response)
         })
         .catch((err) => {
           console.log(err);
         });
-  }, [dispatch, from, to, index, banking]);
+  }, [dispatch])
 
+  const setPage = (i) => {
+    setPageIdx(i);
+  }
   return (
       <Container className="container" style={{marginTop: '20px'}}>
         <Row className="justify-content-center">
           <Col md={12}>
-            <CardGroup className=" mb-0">
+            <CardGroup className="mb-0">
               <Card className="p-6">
-                <div className="card-block" style={{padding: "20px 40px"}}>
+                <div className="card-block padding-card">
                   <h3 className="col-centered table-heading">LỊCH SỬ GIAO DỊCH</h3>
                   <hr/>
                   <Form method="post" noValidate="novalidate"
-                        className="needs-validation" onSubmit={findHistoryAccount}>
+                        className="needs-validation">
                     <h4>Thông tin tìm kiếm</h4>
                     <FormGroup>
                       <Row>
                         <Col xs={6}>
-                          <Label for="from">Thời gian bắt đầu</Label>
-                          <InputGroup className="mb-2">
-                            <DatePicker
-                                className="form-control"
-                                type="text"
-                                name="from"
-                                dateFormat="dd-MM-yyyy"
-                                onSelect={onChangeFrom}
-                                onChange={onChangeFrom}
-                                selected={from}
-                            />
-                          </InputGroup>
-
-                          <Label for="time">Thời gian kết thúc</Label>
-                          <InputGroup className="mb-2">
-                            <DatePicker
-                                className="form-control"
-                                type="text"
-                                name="to"
-                                dateFormat="dd-MM-yyyy"
-                                onSelect={onChangeTo}
-                                onChange={onChangeTo}
-                                selected={to}
-                            />
-                          </InputGroup>
+                          <FormGroup>
+                            <Label for="from">Thời gian bắt đầu</Label>
+                            <InputGroup className="mb-2">
+                              <DatePicker
+                                  className="form-control"
+                                  type="text"
+                                  name="from"
+                                  dateFormat="dd-MM-yyyy"
+                                  onSelect={onChangeFrom}
+                                  onChange={onChangeFrom}
+                                  selected={from}/>
+                            </InputGroup>
+                          </FormGroup>
+                          <FormGroup>
+                            <Label for="time">Thời gian kết thúc</Label>
+                            <InputGroup className="mb-2">
+                              <DatePicker
+                                  className="form-control"
+                                  type="text"
+                                  name="to"
+                                  dateFormat="dd-MM-yyyy"
+                                  onSelect={onChangeTo}
+                                  onChange={onChangeTo}
+                                  selected={to}
+                              />
+                            </InputGroup>
+                          </FormGroup>
                         </Col>
                         <Col xs={6}>
-                          <Label for="time">Ngân hàng</Label>
-                          <Input type="select"
-                                 value={banking}
-                                 onChange={onChangeBanking}
-                                 name="banking"
-                                 id="banking">
-                            <option value={0}>-- Tất cả --</option>
-                            {
-                              interBankInfo.item &&
-                              interBankInfo.item.map((item, index) => {
-                                return <option key={index}
-                                               value={item.partner_code}>{item.name}</option>
-                              })
-                            }
-                          </Input>
-                          <Label for="btnSearch" style={{marginBottom: "34px"}}></Label>
-                          <InputGroup>
-                            <Button id="btnSearch" type="submit" color={"success"}
-                                    className="btn-search"
-                                    style={{width: "200px"}}
-                                    disabled={false}>
-                              <span>Tìm kiếm</span>
-                            </Button>
-                          </InputGroup>
+                          <FormGroup>
+                            <Label for="time">Ngân hàng</Label>
+                            <Input type="select"
+                                   value={banking}
+                                   onChange={onChangeBanking}
+                                   name="banking"
+                                   id="banking">
+                              <option value={0}>-- Tất cả --</option>
+                              {
+                                interBankInfo.item &&
+                                interBankInfo.item.map((item, index) => {
+                                  return <option key={index}
+                                                 value={item.partner_code}>{item.name}</option>
+                                })
+                              }
+                            </Input>
+                          </FormGroup>
+                          <FormGroup>
+                            <Label for="payType">Loại giao dịch</Label>
+                            <Input type="select"
+                                   value={payType}
+                                   onChange={onChangePayType}
+                                   name="payType"
+                                   id="payType">
+                              {
+                                paySelector &&
+                                paySelector.map((item, index) => {
+                                  return <option key={index} value={item.value}>{item.title}</option>
+                                })
+                              }
+                            </Input>
+                          </FormGroup>
                         </Col>
                       </Row>
                     </FormGroup>
@@ -212,57 +181,12 @@ const HistoryTrans = () => {
           <Col md={12}>
             <CardGroup>
               <Card id="localBank">
-                <div className="card-body">
+                <div className="card-body padding-card">
                   <h4>Giao dịch chuyển tiền</h4>
-                  {
-                    <TableInfoTransfer data={transHistory}></TableInfoTransfer>
-                  }
-                  <Pagination aria-label="Page navigation example">
-                    <PaginationItem>
-                      <PaginationLink first href="#"/>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink previous href="#"/>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">
-                        1
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">
-                        2
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">
-                        3
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">
-                        4
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink href="#">
-                        5
-                      </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink next href="#"/>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink last href="#"/>
-                    </PaginationItem>
-                  </Pagination>
-                  {/*<h4>Giao dịch nhận tiền</h4>*/}
-                  {/*<TableInfoTransfer*/}
-                  {/*    data={receiveHistory}*/}
-                  {/*></TableInfoTransfer>*/}
-
-                  {/*<h4>Giao dịch nhắc nợ</h4>*/}
-                  {/*<TableInfoDept data={historyDebt}></TableInfoDept>*/}
+                  <TableInfoTransfer data={historyTrans}></TableInfoTransfer>
+                  <div className="col-centered">
+                    <Paging pageIdx={pageIdx} total={total} setPage={setPage}/>
+                  </div>
                 </div>
               </Card>
             </CardGroup>

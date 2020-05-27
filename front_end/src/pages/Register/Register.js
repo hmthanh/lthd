@@ -2,7 +2,7 @@ import React, {useCallback, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {checkValue} from '../../utils/utils'
 import DatePicker from 'react-datepicker'
-import {register} from '../../redux/creators/registerCreator'
+import {register} from '../../redux/actions/register.action'
 import {
   Alert,
   Button,

@@ -1,25 +1,26 @@
 const express = require('express');
 const moment = require('moment');
 const {getAccount} = require('../models/account.model');
-const {get, getReceive, getTrans, getallHist, countRow} = require('../models/history.model');
+const {get, getReceive, getTrans, getAllHist, countRow} = require('../models/history.model');
 const router = express.Router();
 
 router.post('/:from', async (req, res) => {
-  // console.log(req.body,req.params )
+  console.log("body", req.body, "params", req.params);
   let from = req.params.from || 0
-  let count =   req.params.count || 30
+  let count = req.params.count || 30
   let fromTime = req.body.from;
   let to = req.body.to;
+  let type = req.body.type;
   let partner = req.body.partner || 0;
 
-  const historyData = await getallHist(from, count, fromTime, to, partner)
+  const historyData = await getAllHist(from, count, fromTime, to, partner, type)
   // console.log(total)
-  let total = await countRow(from, count, fromTime, to, partner)
+  let total = await countRow(from, count, fromTime, to, partner, type)
   console.log(total)
-  res.status(200).json({
+  await res.status(200).json({
     msg: 'successfully',
     errorCode: 0,
-    total: 0 || total[0].numrow,
+    total: 0 || total[0].total_row,
     item: historyData
   })
 });

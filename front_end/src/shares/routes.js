@@ -11,7 +11,7 @@ const ForgotPassword = lazy(() => import('../pages/ForgotPassword/ForgotPassword
 
 // Customer
 const ListAccountPage = lazy(() => import('../pages/ListAccountPage/ListAccountPage'));
-const ListReceiver = lazy(() => import('../pages/ListReceiver/ListReceiver'));
+const AliasReceiver = lazy(() => import('../pages/AliasReceiver/AliasReceiver'));
 const Transfer = lazy(() => import('../pages/Transfer/Transfer'));
 
 const RemindPage = lazy(() => import('../pages/ListInDebtPage/RemindPage'));
@@ -29,19 +29,17 @@ const RechargePage = lazy(() => import('../pages/RechargePage/RechargePage'));
 
 // Admin
 const HistoryTrans = lazy(() => import('../pages/HistoryTrans/HistoryTrans'));
-const ListStaffPage = lazy(() => import("../pages/ListStaffPage/ListStaffPage"));
+const ListEmployee = lazy(() => import("../pages/ListEmployee/ListEmployee"));
 
-const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
-// const ListCustomerPage = lazy(() => import("../pages/ListCustomerPage/ListCustomerPage"));
-// const ListTransferPage = lazy(() => import( "../pages/ListTransferPage/ListTransferPage"));
+const NotFoundPage = lazy(() => import('../pages/NotFound/NotFoundPage'));
 
 
 const routes = [
-    // All account page
+  // All account page
   {
     path: "/",
     exact: true,
-    component: () => <UserInfo></UserInfo>
+    component: () => <UserInfo/>
   },
   {
     path: "/login",
@@ -74,16 +72,16 @@ const routes = [
     component: () => <ForgotPassword></ForgotPassword>
   },
 
-    // user page
+  // user page
   {
     path: "/list-account",
     exact: true,
     component: () => <ListAccountPage></ListAccountPage>
   },
   {
-    path: "/list-receiver",
+    path: "/alias-receiver",
     exact: true,
-    component: () => <ListReceiver></ListReceiver>
+    component: () => <AliasReceiver></AliasReceiver>
   },
   {
     path: "/transfer",
@@ -121,7 +119,7 @@ const routes = [
     component: () => <CloseAccount></CloseAccount>
   },
 
-    // Employee
+  // Employee
   {
     path: "/create-account",
     exact: true,
@@ -138,16 +136,16 @@ const routes = [
     component: () => <RechargePage></RechargePage>
   },
 
-    // Admin
+  // Admin
   {
     path: "/history-trans",
     exact: true,
     component: () => <HistoryTrans></HistoryTrans>
   },
   {
-    path: "/list-staff",
+    path: "/list-employee",
     exact: true,
-    component: () => <ListStaffPage></ListStaffPage>
+    component: () => <ListEmployee></ListEmployee>
   },
   {
     path: "*",
@@ -174,7 +172,7 @@ export const EmployeeLink = [
 export const CustomerLink = [
   {
     title: "Danh sách người nhận",
-    path: "/list-receiver",
+    path: "/alias-receiver",
   },
   {
     title: "Chuyển khoản",
@@ -184,10 +182,6 @@ export const CustomerLink = [
     title: "Lịch sử giao dịch",
     path: "/user-history",
   },
-  // {
-  //   title: "Quản lý nhắc nợ",
-  //   path: "/manage-debt",
-  // }
 ];
 
 export const CustomerItemLink = [
@@ -206,12 +200,8 @@ export const CustomerItemLink = [
 export const AdminLink = [
   {
     title: "Quản lý nhân viên",
-    path: "/list-staff",
+    path: "/list-employee",
   },
-  // {
-  //   title: "Danh sách khách hàng",
-  //   path: "/list-customer",
-  // },
   {
     title: "Danh sách giao dịch",
     path: "/history-trans",

@@ -1,21 +1,30 @@
-import {AUTH_ADMIN, AUTH_CUSTOMER, AUTH_EMPLOYEE, AUTH_FAILED} from "./actionType";
+import {AUTH_ADMIN, AUTH_CUSTOMER, AUTH_EMPLOYEE, AUTH_FAILED} from '../actionType'
 
-export const Auth = (state = {
-  isAuth: false,
-  role: 0,
-  data: [],
-}, action) => {
-  let {type, payload} = action;
-  switch (type) {
-    case AUTH_FAILED:
-      return {...state, isAuth: false, role: 0, data: {...payload}};
-    case AUTH_ADMIN:
-      return {...state, isAuth: true, role: 1, data: {...payload}};
-    case AUTH_EMPLOYEE:
-      return {...state, isAuth: true, role: 2, data: {...payload}};
-    case AUTH_CUSTOMER:
-      return {...state, isAuth: true, role: 3, data: {...payload}};
-    default:
-      return state;
+
+export const AuthFailed = () => ({
+  type: AUTH_FAILED
+});
+
+export const AuthCustomer = () => ({
+  type: AUTH_CUSTOMER
+});
+
+export const AuthEmployee = () => ({
+  type: AUTH_EMPLOYEE
+});
+
+export const AuthAdmin = () => ({
+  type: AUTH_ADMIN
+});
+
+export const DispatchRole = (role, dispatch) => {
+  if (role === 3) {
+    dispatch(AuthCustomer());
+  } else if (role === 2) {
+    dispatch(AuthEmployee());
+  } else if (role === 1) {
+    dispatch(AuthAdmin());
+  } else {
+    dispatch(AuthFailed());
   }
 };

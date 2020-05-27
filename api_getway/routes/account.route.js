@@ -6,6 +6,8 @@ const userAccount = require('../models/userAccount.model')
 const bankingInfoModel = require('../models/bankingInfo.model')
 const receiverModel = require('../models/receiverInfo.model')
 const userModel = require('../models/user.model')
+const refreshTokenModel = require( "../models/refeshToken.model");
+
 const {
   SECRET_TOKEN, OTP, PGP_URL_INFO, PGP_PARTNERCODE, RSA_PARTNERCODE,
   RSA_URL_INFO, SECRET_RSA, LENGTH_REFREST_TOKEN
@@ -77,7 +79,7 @@ router.post('/', async (req, res) => {
       type: 1
     }
     await bankingInfoModel.add(entity)
-    account_num2 = common.genagrateAccountNumber(dob, count + 1)
+    let account_num2 = common.genagrateAccountNumber(dob, count + 1)
     entity.account_num = account_num2
     entity.type = 2
 
@@ -91,7 +93,7 @@ router.post('/', async (req, res) => {
     let htmlmsg = common.htmlMsgLogingTemplate({...restItem, password: pass});
     mailController.sentMail(data.email, '[New Vimo][important !!!] Account Vimo', msgText, htmlmsg);
     const rfToken = rndToken.generate(LENGTH_REFREST_TOKEN);
-    refeshTokenModel.add({user_id: results.insertId, refresh_token: rfToken});
+    refreshTokenModel.add({user_id: results.insertId, refresh_token: rfToken});
   } else {
     msg = 'invalid params'
     errorCode = -100

@@ -18,7 +18,7 @@ import useToggle from "../../utils/useToggle";
 import {useDispatch, useSelector} from "react-redux";
 import {useHistory} from "react-router";
 import {formatMoney} from "../../utils/utils";
-import {closeAccount} from "../../redux/creators/accountCreator";
+import {closeAccount} from "../../redux/actions/account.action";
 
 const CloseAccount = ({index, account_num, surplus, type}) => {
   const color = type === 1 ? "danger" : "success";
@@ -104,6 +104,8 @@ const CloseAccount = ({index, account_num, surplus, type}) => {
                       if (account_num !== acc.account_num) {
                         return (
                             <option key={index} value={acc.account_num}>{acc.account_num}</option>)
+                      }else{
+                        return ""
                       }
                     })
                   }

@@ -13,7 +13,7 @@ import {
   Spinner
 } from "reactstrap";
 import useInputChange from "../../utils/useInputChange";
-import {verifyOTP} from "../../redux/creators/transferCreator";
+import {verifyOTP} from "../../redux/actions/transfer.action";
 import {useDispatch, useSelector} from "react-redux";
 import useToggle from "../../utils/useToggle";
 
