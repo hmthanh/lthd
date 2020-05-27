@@ -1,17 +1,15 @@
 import React from 'react';
 import {Button, CardTitle, Collapse, Form, FormFeedback, FormGroup, Input, Label, ModalFooter, Spinner} from "reactstrap";
-import useInputChange from "../../utils/useInputChange";
 import {verifyOTP} from "../../redux/actions/transfer.action";
 import {useDispatch, useSelector} from "react-redux";
-import useToggle from "../../utils/useToggle";
+import useInputRequire from "../../utils/useInputRequire";
 
 const ModalVerifyTrans = ({transId, onBack, onFinish, finishToggle}) => {
   const dispatch = useDispatch();
   const verifyInfo = useSelector((state) => {
     return state.VerifyResult
   });
-  const invalidOTPToggle = useToggle(false);
-  const OTP = useInputChange("");
+  const OTP = useInputRequire({value: null, valid: false, invalid: false, inValidMsg: ""});
 
   function onVerify(e) {
     let data = {
@@ -26,13 +24,13 @@ const ModalVerifyTrans = ({transId, onBack, onFinish, finishToggle}) => {
             console.log('success');
             onFinish();
           } else {
-            invalidOTPToggle.setActive();
+            OTP.setInValid(true);
           }
           console.log(response);
         })
         .catch((err) => {
           console.log("Error", err);
-          invalidOTPToggle.setActive();
+          OTP.setInValid(true);
         }, [dispatch]);
   }
 
@@ -48,8 +46,9 @@ const ModalVerifyTrans = ({transId, onBack, onFinish, finishToggle}) => {
             <Label for="OTP">Mã OTP</Label>
             <Input type="number" name="OTP" id="OTP"
                    onChange={OTP.onChange}
-                   value={OTP.value}
-                   invalid={invalidOTPToggle.active}
+                   value={OTP.value || ""}
+                   invalid={OTP.invalid}
+                   valid={OTP.valid}
                    required
             />
             <FormFeedback>Mã OTP không chính xác, vui lòng kiểm tra lại</FormFeedback>
