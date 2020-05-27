@@ -37,15 +37,20 @@ module.exports = {
       FROM receiver_info 
       WHERE owner_id=${id} AND partner_bank=${partnerCode}`)
   },
-  saveAlias: data => {
+  saveAlias: async data => {
     if (data.toName && data.uid) {
       let entity = {
-        account_num: data.account_num,
+        account_num: data.toAccount,
         owner_id: data.uid, 
         alias_name: data.toName,
         partner_bank: parseInt(data.partnerCode)
       }
-      this.add(entity)
+      let rows = await db.load(`SELECT COUNT(*) as num FROM receiver_info WHERE account_num=${data.toAccount} AND owner_id=${data.uid}`)
+      // console.log('=========rows SELECT COUNT==========', rows)
+      if(!rows || rows[0].num === 0){
+        db.add(entity, 'receiver_info')
+      }
+      
     } else {
       console.log('=========require toName and uid in body request==========')
     }

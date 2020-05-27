@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
   
   let timestemp = moment().valueOf(new Date())
   const hashRev = req.body.hash
-  console.log('hashRev ', hashRev)
+  // console.log('hashRev ', hashRev)
   const partnerCode = req.body.partnerCode
   const data = req.body.data
   let msg = 'successfully'
@@ -59,13 +59,20 @@ router.post('/', async (req, res) => {
       // if(userName) userName = 'default'
       let rows = await userModel.singleByUser(userName, accountNum)
       // console.log(rows)
-      if (rows && rows[0])
+      if (rows && rows[0]) {
         info = {
           name: rows[0].name,
           accountNum: rows[0].account_num,
           userName: rows[0].user_name,
           birthDay: moment(rows[0].date_of_birth).format('MM/DD/YYYY')
         }
+      }
+       
+      else {
+        msg = 'not found'
+        errorCode = -1008
+        info = []
+      }
     }
   }
   let ret = { msg, errorCode, data: info }

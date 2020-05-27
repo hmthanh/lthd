@@ -4,6 +4,9 @@ const {hash, verifyHash, verify, sign, setPubkeyRSA} = require('../utils/rsa.sig
 const { plus } = require('../utils/db')
 const {RSA_PARTNER_SCRE, SECRET_RSA, RSA_PARTNERCODE} = require('../config')
 const bcrypt = require('bcryptjs')
+const { TranferToAccount } = require('../models/transaction.Tranfer.Model')
+const { getAccountInfo } = require('../models/account.model')
+
 
 const encoding = 'base64'
 
@@ -80,6 +83,15 @@ router.post('/', async (req, res) => {
         ts: data.ts
      }
     }
+    // tài khoản không tồn tại
+    const rows = await getAccountInfo(req.body.to_account);
+    if (!rows || rows.length === 0)  {
+      res.status(200).json({
+        errorCode: -151,
+        message: 'from_account not found'
+      })
+      return
+    }
   } else {
     const enyity = {
       acc_name: data.from,
@@ -92,7 +104,7 @@ router.post('/', async (req, res) => {
       partner_code: partnerCode,
       state: 0
     }
-    let result = await plus(enyity, data.to_account)
+    let result = await TranferToAccount(enyity, data.to_account)
     if(result) {
       info = {
         tranId: result.tranId,

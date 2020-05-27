@@ -160,9 +160,10 @@ router.post('/closed', async (req, res) => {
   }
   tagetAcc = tagetAcc[0]
   let countAcc = await bankingInfoModel.countAccountAcctivate(req.body.uid)
+  console.log(countAcc)
   count = countAcc[0].num
-  let isValid = countAcc > 1 ? true : false
-  if (isValid) {
+  let isValid = count > 1 ? true : false
+  if (!isValid) {
     res.json({
       errorCode: -200,
       msg: "không đóng được tài khoản cuối cùng"
@@ -248,15 +249,15 @@ const getInfoParnerBankPGP = async (accNum) => {
 }
 
 router.post('/acc', async (req, res) => {
-  console.log(req.body)
   let item = {}
-  let account = null;
+  let infoaccount = null;
   if (req.body.partner && req.body.partner !== '0' && req.body.partner !== 0) {
     let info = {}
     if (req.body.partner === '0923') {
       info = await getInfoParnerBankRSA(req.body.query)
-      info = info.data
       // console.log('===========================', info)
+
+      info = info.data
       account = info.data
       info = {...info.data}
       /*
@@ -273,14 +274,23 @@ router.post('/acc', async (req, res) => {
       }
     } else {
       info = await getInfoParnerBankPGP(req.body.query)
-
-      account = info.data
-      info = {...info.data}
-      item = {
-        account_num: info.accountNumber,
-        name: info.account.fullName,
-        email: info.account.email,
+      if (info) {
+        account = info.data
+        info = {...info.data}
+        console.log(info)
+        item = {
+          account_num: req.body.query,
+          name: info.account.fullName,
+          email: info.account.email,
+        }
+      } else {
+        item = {
+          account_num: '',
+          name: '',
+          email: '',
+        }
       }
+      
     }
   } else {
     account = await accountModel.getInfoByAccount(req.body.query)
@@ -299,7 +309,7 @@ router.post('/acc', async (req, res) => {
       account: item
     }
   }
-  await res.status(200).json(ret)
+  res.status(200).json(ret)
 });
 
 // create receiver_info
@@ -347,6 +357,7 @@ router.post('/ref/account/id', async (req, res) => {
 });
 
 router.post('/accpayment', async (req, res) => {
+  // console.log(req.body)
   let account = await bankingInfoModel.getInfoAccountPayment(req.body.id);
   let ret = {
     errorCode: -201,
