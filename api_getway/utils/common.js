@@ -210,6 +210,24 @@ const validate = (data) => {
   return true
 };
 
+const msgLogingAdminTemplate = (info) => `Dear ${info.name}!
+
+  Account of you ready to use. Now, you can loging and change password to use
+  
+  Username: ${info.username}
+  Password: ${info.password}
+  Thanks,
+  The New Vimo Team`
+
+const htmlMsgLogingAdminTemplate = (info) => `Dear ${info.name}! <br/></br>
+
+  Account of you ready to use. Now, you can loging and change password to use </br>
+  
+  Username: <h1>${info.username}</h1></br>
+  Password: <h1>${info.password}</h1></br>
+  Thanks,</br>
+  The New Vimo Team`
+
 const convertObjectToArray = (object) => Object.keys(object).map(i => object[i]);
 
 module.exports = {
@@ -232,5 +250,7 @@ module.exports = {
   convertObjectToArray,
   SQL_SCHEMA,
   msgOTPTemplate,
-  htmlOTPTemplate
+  htmlOTPTemplate,
+  msgLogingAdminTemplate,
+  htmlMsgLogingAdminTemplate
 };
