@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   Badge,
-  Button,
+  Button, Collapse,
   FormGroup,
   Input,
   InputGroup,
@@ -24,6 +24,7 @@ const CloseAccount = ({index, account_num, surplus, type}) => {
   const payTitle = type === 1 ? "Thanh toán" : "Tiết kiệm";
   const dispatch = useDispatch();
   const modalToggle = useToggle(false);
+  const alertToggle = useToggle(false);
   const [receive, setReceive] = useState("");
   const listReceive = useSelector(state => {
     return state.AccountInfo.data.account
@@ -45,16 +46,20 @@ const CloseAccount = ({index, account_num, surplus, type}) => {
     console.log(data);
     dispatch(closeAccount(data, accessToken))
         .then((response) => {
-          console.log(response);
-          modalToggle.setInActive();
-
-          dispatch(getAllAccount(uid, accessToken))
-              .then((response) => {
-                console.log(response);
-              })
-              .catch((e) => {
-                console.log(e);
-              });
+          console.log(response, response.errorCode, response.errorCode === -200);
+          if (response.errorCode === -200) {
+            modalToggle.setActive();
+            alertToggle.setActive();
+          } else {
+            modalToggle.setInActive();
+            dispatch(getAllAccount(uid, accessToken))
+                .then((response) => {
+                  console.log(response);
+                })
+                .catch((e) => {
+                  console.log(e);
+                });
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -100,35 +105,42 @@ const CloseAccount = ({index, account_num, surplus, type}) => {
         <Modal isOpen={modalToggle.active} toggle={modalToggle.toggle}>
           <ModalHeader className="padding-header" toggle={modalToggle.toggle}>Đóng tài khoản</ModalHeader>
           <ModalBody className="padding-body">
-            <strong>Để đóng tài khoản, bạn cần chọn tài khoản để chuyển số dư {formatMoney(surplus)} VNĐ</strong>
-            <FormGroup>
-              <Label>Số tài khoản</Label>
-              <InputGroup>
-                <Input type="select"
-                       onChange={onChangeReceive}
-                       name="receive"
-                       id="receive"
-                       value={receive}>
-                  {
-                    listReceive.map((acc, index) => {
-                      if (account_num !== acc.account_num) {
-                        return (
-                            <option key={index} value={acc.account_num}>{acc.account_num}</option>)
-                      } else {
-                        return ""
-                      }
-                    })
-                  }
-                </Input>
-              </InputGroup>
-            </FormGroup>
-            <h6>Bạn có chăc muốn đóng tài khoản không ?</h6>
+            <Collapse isOpen={!alertToggle.active}>
+              <strong>Để đóng tài khoản, bạn cần chọn tài khoản để chuyển số dư {formatMoney(surplus)} VNĐ</strong>
+              <FormGroup>
+                <Label>Số tài khoản</Label>
+                <InputGroup>
+                  <Input type="select"
+                         onChange={onChangeReceive}
+                         name="receive"
+                         id="receive"
+                         value={receive}>
+                    {
+                      listReceive.map((acc, index) => {
+                        if (account_num !== acc.account_num) {
+                          return (
+                              <option key={index} value={acc.account_num}>{acc.account_num}</option>)
+                        } else {
+                          return ""
+                        }
+                      })
+                    }
+                  </Input>
+                </InputGroup>
+              </FormGroup>
+              <h6>Bạn có chăc muốn đóng tài khoản không ?</h6>
+            </Collapse>
+            <Collapse isOpen={alertToggle.active}>
+              <strong>Không thể đóng tài khoản thanh toán cuối cùng</strong>
+            </Collapse>
           </ModalBody>
           <ModalFooter className="padding-footer">
-            <Button color="danger"
-                    className="d-flex align-items-center justify-content-center"
-                    onClick={onClosePayment}>
-              <span style={{padding: "0px 40px"}}>Đóng tài khoản</span></Button>
+            <Collapse isOpen={!alertToggle.active}>
+              <Button color="danger"
+                      className="d-flex align-items-center justify-content-center"
+                      onClick={onClosePayment}>
+                <span style={{padding: "0px 40px"}}>Đóng tài khoản</span></Button>
+            </Collapse>
             <Button color="light"
                     className="d-flex align-items-center justify-content-center"
                     onClick={modalToggle.setInActive}>
