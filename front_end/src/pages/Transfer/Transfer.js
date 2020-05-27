@@ -87,11 +87,11 @@ const Transfer = () => {
     accountNum.setValue(e.target.value);
     accountNum.setInValid(false);
     accountNum.setValid(true);
-    let {alias_name, partner_bank } = listSaved.item[e.target.selectedIndex];
-    console.log("partner_code" , partner_bank);
+    let {alias_name, partner_bank} = listSaved.item[e.target.selectedIndex];
+    console.log("partner_code", partner_bank);
     name.setValue(alias_name);
-      setBanking(partner_bank);
-    if (partner_bank !== "0"){
+    setBanking(partner_bank);
+    if (partner_bank !== "0") {
       setIsInterbank(true);
       let accessToken = localStorage.getItem('accessToken');
 
@@ -295,9 +295,9 @@ const Transfer = () => {
 
   const onFinish = useCallback(() => {
     finishToggle.setActive();
-    // setTimeout(() => {
-    //   history.push("/user-history")
-    // }, 5000)
+    setTimeout(() => {
+      history.push("/user-history")
+    }, 5000)
   }, [finishToggle, history]);
 
   const onBack = () => {
