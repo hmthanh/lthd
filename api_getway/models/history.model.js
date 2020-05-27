@@ -22,7 +22,7 @@ module.exports = {
       WHERE t.to_account='${accountNum}' 
       ORDER BY t.timestamp DESC`)
   },
-  getall: (type) => {
+  getAll: (type) => {
     return db.load(`
       SELECT t.trans_id, t.type, t.acc_name, t.from_account, t.to_account, t.amount, t.note, t.timestamp, t.surplus, t.state 
       FROM transaction_tranfer t
@@ -37,28 +37,30 @@ module.exports = {
       ORDER BY t.timestamp DESC`)
   },
 
-  getallHist: (offset, count, from, to, partner) => {
-    let q = partner !== 0 ? `AND t.partner_code=${partner}` : ''
+  getAllHist: (offset, count, from, to, partner, type) => {
+    let q = partner !== 0 ? `AND t.partner_code=${partner}` : '';
+    let qType = type !== 0 ? `AND t.type=${type}` : '';
     return db.load(`
-      SELECT t.trans_id, t.type, t.acc_name, t.from_account, t.to_account, t.amount, t.note, t.timestamp, t.surplus, t.state
+      SELECT t.trans_id, t.type, t.acc_name, t.from_account, t.to_account, t.amount, t.note, t.timestamp, t.surplus, t.state, t.signature
       FROM transaction_tranfer t
-      WHERE t.timestamp >= ${from} AND t.timestamp <= ${to} ${q}
+      WHERE t.timestamp >= ${from} AND t.timestamp <= ${to} ${q} ${qType}
       ORDER BY t.timestamp DESC LIMIT ${offset},${count}`)
   },
 
-  countRow: (offset, count, from, to, partner) => {
-    let q = partner !== 0 ? `AND t.partner_code=${partner}` : ''
+  countRow: (offset, count, from, to, partner, type) => {
+    let q = partner !== 0 ? `AND t.partner_code=${partner}` : '';
+    let qType = type !== 0 ? `AND t.type=${type}` : '';
     return db.load(`
-      SELECT COUNT(t.trans_id) as numrow
+      SELECT COUNT(t.trans_id) as total_row
       FROM transaction_tranfer t
-      WHERE t.timestamp >= ${from} AND t.timestamp <= ${to} ${q}`)
+      WHERE t.timestamp >= ${from} AND t.timestamp <= ${to} ${q} ${qType}`)
   },
 
-  getallHistByUid: (offset, count, from, to, account, type, partner) => {
+  getAllHistByUid: (offset, count, from, to, account, type, partner) => {
     let q = type !== 0 ? `AND t.type=${type}` : ''
     let q2 = partner !== 0 ? `AND t.partner_code=${partner}` : ''
     return db.load(`
-      SELECT t.trans_id, t.type, t.acc_name, t.from_account, t.to_account, t.amount, t.note, t.timestamp, t.surplus, t.state, t.signature 
+      SELECT t.trans_id, t.type, t.acc_name, t.from_account, t.to_account, t.amount, t.note, t.timestamp, t.surplus, t.state, t.signature
       FROM transaction_tranfer t
       WHERE t.timestamp >= ${from} AND t.timestamp <= ${to} AND t.from_account IN ${account} ${q} ${q2} 
       ORDER BY t.timestamp DESC LIMIT ${offset},${count}`)

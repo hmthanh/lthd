@@ -41,3 +41,7 @@ div.close{
 .padding-card{
     padding: 20px 40px;
 }
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}

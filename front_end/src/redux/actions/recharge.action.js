@@ -1,21 +1,22 @@
-import {RECHARGE_FAILED, RECHARGE_LOADING, RECHARGE_SUCCESS} from './actionType'
+import {RECHARGE_FAILED, RECHARGE_LOADING, RECHARGE_SUCCESS} from '../actionType'
 
-const initialState = {
-  isLoading: false,
-  statusId: 0,
-  data: []
-};
+import {fetchFrom} from '../../utils/fetchHelper'
+import {UrlApi} from '../../shares/baseUrl'
 
-export default (state = initialState, action) => {
-  const {type, payload} = action;
-  switch (type) {
-    case RECHARGE_LOADING:
-      return {isLoading: true, statusId: 0, data: []};
-    case RECHARGE_FAILED:
-      return {...state, isLoading: false, statusId: 1, data: []};
-    case RECHARGE_SUCCESS:
-      return {...state, isLoading: false, statusId: 2, data: payload};
-    default:
-      return state;
-  }
+export const recharge = (data, accessToken) => {
+  return (dispatch) => {
+    dispatch({type: RECHARGE_LOADING});
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetchFrom(UrlApi + '/api/recharge', 'POST', data, accessToken);
+        console.log(response);
+        dispatch({type: RECHARGE_SUCCESS, payload: response});
+        resolve(response);
+      } catch (e) {
+        console.log(e);
+        reject(e);
+        dispatch({type: RECHARGE_FAILED, payload: e});
+      }
+    });
+  };
 };

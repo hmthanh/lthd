@@ -21,10 +21,10 @@ import {
 import useInputRequire from "../../utils/useInputRequire";
 import useToggle from "../../utils/useToggle";
 // import MessageBox from "../../components/Modal/MessageBox";
-import {forgetPwd} from "../../redux/creators/forgetPwdCreator";
+import {forgetPwd} from "../../redux/actions/forgetPwd.action";
 import ModalVerifyForget from "./ModalVerifyForget";
 import {useHistory} from "react-router";
-import {getAccName} from "../../redux/creators/transferCreator";
+import {getAccName} from "../../redux/actions/transfer.action";
 
 const FogetPassword = () => {
   const dispatch = useDispatch();

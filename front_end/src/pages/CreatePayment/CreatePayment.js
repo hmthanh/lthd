@@ -21,9 +21,9 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import useInputChange from "../../utils/useInputChange";
 import "react-datepicker/dist/react-datepicker.css";
-import {getAccName} from "../../redux/creators/transferCreator";
+import {getAccName} from "../../redux/actions/transfer.action";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {createPayment} from "../../redux/creators/accountCreator";
+import {createPayment} from "../../redux/actions/account.action";
 import useToggle from "../../utils/useToggle";
 
 const CreatePayment = () => {

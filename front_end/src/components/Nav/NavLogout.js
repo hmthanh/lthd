@@ -1,7 +1,7 @@
 import React from 'react';
 import {NavItem, NavLink} from "reactstrap";
 import {useDispatch} from "react-redux";
-import {AuthFailed} from "../../redux/creators/authCreator";
+import {AuthFailed} from "../../redux/actions/auth.action";
 
 const NavLogout = () => {
   const dispatch = useDispatch();

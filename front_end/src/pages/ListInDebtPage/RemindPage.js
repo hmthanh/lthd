@@ -1,7 +1,7 @@
 import React, {Component, useState} from 'react';
 import {Alert, Card, CardBody, CardTitle} from 'reactstrap'
 import {connect} from 'react-redux';
-import {getAllRemindDetail} from "../../redux/creators/remindDetailCreator";
+import {getAllRemindDetail} from "../../redux/actions/remindDetail.action";
 
 
 const AlertExample = ({data}) => {

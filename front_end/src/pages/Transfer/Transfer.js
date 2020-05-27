@@ -16,19 +16,22 @@ import {
   InputGroupText,
   Label,
   Row,
-  Spinner
+  Spinner,
+  UncontrolledTooltip
 } from "reactstrap";
-import {getAccName, getInterbank, transfer} from "../../redux/creators/transferCreator";
+import {getAccName, getInterbank, transfer} from "../../redux/actions/transfer.action";
 import {useDispatch, useSelector} from "react-redux";
 import MessageBox from "../../components/Modal/MessageBox";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ModalVerifyTrans from "../../components/Modal/ModalVerifyTrans";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {getPaymentAcc} from "../../redux/creators/accountCreator";
+import {getPaymentAcc} from "../../redux/actions/account.action";
 import {useLocation} from "react-router";
 import useInputRequire from "../../utils/useInputRequire";
-import {FetchAlias} from "../../redux/creators/nameReminscentCreator";
+import {FetchAlias} from "../../redux/actions/aliasReceiver.action";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faHeart, faHeartBroken} from "@fortawesome/free-solid-svg-icons";
 
 const Transfer = () => {
   const dispatch = useDispatch();
@@ -250,10 +253,6 @@ const Transfer = () => {
         });
   }
 
-  const onChangeSaveAlias = (e) => {
-    saveAlias.toggle();
-  }
-
   useEffect(() => {
     if (qAccNum && qName && qMoney && qNote) {
       setTransType(4);
@@ -364,6 +363,14 @@ const Transfer = () => {
                     </InputGroup>
                   </FormGroup>
                   <FormGroup>
+                    <Button color={(saveAlias.active ? "success" : "danger")} id="saveAlias" onClick={saveAlias.toggle}>
+                      <span style={{marginRight: "10px"}}>{(saveAlias.active ? "Đã lưu" : "Không lưu")}</span>
+                      <FontAwesomeIcon icon={(saveAlias.active ? faHeart : faHeartBroken)}></FontAwesomeIcon>
+                    </Button>
+                    <UncontrolledTooltip placement="right" target="saveAlias">Lưu tên gợi nhớ
+                    </UncontrolledTooltip>
+                  </FormGroup>
+                  <FormGroup>
                     <Label for="receiverTransfer">Chọn ngân hàng</Label>
                     <div>
                       <ButtonGroup className="mb-2 ">
@@ -404,13 +411,7 @@ const Transfer = () => {
                            onChange={message.onChange}
                            id="message"/>
                   </FormGroup>
-                  <FormGroup>
-                    <Label for="saveAlias">Lưu tên gợi nhớ</Label>
-                    <Input type="checkbox" name="saveAlias"
-                           className="form-check-input"
-                           value={saveAlias.active}
-                           onChange={onChangeSaveAlias}/>
-                  </FormGroup>
+
                   <FormGroup>
                     <Label>Hình thức trả phí</Label><br/>
                     <ButtonGroup className="mb-2">

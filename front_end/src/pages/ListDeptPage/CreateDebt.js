@@ -17,12 +17,12 @@ import {
   Row,
   Spinner
 } from "reactstrap";
-import {getAccName} from "../../redux/creators/transferCreator";
+import {getAccName} from "../../redux/actions/transfer.action";
 import {useDispatch, useSelector} from "react-redux";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
-import {Create} from "../../redux/creators/debtCreator";
+import {Create} from "../../redux/actions/debt.action";
 import {useHistory} from "react-router";
 
 const CreateDebt = () => {

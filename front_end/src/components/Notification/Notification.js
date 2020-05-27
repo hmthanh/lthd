@@ -6,7 +6,7 @@ import {faCreditCard} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {formatMoney} from "../../utils/utils";
 import {useDispatch} from "react-redux";
-import {delNotify, getNotify} from "../../redux/creators/remindCreator";
+import {delNotify, getNotify} from "../../redux/actions/remind.action";
 import {SocketUrl} from "../../shares/baseUrl";
 
 const Notification = () => {

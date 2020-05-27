@@ -20,10 +20,10 @@ import {
 } from "reactstrap";
 
 import {useDispatch, useSelector} from "react-redux";
-import {recharge} from "../../redux/creators/rechargeCreator";
+import {recharge} from "../../redux/actions/recharge.action";
 import useToggle from "../../utils/useToggle";
 import useInputChange from "../../utils/useInputChange";
-import {getAccName} from "../../redux/creators/transferCreator";
+import {getAccName} from "../../redux/actions/transfer.action";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import {formatMoney} from "../../utils/utils";
 
@@ -209,7 +209,7 @@ const RechargePage = () => {
                   <Collapse isOpen={alertToggle.active}>
                     <CardTitle>
                       {
-                        transState.active ? <h3 className="text-center">CHUYỂN TIỀN THÀNH CÔNG</h3> :
+                        transState.active ? <h3 className="text-center">NẠP TIỀN THÀNH CÔNG</h3> :
                             <h3 className="text-center">GIAO DỊCH THẤT BẠI</h3>
                       }
                     </CardTitle>
