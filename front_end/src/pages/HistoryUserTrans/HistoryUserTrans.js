@@ -117,7 +117,7 @@ const HistoryUserTrans = () => {
         <Row>
           <Col md={12}>
             <CardGroup>
-              <Card id="localBank">
+              <Card>
                 <div className="card-body padding-card">
                   <h4>Giao dịch chuyển tiền</h4>
                   {

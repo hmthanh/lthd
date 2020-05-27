@@ -27,14 +27,16 @@ import useInputChange from "../../utils/useInputChange";
 import ModalVerifyTrans from "../../components/Modal/ModalVerifyTrans";
 import ShowRequire from "../../components/ShowRequire/ShowRequire";
 import {getPaymentAcc} from "../../redux/actions/account.action";
-import {useLocation} from "react-router";
+import {useHistory, useLocation} from "react-router";
 import useInputRequire from "../../utils/useInputRequire";
 import {FetchAlias} from "../../redux/actions/aliasReceiver.action";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart, faHeartBroken} from "@fortawesome/free-solid-svg-icons";
+import FinishTransfer from "./FinishTransfer";
 
 const Transfer = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const location = useLocation();
   const senderInfo = useSelector(state => {
     return state.PaymentAcc.data
@@ -67,11 +69,12 @@ const Transfer = () => {
   const message = useInputChange('');
   const isSenderPay = useToggle(true);
   const msgBoxToggle = useToggle(false);
-  const showVerifyToggle = useToggle(false);
   const [titleMsg, setTitleMsg] = useState("");
   const [contentMsg, setContentMsg] = useState("");
   const [transId, setTransId] = useState(0);
   const [transType, setTransType] = useState(2);
+  const verifyOTPToggle = useToggle(false);
+  const finishToggle = useToggle(false);
 
   const query = new URLSearchParams(location.search);
   const qAccNum = query.get("account");
@@ -80,7 +83,6 @@ const Transfer = () => {
   const qNote = query.get("note");
 
   const onChangeSelectSaved = (e) => {
-    console.log(e);
     setSelectSaved(e.target.value);
     accountNum.setValue(e.target.value);
     accountNum.setInValid(false)
@@ -113,7 +115,6 @@ const Transfer = () => {
       query: accountNum.value,
       partner: partner_code
     }
-    console.log("acc num", accountNum.value)
     dispatch(getAccName(data, accessToken))
         .then((response) => {
           console.log("success response", response)
@@ -123,7 +124,9 @@ const Transfer = () => {
             accountNum.setInValid(true)
             accountNum.setInValidMsg("Không thể chuyển tiền chung tài khoản")
           } else {
-            accountNum.setValue(newAccountNum)
+            if (newAccountNum) {
+              accountNum.setValue(newAccountNum)
+            }
             accountNum.setValid(true)
             accountNum.setInValid(false)
             accountNum.setInValidMsg("")
@@ -194,12 +197,6 @@ const Transfer = () => {
     msgBoxToggle.setActive();
   }
 
-  function onVerifySuccess() {
-    let title = "Chuyển tiền thành công";
-    let content = "Đã xác thực OTP, Chuyển tiền thành công";
-    showMessageBox(title, content);
-  }
-
   function onSubmitForm(e) {
     e.preventDefault();
     if (accountNum.value === "") {
@@ -229,7 +226,8 @@ const Transfer = () => {
       amount: amount,
       costType: cost_type,
       type: transType,
-      saveAlias: saveAlias.active
+      saveAlias: saveAlias.active,
+      toName: name.value
     };
     console.log("data", data);
     let accessToken = localStorage.getItem('accessToken');
@@ -239,7 +237,8 @@ const Transfer = () => {
           console.log("response", response);
           if (response.errorCode === 0) {
             setTransId(response.transId);
-            showVerifyToggle.setActive();
+            // showVerifyToggle.setActive();
+            verifyOTPToggle.setActive();
           } else {
             let title = "Chuyển tiền thất bại";
             let content = "Số dư của tài khoản không đủ";
@@ -275,185 +274,201 @@ const Transfer = () => {
         });
   }, [dispatch]);
 
+  const onFinish = useCallback(() => {
+    finishToggle.setActive();
+    setTimeout(() => {
+      history.push("/user-history")
+    }, 5000)
+  }, [finishToggle, history]);
+
+  const onBack = () => {
+    verifyOTPToggle.setInActive();
+  }
 
   return (
       <Container>
         <Row>
           <Col xs={12} sm={8} md={6} lg={6} className={"mx-auto"}>
-            <Card id="localBank">
+            <Card>
               <div className="card-body">
-                <CardTitle>
-                  <h3 className="text-center">CHUYỂN KHOẢN</h3>
-                </CardTitle>
-                <hr/>
-                <Form method="post" noValidate="novalidate"
-                      className="needs-validation" onSubmit={onSubmitForm}>
-                  <h4>1. Người gửi</h4>
-                  <FormGroup>
-                    <Label for="senderAccountType">Tài khoản người gửi <ShowRequire/></Label>
-                    <Input type="select"
-                           onChange={onChangeSender}
-                           name="sender"
-                           id="sender"
-                           value={sender}>
-                      {senderInfo.account && senderInfo.account.map((item, index) => {
-                        return (<option
-                            key={index}
-                            value={item.account_num}>{(`Thanh toán ${index + 1} (${item.account_num})`)}
-                        </option>)
-                      })}
-                    </Input>
-                  </FormGroup>
-                  <h4>2. Người nhận</h4>
-                  <FormGroup>
-                    <Label for="receiverSavedList">Thông tin người
-                      nhận <ShowRequire/></Label>
-                    <div>
-                      <ButtonGroup className="mb-2 ">
-                        <Button color="primary" onClick={onChangeNotUseSaved}
-                                active={isUseSaved === false}>Nhập thông tin mới</Button>
-                        <Button color="primary" onClick={onChangeUseSaved}
-                                active={isUseSaved === true}>Danh sách đã lưu</Button>
-                      </ButtonGroup>
-                    </div>
-                    <Collapse isOpen={isUseSaved}>
+                <Collapse isOpen={!verifyOTPToggle.active}>
+                  <CardTitle>
+                    <h3 className="text-center">1. CHUYỂN KHOẢN</h3>
+                  </CardTitle>
+                  <hr/>
+                  <Form method="post" noValidate="novalidate"
+                        className="needs-validation" onSubmit={onSubmitForm}>
+                    <h4>1. Người gửi</h4>
+                    <FormGroup>
+                      <Label for="senderAccountType">Tài khoản người gửi <ShowRequire/></Label>
                       <Input type="select"
-                             value={selectSaved}
-                             onChange={onChangeSelectSaved}
-                             name="selectSaved" id="selectSaved">
-                        {
-                          listSaved.item &&
-                          listSaved.item.map((item, index) => {
-                            return <option key={index} value={item.account_num}>{item.alias_name}</option>
-                          })
-                        }
+                             onChange={onChangeSender}
+                             name="sender"
+                             id="sender"
+                             value={sender}>
+                        {senderInfo.account && senderInfo.account.map((item, index) => {
+                          return (<option
+                              key={index}
+                              value={item.account_num}>{(`Thanh toán ${index + 1} (${item.account_num})`)}
+                          </option>)
+                        })}
                       </Input>
-                    </Collapse>
-                  </FormGroup>
-                  <FormGroup>
-                    <InputGroup className="mb-2">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>ID</InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text"
-                             name="accountNum"
-                             id="accountNum"
-                             onChange={accountNum.onChange}
-                             value={accountNum.value}
-                             onBlur={onBlurAccountNum}
-                             invalid={accountNum.invalid}
-                             valid={accountNum.valid}
-                             placeholder="Nhập số tài khoản hoặc username"/>
-                      {
-                        AccName.isLoading ? (<InputGroupAddon addonType="prepend">
-                          <InputGroupText><Spinner color="primary"
-                                                   size={"sm"} role="status"
-                                                   aria-hidden="true"/></InputGroupText>
-                        </InputGroupAddon>) : ""
-                      }
-                      <FormFeedback>{accountNum.inValidMsg}</FormFeedback>
-                    </InputGroup>
-                    <InputGroup>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>Họ và tên</InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text" name="name"
-                             disabled={true}
-                             value={name.value}/>
-                    </InputGroup>
-                  </FormGroup>
-                  <FormGroup>
-                    <Button color={(saveAlias.active ? "success" : "danger")} id="saveAlias" onClick={saveAlias.toggle}>
-                      <span style={{marginRight: "10px"}}>{(saveAlias.active ? "Đã lưu" : "Không lưu")}</span>
-                      <FontAwesomeIcon icon={(saveAlias.active ? faHeart : faHeartBroken)}></FontAwesomeIcon>
-                    </Button>
-                    <UncontrolledTooltip placement="right" target="saveAlias">Lưu tên gợi nhớ
-                    </UncontrolledTooltip>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="receiverTransfer">Chọn ngân hàng</Label>
-                    <div>
-                      <ButtonGroup className="mb-2 ">
-                        <Button color="primary" onClick={onChangeLocalBank}
-                                active={isInterbank === false}>Nội bộ</Button>
-                        <Button color="primary" onClick={onChangeInterbank}
-                                active={isInterbank === true}>Liên ngân hàng</Button>
+                    </FormGroup>
+                    <h4>2. Người nhận</h4>
+                    <FormGroup>
+                      <Label for="receiverTransfer">Chọn ngân hàng</Label>
+                      <div>
+                        <ButtonGroup className="mb-2 ">
+                          <Button color="primary" onClick={onChangeLocalBank}
+                                  active={isInterbank === false}>Nội bộ</Button>
+                          <Button color="primary" onClick={onChangeInterbank}
+                                  active={isInterbank === true}>Liên ngân hàng</Button>
+                        </ButtonGroup>
+                      </div>
+                      <Collapse isOpen={isInterbank}>
+                        <Input type="select"
+                               value={receiveBank}
+                               onChange={onChangeReceiveBank}
+                               name="receiveBank" id="receiveBank">
+                          {
+                            interBankInfo.item &&
+                            interBankInfo.item.map((item, index) => {
+                              return <option key={index}
+                                             value={item.partner_code}>{item.name}</option>
+                            })
+                          }
+                        </Input>
+                      </Collapse>
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="receiverSavedList">Thông tin người
+                        nhận <ShowRequire/></Label>
+                      <div>
+                        <ButtonGroup className="mb-2 ">
+                          <Button color="primary" onClick={onChangeNotUseSaved}
+                                  active={isUseSaved === false}>Nhập thông tin mới</Button>
+                          <Button color="primary" onClick={onChangeUseSaved}
+                                  active={isUseSaved === true}>Danh sách đã lưu</Button>
+                        </ButtonGroup>
+                      </div>
+                      <Collapse isOpen={isUseSaved}>
+                        <Input type="select"
+                               value={selectSaved}
+                               onChange={onChangeSelectSaved}
+                               name="selectSaved" id="selectSaved">
+                          {
+                            listSaved.item &&
+                            listSaved.item.map((item, index) => {
+                              return <option key={index} value={item.account_num}>{item.alias_name}</option>
+                            })
+                          }
+                        </Input>
+                      </Collapse>
+                    </FormGroup>
+                    <FormGroup>
+                      <InputGroup className="mb-2">
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText>ID</InputGroupText>
+                        </InputGroupAddon>
+                        <Input type="text"
+                               name="accountNum"
+                               id="accountNum"
+                               onChange={accountNum.onChange}
+                               value={accountNum.value || ''}
+                               onBlur={onBlurAccountNum}
+                               invalid={accountNum.invalid}
+                               valid={accountNum.valid}
+                               placeholder="Nhập số tài khoản hoặc username"/>
+                        {
+                          AccName.isLoading ? (<InputGroupAddon addonType="prepend">
+                            <InputGroupText><Spinner color="primary"
+                                                     size={"sm"} role="status"
+                                                     aria-hidden="true"/></InputGroupText>
+                          </InputGroupAddon>) : ""
+                        }
+                        <FormFeedback>{accountNum.inValidMsg}</FormFeedback>
+                      </InputGroup>
+                      <InputGroup>
+                        <InputGroupAddon addonType="prepend">
+                          <InputGroupText>Họ và tên</InputGroupText>
+                        </InputGroupAddon>
+                        <Input type="text" name="name"
+                               disabled={true}
+                               value={name.value}/>
+                      </InputGroup>
+                    </FormGroup>
+                    <FormGroup>
+                      <Button color={(saveAlias.active ? "success" : "danger")} id="saveAlias" onClick={saveAlias.toggle}>
+                        <span style={{marginRight: "10px"}}>{(saveAlias.active ? "Đã lưu" : "Không lưu")}</span>
+                        <FontAwesomeIcon icon={(saveAlias.active ? faHeart : faHeartBroken)}></FontAwesomeIcon>
+                      </Button>
+                      <UncontrolledTooltip placement="right" target="saveAlias">Lưu tên gợi nhớ
+                      </UncontrolledTooltip>
+                    </FormGroup>
+                    <h4>3. Thông tin cần chuyển tiền</h4>
+                    <FormGroup>
+                      <Label for="money">Số tiền <ShowRequire/></Label>
+                      <Input type="number" name="money" id="money"
+                             onChange={money.onChange}
+                             value={money.value}
+                             required/>
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="message">Nội dung chuyển tiền</Label>
+                      <Input type="textarea" name="message"
+                             value={message.value}
+                             onChange={message.onChange}
+                             id="message"/>
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label>Hình thức trả phí</Label><br/>
+                      <ButtonGroup className="mb-2">
+                        <Button color="primary" onClick={isSenderPay.setActive}
+                                active={isSenderPay.active === true}>Người nhận trả phí</Button>
+                        <Button color="primary" onClick={isSenderPay.setInActive}
+                                active={isSenderPay.active === false}>Người gửi trả phí</Button>
                       </ButtonGroup>
-                    </div>
-                    <Collapse isOpen={isInterbank}>
-                      <Input type="select"
-                             value={receiveBank}
-                             onChange={onChangeReceiveBank}
-                             name="receiveBank" id="receiveBank">
-                        {
-                          interBankInfo.item &&
-                          interBankInfo.item.map((item, index) => {
-                            return <option key={index}
-                                           value={item.partner_code}>{item.name}</option>
-                          })
-                        }
-                      </Input>
-                    </Collapse>
-                  </FormGroup>
-
-                  <h4>3. Thông tin cần chuyển tiền</h4>
-                  <FormGroup>
-                    <Label for="money">Số tiền <ShowRequire/></Label>
-                    <Input type="number" name="money" id="money"
-                           onChange={money.onChange}
-                           value={money.value}
-                           required/>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label for="message">Nội dung chuyển tiền</Label>
-                    <Input type="textarea" name="message"
-                           value={message.value}
-                           onChange={message.onChange}
-                           id="message"/>
-                  </FormGroup>
-
-                  <FormGroup>
-                    <Label>Hình thức trả phí</Label><br/>
-                    <ButtonGroup className="mb-2">
-                      <Button color="primary" onClick={isSenderPay.setActive}
-                              active={isSenderPay.active === true}>Người nhận trả phí</Button>
-                      <Button color="primary" onClick={isSenderPay.setInActive}
-                              active={isSenderPay.active === false}>Người gửi trả phí</Button>
-                    </ButtonGroup>
-                  </FormGroup>
-                  <div>
-                    <Button id="btnTransferLocal"
-                            type="submit"
-                            color={"success"}
-                            size={"lg"}
-                            block={true}
-                            className="d-flex align-items-center justify-content-center"
-                            disabled={transferInfo.isLoading}
-                    >
+                    </FormGroup>
+                    <div>
+                      <Button id="btnTransferLocal"
+                              type="submit"
+                              color={"success"}
+                              size={"lg"}
+                              block={true}
+                              className="d-flex align-items-center justify-content-center"
+                              disabled={transferInfo.isLoading}
+                      >
                         <span style={{marginRight: "10px"}}>
                           {(transferInfo.isLoading ? <Spinner color="light"
                                                               size={"sm"} role="status"
                                                               aria-hidden="true"/> : "")}
                         </span>
 
-                      <span>Chuyển Tiền</span>
-                    </Button>
-                  </div>
-                </Form>
-                <MessageBox
-                    className={""}
-                    isOpen={msgBoxToggle.active}
-                    onClose={msgBoxToggle.setInActive}
-                    title={titleMsg}
-                    content={contentMsg}
-                ></MessageBox>
+                        <span>Chuyển Tiền</span>
+                      </Button>
+                    </div>
+                  </Form>
+                  <MessageBox
+                      className={""}
+                      isOpen={msgBoxToggle.active}
+                      onClose={msgBoxToggle.setInActive}
+                      title={titleMsg}
+                      content={contentMsg}
+                  ></MessageBox>
+
+                </Collapse>
+                <Collapse isOpen={verifyOTPToggle.active}>
+                  <ModalVerifyTrans
+                      transId={transId}
+                      onFinish={onFinish}
+                      onBack={onBack}
+                  ></ModalVerifyTrans>
+                </Collapse>
+                <Collapse isOpen={finishToggle.active}>
+                  <FinishTransfer onBack={onBack}></FinishTransfer>
+                </Collapse>
               </div>
-              <ModalVerifyTrans
-                  isShow={showVerifyToggle.active}
-                  transId={transId}
-                  onClose={showVerifyToggle.setInActive}
-                  onVerifySuccess={onVerifySuccess}
-              ></ModalVerifyTrans>
             </Card>
           </Col>
         </Row>

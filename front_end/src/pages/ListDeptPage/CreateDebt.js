@@ -120,7 +120,7 @@ const CreateDebt = () => {
         <div className="container-fluid py-3">
           <Row>
             <Col xs={12} sm={8} md={6} lg={6} className={"mx-auto"}>
-              <Card id="localBank">
+              <Card>
                 <div className="card-body">
                   <CardTitle>
                     <h3 className="text-center">TẠO NHẮC NỢ</h3>

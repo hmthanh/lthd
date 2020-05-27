@@ -40,7 +40,7 @@ const ModalVerifyPwd = ({isShow, verifyPwdData, onClose, onVerifySuccess}) => {
   }
 
   return (
-      <div>
+      <>
         <Modal isOpen={isShow} toggle={onClose}>
           <ModalHeader className="padding-header">Vui lòng nhập mã OTP để xác nhận</ModalHeader>
           <ModalBody className="padding-body">
@@ -72,7 +72,7 @@ const ModalVerifyPwd = ({isShow, verifyPwdData, onClose, onVerifySuccess}) => {
               <span style={{marginLeft: "5px", paddingRight: "40px"}}>Đồng ý</span></Button>
           </ModalFooter>
         </Modal>
-      </div>
+      </>
   );
 };
 
