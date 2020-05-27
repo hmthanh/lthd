@@ -27,12 +27,6 @@ const CancelRemind = ({debtId}) => {
     dispatch(DeleteInDebt(data, accessToken))
         .then((response) => {
           console.log(response);
-          const uid = localStorage.getItem('uid');
-          dispatch(getInDebt(uid, accessToken))
-              .then((response) => {
-                history.go(0);
-                console.log(response)
-              })
         })
         .catch((err) => {
           console.log(err);

@@ -73,6 +73,7 @@ const Transfer = () => {
   const qName = query.get("name");
   const qMoney = query.get("money");
   const qNote = query.get("note");
+  const qDebt = query.get("debt");
 
   const onChangeSelectSaved = (e) => {
     setSelectSaved(e.target.value);
@@ -238,7 +239,8 @@ const Transfer = () => {
       costType: cost_type,
       type: transType,
       saveAlias: saveAlias.active,
-      toName: name.value
+      toName: name.value,
+      debt_id: qDebt
     };
     console.log("data", data);
     let accessToken = localStorage.getItem('accessToken');
